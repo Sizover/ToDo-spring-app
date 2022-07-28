@@ -1,0 +1,10 @@
+.git/
+.gitignore
+.run/
+.gradle/
+.editorconfig
+.gitlab-ci.yml
+.gitlab/
+CHANGELOG.md
+README.md
+Dockerfile
