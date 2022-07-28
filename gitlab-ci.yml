@@ -1,0 +1,23 @@
+include:
+  project: devops/devops-pipelines
+  file:
+    - infra/rules.yml
+    - infra/check.yml
+    - gradle/gradle-jobs.yml
+    - infra/build-kaniko.yml
+    - infra/docker-deploy.yml
+    - gradle/pages-gradle.yml
+    - gradle/cleanup.yml
+    - gradle/unit-db.yml
+    - infra/badges.yml
+
+stages:
+  - prepare
+  - test
+  - build
+  - post-test
+  - build-docs
+  - deploy
+
+variables:
+  GRADLE_IMAGE: gradle:7.5-jdk11
