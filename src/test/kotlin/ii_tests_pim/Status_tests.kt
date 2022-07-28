@@ -69,7 +69,7 @@ class Status_tests {
         element(byText("AutoTest S 0010 $dateTime")).should(exist, ofSeconds(waitTime))
         elements(byText("AutoTest S 0010 $dateTime"))
             .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(2))
-
+        //вносим не значительное изменение
 
 
         Thread.sleep(5000)
