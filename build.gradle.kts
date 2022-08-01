@@ -18,6 +18,13 @@ repositories {
     }
 }
 
+//group = "me.isizov"
+//version = "1.0-SNAPSHOT"
+//
+//repositories {
+//    mavenCentral()
+//}
+
 apply("kiaplib.gradle.kts")
 
 dependencies {

@@ -28,6 +28,6 @@ FROM adoptopenjdk:11-jre-hotspot
 EXPOSE 8080
 USER root
 WORKDIR /opt/kiap
-COPY --from=builder /usr/src/kiap/build/libs/kiap-backend*.jar ./app.jar
-ENTRYPOINT ["java", "-jar", "app.jar"]
+COPY --from=builder /usr/src/kiap/build/libs/kiap-backend*.jar ./testing-e2e.jar
+ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS} -jar testing-e2e.jar"]
 

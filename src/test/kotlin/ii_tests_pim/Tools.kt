@@ -330,4 +330,11 @@ class Tools {
             .shouldNot(exist, ofSeconds(waitTime))
         Thread.sleep((10*stringsOnPage).toLong())
     }
+
+
+//    fun filterON(filterName: String, waitTime: Long){
+//    if (elements(byXpath("//span[text()='$filterName']/..")).size != 1){
+//
+//    }
+//    }
 }

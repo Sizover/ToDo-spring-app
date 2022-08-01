@@ -622,7 +622,7 @@ class PimTests {
                 text("Мероприятие $p.0")
             )
             //определяем количество дочерших пунктов внутри каждого родителя
-            var childCount =
+            val childCount =
                 elements(byCssSelector("div#simple-tabpanel-iplan>div>div>div>div:nth-child($p) div#panel1a-content form")).size
             for (c in 1..childCount) {
                 val colorItemSelector = "div#simple-tabpanel-iplan > div > div > div > div:nth-child($p) >div>div>div>div>div#panel1a-content>div>div>div:nth-child($c)>form>div[style='background-color: rgb(%s); border-color: rgb(%s);']"
@@ -682,6 +682,10 @@ class PimTests {
                 1
             )
         )
+        //временная строка
+        element(byXpath("//button[@data-testid='app-bar-button']")).click()
+        //
+
         //открываем фильтр "Типы происшествий"
         element(byXpath("//span[text()='Типы происшествий']/..")).click()
         element(byCssSelector("div[tabindex='-1'] div[role='combobox']")).should(exist, ofSeconds(waitTime))
@@ -745,20 +749,37 @@ class PimTests {
         element(byXpath("//span[text()='Статусы']/button")).click()
         /////////////////////////////////////////////////////////////////////////////////////////
         //Открываем фильтр "Уровни"
-        element(byXpath("//span[text()='Уровни']/..")).click()
+        var filterLevels = true
+        if (elements(byXpath("//span[text()='Уровни']/..")).size != 1){
+            element(byXpath("//span[contains(text(),'Еще фильтры')]/.."))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+            element(byXpath("//*[contains(text(),'Уровень происшествия')]/..//input"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+            filterLevels = false
+        }
+        else {
+            element(byXpath("//span[text()='Уровни']/..")).click()
+        }
         element(byCssSelector("div[tabindex='-1'] div[role='combobox']")).should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime)).click()
         //Выбираем "ЧС" и "Угроза ЧС"
-        element(byCssSelector("input#operationModeId")).setValue("Угроза ЧС").sendKeys(Keys.DOWN, Keys.ENTER)
-        element(byCssSelector("input#operationModeId")).setValue("ЧС").sendKeys(Keys.DOWN)
-        element(byCssSelector("input#operationModeId")).setValue("ЧС").sendKeys(Keys.ENTER)
+//        element(byCssSelector("input#operationModeId")).setValue("Угроза ЧС").sendKeys(Keys.DOWN, Keys.ENTER)
+//        element(byCssSelector("input#operationModeId")).setValue("ЧС").sendKeys(Keys.DOWN)
+//        element(byCssSelector("input#operationModeId")).setValue("ЧС").sendKeys(Keys.ENTER)
+        element(byCssSelector("input#operationModeId")).sendKeys("Угроза ЧС", Keys.DOWN, Keys.ENTER)
+        element(byCssSelector("input#operationModeId")).sendKeys("ЧС",Keys.DOWN, Keys.ENTER)
         element(byCssSelector("input#operationModeId")).click()
         //Применить
         element(byXpath("//span[text()='Применить']/..")).click()
         //Дожидаемся применения фильтра
-        Thread.sleep(500)
-        element(byXpath("//span[text()='Уровни']/button"))
-            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
+        Thread.sleep(2000)
+        if (filterLevels){
+            element(byXpath("//span[text()='Уровни']/button"))
+                .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))}
         tools.checkbox("Уровень происшествия", true, waitTime)
         intA = elements(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']")).size
         intB = elements(byText("Угроза ЧС")).size
@@ -767,7 +788,21 @@ class PimTests {
         intS = intB + intC
         Assertions.assertTrue(intS == intA)
         //Очищаем фильтр Уровни
-        element(byXpath("//span[text()='Уровни']/button")).click()
+        if (filterLevels){
+            element(byXpath("//span[text()='Уровни']/button")).click()
+        } else {
+            element(byXpath("//span[contains(text(),'Еще фильтры')]/.."))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+            element(byXpath("//*[contains(text(),'Уровень происшествия')]/..//input/following-sibling::div/button[@title='Clear']"))
+                .hover()
+            element(byXpath("//*[contains(text(),'Уровень происшествия')]/..//input/following-sibling::div/button[@title='Clear']"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+            element(byXpath("//span[text()='Применить']/..")).click()
+        }
         /////////////////////////////////////////////////////////////////////////////////////////
         //Открываем фильтр "Источники"
         element(byXpath("//span[text()='Источники']/..")).click()
@@ -1169,7 +1204,7 @@ class PimTests {
         //ищем столбец "файлы"
         tools.checkbox("Файлы",true,waitTime)
         val columsNameElements = elements(byXpath("//thead/tr/th//*[text()]"))
-        var columsName = mutableListOf<String>()
+        val columsName = mutableListOf<String>()
         columsNameElements.forEach {
             columsName.add(it.ownText)
         }
@@ -1346,9 +1381,9 @@ class PimTests {
         //запоминаем те значения, что будем создавать
         for (y in 0 until tableStringCount) {
             if (y!=1){
-            var st: String =
+            val st: String =
                 element(byCssSelector("tr[data-testid='MUIDataTableBodyRow-$y']>td[data-colindex='0']>div")).ownText
-            var va: Int =
+            val va: Int =
                 element(byCssSelector("tr[data-testid='MUIDataTableBodyRow-$y']>td[data-colindex='1']>div")).ownText.toInt()
             when (st) {
                 "Всего" -> {tableAll = va}
