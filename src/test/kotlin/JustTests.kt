@@ -327,7 +327,7 @@ class JustTests {
             tools.addressInput("address","г Краснодар, ул Путевая",waitTime)
             var telCode: Int
             do {
-                telCode = (1..99999).random()
+                telCode = (10000..99999).random()
             } while (telCodeList.contains(telCode.toString()))
             element(byXpath("//label[text()='Телефонный код МО']/parent::div//input")).click()
             element(byXpath("//label[text()='Телефонный код МО']/parent::div//input")).sendKeys(telCode.toString())
