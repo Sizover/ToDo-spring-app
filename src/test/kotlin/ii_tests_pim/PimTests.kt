@@ -1260,9 +1260,8 @@ class PimTests {
         date = LocalDate.now().toString()
         tools.logonTool()
         //кликаем по иконке отчетов
-        element(byXpath("//div[@data-testid='app-menu-Отчеты']/../..")).click()
         //Переходим в "отчет по обращениям"
-        element(byXpath("//div[@data-testid='app-menu-По обращениям']/../..")).click()
+        tools.menuNavigation("Отчеты","По обращениям", waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/.."))
             .should(exist, ofSeconds(waitTime))
@@ -1377,9 +1376,8 @@ class PimTests {
             dateTime = LocalDateTime.now().toString()
             date = LocalDate.now().toString()
             //кликаем по иконке происшествий в боковом меню
-            element(byXpath("//span[text()='Происшествия']/../../../..")).click()
             //Переходим в "Список происшетвий"
-            element(byXpath("//span[text()='Список происшествий']/../../../..")).click()
+            tools.menuNavigation("Происшествия","Список происшествий",waitTime)
             //кликаем по "создать обращение"
             element(byXpath("//span[text()='Создать обращение']/..")).click()
             //заполняем карточку
@@ -1399,7 +1397,6 @@ class PimTests {
             //Вводим случайный адрес
             var aA = ('A'..'Z').random()
             val bB = (1..10).random()
-            //Вбиваем первый символ
             tools.addressInput("callAddress", "Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач $bB", waitTime)
 //            element(byCssSelector("#callAddress"))
 //                .sendKeys("Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач$bB")
@@ -1430,7 +1427,14 @@ class PimTests {
                 element(byXpath("//span[text()='Сохранить карточку']/parent::button")).click()
             } else if (i == 3) {
                 //регистрируем обращение в ранее созданную карточку.
-                element(byText(adr)).click()
+//                element(byText(adr)).click()
+                element(byXpath("//*[@name='refetch']/ancestor::button"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .click()
+                val troubleshoot = element(byXpath("//*[contains(text(),'$adr')]")).ownText
+                println("troubleshoot = $troubleshoot")
+                element(byXpath("//*[contains(text(),'$adr')]/ancestor::button")).click()
                 element(byXpath("//span[text()='Привязать к происшествию']/parent::button")).click()
             } else if (i == 4) {
                 //регистрируем ложное обращение
