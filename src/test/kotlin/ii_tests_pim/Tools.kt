@@ -156,20 +156,33 @@ class Tools {
 //        val checkboxAlias = ""
         val checkboxNameList = mutableListOf<String>()
         //Открываем выпадающий список
-        element(byCssSelector("button[data-testid='Колонки-iconButton']"))
+//        element(byCssSelector("button[data-testid='Колонки-iconButton']"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+//            .click()
+        element(byXpath("//*[@name='table']/../parent::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
         //Дожидаемся, что список появился
-        element(byCssSelector("fieldset[aria-label='Показать/скрыть колонки']>div>label"))
+//        element(byCssSelector("fieldset[aria-label='Показать/скрыть колонки']>div>label"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+        element(byCssSelector("div.MuiPaper-root.MuiPopover-paper.MuiPaper-rounded[class*=MuiPaper-elevation] label"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //если передали пустое значение, то проходимся по всем чек-боксам, если нет, то нет =)
         if (checkboxName.isEmpty()){
-            val checkboxesCount = elements(byXpath("//fieldset[@aria-label='Показать/скрыть колонки']//label/span[text()]"))
-                .size
-            for (i in 1..checkboxesCount){
-                checkboxNameList.add(element(byXpath("//fieldset[@aria-label='Показать/скрыть колонки']//label[$i]/span[text()]")).ownText)
+//            val checkboxesCount =
+////                elements(byXpath("//fieldset[@aria-label='Показать/скрыть колонки']//label/span[text()]"))
+//                elements(byXpath("//label/span[text()]"))
+//                .size
+//            for (i in 1..checkboxesCount){
+//                checkboxNameList.add(element(byXpath("//fieldset[@aria-label='Показать/скрыть колонки']//label[$i]/span[text()]")).ownText)
+//            }
+            val checkboxes = elements(byXpath("//label/span[text()]"))
+            checkboxes.forEach{
+                checkboxNameList.add(it.ownText)
             }
         } else {
             checkboxNameList.add(checkboxName)
