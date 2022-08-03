@@ -1,0 +1,198 @@
+package ii_tests_pim
+
+import com.codeborne.selenide.CollectionCondition
+import com.codeborne.selenide.Condition.*
+import com.codeborne.selenide.Selectors.*
+import com.codeborne.selenide.Selenide.*
+import ii_tests_pim.Retry
+import ii_tests_pim.Tools
+import org.apache.commons.io.FileUtils
+import org.junit.jupiter.api.Assertions
+import org.openqa.selenium.Keys
+import java.io.File
+import java.security.KeyPair
+import java.time.Duration.ofSeconds
+import java.time.LocalDate
+import java.time.LocalDateTime
+import kotlin.coroutines.EmptyCoroutineContext
+
+class Removal {
+    val tools = Tools()
+    var date = LocalDate.now()
+    var dateTime = LocalDateTime.now()
+    var waitTime: Long = 5
+
+
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
+    fun `N 9998`(){
+        //Удаляем все отчеты
+        tools.logonTool()
+//        tools.menuNavigation("Отчеты", "По происшествиям", waitTime)
+        var menuVariable =1
+        for (m in 1..3){
+            when (m) {
+                1 -> {tools.menuNavigation("Отчеты", "По происшествиям", waitTime)}
+                2 -> {tools.menuNavigation("Отчеты", "По обращениям", waitTime)}
+                3 -> {tools.menuNavigation("Отчеты", "По сотрудникам", waitTime)}
+            }
+//        tools.menuNavigation("Отчеты", "По обращениям", waitTime)
+//        tools.menuNavigation("Отчеты", "По сотрудникам", waitTime)
+            tools.stringsOnPage(50, waitTime)
+//            var stringNumder = 1
+            //считаем количество строк - понадобится для прерываемого цикла
+            var countString = elements(byXpath("//tbody/tr")).size
+//            println(countString)
+            //определяем индекс последнего столбца, что бы потом кликать по трем точкам
+            val menuColumn = elements(byXpath("//thead/tr/th")).size
+//            println(menuColumn)
+            //входим в большой цикл без защитного счетчика
+            var control = 1 //хотя вот он готовый счетчик
+            tools.checkbox("Наименование отчета", true, waitTime)
+            //"Проверка формирования отчетов" это часть названия отчета присваемого всем отчетам создаваемыми автотестами
+            while (elements(byXpath("//tbody/tr//*[contains(text(),'Проверка формирования отчетов')]")).size > 0 ){
+                countString = elements(byXpath("//tbody/tr")).size
+                for (i in 1..countString){
+                    //если существует отчет созданный автотестом, то...
+                    if (elements(byXpath("//tbody/tr[$i]//*[contains(text(),'Проверка формирования отчетов')]")).size > 0){
+                        //смотрим не последний ли он на странице, и в любом случае пролистывает до того момента, когда подвал таблицы не будет загораживать его от клика
+                        if (elements(byXpath("//tbody/tr[${i + 1}]")).size > 0){
+                            element(byXpath("//tbody/tr[${i + 1}]")).scrollIntoView(false)
+                        } else {
+                            element(byXpath("//tbody/tr[$i]")).sendKeys(Keys.END)
+                        }
+                        val deletedReport = element(byXpath("//tbody/tr[$i]/td[1]//*[text()]")).ownText
+                        element(byXpath("//tbody/tr[$i]/td[$menuColumn]//button")).click()
+                        element(byXpath("//*[text()='Удалить']/parent::button"))
+                            .should(exist, ofSeconds(waitTime))
+                            .shouldBe(visible, ofSeconds(waitTime))
+                            .click()
+                        element(byXpath("//*[text()='Подтвердите удаление записи']"))
+                            .should(exist, ofSeconds(waitTime))
+                            .shouldBe(visible, ofSeconds(waitTime))
+                        Thread.sleep(200)
+                        element(byXpath("//span[@title='Удалить']/button"))
+                            .should(exist, ofSeconds(waitTime))
+                            .shouldBe(visible, ofSeconds(waitTime))
+                            .click()
+                        //                    Thread.sleep(1000)
+                        //хдем зеленую всплывашку
+                        element(byXpath("//*[contains(@class, 'MuiAlert-standardSuccess')][@role='alert']//*[text()='Запись удалена']"))
+                            .should(exist, ofSeconds(waitTime))
+                            .shouldBe(visible, ofSeconds(waitTime))
+                        //закрываем зеленую всплывашку
+                        element(byXpath("//*[contains(@class, 'MuiAlert-standardSuccess')][@role='alert']//button"))
+                            .click()
+                        //ждем исчезновения очета, который удаляли
+                        element(byXpath("//tbody/tr[$i]/td[1]//*[text()='$deletedReport']"))
+                            .shouldNot(exist, ofSeconds(waitTime))
+                        Thread.sleep(300)
+                        // прерываем цикл for потому что таблица перестроилась после удаления отчета
+                        break
+                    }
+                }
+                //            control += 1
+                //            println(control)
+            }
+        }
+    }
+
+
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
+    fun `N 9999`(){
+        //Закроем все происшествия созданные автотестом , например за неделю
+//        date = LocalDate.now().toString()
+        date = LocalDate.now()
+//        val date2 = date.minusDays(7).toString()
+        val dateStart = LocalDate.now().minusDays(7).toString()
+        val dateEnd = LocalDate.now().toString()
+        tools.logonTool()
+        //убедимся что мы за оператор:
+        //кликаем по иконке оператора сверху справа
+        //element(byCssSelector("header>div>div>div>span>button")).click()
+        element(byXpath("//span[contains(text(),'.sizov')]/parent::button")).click()
+        //пероеходим в профиль пользователя
+        element(byCssSelector("a[href='/profile']>button"))
+            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
+        element(byCssSelector("a[href='/profile']>button")).click()
+        //Извлекаем имя оператора
+        element(byXpath("//p[text()='Должностное лицо:']/following-sibling::p"))
+            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
+        //val operator = element(byCssSelector("main>div:nth-child(3)>div:nth-child(3)>p")).ownText
+        val operator = element(byXpath("//p[text()='Должностное лицо:']/following-sibling::p")).ownText
+//        val operatorMas = operator.split("\n")
+//        val operatorFIO = operatorMas[1].trim()
+        val operatorFIO = operator.trim()
+//        println("ФИО $operator")
+//        println("operatorFIO $operatorFIO")
+        //переходим к списку происшествий и ждем загрузки
+        tools.menuNavigation("Происшествия","Список происшествий",waitTime)
+        element(byCssSelector("table>tbody>tr"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        //устанавливаем фильтр по оператору по которому логинится автотест
+        if (elements(byXpath("//span[text()='Оператор']/parent::button")).size == 1 ){
+            element(byXpath("//span[text()='Оператор']/parent::button")).click()
+        } else {
+            element(byXpath("//span[contains(text(),'Еще фильтры')]/parent::button")).click()
+        }
+        element(byXpath("//input[@name='createdBy']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byXpath("//body/div[@role='presentation']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//input[@name='createdBy']")).sendKeys(operatorFIO)
+        element(byXpath("//body/div[@role='presentation']//*[text()='$operatorFIO']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byXpath("//span[text()='Применить']/parent::button")).click()
+        //устанавливаем фильтр по дате регистрации
+        if (elements(byXpath("//span[text()='Регистрация']/parent::button")).size == 1){
+            element(byXpath("//span[text()='Регистрация']/parent::button")).click()
+        } else {
+            element(byXpath("//span[contains(text(),'Еще фильтры')]/parent::button")).click()
+        }
+        val dateStartList = dateStart.split("-")
+        val dateEndList = dateEnd.split("-")
+        //заполняем дату начала и конца периода отчета сегоднешним числом
+        element(byCssSelector("input#callReceivedAtStart"))
+            .sendKeys("${dateStartList[2]}.${dateStartList[1]}.${dateStartList[0]}0000")
+        element(byCssSelector("input#callReceivedAtEnd"))
+            .sendKeys("${dateEndList[2]}.${dateEndList[1]}.${dateEndList[0]}2359")
+        element(byXpath("//span[text()='Применить']/parent::button")).click()
+        element(byXpath("//table/tbody/tr//*[text()]"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        Thread.sleep(1000)
+        //ищем надпись "Нет данных"
+        var noData = elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size
+//        var noData = elements(byXpath("//p[contains(text(),'Всего ')]")).size
+//        println("noData 1 $noData")
+        // и войдя в цикл без защитного счетчика
+        while (noData == 0){
+            //переходим в каждую первую карточку и меняем статус, на "Закрыта"
+            element(byXpath("//table/tbody/tr[1]")).click()
+            element(byXpath("(//span[text()]/parent::button)[2]"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+            val statusIC = element(byXpath("(//span[text()]/parent::button)[2]//*[text()]")).ownText
+            element(byXpath("(//span[text()]/parent::button)[2]")).click()
+            element(byXpath("//span[text()='Закрыта']/parent::button"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+            element(byXpath("(//span[text()='$statusIC']/parent::button)[@style]"))
+                .shouldNot(exist, ofSeconds(waitTime))
+            back()
+            element(byXpath("//table/tbody/tr[1]"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+            Thread.sleep(1000)
+            noData = elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size
+//            noData = elements(byXpath("//p[contains(text(),'Всего ')]")).size
+//            println("noData 2 $noData")
+        }
+    }
+}
