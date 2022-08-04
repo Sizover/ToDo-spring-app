@@ -673,6 +673,8 @@ class PimTests {
     fun `N 0140`() {
         //A.3.16 Фильтрация карточек происшествия
         tools.logonTool()
+        //кликаем по иконке происшествий в боковом меню
+        //Переходим в "Список происшетвий"
         tools.menuNavigation("Происшествия", "Список происшествий", waitTime)
         elements(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']")).shouldHave(
             CollectionCondition.sizeGreaterThanOrEqual(1))
