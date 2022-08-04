@@ -1027,9 +1027,8 @@ class PimTests {
         //A.3.18 Назначение сил и средств ДДС
         tools.logonTool()
         //кликаем по иконке происшествий в боковом меню
-        element(byXpath("//span[@title='Происшествия']/..")).click()
         //Переходим в "Список происшетвий"
-        element(byXpath("//span[@title='Список происшествий']/..")).click()
+        tools.menuNavigation("Происшествия", "Список происшествий", waitTime)
         element(byCssSelector("table"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -1287,9 +1286,8 @@ class PimTests {
         date = LocalDate.now().toString()
         tools.logonTool()
         //кликаем по иконке отчетов
-        element(byXpath("//div[@data-testid='app-menu-Отчеты']/../..")).click()
         //Переходим в "отчет по обращениям"
-        element(byXpath("//div[@data-testid='app-menu-По обращениям']/../..")).click()
+        tools.menuNavigation("Отчеты","По обращениям", waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/.."))
             .should(exist, ofSeconds(waitTime))
@@ -1404,9 +1402,8 @@ class PimTests {
             dateTime = LocalDateTime.now().toString()
             date = LocalDate.now().toString()
             //кликаем по иконке происшествий в боковом меню
-            element(byXpath("//span[text()='Происшествия']/../../../..")).click()
             //Переходим в "Список происшетвий"
-            element(byXpath("//span[text()='Список происшествий']/../../../..")).click()
+            tools.menuNavigation("Происшествия","Список происшествий",waitTime)
             //кликаем по "создать обращение"
             element(byXpath("//span[text()='Создать обращение']/..")).click()
             //заполняем карточку
@@ -1425,9 +1422,12 @@ class PimTests {
             }
             //Вводим случайный адрес
             var aA = ('A'..'Z').random()
-            val bB = (1..10).random()
-            //Вбиваем первый символ
-            tools.addressInput("callAddress", "Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач $bB", waitTime)
+            val bB = (1..100).random()
+            if (i != 3){
+                tools.addressInput("callAddress", "Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач $bB", waitTime)
+            } else {
+                tools.addressInput("callAddress", adr, waitTime)
+            }
 //            element(byCssSelector("#callAddress"))
 //                .sendKeys("Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач$bB")
 //            //ждем появления списка dadata
@@ -1457,7 +1457,14 @@ class PimTests {
                 element(byXpath("//span[text()='Сохранить карточку']/parent::button")).click()
             } else if (i == 3) {
                 //регистрируем обращение в ранее созданную карточку.
-                element(byText(adr)).click()
+//                element(byText(adr)).click()
+                element(byXpath("//*[@name='refetch']/ancestor::button"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .click()
+                val troubleshoot = element(byXpath("//*[contains(text(),'$adr')]")).ownText
+                println("troubleshoot = $troubleshoot")
+                element(byXpath("//*[contains(text(),'$adr')]/ancestor::button")).click()
                 element(byXpath("//span[text()='Привязать к происшествию']/parent::button")).click()
             } else if (i == 4) {
                 //регистрируем ложное обращение
@@ -1504,9 +1511,8 @@ class PimTests {
         }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //кликаем по иконке отчетов
-        element(byXpath("//div[@data-testid='app-menu-Отчеты']/../..")).click()
         //Переходим в "отчет по обращениям"
-        element(byXpath("//div[@data-testid='app-menu-По обращениям']/../..")).click()
+        tools.menuNavigation("Отчеты", "По обращениям", waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/parent::button")).click()
         //Заполняем поля отчета - название
@@ -1638,9 +1644,8 @@ class PimTests {
         date = LocalDate.now().toString()
         tools.logonTool()
         //кликаем по иконке отчетов
-        element(byXpath("//div[@data-testid='app-menu-Отчеты']/../..")).click()
         //Переходим в "отчет по деятельности сотрудников"
-        element(byXpath("//div[@data-testid='app-menu-По сотрудникам']/../..")).click()
+        tools.menuNavigation("Отчеты", "По сотрудникам", waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/parent::button")).click()
         //Заполняем поля отчета - название
@@ -1723,9 +1728,8 @@ class PimTests {
             dateTime = LocalDateTime.now().toString()
             date = LocalDate.now().toString()
             //кликаем по иконке происшествий в боковом меню
-            element(byXpath("//div[@data-testid='app-menu-Происшествия']/../..")).click()
             //Переходим в "Список происшетвий"
-            element(byXpath("//div[@data-testid='app-menu-Список происшествий']/../..")).click()
+            tools.menuNavigation("Происшествия", "Список происшествий", waitTime)
             //кликаем по "создать обращение"
             element(byXpath("//span[text()='Создать обращение']/parent::button")).click()
             //заполняем карточку
@@ -1747,9 +1751,13 @@ class PimTests {
             }
             //Вводим случайный адрес
             var aA = ('A'..'Z').random()
-            var bB = (1..10).random()
-            //Вбиваем первый символ
-            tools.addressInput("callAddress", "Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач $bB", waitTime)
+            var bB = (1..100).random()
+            if (i != 4){
+                tools.addressInput("callAddress", "Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач $bB", waitTime)
+            } else {
+                tools.addressInput("callAddress", adr, waitTime)
+            }
+
 //            element(byCssSelector("#callAddress"))
 //                .sendKeys("Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач$bB")
 //            //ждем появления списка dadata
@@ -1778,7 +1786,14 @@ class PimTests {
                 element(byXpath("//span[text()='Сохранить карточку']/parent::button")).click()
             } else if (i == 4) {
                 //регистрируем обращение в ранее созданную карточку.
-                element(byText(adr)).click()
+                element(byXpath("//*[@name='refetch']/ancestor::button"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .click()
+                element(byText(adr))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .click()
                 element(byXpath("//span[text()='Привязать к происшествию']/parent::button")).click()
             } else if (i == 5) {
                 //регистрируем ложное обращение
@@ -1844,15 +1859,8 @@ class PimTests {
 //            .should(exist, ofSeconds(waitTime))
 //            .shouldBe(visible, ofSeconds(waitTime))
         //кликаем по иконке отчетов
-        element(byXpath("//div[@data-testid='app-menu-Отчеты']/../.."))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
         //Переходим в "отчет по деятельности сотрудников"
-        element(byXpath("//div[@data-testid='app-menu-По сотрудникам']/../.."))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
+        tools.menuNavigation("Отчеты", "По сотрудникам", waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/parent::button"))
             .should(exist, ofSeconds(waitTime))
@@ -1956,15 +1964,8 @@ class PimTests {
         date = LocalDate.now().toString()
         tools.logonTool()
         //кликаем по иконке отчетов
-        element(byXpath("//div[@data-testid='app-menu-Отчеты']/../.."))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
         //Переходим в "отчет по деятельности сотрудников"
-        element(byXpath("//div[@data-testid='app-menu-По происшествиям']/../.."))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
+        tools.menuNavigation("Отчеты", "По происшествиям", waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/parent::button"))
             .should(exist, ofSeconds(waitTime))
@@ -2038,9 +2039,8 @@ class PimTests {
             dateTime = LocalDateTime.now().toString()
             date = LocalDate.now().toString()
             //кликаем по иконке происшествий в боковом меню
-            element(byXpath("//div[@data-testid='app-menu-Происшествия']/../..")).click()
             //Переходим в "Список происшетвий"
-            element(byXpath("//div[@data-testid='app-menu-Список происшествий']/../..")).click()
+            tools.menuNavigation("Происшествия", "Список происшествий", waitTime)
             //кликаем по "создать обращение"
             element(byXpath("//span[text()='Создать обращение']/parent::button")).click()
             //заполняем карточку
@@ -2062,7 +2062,7 @@ class PimTests {
             }
             //Вводим случайный адрес
 //                val randomLetter = ('A'..'Z').random()
-            val randomNumber = (1..10).random()
+            val randomNumber = (1..100).random()
             //Вбиваем первый символ
             if (i==4){
                 tools.addressInput("callAddress","Карачаево-Черкесская Респ, г Усть-Джегута, ул Мира $randomNumber",waitTime)
@@ -2086,7 +2086,7 @@ class PimTests {
             if (oldIncidentTypeListCount >= i && i<7){
                 element(byCssSelector("input#incidentTypeId")).setValue(oldIncidentTypeList[i-1])
                     .sendKeys(Keys.DOWN, Keys.ENTER)
-                Thread.sleep(10000)
+//                Thread.sleep(10000)
 //            if (oldIncidentTypeListCount > 5 && i == 6) {
 //                //(oldIncidentTypeListCount >= i && i<7)
 //                element(byCssSelector("input#incidentTypeId")).setValue(oldIncidentTypeList[5])
@@ -2203,15 +2203,8 @@ class PimTests {
         //создаем первый контрольный отчет
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //кликаем по иконке отчетов
-        element(byXpath("//div[@data-testid='app-menu-Отчеты']/../.."))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
         //Переходим в "отчет по деятельности сотрудников"
-        element(byXpath("//div[@data-testid='app-menu-По происшествиям']/../.."))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
+        tools.menuNavigation("Отчеты", "По происшествиям", waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/parent::button"))
             .should(exist, ofSeconds(waitTime))
@@ -2351,15 +2344,8 @@ class PimTests {
 //создаем отчет с указанием максимума из имеющихся пострадавших, и ждем соответственно 0 строк
         val maximumAffectedPeople = newAmountAffectedPeopleList.maxOrNull()
         //кликаем по иконке отчетов
-        element(byXpath("//div[@data-testid='app-menu-Отчеты']/../.."))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
         //Переходим в "отчет по деятельности сотрудников"
-        element(byXpath("//div[@data-testid='app-menu-По происшествиям']/../.."))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
+        tools.menuNavigation("Отчеты", "По происшествиям", waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/parent::button"))
             .should(exist, ofSeconds(waitTime))
@@ -2397,15 +2383,8 @@ class PimTests {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //строим отчет с числом пострадавших на 1 меньше и ожидаем, что записей будет столько сколько должно быть)
         //кликаем по иконке отчетов
-        element(byXpath("//div[@data-testid='app-menu-Отчеты']/../.."))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
         //Переходим в "отчет по деятельности сотрудников"
-        element(byXpath("//div[@data-testid='app-menu-По происшествиям']/../.."))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
+        tools.menuNavigation("Отчеты", "По происшествиям", waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/parent::button"))
             .should(exist, ofSeconds(waitTime))
@@ -2443,15 +2422,8 @@ class PimTests {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //создаем отчет с указанием типа происшествия и просто проверяем, что строка одна
         //кликаем по иконке отчетов
-        element(byXpath("//div[@data-testid='app-menu-Отчеты']/../.."))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
         //Переходим в "отчет по деятельности сотрудников"
-        element(byXpath("//div[@data-testid='app-menu-По происшествиям']/../.."))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
+        tools.menuNavigation("Отчеты", "По происшествиям", waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/parent::button"))
             .should(exist, ofSeconds(waitTime))
@@ -2935,15 +2907,8 @@ class PimTests {
         //A.3.32 Проверка использования ассоциативных связей-ссылок между объектами справочников
         tools.logonTool()
         //кликаем по иконке справочников
-        element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
         //переходим в нужный справочник
-        element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul//div[@data-testid='app-menu-Дежурные службы']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
+        tools.menuNavigation("Справочники", "Дежурные службы", waitTime)
         //ждем загрузки таблицы
         element(byCssSelector("main table>tbody"))
             .should(exist, ofSeconds(waitTime))
@@ -2981,16 +2946,23 @@ class PimTests {
         element(byXpath("//label[text()='Фамилия']/..//input"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-            .shouldHave(attribute("value", officialFIOList!![0]))
+        Assertions.assertTrue(officialFIO!!.contains(
+            element(byXpath("//label[text()='Фамилия']/..//input"))
+                .getAttribute("value").toString(), false))
         element(byXpath("//label[text()='Имя']/..//input"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-            .shouldHave(attribute("value", officialFIOList[1]))
-        if (officialFIOList.size > 2) {
+        Assertions.assertTrue(officialFIO.contains(
+            element(byXpath("//label[text()='Имя']/..//input"))
+                .getAttribute("value").toString(), false))
+        if (officialFIOList!!.size > 2) {
             element(byXpath("//label[text()='Отчество']/..//input"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
-                .shouldHave(attribute("value", officialFIOList[2]))
+            Assertions.assertTrue(officialFIO.contains(
+                element(byXpath("//label[text()='Отчество']/..//input"))
+                    .getAttribute("value").toString(), false))
+
         }
 //        element(byXpath("//label[text()='Организация']/..//input"))
 //            .should(exist, ofSeconds(waitTime))
