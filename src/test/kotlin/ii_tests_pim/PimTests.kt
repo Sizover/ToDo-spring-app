@@ -957,9 +957,8 @@ class PimTests {
         tools.logonDds()
 
         //кликаем по иконке происшествий в боковом меню
-        element(byXpath("//div[@data-testid='app-menu-Происшествия']/../..")).click()
         //Переходим в "Список происшетвий"
-        element(byXpath("//div[@data-testid='app-menu-Список происшествий']/../..")).click()
+        tools.menuNavigation("Происшествия", "Список происшествий", waitTime)
         //добавляем в таблицу происшествий столбец "Описание"
         tools.checkbox("Описание", true, waitTime)
 //        //Открываем выпадающий список
@@ -995,9 +994,8 @@ class PimTests {
         //Возвращаемся в КИАП и проверяем статус родительской карточки
         tools.logonTool()
         //кликаем по иконке происшествий в боковом меню
-        element(byXpath("//div[@data-testid='app-menu-Происшествия']/../..")).click()
         //Переходим в "Список происшетвий"
-        element(byXpath("//div[@data-testid='app-menu-Список происшествий']/../..")).click()
+        tools.menuNavigation("Происшествия", "Список происшествий", waitTime)
         //добавляем в таблицу происшествий столбец "Описание"
         tools.checkbox("Описание", true, waitTime)
 //        //Открываем выпадающий список
@@ -1462,8 +1460,8 @@ class PimTests {
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
-                val troubleshoot = element(byXpath("//*[contains(text(),'$adr')]")).ownText
-                println("troubleshoot = $troubleshoot")
+//                val troubleshoot = element(byXpath("//*[contains(text(),'$adr')]")).ownText
+//                println("troubleshoot = $troubleshoot")
                 element(byXpath("//*[contains(text(),'$adr')]/ancestor::button")).click()
                 element(byXpath("//span[text()='Привязать к происшествию']/parent::button")).click()
             } else if (i == 4) {
