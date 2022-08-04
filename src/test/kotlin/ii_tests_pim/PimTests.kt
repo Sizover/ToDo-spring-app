@@ -673,19 +673,9 @@ class PimTests {
     fun `N 0140`() {
         //A.3.16 Фильтрация карточек происшествия
         tools.logonTool()
-        //кликаем по иконке происшествий в боковом меню
-        element(byXpath("//div[@data-testid='app-menu-Происшествия']/../..")).click()
-        //Переходим в "Список происшетвий"
-        element(byXpath("//div[@data-testid='app-menu-Список происшествий']/../..")).click()
+        tools.menuNavigation("Происшествия", "Список происшествий", waitTime)
         elements(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']")).shouldHave(
-            CollectionCondition.sizeGreaterThanOrEqual(
-                1
-            )
-        )
-        //временная строка
-        element(byXpath("//button[@data-testid='app-bar-button']")).click()
-        //
-
+            CollectionCondition.sizeGreaterThanOrEqual(1))
         //открываем фильтр "Типы происшествий"
         element(byXpath("//span[text()='Типы происшествий']/..")).click()
         element(byCssSelector("div[tabindex='-1'] div[role='combobox']")).should(exist, ofSeconds(waitTime))
