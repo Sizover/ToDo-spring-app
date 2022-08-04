@@ -129,6 +129,16 @@ class Removal {
         element(byCssSelector("table>tbody>tr"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
+        //отчищаем фильтры, что бы закрывать и дочерние карточки ДДС
+        element(byXpath("//span[contains(text(),'Еще фильтры')]/.."))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byXpath("//span[text()='Очистить все']/.."))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        Thread.sleep(2500)
         //устанавливаем фильтр по оператору по которому логинится автотест
         if (elements(byXpath("//span[text()='Оператор']/parent::button")).size == 1 ){
             element(byXpath("//span[text()='Оператор']/parent::button")).click()
@@ -148,6 +158,7 @@ class Removal {
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
         element(byXpath("//span[text()='Применить']/parent::button")).click()
+        Thread.sleep(2500)
         //устанавливаем фильтр по дате регистрации
         if (elements(byXpath("//span[text()='Регистрация']/parent::button")).size == 1){
             element(byXpath("//span[text()='Регистрация']/parent::button")).click()
@@ -156,7 +167,7 @@ class Removal {
         }
         val dateStartList = dateStart.split("-")
         val dateEndList = dateEnd.split("-")
-        //заполняем дату начала и конца периода отчета сегоднешним числом
+        //заполняем дату начала и конца периода
         element(byCssSelector("input#callReceivedAtStart"))
             .sendKeys("${dateStartList[2]}.${dateStartList[1]}.${dateStartList[0]}0000")
         element(byCssSelector("input#callReceivedAtEnd"))
@@ -165,7 +176,7 @@ class Removal {
         element(byXpath("//table/tbody/tr//*[text()]"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        Thread.sleep(1000)
+        Thread.sleep(2500)
         //ищем надпись "Нет данных"
         var noData = elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size
 //        var noData = elements(byXpath("//p[contains(text(),'Всего ')]")).size

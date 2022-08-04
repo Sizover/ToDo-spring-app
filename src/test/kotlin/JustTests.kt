@@ -89,6 +89,7 @@ class JustTests {
             val labelSample = element(byXpath("//label[text()='Предварительный просмотр']/following-sibling::div//*[text()]")).ownText
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //            labelListName.add(labelSample.replace(" ", "_"))
+            labelListName.add(labelSample)
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////
             //добавляем описание
             element(byCssSelector("textarea[name='description']")).click()
@@ -145,11 +146,11 @@ class JustTests {
             .shouldBe(visible, ofSeconds(waitTime))
         //добавляем метку
         element(byXpath("//h3[text()='Метки']/following-sibling::span/button")).click()
+        element(byCssSelector("input[name='labels']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
         labelListName.forEach {
-            element(byCssSelector("input[name='labels']"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
             element(byXpath("//body/div[@role='presentation']//*[text()='$it']")).click()
             element(byXpath("//div[@role='combobox']//*[text()='$it']"))
                 .should(exist, ofSeconds(waitTime))
@@ -219,18 +220,27 @@ class JustTests {
         Thread.sleep(1000)
         //внесем существующие телефонные коды в отдельный список
         var telCodeElementsCollection = elements(byXpath(""))
-        var telCodeList = mutableListOf<String>()
+        val telCodeList = mutableListOf<String>()
         var telCodeColumnIndex = 10
-        for (i in 1..elements(byXpath("//thead/tr/th")).size){
-            if (element(byXpath("//thead/tr/th[$i]//*[text()]")).ownText == "Телефонный код"){
-                telCodeColumnIndex = i
+        //Выясняем в каком столбце хранятся телефонные коды
+        val telCodeElements = elements(byXpath("//thead/tr/th"))
+        telCodeElements.forEachIndexed{index, element ->
+            if (element.ownText == "Телефонный код"){
+                telCodeColumnIndex = index + 1
             }
         }
+//        for (i in 1..elements(byXpath("//thead/tr/th")).size){
+//            if (element(byXpath("//thead/tr/th[$i]//*[text()]")).ownText == "Телефонный код"){
+//                telCodeColumnIndex = i
+//            }
+//        }
+        //Внесем телефонные коды в отдельный список
         do {
             telCodeElementsCollection = elements(byXpath("//tbody/tr/td[$telCodeColumnIndex]//*[text()]"))
             telCodeElementsCollection.forEach {
                 telCodeList.add(it.ownText)
             }
+            //побеждаем пагинацию, проходясь по всему справочнику и собирая телефонное коды
             val pagesLi = elements(byXpath("//nav/ul/li")).size
             if (!element(byXpath("//nav/ul/li[${pagesLi - 2}]/div")).getAttribute("style")?.contains("color: blue")!!){
                 element(byXpath("//nav/ul/li[${pagesLi - 1}]/div")).click()
