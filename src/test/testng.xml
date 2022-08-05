@@ -7,7 +7,8 @@
         <classes>
             <class name="ii_tests_pim.PimTests"></class>
             <class name="MapTest"></class>
-            <class name="ii_tests_pim.Removal"></class>
+            <class name="StatusTests"></class>
+            <class name="Removal"></class>
         </classes>
     </test>
 </suite>

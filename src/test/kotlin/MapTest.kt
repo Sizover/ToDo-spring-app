@@ -5,8 +5,6 @@ import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Selectors.byCssSelector
 import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.*
-import ii_tests_pim.Retry
-import ii_tests_pim.Tools
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import java.time.Duration.ofSeconds
