@@ -1,11 +1,9 @@
-package ii_tests_pim
-
 import org.testng.IRetryAnalyzer
 import org.testng.ITestResult
 
 public class Retry : IRetryAnalyzer {
     private var actualRetry: Int = 0
-    private val maxRetry:Int = 0
+    private val maxRetry:Int = 2
 
 
 

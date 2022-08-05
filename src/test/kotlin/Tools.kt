@@ -1,5 +1,3 @@
-package ii_tests_pim
-
 //import kotlin.collections.EmptyMap.keys
 import com.codeborne.selenide.Browsers.CHROME
 import com.codeborne.selenide.Condition.*
@@ -11,7 +9,6 @@ import com.codeborne.selenide.WebDriverRunner
 import org.openqa.selenium.Keys
 import org.openqa.selenium.chrome.ChromeOptions
 import java.time.Duration.ofSeconds
-import java.time.LocalDateTime
 
 
 class Tools {

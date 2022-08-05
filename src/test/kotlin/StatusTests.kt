@@ -1,18 +1,12 @@
-package ii_tests_pim
-
 import com.codeborne.selenide.CollectionCondition
 import com.codeborne.selenide.Condition.*
 import com.codeborne.selenide.Selectors.*
 import com.codeborne.selenide.Selenide.*
-import org.apache.commons.io.FileUtils
-import org.junit.jupiter.api.Assertions
-import org.openqa.selenium.Keys
-import java.io.File
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-class Status_tests {
+class StatusTests {
 
     val tools = Tools()
     var date = LocalDate.now()
