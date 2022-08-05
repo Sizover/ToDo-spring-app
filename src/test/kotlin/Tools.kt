@@ -252,7 +252,7 @@ class Tools {
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
         //временная строка до починки бага
-        element(byXpath("//button[@data-testid='app-bar-button']")).click()
+//        element(byXpath("//button[@data-testid='app-bar-button']")).click()
     }
 
     fun addressInput(inputID: String,address: String, waitTime: Long)
