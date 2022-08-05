@@ -42,21 +42,24 @@ class PimTests {
         //val tools = Tools()
         tools.logonTool()
         //кликаем по иконке справочников в боковом меню
-        element(byXpath("//div[@data-testid='app-menu-Справочники']/../.."))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
         //Переходим в "Муниципальные образования"
-        element(byXpath("//div[@data-testid='app-menu-Муниципальные образования']/../.."))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        //сравниваем количество записей в таблице, на больше или равно 5
-        element(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        elements(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']"))
-            .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(5))
+        var subMenu = ""
+        for (i in 1..5){
+            when(i){
+                1 -> {subMenu = "Муниципальные образования"}
+                2 -> {subMenu = "Должностные лица"}
+                3 -> {subMenu = "Дежурные службы"}
+                4 -> {subMenu = "Видеокамеры"}
+                5 -> {subMenu = "Датчики"}
+            }
+            tools.menuNavigation("Справочники", subMenu, waitTime)
+            //сравниваем количество записей в таблице, на больше или равно 5
+            element(byXpath("//table/tbody/tr"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+            elements(byXpath("//table/tbody/tr"))
+                .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(5))
+        }
         //разлогиниваемся и закрываем браузер
         tools.logoffTool()
     }
@@ -68,31 +71,32 @@ class PimTests {
         //val tools = Tools()
         tools.logonTool()
         //кликаем по иконке справочников в боковом меню
-        element(byXpath("//div[@data-testid='app-menu-Справочники']/../.."))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
         //Переходим в "Типы происшествий"
-        element(byXpath("//div[@data-testid='app-menu-Типы происшествий']/../.."))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
+        tools.menuNavigation("Справочники", "Типы происшествий", waitTime)
         //сравниваем количество записей в таблице, на больше или равно 5
-        element(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']"))
+        element(byXpath("//table/tbody/tr"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        //раскрываем весь список
-        element(byXpath("//thead//*[name()='svg'][@id='expandable-button']/../parent::button"))
+        //раскрываем весь список, контролируя это изменением стрелки
+        element(byXpath("//table/thead/tr//*[@name='arrowRight']/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
-        element(byXpath("//thead//*[name()='svg'][@id='expandable-button']/../parent::button//*[name()='path'][@d='M19 13H5v-2h14v2z']"))
+        element(byXpath("//table/thead/tr//*[@name='arrowRight']/ancestor::button"))
+            .shouldNot(exist, ofSeconds(waitTime))
+        element(byXpath("//table/thead/tr//*[@name='arrowDown']/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        elements(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']"))
-            .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(5))
+        Thread.sleep(3000)
+        val tableAllStringCount = elements(byXpath("//table/tbody/tr/td[1]")).size
+        var leafStringCount = 0
+        for (i in 1..tableAllStringCount){
+            if (elements(byXpath("//table/tbody/tr[$i]/td[1]//button")).size == 0){
+                leafStringCount += 1
+            }
+        }
+        Assertions.assertTrue(leafStringCount >= 5)
         tools.logoffTool()
-
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
@@ -103,15 +107,7 @@ class PimTests {
         //val tools = Tools()
         tools.logonTool()
         //кликаем по иконке справочников в боковом меню
-//        element(byXpath("//div[@data-testid='app-menu-Справочники']/../.."))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//            .click()
-//        //Переходим в справочник "Организации"
-//        element(byXpath("//div[@data-testid='app-menu-Организации']/../.."))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//            .click()
+        //Переходим в справочник "Организации"
         tools.menuNavigation("Справочники","Организации",waitTime)
         //сравниваем колличество строк организаций, по условию больше или равно с 5
         element(byCssSelector("tbody>tr"))
@@ -139,20 +135,13 @@ class PimTests {
         //val tools = Tools()
         tools.logonTool()
         //кликаем по иконке справочников в боковом меню
-        element(byXpath("//div[@data-testid='app-menu-Справочники']/../.."))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
         //Переходим в справочник "Должностные лица"
-        element(byXpath("//div[@data-testid='app-menu-Должностные лица']/../.."))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
+        tools.menuNavigation("Справочники", "Должностные лица", waitTime)
         //сравниваем колличество строк должностных лиц, по условию больше или равно с 5
-        element(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']"))
+        element(byXpath("//table/tbody/tr"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        elements(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']"))
+        elements(byXpath("//table/tbody/tr"))
             .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(5))
         tools.logoffTool()
     }
@@ -164,20 +153,13 @@ class PimTests {
         //val tools = Tools()
         tools.logonTool()
         //кликаем по иконке справочников в боковом меню
-        element(byXpath("//div[@data-testid='app-menu-Справочники']/../.."))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
         //Переходим в справочник "Дежурные службы"
-        element(byXpath("//div[@data-testid='app-menu-Дежурные службы']/../.."))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
+        tools.menuNavigation("Справочники", "Дежурные службы", waitTime)
         //сравниваем колличество строк дежурных служб, по условию больше или равно с 3
-        element(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']"))
+        element(byXpath("//table/tbody/tr"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        elements(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']"))
+        elements(byXpath("//table/tbody/tr"))
             .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(3))
         tools.logoffTool()
     }
@@ -189,17 +171,10 @@ class PimTests {
         //val tools = Tools()
         tools.logonTool()
         //кликаем по иконке справочников в боковом меню
-        element(byXpath("//div[@data-testid='app-menu-Справочники']/../.."))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
         //Переходим в справочник "Видеокамеры"
-        element(byXpath("//div[@data-testid='app-menu-Видеокамеры']/../.."))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
+        tools.menuNavigation("Справочники", "Видеокамеры", waitTime)
         //сравниваем колличество строк дежурных служб, по условию больше или равно с 2
-        elements(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']"))
+        elements(byXpath("//table/tbody/tr"))
             .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(2))
         tools.logoffTool()
     }
