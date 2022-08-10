@@ -2669,7 +2669,7 @@ class PimTests {
 
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 0231`() {
+    fun `N 0232`() {
         tools.logonTool()
         //для каждого справочника выполнить
         for (dict in 1..9){
