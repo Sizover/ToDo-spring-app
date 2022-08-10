@@ -35,9 +35,9 @@ class StatusTests {
             tools.firstHalfIC("S 0010 $it", date.toString(), dateTime.toString(), waitTime)
 //            tools.addressInput("callAddress", "ktyyf", waitTime)
             element(byXpath("//span[text()='Создать карточку']/parent::button")).click()
-            tools.inputRundom("incidentTypeId")
+            tools.inputRandom("incidentTypeId")
             //добавляем метку при создании КП
-            tools.inputRundom("labels")
+            tools.inputRandom("labels")
             //Создаем карточку
             element(byXpath("//span[text()='Сохранить карточку']/..")).click()
             //Убеждаемся, что нам загрузило созданную карточку

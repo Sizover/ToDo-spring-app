@@ -148,8 +148,10 @@ class Tools {
     //По названию колонки, необходимому значению чекбокса и waitTime выставляет отображаемые колонки в табличных РМ
     //При пустом имени, выклацывает весь список в указанное состояние
     {
-        val checkboxTrue = "M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
-        val checkboxFalse = "M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+//        val checkboxTrue = "M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+//        val checkboxFalse = "M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+        val checkboxTrue = "checkboxFocus"
+        val checkboxFalse = "checkboxNormal"
 //        val checkboxAlias = ""
         val checkboxNameList = mutableListOf<String>()
         //Открываем выпадающий список
@@ -188,37 +190,38 @@ class Tools {
             //проверяем что нам выдали и что надо сделать
             element(byXpath("//span[text()='$it']/parent::label//input"))
                 .should(exist, ofSeconds(waitTime))
-            var checkboxState = element(byXpath("//span[text()='$it']/parent::label//*[name()='path']"))
+            var checkboxState = element(byXpath("//span[text()='$it']/parent::label//*[name()='svg'][@name]"))
                 .should(exist, ofSeconds(waitTime))
-                .getAttribute("d")
+                .getAttribute("name")
             //если чекбокс выбран, а надо не выбирать
             if (checkboxState == checkboxTrue && !checkboxCondition){
                 //иногда драйвер опережает браузер и чек-бокс не прокликивается с первого раза, поэтому делаем так:
                 while (checkboxState == checkboxTrue){
                     element(byXpath("//span[text()='$it']/parent::label//input")).click()
-                    checkboxState = element(byXpath("//span[text()='$it']/parent::label//*[name()='path']"))
+                    checkboxState = element(byXpath("//span[text()='$it']/parent::label//*[name()='svg'][@name]"))
                         .should(exist, ofSeconds(waitTime))
-                        .getAttribute("d")
+                        .getAttribute("name")
                 }
-                element(byXpath("//span[text()='$it']/parent::label//*[name()='path']"))
-                    .shouldHave(attribute("d", checkboxFalse), ofSeconds(waitTime))
+                element(byXpath("//span[text()='$it']/parent::label//*[name()='svg'][@name]"))
+                    .shouldHave(attribute("name", checkboxFalse), ofSeconds(waitTime))
                 //если чекбокс не выбран, а надо выбирать
             } else if (checkboxState == checkboxFalse && checkboxCondition){
                 //иногда драйвер опережает браузер и чек-бокс не прокликивается с первого раза, поэтому делаем так:
                 while (checkboxState == checkboxFalse){
                     element(byXpath("//span[text()='$it']/parent::label//input")).click()
-                    checkboxState = element(byXpath("//span[text()='$it']/parent::label//*[name()='path']"))
+                    checkboxState = element(byXpath("//span[text()='$it']/parent::label//*[name()='svg'][@name]"))
                         .should(exist, ofSeconds(waitTime))
-                        .getAttribute("d")
+                        .getAttribute("name")
                 }
-                element(byXpath("//span[text()='$it']/parent::label//*[name()='path']"))
-                    .shouldHave(attribute("d", checkboxTrue), ofSeconds(waitTime))
+                element(byXpath("//span[text()='$it']/parent::label//*[name()='svg'][@name]"))
+                    .shouldHave(attribute("name", checkboxTrue), ofSeconds(waitTime))
             }
         }
-        element(byCssSelector("button[aria-label='Close']")).click()
+//        element(byCssSelector("button[aria-label='Close']")).click()
+        element(byXpath("//div[@role='presentation']")).click()
     }
 
-    fun inputRundom(inputName: String)
+    fun inputRandom(inputName: String)
     //Выбирает случайное значение в переданном импуте (сначала проклацывает весь список, считая проклацывания, потом проклацывает, до некоторого случайного значения)
     {
         while (elements(byXpath("//body/div[@role='presentation']//*[text()]")).size == 0){
@@ -345,6 +348,32 @@ class Tools {
         element(byCssSelector(".MuiList-padding"))
             .shouldNot(exist, ofSeconds(waitTime))
         Thread.sleep((10*stringsOnPage).toLong())
+    }
+
+    fun numberOfColumn(columnName: String, waitTime: Long): Int{
+        //Возвращаем порядковый номер искомого столбца
+        val columnCount = elements(byXpath("//table/thead/tr/th")).size
+        var result = 0
+        for (i in 1..columnCount){
+            element(byXpath("//table/thead/tr/th[$i]//*[text()]")).ownText
+            if (element(byXpath("//table/thead/tr/th[$i]//*[text()]")).ownText == columnName){
+                result = i
+            }
+        }
+        return result
+    }
+
+
+    fun numberOfColumnII(columnName: String, waitTime: Long): Int{
+//        val columnsElements = elements(byXpath("//table/thead/tr/th//*[text()]"))
+        val columnsElements = elements(byXpath("//table/thead/tr/th"))
+        val columsName = mutableListOf<String>()
+        columnsElements.forEachIndexed{index, element ->
+            if (elements(byXpath("//table/thead/tr/th[${index + 1}]//*[text()]")).size == 1){
+                columsName.add(element(byXpath("//table/thead/tr/th[${index + 1}]//*[text()]")).ownText)
+            } else {columsName.add("")}
+                }
+        return columsName.indexOf(columnName) + 1
     }
 
 

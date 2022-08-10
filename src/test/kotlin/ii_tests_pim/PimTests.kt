@@ -38,6 +38,10 @@ class PimTests {
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
     fun `N 0010`() {
         //A31 Убедиться в наличии списка объектов  в справочнике «Муниципальные образования»
+        //A34 Убедиться в наличии списка объектов  в справочнике «Должностные лица»
+        //A35 Убедиться в наличии списка объектов  в справочнике «Дежурные службы»
+        //A36 Убедиться в наличии списка объектов  в справочнике «Видеокамеры»
+        //A37 Убедиться в наличии списка объектов  в справочнике «Датчики»
         //логинимся
         //val tools = Tools()
         tools.logonTool()
@@ -128,73 +132,73 @@ class PimTests {
     }
 
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 0040`() {
-        //A34 Убедиться в наличии списка объектов  в справочнике «Должностные лица»
-        //логинимся
-        //val tools = Tools()
-        tools.logonTool()
-        //кликаем по иконке справочников в боковом меню
-        //Переходим в справочник "Должностные лица"
-        tools.menuNavigation("Справочники", "Должностные лица", waitTime)
-        //сравниваем колличество строк должностных лиц, по условию больше или равно с 5
-        element(byXpath("//table/tbody/tr"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        elements(byXpath("//table/tbody/tr"))
-            .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(5))
-        tools.logoffTool()
-    }
+//    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
+//    fun `N 0040`() {
+//        //A34 Убедиться в наличии списка объектов  в справочнике «Должностные лица»
+//        //логинимся
+//        //val tools = Tools()
+//        tools.logonTool()
+//        //кликаем по иконке справочников в боковом меню
+//        //Переходим в справочник "Должностные лица"
+//        tools.menuNavigation("Справочники", "Должностные лица", waitTime)
+//        //сравниваем колличество строк должностных лиц, по условию больше или равно с 5
+//        element(byXpath("//table/tbody/tr"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+//        elements(byXpath("//table/tbody/tr"))
+//            .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(5))
+//        tools.logoffTool()
+//    }
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 0050`() {
-        //A35 Убедиться в наличии списка объектов  в справочнике «Дежурные службы»
-        //логинимся
-        //val tools = Tools()
-        tools.logonTool()
-        //кликаем по иконке справочников в боковом меню
-        //Переходим в справочник "Дежурные службы"
-        tools.menuNavigation("Справочники", "Дежурные службы", waitTime)
-        //сравниваем колличество строк дежурных служб, по условию больше или равно с 3
-        element(byXpath("//table/tbody/tr"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        elements(byXpath("//table/tbody/tr"))
-            .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(3))
-        tools.logoffTool()
-    }
+//    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
+//    fun `N 0050`() {
+//        //A35 Убедиться в наличии списка объектов  в справочнике «Дежурные службы»
+//        //логинимся
+//        //val tools = Tools()
+//        tools.logonTool()
+//        //кликаем по иконке справочников в боковом меню
+//        //Переходим в справочник "Дежурные службы"
+//        tools.menuNavigation("Справочники", "Дежурные службы", waitTime)
+//        //сравниваем колличество строк дежурных служб, по условию больше или равно с 3
+//        element(byXpath("//table/tbody/tr"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+//        elements(byXpath("//table/tbody/tr"))
+//            .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(3))
+//        tools.logoffTool()
+//    }
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 0060`() {
-        //A36 Убедиться в наличии списка объектов  в справочнике «Видеокамеры»
-        //логинимся
-        //val tools = Tools()
-        tools.logonTool()
-        //кликаем по иконке справочников в боковом меню
-        //Переходим в справочник "Видеокамеры"
-        tools.menuNavigation("Справочники", "Видеокамеры", waitTime)
-        //сравниваем колличество строк дежурных служб, по условию больше или равно с 2
-        elements(byXpath("//table/tbody/tr"))
-            .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(2))
-        tools.logoffTool()
-    }
+//    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
+//    fun `N 0060`() {
+//        //A36 Убедиться в наличии списка объектов  в справочнике «Видеокамеры»
+//        //логинимся
+//        //val tools = Tools()
+//        tools.logonTool()
+//        //кликаем по иконке справочников в боковом меню
+//        //Переходим в справочник "Видеокамеры"
+//        tools.menuNavigation("Справочники", "Видеокамеры", waitTime)
+//        //сравниваем колличество строк дежурных служб, по условию больше или равно с 2
+//        elements(byXpath("//table/tbody/tr"))
+//            .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(2))
+//        tools.logoffTool()
+//    }
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 0070`() {
-        //A37 Убедиться в наличии списка объектов  в справочнике «Датчики»
-        //логинимся
-        //val tools = Tools()
-        tools.logonTool()
-        //кликаем по иконке справочников в боковом меню
-        tools.menuNavigation("Справочники", "Датчики", waitTime)
-        //сравниваем колличество строк дежурных служб, по условию больше или равно с 2
-        element(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        elements(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']"))
-            .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(2))
-        tools.logoffTool()
-    }
+//    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
+//    fun `N 0070`() {
+//        //A37 Убедиться в наличии списка объектов  в справочнике «Датчики»
+//        //логинимся
+//        //val tools = Tools()
+//        tools.logonTool()
+//        //кликаем по иконке справочников в боковом меню
+//        tools.menuNavigation("Справочники", "Датчики", waitTime)
+//        //сравниваем колличество строк дежурных служб, по условию больше или равно с 2
+//        element(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+//        elements(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']"))
+//            .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(2))
+//        tools.logoffTool()
+//    }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
     fun `N 0080`() {
@@ -206,12 +210,12 @@ class PimTests {
         //Переходим в "Список происшетвий"
         tools.menuNavigation("Происшествия","Список происшествий",waitTime)
         //Подсчитываем всего карточек происшествий на странице и убеждаемся, что их больше чем необходимый минимум
-        element(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']"))
+        element(byXpath("//table/tbody/tr"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        elements(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']"))
+        elements(byXpath("//table/tbody/tr"))
             .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(1))
-        val collectionAll = elements(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']"))
+        val collectionAll = elements(byXpath("//table/tbody/tr"))
         val countAll = collectionAll.size
         //подсчитываем количество карточек в разном статусе
         val collectionA = elements(byText("Новая"))
@@ -244,10 +248,10 @@ class PimTests {
         //Переходим в "Архив происшетвий"
         tools.menuNavigation("Происшествия","Архив происшествий",waitTime)
         //сравниваем колличество карточек в архиве, по условию больше или равно с 2
-        element(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']"))
+        element(byXpath("//table/tbody/tr"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        elements(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']"))
+        elements(byXpath("//table/tbody/tr"))
             .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(2))
         tools.logoffTool()
 
@@ -297,9 +301,8 @@ class PimTests {
         date = LocalDate.now().toString()
         tools.logonTool()
         //кликаем по иконке происшествий в боковом меню
-        element(byXpath("//div[@data-testid='app-menu-Происшествия']/../..")).click()
         //Переходим в "Список происшетвий"
-        element(byXpath("//div[@data-testid='app-menu-Список происшествий']/../..")).click()
+        tools.menuNavigation("Происшествия", "Список происшествий", waitTime)
         //кликаем по "создать обращение"
         element(byXpath("//span[text()='Создать обращение']/parent::button")).click()
         //заполняем карточку
@@ -416,9 +419,8 @@ class PimTests {
         //логинимся
         tools.logonTool()
         //кликаем по иконке происшествий в боковом меню
-        element(byXpath("//div[@data-testid='app-menu-Происшествия']/../..")).click()
         //Переходим в "Список происшетвий"
-        element(byXpath("//div[@data-testid='app-menu-Список происшествий']/../..")).click()
+        tools.menuNavigation("Происшествия", "Список происшествий", waitTime)
         //кликаем по "создать обращение"
         element(byXpath("//span[text()='Создать обращение']/parent::button")).click()
         //Проверяем форму подсказки по положению стрелки и части текста
@@ -454,10 +456,9 @@ class PimTests {
         date = LocalDate.now().toString()
         tools.logonTool()
         //кликаем по иконке происшествий в боковом меню
-        element(byXpath("//div[@data-testid='app-menu-Происшествия']/../..")).click()
         //Переходим в "Список происшетвий"
-        element(byXpath("//div[@data-testid='app-menu-Список происшествий']/../..")).click()
         //кликаем по "создать обращение"
+        tools.menuNavigation("Происшествия", "Список происшествий", waitTime)
         element(byXpath("//span[text()='Создать обращение']/parent::button")).click()
         //заполняем карточку
         //Источник события - выбираем случайно
@@ -557,9 +558,8 @@ class PimTests {
 
         tools.logonTool()
         //кликаем по иконке происшествий в боковом меню
-        element(byXpath("//div[@data-testid='app-menu-Происшествия']/../..")).click()
         //Переходим в "Список происшетвий"
-        element(byXpath("//div[@data-testid='app-menu-Список происшествий']/../..")).click()
+        tools.menuNavigation("Происшествия", "Список происшествий", waitTime)
         //добавляем в таблицу происшествий столбец "Описание"
         tools.checkbox("Описание", true, waitTime)
 //        //Открываем выпадающий список
@@ -592,7 +592,7 @@ class PimTests {
         //Определяем количество родительских пунктов
         element(byCssSelector("div#simple-tabpanel-iplan>div>div>div>div"))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-        var parentCount = elements(byCssSelector("div#simple-tabpanel-iplan>div>div>div>div")).size
+        val parentCount = elements(byCssSelector("div#simple-tabpanel-iplan>div>div>div>div")).size
         //большая петля для родительских пунктов
         for (p in 1..parentCount) {
             element(byCssSelector("div#simple-tabpanel-iplan > div > div > div > div:nth-child($p) > div > div#panel1a-header")).shouldHave(
@@ -653,7 +653,7 @@ class PimTests {
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
         tools.menuNavigation("Происшествия", "Список происшествий", waitTime)
-        elements(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']")).shouldHave(
+        elements(byXpath("//table/tbody/tr")).shouldHave(
             CollectionCondition.sizeGreaterThanOrEqual(1))
         //открываем фильтр "Типы происшествий"
         element(byXpath("//span[text()='Типы происшествий']/..")).click()
@@ -675,7 +675,7 @@ class PimTests {
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
         elements(byText("Ложные")).shouldHave(CollectionCondition.sizeGreaterThanOrEqual(0))
         elements(byText("Консультации")).shouldHave(CollectionCondition.sizeGreaterThanOrEqual(0))
-        var intA: Int = elements(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']")).size
+        var intA: Int = elements(byXpath("//table/tbody/tr")).size
         var intB: Int = elements(byText("Ложные")).size
         var intC: Int = elements(byText("Консультации")).size
         var intS: Int = intB + intC
@@ -709,7 +709,7 @@ class PimTests {
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
         elements(byText("В обработке")).shouldHave(CollectionCondition.sizeGreaterThanOrEqual(0))
         elements(byText("Реагирование")).shouldHave(CollectionCondition.sizeGreaterThanOrEqual(0))
-        intA = elements(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']")).size
+        intA = elements(byXpath("//table/tbody/tr")).size
         intB = elements(byText("В обработке")).size
         intC = elements(byText("Реагирование")).size
         intS = intB + intC
@@ -733,8 +733,10 @@ class PimTests {
         else {
             element(byXpath("//span[text()='Уровни']/..")).click()
         }
-        element(byCssSelector("div[tabindex='-1'] div[role='combobox']")).should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime)).click()
+        element(byCssSelector("div[tabindex='-1'] div[role='combobox']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
         //Выбираем "ЧС" и "Угроза ЧС"
 //        element(byCssSelector("input#operationModeId")).setValue("Угроза ЧС").sendKeys(Keys.DOWN, Keys.ENTER)
 //        element(byCssSelector("input#operationModeId")).setValue("ЧС").sendKeys(Keys.DOWN)
@@ -750,7 +752,8 @@ class PimTests {
             element(byXpath("//span[text()='Уровни']/button"))
                 .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))}
         tools.checkbox("Уровень происшествия", true, waitTime)
-        intA = elements(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']")).size
+        Thread.sleep(500)
+        intA = elements(byXpath("//table/tbody/tr")).size
         intB = elements(byText("Угроза ЧС")).size
         //intC = elements(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-'][style]")).size
         intC = elements(byText("ЧС")).size
@@ -774,9 +777,13 @@ class PimTests {
         }
         /////////////////////////////////////////////////////////////////////////////////////////
         //Открываем фильтр "Источники"
+        tools.checkbox("Источник", true, waitTime)
+        val targetColumn = tools.numberOfColumnII("Источник", waitTime)
         element(byXpath("//span[text()='Источники']/..")).click()
         element(byCssSelector("div[tabindex='-1'] div[role='combobox']"))
-            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime)).click()
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
         //Устанавливаем значения фильтров
         element(byCssSelector("input#callTypeId")).setValue("Видеоаналитика").sendKeys(Keys.DOWN, Keys.ENTER)
         element(byCssSelector("input#callTypeId")).setValue("СМС").sendKeys(Keys.DOWN)
@@ -789,7 +796,7 @@ class PimTests {
         element(byXpath("//span[text()='Источники']/button"))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
         //Подсчитываем сработали ли фильтры
-        intA = elements(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']")).size
+        intA = elements(byXpath("//table/tbody/tr")).size
         intB = elements(byText("Видеоаналитика")).size
         intC = elements(byText("СМС")).size
         intS = intB + intC
@@ -797,31 +804,35 @@ class PimTests {
         //Проверяем не закрались ли записи с последним обращением из источника не взятого в фильтр
         if (intS < intA) {
             //и если это произошло, открываем каждую карточку и переходя в её обращения смотрим что там есть что-то из того, что взяли в фильтр
-            for (i in 0 until intA) {
+            for (i in 1 .. intA) {
                 //опять побеждаем отлистывание страницы вниз
-                if (i >= intA-2){
+                if (i == intA){
                     Thread.sleep(500)
                     element(byCssSelector("body"))
                         .should(exist, ofSeconds(waitTime))
                         .shouldBe(visible, ofSeconds(waitTime))
                         .sendKeys(Keys.END)
                 } else {
-                    element(byCssSelector("tr[data-testid='MUIDataTableBodyRow-${i+1}']")).scrollIntoView(false)
+                    element(byXpath("//table/tbody/tr[${i+1}]")).scrollIntoView(false)
                 }
-                element(byCssSelector("tr[data-testid='MUIDataTableBodyRow-$i']")).click()
-                element(byXpath("//span[text()='Обращения']/parent::button"))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
-                    .click()
-                //не учитывается, что обращений может быть больше 20(
-                Thread.sleep(500)
-                val sms = elements(byText("СМС")).size
-                val video = elements(byText("Видеоаналитика")).size
-                val summ = sms + video
-                //println("$sms - sms, $video - video")
-                Assertions.assertTrue(summ > 0)
-                back()
-                back()
+                if (element(byXpath("//table/tbody/tr[$i]/td[$targetColumn]")).ownText != "Видеоаналитика"
+                    && element(byXpath("//table/tbody/tr[$i]/td[$targetColumn]")).ownText != "СМС")
+                {
+                    element(byXpath("//table/tbody/tr[$i]")).click()
+                    element(byXpath("//span[text()='Обращения']/parent::button"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                        .click()
+                    //не учитывается, что обращений может быть больше 20(
+                    Thread.sleep(500)
+                    val sms = elements(byText("СМС")).size
+                    val video = elements(byText("Видеоаналитика")).size
+                    val summ = sms + video
+                    //println("$sms - sms, $video - video")
+                    Assertions.assertTrue(summ > 0)
+                    back()
+                    back()
+                }
             }
         } else {
             Assertions.assertTrue(intS == intA)
@@ -839,10 +850,9 @@ class PimTests {
         date = LocalDate.now().toString()
         tools.logonTool()
         //кликаем по иконке происшествий в боковом меню
-        element(byXpath("//div[@data-testid='app-menu-Происшествия']/../..")).click()
         //Переходим в "Список происшетвий"
-        element(byXpath("//div[@data-testid='app-menu-Список происшествий']/../..")).click()
         //кликаем по "создать обращение"
+        tools.menuNavigation("Происшествия", "Список происшествий", waitTime)
         element(byXpath("//span[text()='Создать обращение']/parent::button")).click()
 //        element(byCssSelector("div span[aria-label='add'] button[type='button']")).shouldHave(exactText("Создать обращение"))
 //            .click()
@@ -890,9 +900,8 @@ class PimTests {
             ofSeconds(waitTime)
         )
         //кликаем по иконке происшествий в боковом меню
-        element(byXpath("//div[@data-testid='app-menu-Происшествия']/../..")).click()
         //Переходим в "Список происшетвий"
-        element(byXpath("//div[@data-testid='app-menu-Список происшествий']/../..")).click()
+        tools.menuNavigation("Происшествия", "Список происшествий", waitTime)
         //добавляем в таблицу происшествий столбец "Описание"
         tools.checkbox("Описание", true, waitTime)
 //        //Открываем выпадающий список
@@ -1013,15 +1022,15 @@ class PimTests {
         //element(byCssSelector("table[role='grid']")).sendKeys(Keys.END)
         //Thread.sleep(5000)
         //Выбираем случайную КП
-        val rndA = (0..19).random()
+        val rndA = (1..20).random()
         //rndA = 0
-        if (rndA == 19) {
+        if (rndA == 20) {
             element(byCssSelector("table[role='grid']")).sendKeys(Keys.END)
         } else {
-            element(byCssSelector("tr[data-testid='MUIDataTableBodyRow-${rndA + 1}']")).scrollIntoView(false)
+            element(byXpath("//table/tbody/tr[${rndA + 1}]")).scrollIntoView(false)
             //Thread.sleep(20000)
         }
-        element(byCssSelector("tr[data-testid='MUIDataTableBodyRow-$rndA']")).click()
+        element(byXpath("//table/tbody/tr[$rndA]")).click()
         //Переходим в силы и средства
         element(byXpath("//span[text()='Силы и средства']/parent::button"))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
@@ -1160,6 +1169,7 @@ class PimTests {
         //A.3.21 Просмотр паспортов опасных объектов
         tools.logonTool()
         tools.menuNavigation("Справочники", "Организации", waitTime)
+        tools.stringsOnPage(50, waitTime)
         //кликаем по иконке справочников в боковом меню
 //        element(byXpath("//span[@title='Справочники']/..")).click()
 //        //Переходим в справочник "Организации"
@@ -1168,7 +1178,8 @@ class PimTests {
         element(byCssSelector("tbody>tr"))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
         //ищем столбец "файлы"
-        tools.checkbox("Файлы",true,waitTime)
+//        tools.checkbox("Файлы",true,waitTime)
+        tools.checkbox("",true,waitTime)
         val columsNameElements = elements(byXpath("//thead/tr/th//*[text()]"))
         val columsName = mutableListOf<String>()
         columsNameElements.forEach {
@@ -1180,14 +1191,14 @@ class PimTests {
         //считаем количество записей на странице
         val all = elements(byCssSelector("tbody>tr")).size
         //Ищем строки организаций с прикрепленными файлами построчно проверяя наличие скрепки
-        for (i in 0 until all) {
+        for (i in 1..all) {
             //опять боремся с глюком видимости но не кликабельности нижних элементов
-            if (i >= all - 2) {
+            if (i == all) {
                 element(byCssSelector("body")).sendKeys(Keys.END)
             } else {
                 element(byXpath("//tbody/tr[${i + 1}]")).scrollIntoView(false)
             }
-            element(byCssSelector("tbody>tr[$i]"))
+            element(byXpath("//tbody/tr[$i]"))
                 .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
             //ищем скрепку в строке
             val haveFile =
@@ -1195,8 +1206,8 @@ class PimTests {
             //если нашли, то...
             if (haveFile == 1) {
                 //переходим в карточку организации
-                element(byCssSelector("//tbody/tr[$i]")).click()
-                element(byCssSelector("form[novalidate]")).should(exist, ofSeconds(waitTime))
+                element(byXpath("//tbody/tr[$i]")).click()
+                element(byXpath("//form[@novalidate]")).should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                 element(byCssSelector("body")).sendKeys(Keys.END)
                 //считаем файлы прикрепленные к организации
@@ -1231,17 +1242,20 @@ class PimTests {
                         val href =
                             element(byCssSelector("div[style='padding: 5px;']>div:nth-child($u) a")).getAttribute("href")
                         open("$href")
+                        Thread.sleep(1000)
                     } else if (fileSVG == 1 || filesvg == 1) {
                         val href =
                             element(byCssSelector("div[style='padding: 5px;']>div:nth-child($u) a")).getAttribute("href")
                         open("$href")
                         element(byCssSelector("rect")).should(exist, ofSeconds(waitTime))
+                        Thread.sleep(1000)
                         back()
                     } else if (fileJPEG == 1 || fileJPG == 1 || filePNG == 1 || filejpeg == 1 || filejpg == 1 || filepng == 1) {
                         val href =
                             element(byCssSelector("div[style='padding: 5px;']>div:nth-child($u) a")).getAttribute("href")
                         open("$href")
                         element(byCssSelector("img")).should(exist, ofSeconds(waitTime))
+                        Thread.sleep(1000)
                         back()
                     }
                 }
@@ -1444,10 +1458,10 @@ class PimTests {
             } else if (i == 4) {
                 //регистрируем ложное обращение
                 element(byXpath("//span[text()='Ложное обращение']/parent::button")).click()
-                element(byXpath("//*[text()='Звонок без информации']/.."))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
-                    .click()
+//                element(byXpath("//*[text()='Звонок без информации']/.."))
+//                    .should(exist, ofSeconds(waitTime))
+//                    .shouldBe(visible, ofSeconds(waitTime))
+//                    .click()
                 //ждем загрузки таблицы происшествий
                 element(byCssSelector("main div table>tbody"))
                     .should(exist, ofSeconds(waitTime))
@@ -1773,10 +1787,10 @@ class PimTests {
             } else if (i == 5) {
                 //регистрируем ложное обращение
                 element(byXpath("//span[text()='Ложное обращение']/parent::button")).click()
-                element(byXpath("//*[text()='Звонок без информации']/.."))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
-                    .click()
+//                element(byXpath("//*[text()='Звонок без информации']/.."))
+//                    .should(exist, ofSeconds(waitTime))
+//                    .shouldBe(visible, ofSeconds(waitTime))
+//                    .click()
                 //ждем загрузки таблицы происшествий
                 element(byCssSelector("main div table>tbody"))
                     .should(exist, ofSeconds(waitTime))
@@ -2095,7 +2109,7 @@ class PimTests {
 //                    element(byCssSelector("input#incidentTypeId")).sendKeys(Keys.DOWN)
 //                }
 //                element(byCssSelector("input#incidentTypeId")).sendKeys(Keys.ENTER)
-                tools.inputRundom("incidentTypeId")
+                tools.inputRandom("incidentTypeId")
                 element(byCssSelector("input#incidentTypeId[value*='.']"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
@@ -2108,7 +2122,7 @@ class PimTests {
                 {
                     repeat(longSelectedIncidentType.length)
                         {element(byCssSelector("input#incidentTypeId")).sendKeys(Keys.BACK_SPACE) }
-                    tools.inputRundom("incidentTypeId")
+                    tools.inputRandom("incidentTypeId")
                     longSelectedIncidentType = element(byCssSelector("input#incidentTypeId")).getAttribute("value").toString()
                     shortSelectedIncidentType = longSelectedIncidentType.substring(longSelectedIncidentType.indexOf(' ') + 1)
 
@@ -2455,20 +2469,31 @@ class PimTests {
                 .shouldBe(visible, ofSeconds(waitTime))
 //            if (elements(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']")).size>0 && i!=10){
             if (i!=10){
-                element(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']>td:first-child"))
+                element(byXpath("//table/tbody/tr"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+//                val stringsList = elements(byXpath("//table/tbody/tr"))
+//                stringsList.shuffle()
+//                stringsList[0].click()
+                // отказался от изящной конструкции выше, т.к. придется встаялять победу над тем что подвал таблицы перекрывает таблицу, оставил как есть
+                element(byXpath("//table/tbody/tr[1]"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
             } else if (i==10){
-//            } else if (elements(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']")).size>0 && i==10){
-                element(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']>td:last-child button"))
+                element(byXpath("//table/tbody/tr"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
-                element(byXpath("//*[text()='Просмотреть']/parent::button"))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
-                    .click()
+//                val columnMenu = tools.numberOfColumnII(" ", waitTime)
+//                element(byXpath("//table/tbody/tr/td[$columnMenu]//button"))
+//                    .should(exist, ofSeconds(waitTime))
+//                    .shouldBe(visible, ofSeconds(waitTime))
+//                    .click()
+//                element(byXpath("//*[text()='Просмотреть']/parent::button"))
+//                    .should(exist, ofSeconds(waitTime))
+//                    .shouldBe(visible, ofSeconds(waitTime))
+//                    .click()
             }
             element(byXpath("//h6[text()='Общие данные']/parent::form"))
                 .should(exist, ofSeconds(waitTime))
@@ -2478,7 +2503,7 @@ class PimTests {
     tools.logoffTool()
     }
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
+//    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
     fun `N 0230`() {
         //A.3.29 Проверка поиска справочных данных
         //хорошо бы в таблицу включать все столбцы, но это потом доработаю //доработано
@@ -2515,12 +2540,15 @@ class PimTests {
             val allRecordCountNotUse = allRecordCountString[1].split(" ")
             val allRecordCountUse = allRecordCountNotUse[0].toInt()
             //ситаем количество слолбцов, при том что последний нам не пригодится
-            val comumnCount = elements(byXpath("//table/thead/tr/th[@data-colindex]//div[text()]")).size
+            val comumnCount = elements(byXpath("//table/thead/tr/th//*[text()]")).size
 //            println("allRecordCountString $allRecordCountString")
 //            println("allRecordCountNotUse $allRecordCountNotUse")
 //            println("allRecordCountUse $allRecordCountUse")
             //отркрываем поисковую строку
-            element(byCssSelector("button[data-testid='Поиск-iconButton']")).click()
+            element(byXpath("//*[@name='search']/ancestor::button"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
             element(byCssSelector("input[placeholder]"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
@@ -2531,7 +2559,7 @@ class PimTests {
             //проходимся по заголовкам столбцов, сверяя их с каждой позицией подсказки
             var searchValue = ""
             for (q in 1 until comumnCount) {
-                val columnName = element(byXpath("//table/thead/tr/th[@data-colindex][$q]//div[text()]")).ownText.toString()
+                val columnName = element(byXpath("//table/thead/tr/th[$q]//*[text()]")).ownText.toString()
 //                println("columnName $columnName")
                 searchHintList?.forEach{
 //                    println("$i searchHintList $it")
@@ -2554,12 +2582,15 @@ class PimTests {
 //                                    && elements(byXpath("//table/tbody/tr[$r]/td[$q]//*[text()]")).size > 0) {
 //                                    trueValueList.add(element(byXpath("//table/tbody/tr[$r]/td[$q]//*[text()]")).ownText.trim())
 //                                }
-                                if (elements(byXpath("//table/tbody/tr[$r]/td[$q]//*[text()]")).size == 1){
+                                if (elements(byXpath("//table/tbody/tr[$r]/td[$q][text()]")).size == 1){
+                                    if (element(byXpath("//table/tbody/tr[$r]/td[$q][text()]")).ownText.trim().isNotEmpty()){
+                                        trueValueList.add(element(byXpath("//table/tbody/tr[$r]/td[$q][text()]")).ownText.trim())
+                                    }
+                                } else if (elements(byXpath("//table/tbody/tr[$r]/td[$q]//*[text()]")).size == 1){
                                     if (element(byXpath("//table/tbody/tr[$r]/td[$q]//*[text()]")).ownText.trim().isNotEmpty()){
                                         trueValueList.add(element(byXpath("//table/tbody/tr[$r]/td[$q]//*[text()]")).ownText.trim())
                                     }
                                 }
-
                             }
                                 maxRandom = trueValueList.size -1
                                 randomColumnValue = (0..maxRandom).random()
@@ -2596,8 +2627,8 @@ class PimTests {
                             var trueValueList = mutableListOf<String>()
                             for (r in 1..countAllString){
                                 if (elements(byXpath("//table/tbody/tr[$r]/td[1]//button")).size ==0
-                                    && elements(byXpath("//table/tbody/tr[$r]/td[${q+1}]//*[text()]")).size !=0){
-                                    trueValueList.add(element(byXpath("//table/tbody/tr[$r]/td[${q+1}]//*[text()]")).ownText)
+                                    && elements(byXpath("//table/tbody/tr[$r]/td[${q+1}][text()]")).size !=0){
+                                    trueValueList.add(element(byXpath("//table/tbody/tr[$r]/td[${q+1}][text()]")).ownText)
                                 }
                             }
                             maxRandom = trueValueList.size -1
@@ -2634,6 +2665,133 @@ class PimTests {
                 }
         }
         tools.logoffTool()
+    }
+
+
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
+    fun `N 0231`() {
+        tools.logonTool()
+        //для каждого справочника выполнить
+        for (dict in 1..9){
+            //кликаем по иконке справочников
+            element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul")).click()
+            //переходим в каждый справочник
+            element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul//div/ul[$dict]")).click()
+            //ждем загрузки таблицы
+            element(byCssSelector("main table>tbody"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+            //добавляем все доступные колонки в таблицу
+            tools.checkbox("", true, waitTime)
+            //получаем счетчик строк в левом нижнем углу страницы, в виде числа
+            val allRecordCountString = element(byXpath("//table/tfoot//p[contains(text(),'Всего ')]")).ownText.toString().split("\n")
+            val allRecordCountNotUse = allRecordCountString[1].split(" ")
+            val allRecordCountUse = allRecordCountNotUse[0].toInt()
+            //ситаем количество слолбцов, при том что последний нам не пригодится
+//            val comumnsCount = elements(byXpath("//table/thead/tr/th//*[text()]")).size
+            //создаем список заголовков столбцов, обрезая последний элемент - заголовок трех точек
+            val columnsElementList = elements(byXpath("//table/thead/tr/th//*[text()]"))
+            val columnsList = mutableListOf<String>()
+            columnsElementList.forEach {
+                columnsList.add(it.ownText.trim())
+            }
+//            val del = columnsList.last()
+//            println(del)
+            columnsList.remove(columnsList.last())
+//            println(columnsList)
+//            println("$dict ${columnsList.size}")
+//            println("allRecordCountString $allRecordCountString")
+//            println("allRecordCountNotUse $allRecordCountNotUse")
+//            println("allRecordCountUse $allRecordCountUse")
+            //отркрываем поисковую строку
+            element(byXpath("//*[@name='search']/ancestor::button"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+            element(byCssSelector("input[placeholder]"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+            //читаем что есть в подсказке
+            val searchHintString = element(byCssSelector("input[placeholder]")).getAttribute("placeholder")
+            val searchHintList = searchHintString?.split(", ")
+            //каждый столбец сверяем с каждым елементом подсказки (так сложно потому что нам еще на странице надо ориентироваться)
+            //каждый столбец проверяем на наличие в списке подсказок
+
+            columnsList.forEachIndexed { colInd, colVal ->
+                println("1 colInd $colInd colVal $colVal searchHintList $searchHintList")
+                if (searchHintList!!.contains(colVal)){
+                    println("2 colInd $colInd colVal $colVal searchHintList $searchHintList")
+                    //если столбец есть в списке подсказок, то для каждой строки достаем его текстовое значение и кладем в список
+                    val stringElement = elements(byXpath("//table/tbody/tr"))
+                    val inColumnsValueList = mutableListOf<String>()
+                    stringElement.forEachIndexed() { elind, el ->
+                        val colNum = tools.numberOfColumnII(colVal, waitTime)
+//                        println(it)
+                        if (
+                            (elements(byXpath("//table/tbody/tr[$elind]/td[$colNum][text()]")).size == 1)
+//                            && element(byXpath("//table/tbody/tr[$elind]/td[${colInd + 1}][text()]")).ownText != "  "
+                            && (!Regex("\\s*").matches(element(byXpath("//table/tbody/tr[$elind]/td[$colNum][text()]")).ownText)))
+                        {
+                            println("first")
+                            inColumnsValueList.add(element(byXpath("//table/tbody/tr[$elind]/td[$colNum][text()]")).ownText.trim())
+                        } else if (
+                            (elements(byXpath("//table/tbody/tr[$elind]/td[$colNum]//*[text()]")).size == 1)
+//                            && element(byXpath("//table/tbody/tr[$elind]/td[${colInd + 1}]//*[text()]")).ownText != "  "
+                            && (!Regex("\\s*").matches(element(byXpath("//table/tbody/tr[$elind]/td[$colNum]//*[text()]")).ownText)))
+                        {
+                            println("second")
+                            inColumnsValueList.add(element(byXpath("//table/tbody/tr[$elind]/td[$colNum]//*[text()]")).ownText.trim())
+                        }
+                    }
+                    //получили список значений столбца на странице теперь преобразуем его в пригодный для поиска вид, если это ФИО или телефонный номер
+                    val  rnd = (0 until inColumnsValueList.size).random()
+                    var rndSearchValue = inColumnsValueList[rnd]
+//                    val fioRegex = Regex("[А-Я]{1}[.]\\s{1}[А-Я]{1}[.]{1}")
+                    val fioRegex = Regex("[a-zA-Zа-яА-Я]{1}[.]\\s{1}[a-zA-Zа-яА-Я]{1}[.]{1}")
+                    val telRegex = Regex("[+]{1}[7]{1}[(]{1}[0-9]{3}[)]{1}[0-9]{3}[-]{1}[0-9]{2}[-]{1}[0-9]{2}")
+                    if (telRegex.containsMatchIn(rndSearchValue)) {
+                        val newSearchValue = rndSearchValue.filter { it.isDigit() }
+                        rndSearchValue = newSearchValue
+                        } else if (fioRegex.containsMatchIn(rndSearchValue)) {
+                        val searchValueList = rndSearchValue.split(" ")
+                        rndSearchValue = searchValueList[0]
+                        }
+                    element(byCssSelector("input[placeholder]")).click()
+                    element(byCssSelector("input[placeholder]")).sendKeys(rndSearchValue)
+                    element(byCssSelector("input[placeholder]")).sendKeys(Keys.ENTER)
+                    Thread.sleep(1000)
+                    val newRecordCountString = element(byXpath("//table/tfoot//p[contains(text(),'Всего ')]")).ownText.toString().split("\n")
+                    val newRecordCountNotUse = newRecordCountString[1].split(" ")
+                    val newRecordCountUse = newRecordCountNotUse[0].toInt()
+                    println("newRecordCountUse $newRecordCountUse")
+                    println("allRecordCountUse $allRecordCountUse")
+                    println("rndSearchValue |$rndSearchValue|")
+                    println("inColumnsValueList |$inColumnsValueList|")
+
+                    Assertions.assertTrue(allRecordCountUse > newRecordCountUse)
+                    element(byXpath("//input[@placeholder]/following-sibling::div//button"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                        .click()
+                }
+            }
+//            columnsList.forEachIndexed { colInd, colVal ->
+//                searchHintList!!.forEachIndexed {hintInd, hintVal ->
+//                    if ((colVal == hintVal)
+//                        || (colVal == "Телефонный код" && colVal == "Тел.код")
+//                        || (colVal == "Метка" && colVal == "Имя метки")
+//                        || (colVal == "№" && colVal == "Номер пункта")){
+//
+//                        if (elements(byXpath("")).size == 1){
+//
+//                        }
+//
+//                    }
+//                }
+//            }
+
+        }
+
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
@@ -2737,7 +2895,7 @@ class PimTests {
 ////            .shouldBe(visible, ofSeconds(waitTime))
 ////            .scrollIntoView(false)
 //            .sendKeys(Keys.END)
-        tools.inputRundom("labels")
+        tools.inputRandom("labels")
 ////        Thread.sleep(2000)
 //        element(byXpath("//input[@name='labels']")).click()
 ////        Thread.sleep(2000)

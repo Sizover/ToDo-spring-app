@@ -53,9 +53,11 @@ class Bufer {
     @org.testng.annotations.Test
     fun `N 02500`(){
         tools.logonTool()
-        tools.menuNavigation("Происшествия","Список происшествий", waitTime)
-        tools.stringsOnPage(100, waitTime)
-        Thread.sleep(10000)
+        tools.menuNavigation("Справочники","Муниципальные образования", waitTime)
+        tools.numberOfColumnII("Административный центр", waitTime)
+        println(tools.numberOfColumnII("Административный центр", waitTime))
+        Thread.sleep(5000)
+
     }
 }
 
