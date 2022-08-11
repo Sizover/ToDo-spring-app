@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="91c598e0-d724-4c0e-9c0f-45d8884c7de4" name="#7 Переделка тестов, под новый табличный и иерархический движок" comment="#7 Переделка тестов, под новый табличный и иерархический движок недоделана. сихра срепозиторием для переезда на другой ПК" />
+    <list id="ca149d85-a975-4ce8-a892-1395e65d3c80" name="Changes" comment="#1 Настройка проекта" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="testing-e2e" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Kotlin Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="develop" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitlabProjectsProjectSettings">
+    <option name="deleteMergedBranch" value="false" />
+    <option name="mergeAsWorkInProgress" value="false" />
+    <option name="projectIdMap">
+      <map>
+        <entry key="1882995897" value="64" />
+      </map>
+    </option>
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="ProjectErrors" />
+  </component>
+  <component name="ProjectId" id="2CZFqaxhXeMHfX6QZpzGEII1I8x" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "/home/isizov/projects/testing-e2e",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "preferences.intentionPowerPack",
+    "start.from.branch": "develop"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/.gitlab/ issue_templates" />
+    </key>
+    <key name="MoveKotlinTopLevelDeclarationsDialog.RECENTS_KEY">
+      <recent name="" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Gradle.PimTests.N 0231">
+    <configuration name="Bufer.N 02500" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;ii_tests_pim.Bufer.N 02500&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="PimTests.N 0210" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;ii_tests_pim.PimTests.N 0210&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="PimTests.N 0220" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;ii_tests_pim.PimTests.N 0220&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="PimTests.N 0230" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;ii_tests_pim.PimTests.N 0230&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="PimTests.N 0231" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;ii_tests_pim.PimTests.N 0231&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Gradle.PimTests.N 0231" />
+        <item itemvalue="Gradle.Bufer.N 02500" />
+        <item itemvalue="Gradle.PimTests.N 0230" />
+        <item itemvalue="Gradle.PimTests.N 0220" />
+        <item itemvalue="Gradle.PimTests.N 0210" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="SvnConfiguration">
+    <configuration>$USER_HOME$/.subversion</configuration>
+  </component>
+  <component name="TaskManager">
+    <task id="Default" summary="Default task">
+      <branch name="develop" repository="$PROJECT_DIR$" />
+      <changelist id="ca149d85-a975-4ce8-a892-1395e65d3c80" name="Changes" comment="" />
+      <created>1659002391741</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1659708440827</updated>
+    </task>
+    <task id="4848" summary="Автотесты спринта 48">
+      <branch name="develop" repository="$PROJECT_DIR$" original="true" />
+      <branch name="feature/#6" repository="$PROJECT_DIR$" />
+      <created>1659523909749</created>
+      <option name="issue" value="true" />
+      <url>https://git.kiap.dev/kiap/testing-e2e/issues/6</url>
+      <option name="number" value="6" />
+      <option name="presentableId" value="#6" />
+      <option name="project" value="Тестирование - сквозные автотесты" />
+      <option name="type" value="BUG" />
+      <updated>1659708357727</updated>
+    </task>
+    <task active="true" id="4863" summary="Переделка тестов, под новый табличный и иерархический движок">
+      <branch name="develop" repository="$PROJECT_DIR$" original="true" />
+      <branch name="feature/#7" repository="$PROJECT_DIR$" />
+      <changelist id="91c598e0-d724-4c0e-9c0f-45d8884c7de4" name="#7 Переделка тестов, под новый табличный и иерархический движок" comment="" />
+      <created>1659708125402</created>
+      <option name="issue" value="true" />
+      <url>https://git.kiap.dev/kiap/testing-e2e/issues/7</url>
+      <option name="number" value="7" />
+      <option name="presentableId" value="#7" />
+      <option name="project" value="Тестирование - сквозные автотесты" />
+      <option name="type" value="BUG" />
+      <updated>1660119543462</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
+    <option name="clearContext" value="false" />
+    <option name="saveContextOnCommit" value="false" />
+    <servers>
+      <Gitlab shared="true" url="https://git.kiap.dev">
+        <option name="currentProject">
+          <GitlabProject id="64" />
+        </option>
+      </Gitlab>
+    </servers>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Копирование и донастройка" />
+    <MESSAGE value="#2 Донастройка проекта" />
+    <MESSAGE value="#3 Делаем мерж как надо" />
+    <MESSAGE value="#5 Из-за неисправности боковой шторки (да и на будущее) унифицирую применение фильтров, через отд..." />
+    <MESSAGE value="#6 Автотесты спринта 48" />
+    <MESSAGE value="Попытался унифицировать инструмент добавления столбцов, так что бы работал и старом и в новом табличном движке - фигушки." />
+    <MESSAGE value="Попытался унифицировать инструмент добавления столбцов, так что бы работал и старом и в новом табличном движке - фигушки. +победил падение теста по отчетам - очень медленно (по отношению к роботу) обновляется предложка - добавил клик на рефреш" />
+    <MESSAGE value="дописал тест на проверку статусов + какие-то мелкие правки разных тестов" />
+    <MESSAGE value="#1 Настройка проекта" />
+    <MESSAGE value="#7 Переделка тестов, под новый табличный и иерархический движок отправка в репозиторий перед выходными" />
+    <MESSAGE value="#7 Переделка тестов, под новый табличный и иерархический движок недоделана. сихра срепозиторием для переезда на другой ПК" />
+    <option name="LAST_COMMIT_MESSAGE" value="#7 Переделка тестов, под новый табличный и иерархический движок недоделана. сихра срепозиторием для переезда на другой ПК" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/testing_e2e$PimTests.ic" NAME="PimTests Coverage Results" MODIFIED="1659356938205" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/testing_e2e$PimTests_N_0180.ic" NAME="PimTests.N 0180 Coverage Results" MODIFIED="1659970765173" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+  </component>
+</project>
