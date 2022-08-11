@@ -2503,13 +2503,13 @@ class PimTests {
     tools.logoffTool()
     }
 
-//    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
     fun `N 0230`() {
         //A.3.29 Проверка поиска справочных данных
         //хорошо бы в таблицу включать все столбцы, но это потом доработаю //доработано
         tools.logonTool()
-
-        for (i in 1..10) {
+        //временно не проверяем поиск по справочнику типов происшествий т.к. не можем там контролировать число строк
+        for (i in 1..9) {
             //кликаем по иконке справочников
             element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul")).click()
             //переходим в каждый справочник
@@ -2558,108 +2558,144 @@ class PimTests {
 //            println("searchHintList $searchHintList")
             //проходимся по заголовкам столбцов, сверяя их с каждой позицией подсказки
             var searchValue = ""
-            for (q in 1 until comumnCount) {
-                val columnName = element(byXpath("//table/thead/tr/th[$q]//*[text()]")).ownText.toString()
-//                println("columnName $columnName")
-                searchHintList?.forEach{
-//                    println("$i searchHintList $it")
-                    //если заголовок столбца совпал с подсказкой, то вбиваем значение этого столбца из первой строки в подсказку и ждем что нижний счетчик строк будет строго меньше исходного
-                    if (columnName.contains(it)
-                        || (columnName == "Телефонный код" && it == "Тел.код")
-                        || (columnName == "Метка" && it == "Имя метки")
-                        || (columnName == "№" && it == "Номер пункта")) {
-                        //искомое значение определяем случайно, среди имеющихся но с типами происшествий и откидыванием пустых значений других справочников придется возится
-                        var maxRandom: Int = 1
-                        var randomColumnValue =0
-                        if (i != 10){
-                            val countAllString = elements(byXpath("//table/tbody/tr")).size
-                            var trueValueList = mutableListOf<String>()
-                            for (r in 1..countAllString) {
-//                                if (elements(byXpath("//table/tbody/tr[$r]/td[$q]//*[text()]")).size == 1) {
-//                                    trueValueList.add(element(byXpath("//table/tbody/tr[$r]/td[$q]//*[text()]")).ownText.trim())
-//                                }
-//                                if (element(byXpath("//table/tbody/tr[$r]/td[$q]//*[text()]")).ownText.trim().isNotEmpty()
-//                                    && elements(byXpath("//table/tbody/tr[$r]/td[$q]//*[text()]")).size > 0) {
-//                                    trueValueList.add(element(byXpath("//table/tbody/tr[$r]/td[$q]//*[text()]")).ownText.trim())
-//                                }
-                                if (elements(byXpath("//table/tbody/tr[$r]/td[$q][text()]")).size == 1){
-                                    if (element(byXpath("//table/tbody/tr[$r]/td[$q][text()]")).ownText.trim().isNotEmpty()){
-                                        trueValueList.add(element(byXpath("//table/tbody/tr[$r]/td[$q][text()]")).ownText.trim())
-                                    }
-                                } else if (elements(byXpath("//table/tbody/tr[$r]/td[$q]//*[text()]")).size == 1){
-                                    if (element(byXpath("//table/tbody/tr[$r]/td[$q]//*[text()]")).ownText.trim().isNotEmpty()){
-                                        trueValueList.add(element(byXpath("//table/tbody/tr[$r]/td[$q]//*[text()]")).ownText.trim())
+            for (col in 1 until comumnCount) {
+                var hierarchy: Boolean
+                element(byXpath("//table/thead/tr/th[$col]"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                //если столбец, кнопка без текста, то жмем её и переходим к другим столбцам
+                // (по идее это только иерархический столбец)
+                if ((elements(byXpath("//table/thead/tr/th[$col]//*[text()]")).size == 0)
+                    && (elements(byXpath("//table/thead/tr/th[$col]//button")).size == 1)){
+                    element(byXpath("//table/thead/tr/th[$col]//button"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                        .click()
+                    element(byCssSelector("thead>tr>th svg[name='arrowDown']"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                    hierarchy = true
+                }
+                //проверяем существует ли заголовок столбца, и если существует, то:
+//                if (elements(byXpath("//table/thead/tr/th[$q]//*[text()]")).size == 1){
+                else {
+                    hierarchy = false
+                    val columnName = element(byXpath("//table/thead/tr/th[$col]//*[text()]")).ownText.toString()
+    //                println("columnName $columnName")
+                    searchHintList?.forEach { it ->
+    //                    println("$i searchHintList $it")
+                        //если заголовок столбца совпал с подсказкой, то вбиваем значение этого столбца из каждой строки в список из которого выберем случайное значение для поиска, ждем что нижний счетчик строк будет строго меньше исходного
+                        if (columnName.contains(it)
+                            || (columnName == "Телефонный код" && it == "Тел.код")
+                            || (columnName == "Метка" && it == "Имя метки")
+                            || (columnName == "№" && it == "Номер пункта")
+                        ) {
+                            println("i = $i columnName = $columnName")
+                            //искомое значение определяем случайно, среди имеющихся но с типами происшествий и откидыванием пустых значений других справочников придется возится
+                            var maxRandom: Int = 1
+                            var randomColumnValue = 0
+                            if (i != 10) {
+                                val countAllString = elements(byXpath("//table/tbody/tr")).size
+                                var trueValueList = mutableListOf<String>()
+                                for (str in 1..countAllString) {
+    //                                if (elements(byXpath("//table/tbody/tr[$r]/td[$q]//*[text()]")).size == 1) {
+    //                                    trueValueList.add(element(byXpath("//table/tbody/tr[$r]/td[$q]//*[text()]")).ownText.trim())
+    //                                }
+    //                                if (element(byXpath("//table/tbody/tr[$r]/td[$q]//*[text()]")).ownText.trim().isNotEmpty()
+    //                                    && elements(byXpath("//table/tbody/tr[$r]/td[$q]//*[text()]")).size > 0) {
+    //                                    trueValueList.add(element(byXpath("//table/tbody/tr[$r]/td[$q]//*[text()]")).ownText.trim())
+    //                                }
+                                    if ((elements(byXpath("//table/tbody/tr[$str]/td[$col][text()]")).size == 1)
+                                        && (element(byXpath("//table/tbody/tr[$str]/td[$col][text()]")).ownText.trim()
+                                            .isNotEmpty())) {
+                                            trueValueList.add(element(byXpath("//table/tbody/tr[$str]/td[$col][text()]")).ownText.trim())
+                                    } else if ((elements(byXpath("//table/tbody/tr[$str]/td[$col]//*[text()]")).size == 1)
+                                        &&(element(byXpath("//table/tbody/tr[$str]/td[$col]//*[text()]")).ownText.trim()
+                                            .isNotEmpty())) {
+                                            trueValueList.add(element(byXpath("//table/tbody/tr[$str]/td[$col]//*[text()]")).ownText.trim())
                                     }
                                 }
-                            }
-                                maxRandom = trueValueList.size -1
+                                maxRandom = trueValueList.size - 1
                                 randomColumnValue = (0..maxRandom).random()
                                 searchValue = trueValueList[randomColumnValue].toString()
-                            //проверяем не номер ли это телефона и видоизменяем запись , к.т. в формате +Х(ХХХ)ХХХ-ХХ-ХХ в поисковой строке не вернет результатов, только +ХХХХХХХХХХ
-                            //аналогично с ФИО
-                            val  ioRegex = Regex("[А-Я]{1}[.]\\s{1}[А-Я]{1}[.]{1}")
-                            val telRegex = Regex("[+]{1}[7]{1}[(]{1}[0-9]{3}[)]{1}[0-9]{3}[-]{1}[0-9]{2}[-]{1}[0-9]{2}")
-//                            if (searchValue.contains("+")
-//                                && searchValue.contains("(")
-//                                && searchValue.contains(")")
-//                                && searchValue.contains("-"))
-                            if (telRegex.containsMatchIn(searchValue))
-                            {
-                                val newSearchValue = searchValue.filter { it.isDigit() }
-                                searchValue = newSearchValue
-                            } else if (ioRegex.containsMatchIn(searchValue))
-                                {
-                                val searchValueList = searchValue.split(" ")
+                                //проверяем не номер ли это телефона и видоизменяем запись , к.т. в формате +Х(ХХХ)ХХХ-ХХ-ХХ в поисковой строке не вернет результатов, только +ХХХХХХХХХХ
+                                //аналогично с ФИО
+//                                val ioRegex = Regex("[А-ЯA-Z]{1}[.]\\s{1}[А-ЯA-Z]{1}[.]{1}")
+                                val ioRegex = Regex("[а-яА-Яa-zA-Z]{1}[.]\\s{1}[а-яА-Яa-zA-Z]{1}[.]{1}")
+                                val telRegex = Regex("[+]{1}[7]{1}[(]{1}[0-9]{3}[)]{1}[0-9]{3}[-]{1}[0-9]{2}[-]{1}[0-9]{2}")
+                                val workTelRegex = Regex("[0-9]{1}[-][0-9]{5}[-][0-9]{3}[-][0-9]{3}")
+    //                            if (searchValue.contains("+")
+    //                                && searchValue.contains("(")
+    //                                && searchValue.contains(")")
+    //                                && searchValue.contains("-"))
+                                if (telRegex.containsMatchIn(searchValue) || workTelRegex.containsMatchIn(searchValue)) {
+                                    val newSearchValue = searchValue.filter { it.isDigit() }
+                                    searchValue = newSearchValue
+                                } else if (ioRegex.containsMatchIn(searchValue)) {
+                                    val searchValueList = searchValue.split(" ")
                                     searchValue = searchValueList[0]
-                            }
-//                                println("countAllString $i $countAllString")
-//                                println("trueValueList $i $trueValueList")
-//                                println("maxRandom $i $maxRandom")
-//                                println("randomColumnValue $i $randomColumnValue")
-//                                println("searchValue $searchValue")
-//                            searchValue = element(byXpath("//table/tbody/tr[1]/td[$q]//*[text()]")).ownText.toString()
-                        } else if (i==10) { //Отдельно обрабатываем справочник типов происшествий
-                            element(byXpath("//thead//*[name()='svg'][@id='expandable-button']/../parent::button")).click()
-                            element(byXpath("//thead//*[name()='svg'][@id='expandable-button']/../parent::button//*[name()='path'][@d='M19 13H5v-2h14v2z']"))
-                                .should(exist, ofSeconds(waitTime))
-                                .shouldBe(visible, ofSeconds(waitTime))
-                            val countAllString = elements(byXpath("//table/tbody/tr")).size
-                            var trueValueList = mutableListOf<String>()
-                            for (r in 1..countAllString){
-                                if (elements(byXpath("//table/tbody/tr[$r]/td[1]//button")).size ==0
-                                    && elements(byXpath("//table/tbody/tr[$r]/td[${q+1}][text()]")).size !=0){
-                                    trueValueList.add(element(byXpath("//table/tbody/tr[$r]/td[${q+1}][text()]")).ownText)
-                                }
-                            }
-                            maxRandom = trueValueList.size -1
-                            randomColumnValue = (0..maxRandom).random()
-                            searchValue = trueValueList[randomColumnValue].toString()
-//                            println("countAllString $i $countAllString")
-//                            println("trueValueList $i $trueValueList")
-//                            println("maxRandom $i $maxRandom")
-//                            println("randomColumnValue $i $randomColumnValue")
 
+                                }
+//                                else if (workTelRegex.containsMatchIn(searchValue)){
+//                                    val newSearchValue = searchValue.filter { it.isDigit() }
+//                                    searchValue = newSearchValue
+//                                }
+    //                                println("countAllString $i $countAllString")
+    //                                println("trueValueList $i $trueValueList")
+    //                                println("maxRandom $i $maxRandom")
+    //                                println("randomColumnValue $i $randomColumnValue")
+    //                                println("searchValue $searchValue")
+    //                            searchValue = element(byXpath("//table/tbody/tr[1]/td[$q]//*[text()]")).ownText.toString()
+                            } else if (i == 10) { //Отдельно обрабатываем справочник типов происшествий
+//                                element(byXpath("//thead//*[name()='svg'][@id='expandable-button']/../parent::button")).click()
+//                                element(byXpath("//thead//*[name()='svg'][@id='expandable-button']/../parent::button//*[name()='path'][@d='M19 13H5v-2h14v2z']"))
+//                                    .should(exist, ofSeconds(waitTime))
+//                                    .shouldBe(visible, ofSeconds(waitTime))
+                                val countAllString = elements(byXpath("//table/tbody/tr")).size
+                                var trueValueList = mutableListOf<String>()
+                                for (r in 1..countAllString) {
+                                    if (elements(byXpath("//table/tbody/tr[$r]/td[$col]//button")).size == 0
+                                        && elements(byXpath("//table/tbody/tr[$r]/td[$col][text()]")).size != 0
+                                    ) {
+                                        trueValueList.add(element(byXpath("//table/tbody/tr[$r]/td[$col][text()]")).ownText)
+                                    }
+                                }
+                                maxRandom = trueValueList.size - 1
+                                randomColumnValue = (0..maxRandom).random()
+                                searchValue = trueValueList[randomColumnValue].toString()
+    //                            println("countAllString $i $countAllString")
+    //                            println("trueValueList $i $trueValueList")
+    //                            println("maxRandom $i $maxRandom")
+    //                            println("randomColumnValue $i $randomColumnValue")
+
+                            }
+    //                        println("searchValue $searchValue")
+                            if (elements(byCssSelector("input[placeholder]")).size == 0) {
+                                element(byXpath("//*[@name='search']/ancestor::button")).click()
+                            }
+                            element(byCssSelector("input[placeholder]")).sendKeys(searchValue, Keys.ENTER)
+                            Thread.sleep(500)
+                            element(byXpath("//table/tfoot//p[contains(text(),'Всего ')]"))
+                                .should(exist, ofSeconds(longWait))
+                                .shouldBe(visible, ofSeconds(longWait))
+                            val nowRecordCountString =
+                                element(byXpath("//table/tfoot//p[contains(text(),'Всего ')]")).ownText.toString()
+                                    .split("\n")
+                            val nowRecordCountNotUse = nowRecordCountString[1].split(" ")
+                            val nowRecordCountUse = nowRecordCountNotUse[0].toInt()
+    //                        println("searchValue $searchValue")
+    //                        println("allRecordCountUse $allRecordCountUse")
+    //                        println("nowRecordCountUse $nowRecordCountUse")
+                            Assertions.assertTrue(allRecordCountUse > nowRecordCountUse)
+                            if (i == 10) {
+                                Assertions.assertTrue(nowRecordCountUse == 1)
+                            }
+    //                        println("nowRecordCountUse $nowRecordCountUse")
+                            //Thread.sleep(2500)
+                            element(byXpath("//input[@placeholder]/following-sibling::div/button")).click()
+                            element(byCssSelector("input[placeholder]")).click()
+    //                        Thread.sleep(5000)
                         }
-//                        println("searchValue $searchValue")
-                        if ( i==10 ){element(byCssSelector("button[data-testid='Поиск-iconButton']")).click()}
-                        element(byCssSelector("input[placeholder]")).sendKeys(searchValue, Keys.ENTER)
-                        Thread.sleep(500)
-                        element(byXpath("//table/tfoot//p[contains(text(),'Всего ')]"))
-                            .should(exist, ofSeconds(longWait))
-                            .shouldBe(visible, ofSeconds(longWait))
-                        val nowRecordCountString = element(byXpath("//table/tfoot//p[contains(text(),'Всего ')]")).ownText.toString().split("\n")
-                        val nowRecordCountNotUse = nowRecordCountString[1].split(" ")
-                        val nowRecordCountUse = nowRecordCountNotUse[0].toInt()
-//                        println("searchValue $searchValue")
-//                        println("allRecordCountUse $allRecordCountUse")
-//                        println("nowRecordCountUse $nowRecordCountUse")
-                        Assertions.assertTrue(allRecordCountUse > nowRecordCountUse)
-                        if ( i==10 ){Assertions.assertTrue(nowRecordCountUse == 1)}
-//                        println("nowRecordCountUse $nowRecordCountUse")
-                        //Thread.sleep(2500)
-                        element(byXpath("//input[@placeholder]/following-sibling::div/button")).click()
-                        element(byCssSelector("input[placeholder]")).click()
-//                        Thread.sleep(5000)
                         }
                     }
                 }
@@ -2724,7 +2760,7 @@ class PimTests {
                     //если столбец есть в списке подсказок, то для каждой строки достаем его текстовое значение и кладем в список
                     val stringElement = elements(byXpath("//table/tbody/tr"))
                     val inColumnsValueList = mutableListOf<String>()
-                    stringElement.forEachIndexed() { elind, el ->
+                    stringElement.forEachIndexed { elind, el ->
                         val colNum = tools.numberOfColumnII(colVal, waitTime)
 //                        println(it)
                         if (
