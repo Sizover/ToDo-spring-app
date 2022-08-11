@@ -2718,9 +2718,9 @@ class PimTests {
             //каждый столбец проверяем на наличие в списке подсказок
 
             columnsList.forEachIndexed { colInd, colVal ->
-                println("1 colInd $colInd colVal $colVal searchHintList $searchHintList")
+//                println("1 colInd $colInd colVal $colVal searchHintList $searchHintList")
                 if (searchHintList!!.contains(colVal)){
-                    println("2 colInd $colInd colVal $colVal searchHintList $searchHintList")
+//                    println("2 colInd $colInd colVal $colVal searchHintList $searchHintList")
                     //если столбец есть в списке подсказок, то для каждой строки достаем его текстовое значение и кладем в список
                     val stringElement = elements(byXpath("//table/tbody/tr"))
                     val inColumnsValueList = mutableListOf<String>()
@@ -2729,17 +2729,19 @@ class PimTests {
 //                        println(it)
                         if (
                             (elements(byXpath("//table/tbody/tr[$elind]/td[$colNum][text()]")).size == 1)
-//                            && element(byXpath("//table/tbody/tr[$elind]/td[${colInd + 1}][text()]")).ownText != "  "
-                            && (!Regex("\\s*").matches(element(byXpath("//table/tbody/tr[$elind]/td[$colNum][text()]")).ownText)))
+                            && element(byXpath("//table/tbody/tr[$elind]/td[${colInd + 1}][text()]")).ownText != "  "
+//                            && (!Regex("\\s+").matches(element(byXpath("//table/tbody/tr[$elind]/td[$colNum][text()]")).ownText))
+                            )
                         {
-                            println("first")
+//                            println("first")
                             inColumnsValueList.add(element(byXpath("//table/tbody/tr[$elind]/td[$colNum][text()]")).ownText.trim())
                         } else if (
                             (elements(byXpath("//table/tbody/tr[$elind]/td[$colNum]//*[text()]")).size == 1)
-//                            && element(byXpath("//table/tbody/tr[$elind]/td[${colInd + 1}]//*[text()]")).ownText != "  "
-                            && (!Regex("\\s*").matches(element(byXpath("//table/tbody/tr[$elind]/td[$colNum]//*[text()]")).ownText)))
+                            && element(byXpath("//table/tbody/tr[$elind]/td[${colInd + 1}]//*[text()]")).ownText != "  "
+//                            && (!Regex("\\s+").matches(element(byXpath("//table/tbody/tr[$elind]/td[$colNum]//*[text()]")).ownText))
+                        )
                         {
-                            println("second")
+//                            println("second")
                             inColumnsValueList.add(element(byXpath("//table/tbody/tr[$elind]/td[$colNum]//*[text()]")).ownText.trim())
                         }
                     }
@@ -2763,10 +2765,10 @@ class PimTests {
                     val newRecordCountString = element(byXpath("//table/tfoot//p[contains(text(),'Всего ')]")).ownText.toString().split("\n")
                     val newRecordCountNotUse = newRecordCountString[1].split(" ")
                     val newRecordCountUse = newRecordCountNotUse[0].toInt()
-                    println("newRecordCountUse $newRecordCountUse")
-                    println("allRecordCountUse $allRecordCountUse")
-                    println("rndSearchValue |$rndSearchValue|")
-                    println("inColumnsValueList |$inColumnsValueList|")
+//                    println("newRecordCountUse $newRecordCountUse")
+//                    println("allRecordCountUse $allRecordCountUse")
+//                    println("rndSearchValue |$rndSearchValue|")
+//                    println("inColumnsValueList |$inColumnsValueList|")
 
                     Assertions.assertTrue(allRecordCountUse > newRecordCountUse)
                     element(byXpath("//input[@placeholder]/following-sibling::div//button"))

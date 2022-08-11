@@ -109,16 +109,16 @@ class JustTests {
         tools.menuNavigation("Происшествия","Создать карточку", waitTime)
         tools.firstHalfIC("T 0010",date.toString(),dateTime.toString(),waitTime)
         element(byXpath("//span[text()='Создать карточку']/parent::button")).click()
-        tools.inputRundom("incidentTypeId")
+        tools.inputRandom("incidentTypeId")
         //добавляем метку при создании КП
-        tools.inputRundom("labels")
+        tools.inputRandom("labels")
         var createLabel = element(byXpath("//label[text()='Метки']/..//span[@style='line-height: 1;'][1]//span[text()]")).ownText
         while (labelListName.contains(createLabel)){
             element(byXpath("//label[text()='Метки']/..//span[text()='$createLabel']/../*[name()='svg']"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
                 .click()
-            tools.inputRundom("labels")
+            tools.inputRandom("labels")
             createLabel = element(byXpath("//label[text()='Метки']/..//span[@style='line-height: 1;'][1]//span[text()]")).ownText
         }
         element(byXpath("//span[text()='Сохранить карточку']/parent::button")).click()
