@@ -1,10 +1,19 @@
 //import kotlin.collections.EmptyMap.keys
 import com.codeborne.selenide.Browsers.CHROME
-import com.codeborne.selenide.Condition.*
+import com.codeborne.selenide.Condition.attribute
+import com.codeborne.selenide.Condition.exist
+import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Configuration
-import com.codeborne.selenide.Selectors.*
+import com.codeborne.selenide.Selectors.byCssSelector
+import com.codeborne.selenide.Selectors.byName
+import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide
-import com.codeborne.selenide.Selenide.*
+import com.codeborne.selenide.Selenide.clearBrowserCookies
+import com.codeborne.selenide.Selenide.clearBrowserLocalStorage
+import com.codeborne.selenide.Selenide.closeWindow
+import com.codeborne.selenide.Selenide.element
+import com.codeborne.selenide.Selenide.elements
+import com.codeborne.selenide.Selenide.open
 import com.codeborne.selenide.WebDriverRunner
 import org.openqa.selenium.Keys
 import org.openqa.selenium.chrome.ChromeOptions
@@ -147,6 +156,7 @@ class Tools {
     fun checkbox(checkboxName: String, checkboxCondition: Boolean, waitTime: Long)
     //По названию колонки, необходимому значению чекбокса и waitTime выставляет отображаемые колонки в табличных РМ
     //При пустом имени, выклацывает весь список в указанное состояние
+    //Допустимо передавать несколько значений разделяя их ; без пробелов
     {
 //        val checkboxTrue = "M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
 //        val checkboxFalse = "M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
@@ -183,6 +193,11 @@ class Tools {
             checkboxes.forEach{
                 checkboxNameList.add(it.ownText)
             }
+        } else if (checkboxName.contains(";")){
+//            checkboxNameList = checkboxName.split(";").toMutableList()
+            checkboxName.split(";").forEach {
+                checkboxNameList.add(it)
+            }
         } else {
             checkboxNameList.add(checkboxName)
         }
@@ -215,6 +230,9 @@ class Tools {
                 }
                 element(byXpath("//span[text()='$it']/parent::label//*[name()='svg'][@name]"))
                     .shouldHave(attribute("name", checkboxTrue), ofSeconds(waitTime))
+                element(byXpath("//table/thead/tr/th//*[text()='$it']"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
             }
         }
 //        element(byCssSelector("button[aria-label='Close']")).click()
@@ -350,21 +368,21 @@ class Tools {
         Thread.sleep((10*stringsOnPage).toLong())
     }
 
+//    fun numberOfColumn(columnName: String, waitTime: Long): Int{
+//        //Возвращаем порядковый номер искомого столбца
+//        val columnCount = elements(byXpath("//table/thead/tr/th")).size
+//        var result = 0
+//        for (i in 1..columnCount){
+//            element(byXpath("//table/thead/tr/th[$i]//*[text()]")).ownText
+//            if (element(byXpath("//table/thead/tr/th[$i]//*[text()]")).ownText == columnName){
+//                result = i
+//            }
+//        }
+//        return result
+//    }
+
+
     fun numberOfColumn(columnName: String, waitTime: Long): Int{
-        //Возвращаем порядковый номер искомого столбца
-        val columnCount = elements(byXpath("//table/thead/tr/th")).size
-        var result = 0
-        for (i in 1..columnCount){
-            element(byXpath("//table/thead/tr/th[$i]//*[text()]")).ownText
-            if (element(byXpath("//table/thead/tr/th[$i]//*[text()]")).ownText == columnName){
-                result = i
-            }
-        }
-        return result
-    }
-
-
-    fun numberOfColumnII(columnName: String, waitTime: Long): Int{
 //        val columnsElements = elements(byXpath("//table/thead/tr/th//*[text()]"))
         val columnsElements = elements(byXpath("//table/thead/tr/th"))
         val columsName = mutableListOf<String>()

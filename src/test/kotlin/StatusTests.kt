@@ -1,7 +1,13 @@
+
 import com.codeborne.selenide.CollectionCondition
-import com.codeborne.selenide.Condition.*
-import com.codeborne.selenide.Selectors.*
-import com.codeborne.selenide.Selenide.*
+import com.codeborne.selenide.Condition.exist
+import com.codeborne.selenide.Condition.text
+import com.codeborne.selenide.Condition.visible
+import com.codeborne.selenide.Selectors.byCssSelector
+import com.codeborne.selenide.Selectors.byText
+import com.codeborne.selenide.Selectors.byXpath
+import com.codeborne.selenide.Selenide.element
+import com.codeborne.selenide.Selenide.elements
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -100,15 +106,18 @@ class StatusTests {
                     .click()
                 //устанавливаем статус
                 element(byXpath("//span[text()='В обработке']/parent::button"))
-                    .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-                element(byXpath("//span[text()='В обработке']/parent::button")).click()
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .click()
                 element(byXpath("//span[contains(@class,'MuiButton-label')][text()='${statusList[i]}']/parent::button"))
-                    .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-                element(byXpath("//span[contains(@class,'MuiButton-label')][text()='${statusList[i]}']/parent::button")).click()
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .click()
                 element(byXpath("//span[text()='В обработке']/parent::button"))
                     .shouldNot(exist, ofSeconds(waitTime))
                 element(byXpath("//span[contains(@class,'MuiButton-label')][text()='${statusList[i]}']/parent::button"))
-                    .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
                 i += 1
                 tools.logoffTool()
             }

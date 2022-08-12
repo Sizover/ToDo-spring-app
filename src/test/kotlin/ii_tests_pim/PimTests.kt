@@ -4,9 +4,18 @@ package ii_tests_pim
 import Retry
 import Tools
 import com.codeborne.selenide.CollectionCondition
-import com.codeborne.selenide.Condition.*
-import com.codeborne.selenide.Selectors.*
-import com.codeborne.selenide.Selenide.*
+import com.codeborne.selenide.Condition.exactText
+import com.codeborne.selenide.Condition.exist
+import com.codeborne.selenide.Condition.text
+import com.codeborne.selenide.Condition.visible
+import com.codeborne.selenide.Selectors.byCssSelector
+import com.codeborne.selenide.Selectors.byName
+import com.codeborne.selenide.Selectors.byText
+import com.codeborne.selenide.Selectors.byXpath
+import com.codeborne.selenide.Selenide.back
+import com.codeborne.selenide.Selenide.element
+import com.codeborne.selenide.Selenide.elements
+import com.codeborne.selenide.Selenide.open
 import org.apache.commons.io.FileUtils
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
@@ -778,7 +787,7 @@ class PimTests {
         /////////////////////////////////////////////////////////////////////////////////////////
         //Открываем фильтр "Источники"
         tools.checkbox("Источник", true, waitTime)
-        val targetColumn = tools.numberOfColumnII("Источник", waitTime)
+        val targetColumn = tools.numberOfColumn("Источник", waitTime)
         element(byXpath("//span[text()='Источники']/..")).click()
         element(byCssSelector("div[tabindex='-1'] div[role='combobox']"))
             .should(exist, ofSeconds(waitTime))
@@ -2509,11 +2518,12 @@ class PimTests {
         //хорошо бы в таблицу включать все столбцы, но это потом доработаю //доработано
         tools.logonTool()
         //временно не проверяем поиск по справочнику типов происшествий т.к. не можем там контролировать число строк
-        for (i in 1..9) {
+        //(ну как бы можем, но не по такому алгоритму, а вероятно в отдельном тесте. еще подумаю...)
+        for (dicts in 1..10) {
             //кликаем по иконке справочников
             element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul")).click()
             //переходим в каждый справочник
-            element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul//div/ul[$i]")).click()
+            element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul//div/ul[$dicts]")).click()
             //ждем загрузки таблицы
             element(byCssSelector("main table>tbody"))
                 .should(exist, ofSeconds(waitTime))
@@ -2536,11 +2546,17 @@ class PimTests {
 //            }
 //            element(byXpath("//fieldset[@aria-label='Показать/скрыть колонки']/../button")).click()
             //получаем счетчик строк в левом нижнем углу страницы, в виде числа
-            val allRecordCountString = element(byXpath("//table/tfoot//p[contains(text(),'Всего ')]")).ownText.toString().split("\n")
-            val allRecordCountNotUse = allRecordCountString[1].split(" ")
-            val allRecordCountUse = allRecordCountNotUse[0].toInt()
+            var allRecordCountUse: Int
+            if (dicts != 10) {
+                val allRecordCountString =
+                    element(byXpath("//table/tfoot//p[contains(text(),'Всего ')]")).ownText.toString().split("\n")
+                val allRecordCountNotUse = allRecordCountString[1].split(" ")
+                allRecordCountUse = allRecordCountNotUse[0].toInt()
+            } else {
+                allRecordCountUse = elements(byXpath("//tbody/tr")).size
+            }
             //ситаем количество слолбцов, при том что последний нам не пригодится
-            val comumnCount = elements(byXpath("//table/thead/tr/th//*[text()]")).size
+            val comumnCount = elements(byXpath("//table/thead/tr/th")).size
 //            println("allRecordCountString $allRecordCountString")
 //            println("allRecordCountNotUse $allRecordCountNotUse")
 //            println("allRecordCountUse $allRecordCountUse")
@@ -2585,16 +2601,17 @@ class PimTests {
                     searchHintList?.forEach { it ->
     //                    println("$i searchHintList $it")
                         //если заголовок столбца совпал с подсказкой, то вбиваем значение этого столбца из каждой строки в список из которого выберем случайное значение для поиска, ждем что нижний счетчик строк будет строго меньше исходного
+//                        println("i = $dicts columnName = $columnName подсказка = $it")
                         if (columnName.contains(it)
                             || (columnName == "Телефонный код" && it == "Тел.код")
                             || (columnName == "Метка" && it == "Имя метки")
                             || (columnName == "№" && it == "Номер пункта")
                         ) {
-                            println("i = $i columnName = $columnName")
+//                            println("i = $dicts true columnName = $columnName подсказка = $it")
                             //искомое значение определяем случайно, среди имеющихся но с типами происшествий и откидыванием пустых значений других справочников придется возится
                             var maxRandom: Int = 1
                             var randomColumnValue = 0
-                            if (i != 10) {
+                            if (dicts != 10) {
                                 val countAllString = elements(byXpath("//table/tbody/tr")).size
                                 var trueValueList = mutableListOf<String>()
                                 for (str in 1..countAllString) {
@@ -2622,7 +2639,7 @@ class PimTests {
                                 //аналогично с ФИО
 //                                val ioRegex = Regex("[А-ЯA-Z]{1}[.]\\s{1}[А-ЯA-Z]{1}[.]{1}")
                                 val ioRegex = Regex("[а-яА-Яa-zA-Z]{1}[.]\\s{1}[а-яА-Яa-zA-Z]{1}[.]{1}")
-                                val telRegex = Regex("[+]{1}[7]{1}[(]{1}[0-9]{3}[)]{1}[0-9]{3}[-]{1}[0-9]{2}[-]{1}[0-9]{2}")
+                                val telRegex = Regex("[+7(]{1}[0-9]{3}[)]{1}[0-9]{3}[-]{1}[0-9]{2}[-]{1}[0-9]{2}")
                                 val workTelRegex = Regex("[0-9]{1}[-][0-9]{5}[-][0-9]{3}[-][0-9]{3}")
     //                            if (searchValue.contains("+")
     //                                && searchValue.contains("(")
@@ -2646,14 +2663,14 @@ class PimTests {
     //                                println("randomColumnValue $i $randomColumnValue")
     //                                println("searchValue $searchValue")
     //                            searchValue = element(byXpath("//table/tbody/tr[1]/td[$q]//*[text()]")).ownText.toString()
-                            } else if (i == 10) { //Отдельно обрабатываем справочник типов происшествий
+                            } else if (dicts == 10) { //Отдельно обрабатываем справочник типов происшествий
 //                                element(byXpath("//thead//*[name()='svg'][@id='expandable-button']/../parent::button")).click()
 //                                element(byXpath("//thead//*[name()='svg'][@id='expandable-button']/../parent::button//*[name()='path'][@d='M19 13H5v-2h14v2z']"))
 //                                    .should(exist, ofSeconds(waitTime))
 //                                    .shouldBe(visible, ofSeconds(waitTime))
-                                val countAllString = elements(byXpath("//table/tbody/tr")).size
+//                                val countAllString = elements(byXpath("//table/tbody/tr")).size
                                 var trueValueList = mutableListOf<String>()
-                                for (r in 1..countAllString) {
+                                for (r in 1..allRecordCountUse) {
                                     if (elements(byXpath("//table/tbody/tr[$r]/td[$col]//button")).size == 0
                                         && elements(byXpath("//table/tbody/tr[$r]/td[$col][text()]")).size != 0
                                     ) {
@@ -2670,31 +2687,41 @@ class PimTests {
 
                             }
     //                        println("searchValue $searchValue")
+                            //открываем строку поиска, если закрылась (бывает с иерархическими справочниками)
                             if (elements(byCssSelector("input[placeholder]")).size == 0) {
                                 element(byXpath("//*[@name='search']/ancestor::button")).click()
                             }
                             element(byCssSelector("input[placeholder]")).sendKeys(searchValue, Keys.ENTER)
-                            Thread.sleep(500)
-                            element(byXpath("//table/tfoot//p[contains(text(),'Всего ')]"))
-                                .should(exist, ofSeconds(longWait))
-                                .shouldBe(visible, ofSeconds(longWait))
-                            val nowRecordCountString =
-                                element(byXpath("//table/tfoot//p[contains(text(),'Всего ')]")).ownText.toString()
-                                    .split("\n")
-                            val nowRecordCountNotUse = nowRecordCountString[1].split(" ")
-                            val nowRecordCountUse = nowRecordCountNotUse[0].toInt()
+                            Thread.sleep(1000)
+
+                            val nowRecordCountUse:Int
+                            if (dicts != 10){
+                                element(byXpath("//table/tfoot//p[contains(text(),'Всего ')]"))
+                                    .should(exist, ofSeconds(longWait))
+                                    .shouldBe(visible, ofSeconds(longWait))
+                                val nowRecordCountString =
+                                    element(byXpath("//table/tfoot//p[contains(text(),'Всего ')]")).ownText.toString()
+                                        .split("\n")
+                                val nowRecordCountNotUse = nowRecordCountString[1].split(" ")
+                                nowRecordCountUse = nowRecordCountNotUse[0].toInt()
+                            } else {
+                                nowRecordCountUse = elements(byXpath("//tbody/tr")).size
+                            }
     //                        println("searchValue $searchValue")
     //                        println("allRecordCountUse $allRecordCountUse")
     //                        println("nowRecordCountUse $nowRecordCountUse")
+//                            Assertions.assertTrue(allRecordCountUse > nowRecordCountUse)
                             Assertions.assertTrue(allRecordCountUse > nowRecordCountUse)
-                            if (i == 10) {
-                                Assertions.assertTrue(nowRecordCountUse == 1)
-                            }
+//                            if (dicts == 10) {
+//                                Assertions.assertTrue(nowRecordCountUse == 1)
+//                            } else {
+//                                Assertions.assertTrue(allRecordCountUse > nowRecordCountUse)
+//                            }
     //                        println("nowRecordCountUse $nowRecordCountUse")
                             //Thread.sleep(2500)
                             element(byXpath("//input[@placeholder]/following-sibling::div/button")).click()
                             element(byCssSelector("input[placeholder]")).click()
-    //                        Thread.sleep(5000)
+                            Thread.sleep(1000)
                         }
                         }
                     }
@@ -2704,7 +2731,7 @@ class PimTests {
     }
 
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
+//    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
     fun `N 0231`() {
         tools.logonTool()
         //для каждого справочника выполнить
@@ -2761,7 +2788,7 @@ class PimTests {
                     val stringElement = elements(byXpath("//table/tbody/tr"))
                     val inColumnsValueList = mutableListOf<String>()
                     stringElement.forEachIndexed { elind, el ->
-                        val colNum = tools.numberOfColumnII(colVal, waitTime)
+                        val colNum = tools.numberOfColumn(colVal, waitTime)
 //                        println(it)
                         if (
                             (elements(byXpath("//table/tbody/tr[$elind]/td[$colNum][text()]")).size == 1)
@@ -2837,15 +2864,8 @@ class PimTests {
         //A.3.30 Проверка наличия справочников с иерархической системой классификации
         tools.logonTool()
         //кликаем по иконке справочников
-        element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
         //переходим в нужный справочник
-        element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul//div[@data-testid='app-menu-Типы происшествий']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
+        tools.menuNavigation("Справочники", "Типы происшествий", waitTime)
         //ждем загрузки таблицы
         element(byCssSelector("main table>tbody"))
             .should(exist, ofSeconds(waitTime))
@@ -2870,29 +2890,21 @@ class PimTests {
         //A.3.31 Проверка задания меток для указания признаков объектов
         tools.logonTool()
         //кликаем по иконке справочников
-        element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
         //переходим в нужный справочник
-        element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul//div[@data-testid='app-menu-Организации']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
+        tools.menuNavigation("Справочники", "Организации", waitTime)
         //ждем загрузки таблицы
         element(byCssSelector("main table>tbody"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //считаем строки и переходим в случайную организацию
-        val organizationTableStringCount = elements(byCssSelector("tbody>tr[data-testid^='MUIDataTableBodyRow-']")).size
+        val organizationTableStringCount = elements(byXpath("//table/tbody/tr")).size
         val rndOrganization = (1..organizationTableStringCount).random()
         if (rndOrganization == organizationTableStringCount){
             element(byCssSelector("body")).sendKeys(Keys.END)
-        } else { element(byCssSelector("tbody>tr[data-testid^='MUIDataTableBodyRow-']:nth-child(${rndOrganization + 1})"))
+        } else { element(byXpath("//table/tbody/tr[${rndOrganization + 1}]"))
             .scrollIntoView(false)
-
         }
-        element(byCssSelector("tbody>tr[data-testid^='MUIDataTableBodyRow-']:nth-child($rndOrganization)")).click()
+        element(byXpath("//table/tbody/tr[($rndOrganization)]")).click()
         //ждем Редактировать
         element(byXpath("//span[text()='Редактировать']/parent::button"))
             .should(exist, ofSeconds(waitTime))
@@ -2966,7 +2978,7 @@ class PimTests {
         //переходим в ту же организацию
         if (rndOrganization == organizationTableStringCount){
             element(byCssSelector("body")).sendKeys(Keys.END)
-        } else { element(byCssSelector("tbody>tr[data-testid^='MUIDataTableBodyRow-']:nth-child(${rndOrganization + 1})"))
+        } else { element(byXpath("//table/tbody/tr[${rndOrganization + 1}]"))
             .scrollIntoView(false)
         }
         element(byText(organizationName.toString())).click()
@@ -2992,18 +3004,11 @@ class PimTests {
 
         tools.logoffTool()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //теперь удалим эту метку
+        //теперь удалим эту (эти) метку(и)
         tools.logonTool()
         //кликаем по иконке справочников
-        element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
         //переходим в нужный справочник
-        element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul//div[@data-testid='app-menu-Организации']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
+        tools.menuNavigation("Справочники", "Организации", waitTime)
         //ждем загрузки таблицы
         element(byCssSelector("main table>tbody"))
             .should(exist, ofSeconds(waitTime))
@@ -3012,7 +3017,7 @@ class PimTests {
         //переходим в ту же организацию
         if (rndOrganization == organizationTableStringCount){
             element(byCssSelector("body")).sendKeys(Keys.END)
-        } else { element(byCssSelector("tbody>tr[data-testid^='MUIDataTableBodyRow-']:nth-child(${rndOrganization + 1})"))
+        } else { element(byXpath("//table/tbody/tr[${rndOrganization + 1}]"))
             .scrollIntoView(false)
         }
         element(byText(organizationName.toString())).click()
@@ -3025,11 +3030,13 @@ class PimTests {
             .shouldBe(visible, ofSeconds(waitTime))
         val newLabelList = newLabelsList.minus(oldLabelsList.toSet())
         val newLabelNum = newLabelsList.size
+        newLabelList.forEach {
+            element(byXpath("//label[text()='Метки']/..//span[@style='line-height: 1;']//span[text()='$it']"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+        }
 //        println("newLabel $newLabel")
         //убеждаемся, что поставленная метка на месте
-        element(byXpath("//label[text()='Метки']/..//span[@style='line-height: 1;']//span[text()='${newLabelList[0]}']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
         //жмем Редактировать
         element(byXpath("//span[text()='Редактировать']/parent::button"))
             .should(exist, ofSeconds(waitTime))
@@ -3040,10 +3047,12 @@ class PimTests {
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .scrollIntoView(false)
-        element(byXpath("//label[text()='Метки']/..//span[text()='${newLabelList[0]}']/../*[name()='svg']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
+        newLabelList.forEach {
+            element(byXpath("//label[text()='Метки']/..//span[text()='$it']/../*[name()='svg']"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+        }
         element(byXpath("//span[text()='Сохранить']/parent::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -3052,19 +3061,19 @@ class PimTests {
         element(byCssSelector("main table>tbody"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        //открываем поиск (т.к. теперь не знаем до какой строки листать)
         //переходим в ту же организацию
         if (rndOrganization == organizationTableStringCount){
             element(byCssSelector("body")).sendKeys(Keys.END)
-        } else { element(byCssSelector("tbody>tr[data-testid^='MUIDataTableBodyRow-']:nth-child(${rndOrganization + 1})"))
+        } else { element(byXpath("//table/tbody/tr[${rndOrganization + 1}]"))
             .scrollIntoView(false)
         }
         element(byText(organizationName.toString())).click()
         //убеждаемся, что нашей метки нет
-        element(byXpath("//label[text()='Метки']/..//span[@style='line-height: 1;']//span[text()='${newLabelList[0]}']"))
-            .shouldNot(exist, ofSeconds(waitTime))
-            .shouldNotBe(visible, ofSeconds(waitTime))
-
+        newLabelList.forEach {
+            element(byXpath("//label[text()='Метки']/..//span[@style='line-height: 1;']//span[text()='$it']"))
+                .shouldNot(exist, ofSeconds(waitTime))
+                .shouldNotBe(visible, ofSeconds(waitTime))
+        }
         tools.logoffTool()
 //        println("newLabel $newLabel")
 //        println("oldLabelsList $oldLabelsList")
@@ -3084,22 +3093,35 @@ class PimTests {
         element(byCssSelector("main table>tbody"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
+        //Собираем все ФИО, что бы не проверять организацию у которой руководитель не указан
+        tools.checkbox("Руководитель", true, waitTime)
+        val officialIdColumn = tools.numberOfColumn("Руководитель", waitTime)
+//        val officialIdElementList = elements(byXpath("//table/tbody/tr/td[$officialIdColumn][text()]"))
+//        val officialIdFIOList = mutableListOf<String>()
+//        officialIdElementList.forEach {
+//            officialIdFIOList.add(it.ownText)
+//        }
         //считаем строки и переходим в случайную службу
-        val organizationTableStringCount = elements(byCssSelector("tbody>tr[data-testid^='MUIDataTableBodyRow-']")).size
-        val rndOrganization = (1..organizationTableStringCount).random()
+        val organizationTableStringCount = elements(byXpath("//table/tbody/tr")).size
+        var rndOrganization: Int
+        do {
+            rndOrganization = (1..organizationTableStringCount).random()
+        } while (elements(byXpath("//table/tbody/tr[$rndOrganization]/td[$officialIdColumn][text()]")).size == 0)
         if (rndOrganization == organizationTableStringCount){
             element(byCssSelector("body")).sendKeys(Keys.END)
-        } else { element(byCssSelector("tbody>tr[data-testid^='MUIDataTableBodyRow-']:nth-child(${rndOrganization + 1})"))
+        } else { element(byXpath("//table/tbody/tr[${rndOrganization + 1}]"))
             .scrollIntoView(false)
-
         }
         //переходим в дежурную службу
-        element(byCssSelector("tbody>tr[data-testid^='MUIDataTableBodyRow-']:nth-child($rndOrganization)")).click()
+        element(byXpath("//table/tbody/tr[$rndOrganization]")).click()
         element(byCssSelector("form"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //element(byXpath("//div[@data-testid='officialId']/../..//span[@title='Перейти']/button"))
         //запоминаем ФИО руководителя
+        element(byXpath("//label[text()='Руководитель']/..//input"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
         val officialFIO = element(byXpath("//label[text()='Руководитель']/..//input")).getAttribute("value")
 //        val companyName = element(byXpath("//label[text()='Организация']/..//input")).getAttribute("value")
         val officialFIOList = officialFIO?.split(" ")
@@ -3108,6 +3130,7 @@ class PimTests {
         //label[text()='Руководитель']/..//input
         //кликаем на стрелку перехода к руководителю
         element(byXpath("//label[text()='Руководитель']/../../../..//span[@title='Перейти']/button"))
+//        element(byXpath("//label[text()='Руководитель']/ancestor::div[@class='MuiGrid-root MuiGrid-item MuiGrid-grid-sm-6']//span[@title='Перейти']/button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
@@ -3160,10 +3183,13 @@ class PimTests {
         //переключаемся на 500 записей на странице
         tools.stringsOnPage(500, waitTime)
         //выставляем отображение нужных столбцов
-        tools.checkbox("Наименование", true, waitTime)
-        tools.checkbox("Организация", true, waitTime)
+        tools.checkbox("Наименование;Организация", true, waitTime)
+        element(byXpath("//table/thead/tr/th//*[text()='Наименование']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+//        tools.checkbox("Организация", true, waitTime)
         //ждем появления выставленных столбцов (последнего из них)
-        element(byText("Организация"))
+        element(byXpath("//table/thead/tr/th//*[text()='Организация']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //определяем порядковые номера столбцов, которые положим в хэш
@@ -3192,8 +3218,8 @@ class PimTests {
         for (u in 1.. stringsCount){
 
 
-            hotLineList.add(element(byXpath("//tbody/tr[$u]/td[$hotlineColumnNumber]//*[text()]")).ownText)
-            organizationList.add(element(byXpath("//tbody/tr[$u]/td[$organizationColumnNumber]//*[text()]")).ownText)
+            hotLineList.add(element(byXpath("//tbody/tr[$u]/td[$hotlineColumnNumber][text()]")).ownText)
+            organizationList.add(element(byXpath("//tbody/tr[$u]/td[$organizationColumnNumber][text()]")).ownText)
 
 //            hotLineANDOrganization
 //                .put(element(byXpath("//tbody/tr[$u]/td[$hotlineColumnNumber]//*[text()]")).ownText,
@@ -3221,6 +3247,36 @@ class PimTests {
         element(byCssSelector("main table>tbody"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
+        val menuColumnNubber = tools.numberOfColumn(" ", waitTime)
+        //удалим потуги неудачных тестов
+        //воспользуемся поиском
+//        element(byXpath("//*[@name='search']/ancestor::button"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+//            .click()
+//        element(byCssSelector("input[placeholder^='ФИО']"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+//            .click()
+//        element(byCssSelector("input[placeholder^='ФИО']"))
+//            .sendKeys("N 0270 AutoTest", Keys.ENTER)
+//        Thread.sleep(1000)
+//        while (elements(byXpath("//table/tbody/tr//*[text()='Нет информации']")).size == 0){
+//            //открываем трехточечное меню
+//            element(byXpath("//table/tbody/tr[1]/td[$menuColumnNubber]//button"))
+//                .click()
+//            //удаляем
+//            element(byXpath("//span[text()='Удалить']/parent::button"))
+//                .should(exist, ofSeconds(waitTime))
+//                .shouldBe(visible, ofSeconds(waitTime))
+//                .click()
+//            //подтверждаем удаление
+//            element(byXpath("//div[@role='dialog']//span[text()='Удалить']/parent::button"))
+//                .should(exist, ofSeconds(waitTime))
+//                .shouldBe(visible, ofSeconds(waitTime))
+//                .click()
+//            Thread.sleep(500)
+//        }
         element(byXpath("//span[text()='Добавить новое']/parent::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -3258,7 +3314,10 @@ class PimTests {
         val companyId = element(byXpath("//input[@name='companyId']")).getAttribute("value")
         //Выбираем службу
         //т.к. служба зависима от организации, придется убедится в отсутствии элемента noOption
-        element(byXpath("//input[@name='hotlineId']")).click()
+        element(byXpath("//input[@name='hotlineId']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
         element(byXpath("//input[@name='hotlineId']")).sendKeys(hotLineList[randomAtridute])
         element(byXpath("//input[@name='hotlineId']")).sendKeys(Keys.DOWN, Keys.ENTER)
 //        var noOption = true
@@ -3284,14 +3343,17 @@ class PimTests {
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //воспользуемся поиском
-        element(byCssSelector("button[data-testid='Поиск-iconButton']")).click()
+        element(byXpath("//*[@name='search']/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
         element(byCssSelector("input[placeholder^='ФИО']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
         element(byCssSelector("input[placeholder^='ФИО']")).sendKeys(dateTime, Keys.ENTER)
         //открываем три точки
-        element(byXpath("//div[contains(text(),'$dateTime')]/parent::td/parent::tr/td[@data-colindex='11']//button"))
+        element(byXpath("//td[contains(text(),'$dateTime')]/parent::tr/td[$menuColumnNubber]//button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
@@ -3363,19 +3425,23 @@ class PimTests {
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
+        tools.menuNavigation("Справочники", "Должностные лица", waitTime)
         //ждем загрузки таблицы
         element(byCssSelector("main table>tbody"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //воспользуемся поиском
-        element(byCssSelector("button[data-testid='Поиск-iconButton']")).click()
+        element(byXpath("//*[@name='search']/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
         element(byCssSelector("input[placeholder^='ФИО']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
         element(byCssSelector("input[placeholder^='ФИО']")).sendKeys(dateTime, Keys.ENTER)
         //открываем три точки
-        element(byXpath("//div[contains(text(),'$dateTime')]/parent::td/parent::tr/td[@data-colindex='11']//button"))
+        element(byXpath("//td[contains(text(),'$dateTime')]/parent::tr/td[$menuColumnNubber]//button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
@@ -3389,9 +3455,11 @@ class PimTests {
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
-        element(byXpath("//tbody/tr//div[text()='Нет данных']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//table/tbody/tr"))
+            .shouldNot(exist, ofSeconds(waitTime))
+//        element(byXpath("//tbody/tr//div[text()='Нет данных']"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
 //        Thread.sleep(5000)
     }
 
