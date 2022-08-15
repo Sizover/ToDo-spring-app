@@ -1,6 +1,11 @@
-import com.codeborne.selenide.Condition.*
-import com.codeborne.selenide.Selectors.*
-import com.codeborne.selenide.Selenide.*
+
+import com.codeborne.selenide.Condition.exist
+import com.codeborne.selenide.Condition.visible
+import com.codeborne.selenide.Selectors.byCssSelector
+import com.codeborne.selenide.Selectors.byXpath
+import com.codeborne.selenide.Selenide.back
+import com.codeborne.selenide.Selenide.element
+import com.codeborne.selenide.Selenide.elements
 import org.openqa.selenium.Keys
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
@@ -174,18 +179,34 @@ class Removal {
         // и войдя в цикл без защитного счетчика
         while (noData == 0){
             //переходим в каждую первую карточку и меняем статус, на "Закрыта"
-            element(byXpath("//table/tbody/tr[1]")).click()
-            element(byXpath("(//span[text()]/parent::button)[2]"))
+            element(byXpath("//table/tbody/tr[1]"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
-            val statusIC = element(byXpath("(//span[text()]/parent::button)[2]//*[text()]")).ownText
-            element(byXpath("(//span[text()]/parent::button)[2]")).click()
+                .click()
+            Thread.sleep(500)
+//            element(byXpath("(//span[text()]/parent::button)[2]"))
+//                .should(exist, ofSeconds(waitTime))
+//                .shouldBe(visible, ofSeconds(waitTime))
+//            element(byXpath("//main/div[3]/div[1]/div[1]/div[2]//button[1]"))
+//                .should(exist, ofSeconds(waitTime))
+//                .shouldBe(visible, ofSeconds(waitTime))
+            element(byXpath("//div[contains(@class,'MuiBox-root')]/div/div/div[contains(@class,'MuiGrid-root')]//button[1]"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+            val statusIC = element(byXpath("//div[contains(@class,'MuiBox-root')]/div/div/div[contains(@class,'MuiGrid-root')]//button[1]//*[text()]"))
+                .ownText
+            element(byXpath("//div[contains(@class,'MuiBox-root')]/div/div/div[contains(@class,'MuiGrid-root')]//button[1]"))
+                .click()
+            Thread.sleep(500)
             element(byXpath("//span[text()='Закрыта']/parent::button"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
                 .click()
+            Thread.sleep(500)
             element(byXpath("(//span[text()='$statusIC']/parent::button)[@style]"))
                 .shouldNot(exist, ofSeconds(waitTime))
+            element(byXpath("(//span[text()='Закрыта']/parent::button)[@style]"))
+                .should(exist, ofSeconds(waitTime))
             back()
             element(byXpath("//table/tbody/tr[1]"))
                 .should(exist, ofSeconds(waitTime))

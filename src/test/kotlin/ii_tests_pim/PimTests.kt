@@ -370,14 +370,14 @@ class PimTests {
             .shouldBe(visible, ofSeconds(waitTime))
         //загружаем файлы проверяя их прикрепление
         element(byCssSelector("input#upload-file"))
-            .uploadFile(File("/home/isizov/Downloads/Sharash-montash_pasport.pdf"))
+            .uploadFile(File("/home/isizov/Метаданные/AutoTest.webp"))
         //Thread.sleep(50000)
         element(byCssSelector("div[style='padding: 5px;'] > div:first-child"))
-            .shouldHave(text("Sharash-montash_pasport.pdf"), ofSeconds(waitTime))
+            .shouldHave(text("AutoTest.webp"), ofSeconds(waitTime))
         element(byCssSelector("input#upload-file"))
-            .uploadFile(File("/home/isizov/Pictures/post_5a9d4ef332426-1.jpg"))
+            .uploadFile(File("/home/isizov/Метаданные/Тестовый файл_.docx"))
         element(byCssSelector("div[style='padding: 5px;'] > div:first-child"))
-            .shouldHave(text("post_5a9d4ef332426-1.jpg"), ofSeconds(waitTime))
+            .shouldHave(text("Тестовый файл_.docx"), ofSeconds(waitTime))
 
         tools.logoffTool()
 
@@ -388,9 +388,8 @@ class PimTests {
         tools.logonTool()
         //кликаем по иконке происшествий в боковом меню
         //кликаем по иконке происшествий в боковом меню
-        element(byXpath("//div[@data-testid='app-menu-Происшествия']/../..")).click()
-        //Переходим в "Список происшетвий"
-        element(byXpath("//div[@data-testid='app-menu-Список происшествий']/../..")).click()
+        //Переходим в "Список происшетвий" )
+        tools.menuNavigation("Происшествия", "Список происшествий", waitTime)
         //добавляем в таблицу происшествий столбец "Описание"
         tools.checkbox("Описание", true, waitTime)
 //        //Открываем выпадающий список
@@ -413,10 +412,10 @@ class PimTests {
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //Прикрепляем файл
-        element(byCssSelector("input#upload-file")).uploadFile(File("/home/isizov/Documents/AutoTest.odt"))
+        element(byCssSelector("input#upload-file")).uploadFile(File("/home/isizov/Метаданные/test.pdf"))
         //Thread.sleep(50000)
         element(byCssSelector("div[style='padding: 5px;'] > div:first-child"))
-            .shouldHave(text("AutoTest.odt"), ofSeconds(waitTime))
+            .shouldHave(text("test.pdf"), ofSeconds(waitTime))
 
         tools.logoffTool()
     }
@@ -1025,12 +1024,29 @@ class PimTests {
         element(byCssSelector("table"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
+        //открываем фильтр "Типы происшествий"
+        element(byXpath("//span[text()='Типы происшествий']/..")).click()
+        element(byCssSelector("div[tabindex='-1'] div[role='combobox']")).should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime)).click()
+        //Выбираем "Консультации"
+        element(byCssSelector("ol label[title='П Повседневные'] span[role='checkbox']")).click()
+        //Кликаем "В пустоту"
+        element(byCssSelector("body > div:nth-child(9) > div:nth-child(1)")).click()
+        //Применить
+        element(byXpath("//span[text()='Применить']/..")).click()
+        //Дожидаемся применения фильтра
+        Thread.sleep(500)
+        element(byXpath("//span[text()='Типы происшествий']/button"))
+            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
+        element(byCssSelector("button[style='width: 250px; min-width: 250px; display: flex; justify-content: space-between;']"))
+            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
         //т.к. из за библиотеки построения таблицы, элементы скрытые за прокруткой вниз,
         // с точки зрения драйвера браузера станут кликабельны раньше чем на самом деле до них докрутит прокрутка,
         // сразу опускаемся вниз страницы (с прокруткой вверх будет аналогично, поэтому следующая строка не канает)
         //element(byCssSelector("table[role='grid']")).sendKeys(Keys.END)
         //Thread.sleep(5000)
         //Выбираем случайную КП
+
         val rndA = (1..20).random()
         //rndA = 0
         if (rndA == 20) {
@@ -2591,6 +2607,9 @@ class PimTests {
                         .should(exist, ofSeconds(waitTime))
                         .shouldBe(visible, ofSeconds(waitTime))
                     hierarchy = true
+                    if (dicts == 10){
+                        allRecordCountUse = elements(byXpath("//tbody/tr")).size
+                    }
                 }
                 //проверяем существует ли заголовок столбца, и если существует, то:
 //                if (elements(byXpath("//table/thead/tr/th[$q]//*[text()]")).size == 1){
@@ -2601,13 +2620,13 @@ class PimTests {
                     searchHintList?.forEach { it ->
     //                    println("$i searchHintList $it")
                         //если заголовок столбца совпал с подсказкой, то вбиваем значение этого столбца из каждой строки в список из которого выберем случайное значение для поиска, ждем что нижний счетчик строк будет строго меньше исходного
-//                        println("i = $dicts columnName = $columnName подсказка = $it")
+                        println("i = $dicts columnName = $columnName подсказка = $it")
                         if (columnName.contains(it)
                             || (columnName == "Телефонный код" && it == "Тел.код")
                             || (columnName == "Метка" && it == "Имя метки")
                             || (columnName == "№" && it == "Номер пункта")
                         ) {
-//                            println("i = $dicts true columnName = $columnName подсказка = $it")
+                            println("i = $dicts true columnName = $columnName подсказка = $it")
                             //искомое значение определяем случайно, среди имеющихся но с типами происшествий и откидыванием пустых значений других справочников придется возится
                             var maxRandom: Int = 1
                             var randomColumnValue = 0
@@ -2706,11 +2725,14 @@ class PimTests {
                                 nowRecordCountUse = nowRecordCountNotUse[0].toInt()
                             } else {
                                 nowRecordCountUse = elements(byXpath("//tbody/tr")).size
+                                Assertions.assertTrue(nowRecordCountUse != 0)
                             }
     //                        println("searchValue $searchValue")
     //                        println("allRecordCountUse $allRecordCountUse")
     //                        println("nowRecordCountUse $nowRecordCountUse")
 //                            Assertions.assertTrue(allRecordCountUse > nowRecordCountUse)
+                            println("allRecordCountUse $allRecordCountUse")
+                            println("nowRecordCountUse $nowRecordCountUse")
                             Assertions.assertTrue(allRecordCountUse > nowRecordCountUse)
 //                            if (dicts == 10) {
 //                                Assertions.assertTrue(nowRecordCountUse == 1)
@@ -2859,7 +2881,7 @@ class PimTests {
 
     }
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
+//    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
     fun `N 0240`(){
         //A.3.30 Проверка наличия справочников с иерархической системой классификации
         tools.logonTool()
@@ -2881,6 +2903,34 @@ class PimTests {
         val stringCountAfter = elements(byCssSelector("tbody>tr[data-testid^='MUIDataTableBodyRow-']")).size
         //сравниваем число строк
         Assertions.assertTrue(stringCountAfter > stringCountBefore)
+        tools.logoffTool()
+    }
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
+    fun `N 0241`(){
+        //иерархических справосников стало больше, проверяем все
+        tools.logonTool()
+        for (dicts in 1..10) {
+            //кликаем по иконке справочников
+            element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul")).click()
+            //переходим в каждый справочник
+            element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul//div/ul[$dicts]")).click()
+            //ждем загрузки таблицы
+            element(byCssSelector("main table>tbody"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+            if (elements(byXpath("//table/thead/tr[1]/th[1]//button")).size == 1
+                && elements(byXpath("//table/thead/tr[1]/th[1]//*[text()]")).size ==0
+            ){
+                val stringCount = elements(byXpath("//table/tbody/tr")).size
+                element(byXpath("//table/thead/tr[1]/th[1]//button")).click()
+                element(byXpath("//table/thead/tr[1]/th[1]//*[@name='arrowDown']"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                val  newStringCount = elements(byXpath("//table/tbody/tr")).size
+                Assertions.assertTrue(stringCount < newStringCount)
+
+            }
+        }
         tools.logoffTool()
     }
 

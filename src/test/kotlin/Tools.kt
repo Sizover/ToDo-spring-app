@@ -230,9 +230,9 @@ class Tools {
                 }
                 element(byXpath("//span[text()='$it']/parent::label//*[name()='svg'][@name]"))
                     .shouldHave(attribute("name", checkboxTrue), ofSeconds(waitTime))
-                element(byXpath("//table/thead/tr/th//*[text()='$it']"))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
+//                element(byXpath("//table/thead/tr/th//*[text()='$it']"))
+//                    .should(exist, ofSeconds(waitTime))
+//                    .shouldBe(visible, ofSeconds(waitTime))
             }
         }
 //        element(byCssSelector("button[aria-label='Close']")).click()

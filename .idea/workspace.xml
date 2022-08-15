@@ -5,12 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="91c598e0-d724-4c0e-9c0f-45d8884c7de4" name="#7 Переделка тестов, под новый табличный и иерархический движок" comment="#7 Переделка тестов, под новый табличный и иерархический движок">
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/kotlin/JustTests.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/JustTests.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/kotlin/Removal.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/Removal.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/kotlin/Retry.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/Retry.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/kotlin/StatusTests.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/StatusTests.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/kotlin/Tools.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/Tools.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/kotlin/ii_tests_pim/Bufer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/ii_tests_pim/Bufer.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/kotlin/ii_tests_pim/PimTests.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/ii_tests_pim/PimTests.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/testng.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/testng.xml" afterDir="false" />
     </list>
     <list id="ca149d85-a975-4ce8-a892-1395e65d3c80" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -88,7 +90,7 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
     "last.edited.regexp": "Sample Text",
-    "last_opened_file_path": "/home/isizov/projects/testing-e2e",
+    "last_opened_file_path": "/home/isizov/projects/testing-e2e/src/test/testng.xml",
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.0",
@@ -106,8 +108,8 @@
       <recent name="" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.StatusTests.S 0010">
-    <configuration name="Bufer" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+  <component name="RunManager" selected="Gradle.PimTests.N 0160">
+    <configuration name="JustTests.T 0010" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -120,7 +122,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;ii_tests_pim.Bufer&quot;" />
+            <option value="&quot;JustTests.T 0010&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -130,7 +132,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="PimTests.N 0250" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="PimTests.N 0160" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -143,7 +145,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;ii_tests_pim.PimTests.N 0250&quot;" />
+            <option value="&quot;ii_tests_pim.PimTests.N 0160&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -153,7 +155,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="PimTests.N 0260" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="PimTests.N 0170" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -166,7 +168,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;ii_tests_pim.PimTests.N 0260&quot;" />
+            <option value="&quot;ii_tests_pim.PimTests.N 0170&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -176,7 +178,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="PimTests.N 0270" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="Removal.N 9998" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -189,7 +191,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;ii_tests_pim.PimTests.N 0270&quot;" />
+            <option value="&quot;Removal.N 9998&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -199,7 +201,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="StatusTests.S 0010" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="Removal.N 9999" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -212,7 +214,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;StatusTests.S 0010&quot;" />
+            <option value="&quot;Removal.N 9999&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -222,13 +224,38 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
+    <configuration name="Run_1" type="TestNG">
+      <shortenClasspath name="NONE" />
+      <option name="SUITE_NAME" value="$PROJECT_DIR$/src/test/testng.xml" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="GROUP_NAME" value="" />
+      <option name="TEST_OBJECT" value="SUITE" />
+      <option name="PARAMETERS" value="" />
+      <option name="OUTPUT_DIRECTORY" value="" />
+      <option name="PROPERTIES_FILE" value="" />
+      <properties />
+      <listeners />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Gradle.JustTests.T 0010" />
+      <item itemvalue="Gradle.PimTests.N 0160" />
+      <item itemvalue="Gradle.PimTests.N 0170" />
+      <item itemvalue="Gradle.Removal.N 9998" />
+      <item itemvalue="Gradle.Removal.N 9999" />
+      <item itemvalue="TestNG.Run_1" />
+    </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.StatusTests.S 0010" />
-        <item itemvalue="Gradle.PimTests.N 0270" />
-        <item itemvalue="Gradle.Bufer" />
-        <item itemvalue="Gradle.PimTests.N 0260" />
-        <item itemvalue="Gradle.PimTests.N 0250" />
+        <item itemvalue="Gradle.PimTests.N 0160" />
+        <item itemvalue="Gradle.JustTests.T 0010" />
+        <item itemvalue="Gradle.PimTests.N 0170" />
+        <item itemvalue="Gradle.Removal.N 9999" />
+        <item itemvalue="Gradle.Removal.N 9998" />
       </list>
     </recent_temporary>
   </component>
@@ -268,9 +295,9 @@
       <option name="presentableId" value="#7" />
       <option name="project" value="Тестирование - сквозные автотесты" />
       <option name="type" value="BUG" />
-      <updated>1660229395328</updated>
+      <updated>1660319653550</updated>
       <workItem from="1660212118333" duration="2013000" />
-      <workItem from="1660217893289" duration="30078000" />
+      <workItem from="1660217893289" duration="43918000" />
     </task>
     <option name="localTasksCounter" value="3" />
     <option name="clearContext" value="false" />

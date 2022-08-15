@@ -1,9 +1,13 @@
 
 
 
-import com.codeborne.selenide.Condition.*
-import com.codeborne.selenide.Selectors.*
-import com.codeborne.selenide.Selenide.*
+import com.codeborne.selenide.Condition.exist
+import com.codeborne.selenide.Condition.text
+import com.codeborne.selenide.Condition.visible
+import com.codeborne.selenide.Selectors.byCssSelector
+import com.codeborne.selenide.Selectors.byXpath
+import com.codeborne.selenide.Selenide.element
+import com.codeborne.selenide.Selenide.elements
 import org.openqa.selenium.Keys
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
@@ -23,7 +27,7 @@ class JustTests {
         tools.logonTool()
         tools.menuNavigation("Справочники", "Метки", waitTime)
         //воспользуемся поиском, что бы найти созданную метку не удаленную в упавший проход
-        element(byCssSelector("button[data-testid='Поиск-iconButton']"))
+        element(byXpath("//*[@name='search']/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
@@ -201,7 +205,7 @@ class JustTests {
             .shouldBe(visible, ofSeconds(waitTime))
     }
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
+//    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
     fun `T 0020`() {
         //создадим пару МО, один оставив навсегда, а второй создавая и удаляя каждый раз
         val moATItWas = mutableListOf<String>()
