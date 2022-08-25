@@ -36,11 +36,13 @@ class JustTests {
             .shouldBe(visible, ofSeconds(waitTime))
         element(byCssSelector("input[placeholder]")).sendKeys("AutoTest", Keys.ENTER)
         Thread.sleep(500)
-        if (elements(byXpath("//tbody/tr//div[text()='Нет данных']")).size == 0){
-            while (elements(byXpath("//tbody/tr//div[text()='Нет данных']")).size == 0) {
+        val menuColumn = elements(byXpath("//thead/tr/th")).size
+//        val nameColumn = tools.numberOfColumn("Метка", waitTime)
+        if (elements(byXpath("//tbody/tr//*[text()='Нет данных']")).size == 0){
+            while (elements(byXpath("//tbody/tr//*[text()='Нет данных']")).size == 0) {
                 val removedLadel = element(byXpath("(//tbody/tr/td[1]//*[text()])[last()]")).ownText.toString()
                 //открываем трехточечное меню
-                element(byXpath("(//tbody/tr//button)[last()]")).click()
+                element(byXpath("(//tbody/tr/td[$menuColumn]//button)[last()]")).click()
                 //удаляем метку
                 element(byXpath("//span[text()='Удалить']/parent::button"))
                     .should(exist, ofSeconds(waitTime))
@@ -51,11 +53,11 @@ class JustTests {
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
-                element(byXpath("//tbody/tr/td[1]//*[text()='$removedLadel']"))
+                element(byXpath("//tbody/tr/td//*[text()='$removedLadel']"))
                     .shouldNot(exist, ofSeconds(waitTime))
             }
             //убеждаемся что удалили
-            element(byXpath("//tbody/tr//div[text()='Нет данных']"))
+            element(byXpath("//tbody/tr//*[text()='Нет данных']"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
         }
@@ -102,7 +104,7 @@ class JustTests {
             element(byXpath("//tr/td//*[contains(text(),'$labelSample')]"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
-            element(byXpath("//tr/td//*[text()='Метка \"$labelSample\" создана автотестом и должна быть удалена им же']"))
+            element(byXpath("//tr/td[text()='Метка \"$labelSample\" создана автотестом и должна быть удалена им же']"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
         }
@@ -113,16 +115,16 @@ class JustTests {
         tools.menuNavigation("Происшествия","Создать карточку", waitTime)
         tools.firstHalfIC("T 0010",date.toString(),dateTime.toString(),waitTime)
         element(byXpath("//span[text()='Создать карточку']/parent::button")).click()
-        tools.inputRandom("incidentTypeId")
+        tools.inputRandomNew("incidentTypeId-textfield", false, waitTime)
         //добавляем метку при создании КП
-        tools.inputRandom("labels")
+        tools.inputRandomNew("labelsId-textfield", true, waitTime)
         var createLabel = element(byXpath("//label[text()='Метки']/..//span[@style='line-height: 1;'][1]//span[text()]")).ownText
         while (labelListName.contains(createLabel)){
             element(byXpath("//label[text()='Метки']/..//span[text()='$createLabel']/../*[name()='svg']"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
                 .click()
-            tools.inputRandom("labels")
+            tools.inputRandomNew("labelsId-textfield", true, waitTime)
             createLabel = element(byXpath("//label[text()='Метки']/..//span[@style='line-height: 1;'][1]//span[text()]")).ownText
         }
         element(byXpath("//span[text()='Сохранить карточку']/parent::button")).click()

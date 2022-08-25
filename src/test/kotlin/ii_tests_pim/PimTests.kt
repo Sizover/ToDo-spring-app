@@ -353,7 +353,7 @@ class PimTests {
         //регистрируем обращение
         element(byXpath("//span[text()='Создать карточку']/parent::button")).click()
         //выбираем тип происшествия
-        element(byCssSelector("input#incidentTypeId")).setValue("П.5.1.5 Auto-Test").sendKeys(Keys.DOWN, Keys.RETURN)
+        element(byCssSelector("input#incidentTypeId-autocomplete")).setValue("П.5.1.5 Auto-Test").sendKeys(Keys.DOWN, Keys.RETURN)
         //Создаем карточку
         element(byXpath("//span[text()='Сохранить карточку']/..")).click()
         //Убеждаемся, что нам загрузило созданную карточку
@@ -495,7 +495,7 @@ class PimTests {
         //регистрируем обращение
         element(byXpath("//span[text()='Создать карточку']/parent::button")).click()
         //выбираем тип происшествия
-        element(byCssSelector("input#incidentTypeId")).setValue("П.5.1.5 Auto-Test").sendKeys(Keys.DOWN, Keys.ENTER)
+        element(byCssSelector("input#incidentTypeId-autocomplete")).setValue("П.5.1.5 Auto-Test").sendKeys(Keys.DOWN, Keys.ENTER)
         //Создаем карточку
         element(byCssSelector("div.MuiGrid-root.MuiGrid-item > button[type='submit']")).click()
         //Убеждаемся, что нам загрузило созданную карточку
@@ -664,28 +664,50 @@ class PimTests {
         elements(byXpath("//table/tbody/tr")).shouldHave(
             CollectionCondition.sizeGreaterThanOrEqual(1))
         //открываем фильтр "Типы происшествий"
-        element(byXpath("//span[text()='Типы происшествий']/..")).click()
-        element(byCssSelector("div[tabindex='-1'] div[role='combobox']")).should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime)).click()
+        element(byXpath("//*[text()='Типы происшествий']/ancestor::button")).click()
+        element(byXpath("//label[text()='Типы происшествий']/..//input[@id='incidentTypeId-autocomplete']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
         //Выбираем "Консультации"
-        element(byCssSelector("ol label[title='К Консультации'] span[role='checkbox']")).click()
+        element(byXpath("//label[text()='Типы происшествий']/..//input[@id='incidentTypeId-autocomplete']"))
+            .sendKeys("К.1.1.1 Консультации")
+        element(byXpath("//label[text()='Типы происшествий']/..//input[@id='incidentTypeId-autocomplete']"))
+            .sendKeys(Keys.DOWN, Keys.ENTER)
+        repeat(20){
+            element(byXpath("//label[text()='Типы происшествий']/..//input[@id='incidentTypeId-autocomplete']"))
+                .sendKeys(Keys.BACK_SPACE)
+        }
+//        element(byCssSelector("ol label[title='К Консультации'] span[role='checkbox']")).click()
         //Выбираем "Ложные"
-        element(byCssSelector("ol label[title='Л Ложные'] span[role='checkbox']")).click()
+        element(byXpath("//label[text()='Типы происшествий']/..//input[@id='incidentTypeId-autocomplete']"))
+            .sendKeys("Л.1.1 Ложные")
+        element(byXpath("//label[text()='Типы происшествий']/..//input[@id='incidentTypeId-autocomplete']"))
+            .sendKeys(Keys.DOWN, Keys.ENTER)
+        repeat(12){
+            element(byXpath("//label[text()='Типы происшествий']/..//input[@id='incidentTypeId-autocomplete']"))
+                .sendKeys(Keys.BACK_SPACE)
+        }
+//        element(byCssSelector("ol label[title='Л Ложные'] span[role='checkbox']")).click()
         //Кликаем "В пустоту"
-        element(byCssSelector("body > div:nth-child(9) > div:nth-child(1)")).click()
+//        element(byCssSelector("body > div:nth-child(9) > div:nth-child(1)")).click()
         //Применить
-        element(byXpath("//span[text()='Применить']/..")).click()
+        element(byXpath("//*[text()='Применить']/ancestor::button")).click()
         //Дожидаемся применения фильтра
         Thread.sleep(500)
         element(byXpath("//span[text()='Типы происшествий']/button"))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
         element(byCssSelector("button[style='width: 250px; min-width: 250px; display: flex; justify-content: space-between;']"))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-        elements(byText("Ложные")).shouldHave(CollectionCondition.sizeGreaterThanOrEqual(0))
-        elements(byText("Консультации")).shouldHave(CollectionCondition.sizeGreaterThanOrEqual(0))
+//        elements(byText("Ложные")).shouldHave(CollectionCondition.sizeGreaterThanOrEqual(0))
+//        elements(byText("Консультации")).shouldHave(CollectionCondition.sizeGreaterThanOrEqual(0))
+//        tools.checkbox("Группа", false, waitTime)
+        tools.checkbox("Подгруппа", true, waitTime)
+        var targetColumn = tools.numberOfColumn("Подгруппа", waitTime)
+        Thread.sleep(500)
         var intA: Int = elements(byXpath("//table/tbody/tr")).size
-        var intB: Int = elements(byText("Ложные")).size
-        var intC: Int = elements(byText("Консультации")).size
+        var intB: Int = elements(byXpath("//table/tbody/tr/td[$targetColumn][text()='Ложные']")).size
+        var intC: Int = elements(byXpath("//table/tbody/tr/td[$targetColumn][text()='Консультации']")).size
         var intS: Int = intB + intC
         //println("$intA" + " A")
         //println("$intB" + " B")
@@ -696,6 +718,7 @@ class PimTests {
         element(byXpath("//span[text()='Типы происшествий']/button")).click()
         /////////////////////////////////////////////////////////////////////////////////////////
         //Открываем фильтр "Статусы"
+        tools.checkbox("Статус", true, waitTime)
         element(byXpath("//span[text()='Статусы']/..")).click()
         element(byCssSelector("div[tabindex='-1'] div[role='combobox']")).should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime)).click()
@@ -715,12 +738,17 @@ class PimTests {
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
         element(byCssSelector("button[style='width: 130px; min-width: 130px; display: flex; justify-content: space-between;']"))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-        elements(byText("В обработке")).shouldHave(CollectionCondition.sizeGreaterThanOrEqual(0))
-        elements(byText("Реагирование")).shouldHave(CollectionCondition.sizeGreaterThanOrEqual(0))
+//        elements(byText("В обработке")).shouldHave(CollectionCondition.sizeGreaterThanOrEqual(0))
+//        elements(byText("Реагирование")).shouldHave(CollectionCondition.sizeGreaterThanOrEqual(0))
+        targetColumn = tools.numberOfColumn("Статус", waitTime)
         intA = elements(byXpath("//table/tbody/tr")).size
-        intB = elements(byText("В обработке")).size
-        intC = elements(byText("Реагирование")).size
+        intB = elements(byXpath("//tbody/tr/td[$targetColumn]//*[text()='В обработке']")).size
+        intC = elements(byXpath("//tbody/tr/td[$targetColumn]//*[text()='Реагирование']")).size
         intS = intB + intC
+//        println("intA $intA")
+//        println("intB $intB")
+//        println("intC $intC")
+//        println("intS $intS")
         Assertions.assertTrue(intS == intA)
         //Очищаем фильтр "Статусы"
         element(byXpath("//span[text()='Статусы']/button")).click()
@@ -758,13 +786,15 @@ class PimTests {
         Thread.sleep(2000)
         if (filterLevels){
             element(byXpath("//span[text()='Уровни']/button"))
-                .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))}
+                .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
+        }
         tools.checkbox("Уровень происшествия", true, waitTime)
+        targetColumn = tools.numberOfColumn("Уровень происшествия", waitTime)
         Thread.sleep(500)
         intA = elements(byXpath("//table/tbody/tr")).size
-        intB = elements(byText("Угроза ЧС")).size
+        intB = elements(byXpath("//tbody/tr/td[$targetColumn][text()='Угроза ЧС']")).size
         //intC = elements(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-'][style]")).size
-        intC = elements(byText("ЧС")).size
+        intC = elements(byXpath("//tbody/tr/td[$targetColumn][text()='ЧС']")).size
         intS = intB + intC
         Assertions.assertTrue(intS == intA)
         //Очищаем фильтр Уровни
@@ -786,7 +816,7 @@ class PimTests {
         /////////////////////////////////////////////////////////////////////////////////////////
         //Открываем фильтр "Источники"
         tools.checkbox("Источник", true, waitTime)
-        val targetColumn = tools.numberOfColumn("Источник", waitTime)
+        targetColumn = tools.numberOfColumn("Источник", waitTime)
         element(byXpath("//span[text()='Источники']/..")).click()
         element(byCssSelector("div[tabindex='-1'] div[role='combobox']"))
             .should(exist, ofSeconds(waitTime))
@@ -891,7 +921,7 @@ class PimTests {
         //регистрируем обращение
         element(byXpath("//span[text()='Создать карточку']/parent::button")).click()
         //выбираем тип происшествия
-        element(byCssSelector("input#incidentTypeId")).setValue("П.5.1.5 Auto-Test").sendKeys(Keys.DOWN, Keys.ENTER)
+        element(byCssSelector("input#incidentTypeId-autocomplete")).setValue("П.5.1.5 Auto-Test").sendKeys(Keys.DOWN, Keys.ENTER)
         //Создаем карточку
         element(byXpath("//span[text()='Сохранить карточку']/parent::button")).click()
         //Убеждаемся, что нам загрузило созданную карточку
@@ -1025,21 +1055,29 @@ class PimTests {
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //открываем фильтр "Типы происшествий"
-        element(byXpath("//span[text()='Типы происшествий']/..")).click()
-        element(byCssSelector("div[tabindex='-1'] div[role='combobox']")).should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime)).click()
-        //Выбираем "Консультации"
-        element(byCssSelector("ol label[title='П Повседневные'] span[role='checkbox']")).click()
-        //Кликаем "В пустоту"
-        element(byCssSelector("body > div:nth-child(9) > div:nth-child(1)")).click()
-        //Применить
-        element(byXpath("//span[text()='Применить']/..")).click()
+        element(byXpath("//*[text()='Типы происшествий']/ancestor::button")).click()
+        element(byXpath("//label[text()='Типы происшествий']/..//input[@id='incidentTypeId-autocomplete']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        //Выбираем "Повседневные"
+        element(byXpath("//label[text()='Типы происшествий']/..//input[@id='incidentTypeId-autocomplete']"))
+            .sendKeys("П Повседневные")
+        element(byXpath("//label[text()='Типы происшествий']/..//input[@id='incidentTypeId-autocomplete']"))
+            .sendKeys(Keys.DOWN, Keys.ENTER)
+        repeat(14){
+            element(byXpath("//label[text()='Типы происшествий']/..//input[@id='incidentTypeId-autocomplete']"))
+                .sendKeys(Keys.BACK_SPACE)
+        }
+        element(byXpath("//*[text()='Применить']/ancestor::button")).click()
         //Дожидаемся применения фильтра
         Thread.sleep(500)
         element(byXpath("//span[text()='Типы происшествий']/button"))
-            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
         element(byCssSelector("button[style='width: 250px; min-width: 250px; display: flex; justify-content: space-between;']"))
-            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
         //т.к. из за библиотеки построения таблицы, элементы скрытые за прокруткой вниз,
         // с точки зрения драйвера браузера станут кликабельны раньше чем на самом деле до них докрутит прокрутка,
         // сразу опускаемся вниз страницы (с прокруткой вверх будет аналогично, поэтому следующая строка не канает)
@@ -1094,7 +1132,7 @@ class PimTests {
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 0170`() {
+    fun `N 0112`() {
         //A.3.19 Убедиться на стороне Системы-112 в наличии возможности назначать   карточку на ЕЦОР  (КИАП) из Системы-112
         //A.3.20 Прием карточки из Системы-112
         dateTime = LocalDateTime.now().toString()
@@ -1327,78 +1365,85 @@ class PimTests {
         //создаем отчет
         element(byXpath("//span[text()='Создать']/..")).click()
         //переходим в созданный отчет
-        element(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']"))
+        element(byXpath("//tbody/tr/td"))
             .shouldHave(text("A.3.23 Проверка формирования отчетов по обращениям $dateTime отсчет"))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime)).click()
         //проверяем и запоминаем общее количество обращений
-        val all = element(byXpath("//td[text()='Общее количество вызовов (обращений):']/following-sibling::td"))
-            .ownText.toInt()
+        val tableSelector = "//table/tbody/tr/td[text()='%s']/following-sibling::td"
+        val all = element(byXpath(tableSelector.format("Общее количество вызовов (обращений):"))).ownText.toInt()
         //ложных
-        val fal = element(byXpath("//td[text()='Ложных']/following-sibling::td"))
-            .ownText.toInt()
+        val fal = element(byXpath(tableSelector.format("Ложных"))).ownText.toInt()
         //консультаций
-        val con = element(byXpath("//td[text()='Консультаций']/following-sibling::td"))
-            .ownText.toInt()
+        val con = element(byXpath(tableSelector.format("Консультаций"))).ownText.toInt()
         //по происшествиям
-        val inc = element(byXpath("//td[text()='По происшествиям']/following-sibling::td"))
-            .ownText.toInt()
+        val inc = element(byXpath(tableSelector.format("По происшествиям"))).ownText.toInt()
         var falD = 0
         var conD =0
         var incD = 0
         //сверим цветастую табличку с диаграммой
+        val diagramSelector = "g.recharts-layer.recharts-pie-labels>g:nth-child(%d)>text"
         //если вобще есть диаграмма
         if (all > 0){
             //ложные, если они есть
             if (elements(byCssSelector("text[name='Ложных']")).size == 0){
-                falD = element(byCssSelector("g.recharts-layer.recharts-pie-labels>g:nth-child(1)>text")).ownText.toInt()
+                falD = element(byCssSelector(diagramSelector.format(1))).ownText.toInt()
                 Assertions.assertTrue(fal == falD)
             }
             //консультации, если они есть
             if (elements(byCssSelector("text[name='Консультаций']")).size == 0){
-                conD = element(byCssSelector("g.recharts-layer.recharts-pie-labels>g:nth-child(2)>text")).ownText.toInt()
+                conD = element(byCssSelector(diagramSelector.format(2))).ownText.toInt()
                 Assertions.assertTrue(con == conD)
             }
             //происшествия, если они есть
             if (elements(byCssSelector("text[name='По происшествиям']")).size == 0){
-                incD = element(byCssSelector("g.recharts-layer.recharts-pie-labels>g:nth-child(3)>text")).ownText.toInt()
+                incD = element(byCssSelector(diagramSelector.format(3))).ownText.toInt()
                 Assertions.assertTrue(inc == incD)
             }
         }
         //Сверяем, но возможна ситуация, когда отношение количества каких-то обращений к остальным, мало и обращения есть, а цифры на диаграмме нету, решать будем, когда появится такой отчет
-        //рассматриваем таблицу источников
-        //всего записей в смысле в графе всего
-        var tableAll = 0
+        //рассматриваем таблицу источников (которой может и не существовать)
+        var tableAll =0
+        var tableVideo = 0
+        var tableAIS = 0
+        var tableSensor = 0
+        var tablePortal = 0
+        var tableUIV = 0
 //            element(byCssSelector("tr[data-testid='MUIDataTableBodyRow-0']>td[data-colindex='1']>div")).ownText.toInt()
         //println(tableAll)
-        //Видеоаналитика из общего числа
-        var tableVideo = 0
-        //Внешняя АИС из общего числа
-        var tableAIS = 0
-        //Датчик из общего числа
-        var tableSensor = 0
-        //Портал населения из общего числа
-        var tablePortal = 0
-        //Портал УИВ из общего числа
-        var tableUIV = 0
-        //служебный счетчик, всего строк
-        var tableStringCount = elements(byCssSelector("tr[id^='MUIDataTableBodyRow-']")).size
-        //запоминаем те значения, что будем создавать
-        for (y in 0 until tableStringCount) {
-            if (y!=1){
-            val st: String =
-                element(byCssSelector("tr[data-testid='MUIDataTableBodyRow-$y']>td[data-colindex='0']>div")).ownText
-            val va: Int =
-                element(byCssSelector("tr[data-testid='MUIDataTableBodyRow-$y']>td[data-colindex='1']>div")).ownText.toInt()
-            when (st) {
-                "Всего" -> {tableAll = va}
-                "Видеоаналитика" -> {tableVideo = va}
-                "Внешняя АИС" -> {tableAIS = va}
-                "Датчик" -> {tableSensor = va}
-                "Портал населения" -> {tablePortal = va}
-                "Портал УИВ" -> {tableUIV = va}
-            }
-            }
+        if (elements(byXpath("//table/tbody/tr[1]//*[text()='Нет данных']")).size == 0) {
+            //всего записей в смысле в графе всего
+            tableAll = element(byXpath(tableSelector.format("Всего"))).ownText.toInt()
+            //Видеоаналитика из общего числа
+            tableVideo = element(byXpath(tableSelector.format("Видеоаналитика"))).ownText.toInt()
+            //Внешняя АИС из общего числа
+            tableAIS = element(byXpath(tableSelector.format("Внешняя АИС"))).ownText.toInt()
+            //Датчик из общего числа
+            tableSensor = element(byXpath(tableSelector.format("Датчик"))).ownText.toInt()
+            //Портал населения из общего числа
+            tablePortal = element(byXpath(tableSelector.format("Портал населения"))).ownText.toInt()
+            //Портал УИВ из общего числа
+            tableUIV = element(byXpath(tableSelector.format("Портал УИВ"))).ownText.toInt()
         }
+
+        //служебный счетчик, всего строк
+//        var tableStringCount = elements(byCssSelector("tr[id^='MUIDataTableBodyRow-']")).size
+//        //запоминаем те значения, что будем создавать
+//        for (y in 0 until tableStringCount) {
+//            if (y!=1){
+//            val st: String =
+//                element(byCssSelector("tr[data-testid='MUIDataTableBodyRow-$y']>td[data-colindex='0']>div")).ownText
+//            val va: Int =
+//                element(byCssSelector("tr[data-testid='MUIDataTableBodyRow-$y']>td[data-colindex='1']>div")).ownText.toInt()
+//            when (st) {
+//                "Всего" -> {tableAll = va}
+//                "Видеоаналитика" -> {tableVideo = va}
+//                "Внешняя АИС" -> {tableAIS = va}
+//                "Датчик" -> {tableSensor = va}
+//                "Портал населения" -> {tablePortal = va}
+//                "Портал УИВ" -> {tableUIV = va}
+//            }
+//            }
+//        }
 //        println("all $all")
 //        println("fal $fal")
 //        println("con $con")
@@ -1465,7 +1510,7 @@ class PimTests {
                 //регистрируем обращение
                 element(byXpath("//span[text()='Создать карточку']/parent::button")).click()
                 //выбираем тип происшествия
-                element(byCssSelector("input#incidentTypeId")).setValue("П.5.1.5 Auto-Test")
+                element(byCssSelector("input#incidentTypeId-autocomplete")).setValue("П.5.1.5 Auto-Test")
                     .sendKeys(Keys.DOWN, Keys.ENTER)
                 //Создаем карточку
                 element(byXpath("//span[text()='Сохранить карточку']/parent::button")).click()
@@ -1482,7 +1527,7 @@ class PimTests {
                 element(byXpath("//span[text()='Привязать к происшествию']/parent::button")).click()
             } else if (i == 4) {
                 //регистрируем ложное обращение
-                element(byXpath("//span[text()='Ложное обращение']/parent::button")).click()
+                element(byXpath("//*[text()='Ложное обращение']/ancestor::button")).click()
 //                element(byXpath("//*[text()='Звонок без информации']/.."))
 //                    .should(exist, ofSeconds(waitTime))
 //                    .shouldBe(visible, ofSeconds(waitTime))
@@ -1548,24 +1593,18 @@ class PimTests {
         //создаем отчет
         element(byXpath("//span[text()='Создать']/parent::button")).click()
         //переходим в созданный отчет
-        element(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']"))
+        element(byXpath("//tbody/tr/td"))
             .shouldHave(text("A.3.23 Проверка формирования отчетов по обращениям $dateTime сверка"))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime)).click()
         //проверяем и запоминаем общее количество обращений
-        val allT = element(byXpath("//td[text()='Общее количество вызовов (обращений):']/following-sibling::td"))
-            .ownText.toInt()
+        val allT = element(byXpath(tableSelector.format("Общее количество вызовов (обращений):"))).ownText.toInt()
         //ложных
-        val falT = element(byXpath("//td[text()='Ложных']/following-sibling::td"))
-            .ownText.toInt()
+        val falT = element(byXpath(tableSelector.format("Ложных"))).ownText.toInt()
         //консультаций
-        val conT = element(byXpath("//td[text()='Консультаций']/following-sibling::td"))
-            .ownText.toInt()
+        val conT = element(byXpath(tableSelector.format("Консультаций"))).ownText.toInt()
         //по происшествиям
-        val incT = element(byXpath("//td[text()='По происшествиям']/following-sibling::td"))
-            .ownText.toInt()
-
+        val incT = element(byXpath(tableSelector.format("По происшествиям"))).ownText.toInt()
         //сверим цветастую табличку с диаграммой
-        val diagramSelector = "g.recharts-layer.recharts-pie-labels>g:nth-child(%d)>text"
         //ложные
         if (elements(byCssSelector(diagramSelector.format(1))).size == 1){
             falD = element(byCssSelector(diagramSelector.format(1))).ownText.toInt()
@@ -1594,33 +1633,38 @@ class PimTests {
         //рассматриваем таблицу источников
         //всего записей в смысле в графе всего
         val tableAllT =
-            element(byCssSelector("tr[data-testid='MUIDataTableBodyRow-0']>td[data-colindex='1']>div")).ownText.toInt()
+            element(byXpath(tableSelector.format("Всего"))).ownText.toInt()
         //println(tableAll)
         //Видеоаналитика из общего числа
-        var tableVideoT: Int = 0
+        val tableVideoT: Int =
+            element(byXpath(tableSelector.format("Видеоаналитика"))).ownText.toInt()
         //Внешняя АИС из общего числа
-        var tableAIST: Int = 0
+        val tableAIST: Int =
+            element(byXpath(tableSelector.format("Внешняя АИС"))).ownText.toInt()
         //Датчик из общего числа
-        var tableSensorT: Int = 0
+        val tableSensorT: Int =
+            element(byXpath(tableSelector.format("Датчик"))).ownText.toInt()
         //Портал населения из общего числа
-        var tablePortalT: Int = 0
+        val tablePortalT: Int =
+            element(byXpath(tableSelector.format("Портал населения"))).ownText.toInt()
         //Портал УИВ из общего числа
-        var tableUIVT: Int = 0
+        val tableUIVT: Int =
+            element(byXpath(tableSelector.format("Портал УИВ"))).ownText.toInt()
         //служебный счетчик, всего строк
-        tableStringCount = elements(byCssSelector("tr[id^='MUIDataTableBodyRow-']")).size
-        for (u in 2 until tableStringCount) {
-            val st: String =
-                element(byCssSelector("tr[data-testid='MUIDataTableBodyRow-$u']>td[data-colindex='0']>div")).ownText.toString()
-            val va: Int =
-                element(byCssSelector("tr[data-testid='MUIDataTableBodyRow-$u']>td[data-colindex='1']>div")).ownText.toInt()
-            when (st) {
-                "Видеоаналитика" -> { tableVideoT = va }
-                "Внешняя АИС" -> { tableAIST = va }
-                "Датчик" -> { tableSensorT = va }
-                "Портал населения" -> { tablePortalT = va }
-                "Портал УИВ" -> { tableUIVT = va }
-            }
-        }
+//        tableStringCount = elements(byCssSelector("tr[id^='MUIDataTableBodyRow-']")).size
+//        for (u in 2 until tableStringCount) {
+//            val st: String =
+//                element(byCssSelector("tr[data-testid='MUIDataTableBodyRow-$u']>td[data-colindex='0']>div")).ownText.toString()
+//            val va: Int =
+//                element(byCssSelector("tr[data-testid='MUIDataTableBodyRow-$u']>td[data-colindex='1']>div")).ownText.toInt()
+//            when (st) {
+//                "Видеоаналитика" -> { tableVideoT = va }
+//                "Внешняя АИС" -> { tableAIST = va }
+//                "Датчик" -> { tableSensorT = va }
+//                "Портал населения" -> { tablePortalT = va }
+//                "Портал УИВ" -> { tableUIVT = va }
+//            }
+//        }
 
 //        println("allT $allT")
 //        println("falT $falT")
@@ -1682,7 +1726,7 @@ class PimTests {
         //создаем отчет
         element(byXpath("//span[text()='Создать']/parent::button")).click()
         //переходим в созданный отчет
-        element(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']"))
+        element(byXpath("//tbody/tr/td"))
             .shouldHave(text("A.3.24 Проверка формирования отчетов по деятельности сотрудников $dateTime отсчет"))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime)).click()
         //убедимся что мы за оператор:
@@ -1697,10 +1741,10 @@ class PimTests {
         element(byXpath("//p[text()='Должностное лицо:']/following-sibling::p"))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
         //val operator = element(byCssSelector("main>div:nth-child(3)>div:nth-child(3)>p")).ownText
-        val operator = element(byXpath("//p[text()='Должностное лицо:']/following-sibling::p")).ownText
+        val operator = element(byXpath("//p[text()='Должностное лицо:']/following-sibling::p")).ownText.trim()
 //        val operatorMas = operator.split("\n")
 //        val operatorFIO = operatorMas[1].trim()
-        val operatorFIO = operator.trim()
+//        val operatorFIO = operator.trim()
 //        println("ФИО $operator")
 //        println("operatorMas $operatorMas")
 //        println("operatorFIO $operatorFIO")
@@ -1718,21 +1762,22 @@ class PimTests {
         var fifth = 0
         var sixth = 0
         var seventh = 0
-        var operators = elements(byCssSelector("tr[id^=MUIDataTableBodyRow-]")).size
-        for (w in 0 until operators) {
-            var momentOperator =
-                element(byCssSelector("tr[data-testid^=MUIDataTableBodyRow-]>td[data-testid='MuiDataTableBodyCell-0-$w']>div:nth-child(2)")).ownText.trim()
+        var operators = elements(byXpath("//tbody/tr/td")).size
+        for (w in 1..operators) {
+            val momentOperator =
+                element(byXpath("//tbody/tr[$w]/td[1]")).ownText.trim()
 //            println("0 momentOperator $momentOperator")
-            if (operatorFIO == momentOperator) {
+            if (operator == momentOperator) {
                 //поехали запоминать значения в отчете для оператора
-                val operatorDataSelector = "td[data-testid='MuiDataTableBodyCell-%d-$w']>div:nth-child(2)"
-                first = element(byCssSelector(operatorDataSelector.format(2))).ownText.toInt()
-                second = element(byCssSelector(operatorDataSelector.format(3))).ownText.toInt()
-                third = element(byCssSelector(operatorDataSelector.format(4))).ownText.toInt()
-                fourth = element(byCssSelector(operatorDataSelector.format(5))).ownText.toInt()
-                fifth = element(byCssSelector(operatorDataSelector.format(6))).ownText.toInt()
-                sixth = element(byCssSelector(operatorDataSelector.format(7))).ownText.toInt()
-                seventh = element(byCssSelector(operatorDataSelector.format(8))).ownText.toInt()
+                val operatorDataSelector = "//tbody/tr[$w]/td[%d]"
+                first = element(byXpath(operatorDataSelector.format(3))).ownText.toInt()
+                second = element(byXpath(operatorDataSelector.format(4))).ownText.toInt()
+                third = element(byXpath(operatorDataSelector.format(5))).ownText.toInt()
+                fourth = element(byXpath(operatorDataSelector.format(6))).ownText.toInt()
+                fifth = element(byXpath(operatorDataSelector.format(7))).ownText.toInt()
+                sixth = element(byXpath(operatorDataSelector.format(8))).ownText.toInt()
+                seventh = element(byXpath(operatorDataSelector.format(9))).ownText.toInt()
+                break
             }
         }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1794,7 +1839,7 @@ class PimTests {
                 //регистрируем обращение
                 element(byXpath("//span[text()='Создать карточку']/parent::button")).click()
                 //выбираем тип происшествия
-                element(byCssSelector("input#incidentTypeId")).setValue("П.5.1.5 Auto-Test")
+                element(byCssSelector("input#incidentTypeId-autocomplete")).setValue("П.5.1.5 Auto-Test")
                     .sendKeys(Keys.DOWN, Keys.ENTER)
                 //Создаем карточку
                 element(byXpath("//span[text()='Сохранить карточку']/parent::button")).click()
@@ -1811,7 +1856,7 @@ class PimTests {
                 element(byXpath("//span[text()='Привязать к происшествию']/parent::button")).click()
             } else if (i == 5) {
                 //регистрируем ложное обращение
-                element(byXpath("//span[text()='Ложное обращение']/parent::button")).click()
+                element(byXpath("//*[text()='Ложное обращение']/ancestor::button")).click()
 //                element(byXpath("//*[text()='Звонок без информации']/.."))
 //                    .should(exist, ofSeconds(waitTime))
 //                    .shouldBe(visible, ofSeconds(waitTime))
@@ -1896,7 +1941,7 @@ class PimTests {
         //создаем отчет
         element(byXpath("//span[text()='Создать']/parent::button")).click()
         //переходим в созданный отчет
-        element(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']"))
+        element(byXpath("//tbody/tr/td"))
             .shouldHave(text("A.3.24 Проверка формирования отчетов по деятельности сотрудников $dateTime сверка"))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime)).click()
 //        //убедимся что мы за оператор:
@@ -1920,7 +1965,7 @@ class PimTests {
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
             .shouldHave(text("A.3.24 Проверка формирования отчетов по деятельности сотрудников $dateTime сверка"))
         //служебный счетчик числа операторов
-        operators = elements(byCssSelector("tr[id^=MUIDataTableBodyRow-]")).size
+        operators = elements(byXpath("//tbody/tr/td")).size
         var firstT = 0
         var secondT = 0
         var thirdT = 0
@@ -1929,19 +1974,20 @@ class PimTests {
         var sixthT = 0
         var seventhT = 0
         //ищем кто в списке мы
-        for (e in 0 until operators) {
-            var momentOperator =
-                element(byCssSelector("tr[data-testid^=MUIDataTableBodyRow-]>td[data-testid='MuiDataTableBodyCell-0-$e']>div:nth-child(2)")).ownText.trim()
-            if (operatorFIO == momentOperator) {
-                val operatorDataSelector = "td[data-testid='MuiDataTableBodyCell-%d-$e']>div:nth-child(2)"
+        for (e in 1..operators) {
+            val momentOperator =
+                element(byXpath("//tbody/tr[$e]/td[1]")).ownText.trim()
+            if (operator == momentOperator) {
+                val operatorDataSelector = "//tbody/tr[$e]/td[%d]"
                 //поехали запоминать значения в отчете для оператора
-                firstT = element(byCssSelector(operatorDataSelector.format(2))).ownText.toInt()
-                secondT = element(byCssSelector(operatorDataSelector.format(3))).ownText.toInt()
-                thirdT = element(byCssSelector(operatorDataSelector.format(4))).ownText.toInt()
-                fourthT = element(byCssSelector(operatorDataSelector.format(5))).ownText.toInt()
-                fifthT = element(byCssSelector(operatorDataSelector.format(6))).ownText.toInt()
-                sixthT = element(byCssSelector(operatorDataSelector.format(7))).ownText.toInt()
-                seventhT = element(byCssSelector(operatorDataSelector.format(8))).ownText.toInt()
+                firstT = element(byXpath(operatorDataSelector.format(3))).ownText.toInt()
+                secondT = element(byXpath(operatorDataSelector.format(4))).ownText.toInt()
+                thirdT = element(byXpath(operatorDataSelector.format(5))).ownText.toInt()
+                fourthT = element(byXpath(operatorDataSelector.format(6))).ownText.toInt()
+                fifthT = element(byXpath(operatorDataSelector.format(7))).ownText.toInt()
+                sixthT = element(byXpath(operatorDataSelector.format(8))).ownText.toInt()
+                seventhT = element(byXpath(operatorDataSelector.format(9))).ownText.toInt()
+                break
             }
         }
 //        println("first $first")
@@ -1978,7 +2024,7 @@ class PimTests {
         date = LocalDate.now().toString()
         tools.logonTool()
         //кликаем по иконке отчетов
-        //Переходим в "отчет по деятельности сотрудников"
+        //Переходим в "отчет По происшествиям"
         tools.menuNavigation("Отчеты", "По происшествиям", waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/parent::button"))
@@ -2004,41 +2050,44 @@ class PimTests {
         //Thread.sleep(50000)
         element(byXpath("//span[text()='Создать']/parent::button")).click()
         //переходим в созданный отчет
-        element(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']"))
+        element(byXpath("//tbody/tr/td[1]"))
             .shouldHave(text("A.3.25 Проверка формирования отчетов по происшествиям $dateTime отсчет"))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
             .click()
-        //ждем таблицу
-//        element(byCssSelector("main > div:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div"))
-//            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-        element(byCssSelector("div[class*='MuiPaper-elevation'][class*='MuiPaper-rounded'][class*='jss']"))
+        //ждем заголовок таблицы
+        element(byXpath("//h5[text()='A.3.25 Проверка формирования отчетов по происшествиям $dateTime отсчет']"))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
         //Запоминаем значения отчета
         //значения в легенде
-        val legendSelector = "table[aria-label='simple table'] tr:nth-child(%d)>td:nth-child(2)"
-        val legendAllBefore = element(byCssSelector(legendSelector.format(1))).ownText.toInt()
-        val legendNewBefore = element(byCssSelector(legendSelector.format(2))).ownText.toInt()
-        val legendProcessingBefore = element(byCssSelector(legendSelector.format(3))).ownText.toInt()
-        val legendReactionBefore = element(byCssSelector(legendSelector.format(4))).ownText.toInt()
-        val legendDoneBefore = element(byCssSelector(legendSelector.format(5))).ownText.toInt()
-        val legendCanselBefore = element(byCssSelector(legendSelector.format(6))).ownText.toInt()
-        val legendCloseBefore = element(byCssSelector(legendSelector.format(7))).ownText.toInt()
+        val colorTableSelector = "//table/tbody/tr/td[text()='%s']/following-sibling::td"
+//        val legendSelector = "table[aria-label='simple table'] tr:nth-child(%d)>td:nth-child(2)"
+        val legendAllBefore = element(byXpath(colorTableSelector.format("Всего"))).ownText.toInt()
+        val legendNewBefore = element(byXpath(colorTableSelector.format("Новые"))).ownText.toInt()
+        val legendProcessingBefore = element(byXpath(colorTableSelector.format("В обработке"))).ownText.toInt()
+        val legendReactionBefore = element(byXpath(colorTableSelector.format("Реагирование"))).ownText.toInt()
+        val legendDoneBefore = element(byXpath(colorTableSelector.format("Завершены"))).ownText.toInt()
+        val legendCanselBefore = element(byXpath(colorTableSelector.format("Отменены"))).ownText.toInt()
+        val legendCloseBefore = element(byXpath(colorTableSelector.format("Закрыты"))).ownText.toInt()
         //значения в таблице
-        val oldTableStringCount = elements(byCssSelector("table[role='grid']>tbody>tr[data-testid^='MUIDataTableBodyRow-']")).size
         val oldIncidentTypeList = mutableListOf<String>()
         val oldAmountIncidentList = mutableListOf<Int>()
         val oldAmountAffectedPeopleList = mutableListOf<Int>()
         val oldAmountAffectedChildrenList = mutableListOf<Int>()
         val oldAmountDiePeopleList = mutableListOf<Int>()
         val oldAmountDieChildrenList = mutableListOf<Int>()
-        val tableSelector = "table[role='grid']>tbody>tr[data-testid^='MUIDataTableBodyRow-']:nth-child(%d)>td:nth-child(%d)>div"
-        for (i in 0 until oldTableStringCount) {
-            oldIncidentTypeList.add(i, element(byCssSelector(tableSelector.format(i + 1, 1))).ownText)
-            oldAmountIncidentList.add(i, element(byCssSelector(tableSelector.format(i + 1, 2))).ownText.toInt())
-            oldAmountAffectedPeopleList.add(i, element(byCssSelector(tableSelector.format(i + 1, 3))).ownText.toInt())
-            oldAmountAffectedChildrenList.add(i, element(byCssSelector(tableSelector.format(i + 1, 4))).ownText.toInt())
-            oldAmountDiePeopleList.add(i, element(byCssSelector(tableSelector.format(i + 1, 5))).ownText.toInt())
-            oldAmountDieChildrenList.add(i, element(byCssSelector(tableSelector.format(i + 1, 6))).ownText.toInt())
+        val tableSelector = "//table[@aria-label='sticky table']/tbody/tr[%d]/td[%d]"
+        //table[@aria-label='sticky table']/tbody/tr
+        var oldTableStringCount = 0
+        if (elements(byXpath("//table/tbody/tr[1]//*[text()='Нет данных']")).size == 0) {
+            oldTableStringCount = elements(byXpath("//table[@aria-label='sticky table']/tbody/tr")).size
+            for (i in 0 until oldTableStringCount) {
+                oldIncidentTypeList.add(i, element(byXpath(tableSelector.format(i + 1, 1))).ownText)
+                oldAmountIncidentList.add(i, element(byXpath(tableSelector.format(i + 1, 2))).ownText.toInt())
+                oldAmountAffectedPeopleList.add(i, element(byXpath(tableSelector.format(i + 1, 3))).ownText.toInt())
+                oldAmountAffectedChildrenList.add(i, element(byXpath(tableSelector.format(i + 1, 4))).ownText.toInt())
+                oldAmountDiePeopleList.add(i, element(byXpath(tableSelector.format(i + 1, 5))).ownText.toInt())
+                oldAmountDieChildrenList.add(i, element(byXpath(tableSelector.format(i + 1, 6))).ownText.toInt())
+            }
         }
         val oldIncidentTypeListCount: Int = oldIncidentTypeList.count()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2092,13 +2141,15 @@ class PimTests {
             //element(byXpath("//*[@id=\"skeleton\"]/div/main/div[3]/div[1]/div/form/div[9]/div[1]/button")).click()
             element(byXpath("//span[text()='Создать карточку']/parent::button")).click()
             //ждем поле выбора происшествия
-            element(byCssSelector("input#incidentTypeId"))
+            element(byCssSelector("input#incidentTypeId-autocomplete"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
             //выбираем тип происшествия
             //Сначала создаем происшествия с теми же типами, что были в первом отчете, если они были
             if (oldIncidentTypeListCount >= i && i<7){
-                element(byCssSelector("input#incidentTypeId")).setValue(oldIncidentTypeList[i-1])
+                element(byCssSelector("input#incidentTypeId-autocomplete"))
+                    .sendKeys(oldIncidentTypeList[i-1])
+                element(byCssSelector("input#incidentTypeId-autocomplete"))
                     .sendKeys(Keys.DOWN, Keys.ENTER)
 //                Thread.sleep(10000)
 //            if (oldIncidentTypeListCount > 5 && i == 6) {
@@ -2123,7 +2174,7 @@ class PimTests {
 //                    .sendKeys(Keys.DOWN, Keys.ENTER)
                 //контрольное, заренее известное по типу, происшествие
             } else if(i == 7){
-                element(byCssSelector("input#incidentTypeId")).setValue("П.5.1.5 Auto-Test")
+                element(byCssSelector("input#incidentTypeId-autocomplete")).setValue("П.5.1.5 Auto-Test")
                     .sendKeys(Keys.DOWN, Keys.ENTER)
                 //случайные типы происшествий на те первые 6 позиций отчета, которых в первом отчете могло не быть
             } else {
@@ -2134,21 +2185,23 @@ class PimTests {
 //                    element(byCssSelector("input#incidentTypeId")).sendKeys(Keys.DOWN)
 //                }
 //                element(byCssSelector("input#incidentTypeId")).sendKeys(Keys.ENTER)
-                tools.inputRandom("incidentTypeId")
-                element(byCssSelector("input#incidentTypeId[value*='.']"))
+//                tools.inputRandom("incidentTypeId")
+                tools.inputRandomNew("incidentTypeId-textfield", false, waitTime)
+                element(byCssSelector("input#incidentTypeId-autocomplete[value*='.']"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                 //убеждаемся что такого происшествия нет в первом отчете и если есть, то выбираем другое
-                var longSelectedIncidentType = element(byCssSelector("input#incidentTypeId")).getAttribute("value").toString()
+                var longSelectedIncidentType = element(byCssSelector("input#incidentTypeId-autocomplete")).getAttribute("value").toString()
                 var shortSelectedIncidentType = longSelectedIncidentType.substring(longSelectedIncidentType.indexOf(' ') + 1)
                 while (oldIncidentTypeList.contains(shortSelectedIncidentType)
                     || shortSelectedIncidentTypeList.contains(shortSelectedIncidentType)
                     || shortSelectedIncidentType=="Auto-Test")
                 {
                     repeat(longSelectedIncidentType.length)
-                        {element(byCssSelector("input#incidentTypeId")).sendKeys(Keys.BACK_SPACE) }
-                    tools.inputRandom("incidentTypeId")
-                    longSelectedIncidentType = element(byCssSelector("input#incidentTypeId")).getAttribute("value").toString()
+                        {element(byCssSelector("input#incidentTypeId-autocomplete")).sendKeys(Keys.BACK_SPACE) }
+//                    tools.inputRandom("incidentTypeId")
+                    tools.inputRandomNew("incidentTypeId-textfield", false, waitTime)
+                    longSelectedIncidentType = element(byCssSelector("input#incidentTypeId-autocomplete")).getAttribute("value").toString()
                     shortSelectedIncidentType = longSelectedIncidentType.substring(longSelectedIncidentType.indexOf(' ') + 1)
 
 //                    element(byCssSelector("input#incidentTypeId")).sendKeys(Keys.DOWN)
@@ -2185,7 +2238,7 @@ class PimTests {
 //                for (e in 1 until i){element(byCssSelector("div[role='region']>div>div>div:first-child>div:nth-child($e) input")).setValue("3")}//альтернатива блоку выше, но не создающая происшествие только с погибшими
             }
             //Создаем карточку
-            element(byCssSelector("div.MuiGrid-root.MuiGrid-item > button[type='submit']")).click()
+            element(byXpath("//span[text()='Сохранить карточку']/parent::button")).click()
             //Убеждаемся, что нам загрузило созданную карточку
             //проверяя что нам в принципе загрузило какую-то карточку
 
@@ -2238,29 +2291,27 @@ class PimTests {
         //Thread.sleep(50000)
         element(byXpath("//span[text()='Создать']/parent::button")).click()
         //переходим в созданный отчет
-        element(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']"))
+        element(byXpath("//tbody/tr/td[1]"))
             .shouldHave(text("A.3.25 Проверка формирования отчетов по происшествиям $dateTime сверка"))
             .should(exist, ofSeconds(waitTime)).shouldBe(
                 visible,
                 ofSeconds(waitTime)
             ).click()
-        //ждем таблицу
-        element(byCssSelector("main > div:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div"))
-            .should(exist, ofSeconds(waitTime)).shouldBe(
-                visible,
-                ofSeconds(waitTime)
-            )
+        //ждем заголовок
+        element(byXpath("//h5[text()='A.3.25 Проверка формирования отчетов по происшествиям $dateTime сверка']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
         //Запоминаем значения отчета
         //значения в легенде
-        val legendAllAfter = element(byCssSelector(legendSelector.format(1))).ownText.toInt()
-        val legendNewAfter = element(byCssSelector(legendSelector.format(2))).ownText.toInt()
-        val legendProcessingAfter = element(byCssSelector(legendSelector.format(3))).ownText.toInt()
-        val legendReactionAfter = element(byCssSelector(legendSelector.format(4))).ownText.toInt()
-        val legendDoneAfter = element(byCssSelector(legendSelector.format(5))).ownText.toInt()
-        val legendCanselAfter = element(byCssSelector(legendSelector.format(6))).ownText.toInt()
-        val legendCloseAfter = element(byCssSelector(legendSelector.format(7))).ownText.toInt()
+        val legendAllAfter = element(byXpath(colorTableSelector.format("Всего"))).ownText.toInt()
+        val legendNewAfter = element(byXpath(colorTableSelector.format("Новые"))).ownText.toInt()
+        val legendProcessingAfter = element(byXpath(colorTableSelector.format("В обработке"))).ownText.toInt()
+        val legendReactionAfter = element(byXpath(colorTableSelector.format("Реагирование"))).ownText.toInt()
+        val legendDoneAfter = element(byXpath(colorTableSelector.format("Завершены"))).ownText.toInt()
+        val legendCanselAfter = element(byXpath(colorTableSelector.format("Отменены"))).ownText.toInt()
+        val legendCloseAfter = element(byXpath(colorTableSelector.format("Закрыты"))).ownText.toInt()
         //значения в таблице
-        val newTableStringCount = elements(byCssSelector("table[role='grid']>tbody>tr[data-testid^='MUIDataTableBodyRow-']")).size
+        val newTableStringCount = elements(byXpath("//table[@aria-label='sticky table']/tbody/tr")).size
         val newIncidentTypeList = mutableListOf<String>()
         val newAmountIncidentList = mutableListOf<Int>()
         val newAmountAffectedPeopleList = mutableListOf<Int>()
@@ -2268,12 +2319,12 @@ class PimTests {
         val newAmountDiePeopleList = mutableListOf<Int>()
         val newAmountDieChildrenList = mutableListOf<Int>()
         for (i in 0 until newTableStringCount) {
-            newIncidentTypeList.add(i, element(byCssSelector(tableSelector.format(i + 1, 1))).ownText)
-            newAmountIncidentList.add(i, element(byCssSelector(tableSelector.format(i + 1, 2))).ownText.toInt())
-            newAmountAffectedPeopleList.add(i, element(byCssSelector(tableSelector.format(i + 1, 3))).ownText.toInt())
-            newAmountAffectedChildrenList.add(i, element(byCssSelector(tableSelector.format(i + 1, 4))).ownText.toInt())
-            newAmountDiePeopleList.add(i, element(byCssSelector(tableSelector.format(i + 1, 5))).ownText.toInt())
-            newAmountDieChildrenList.add(i, element(byCssSelector(tableSelector.format(i + 1, 6))).ownText.toInt())
+            newIncidentTypeList.add(i, element(byXpath(tableSelector.format(i + 1, 1))).ownText)
+            newAmountIncidentList.add(i, element(byXpath(tableSelector.format(i + 1, 2))).ownText.toInt())
+            newAmountAffectedPeopleList.add(i, element(byXpath(tableSelector.format(i + 1, 3))).ownText.toInt())
+            newAmountAffectedChildrenList.add(i, element(byXpath(tableSelector.format(i + 1, 4))).ownText.toInt())
+            newAmountDiePeopleList.add(i, element(byXpath(tableSelector.format(i + 1, 5))).ownText.toInt())
+            newAmountDieChildrenList.add(i, element(byXpath(tableSelector.format(i + 1, 6))).ownText.toInt())
         }
 //            var newIncidentTypeListCount: Int = newIncidentTypeList.count()
         //значения в диаграмме
@@ -2281,33 +2332,50 @@ class PimTests {
 //        val diagSelector = "svg.recharts-surface>g>g.recharts-pie-labels>g:nth-child(%d)>text"
         //сравниваем новую диаграмму со старой легендой, учитывая созданные КП. "Новые" происшествия не рассматриваем
         //т.к. наличие цифры на диаграмме зависит от соотношения количества разных карточек, перед сравнением диаграммы убеждаемся, что вобще есть что сравнивать
-        val diagSelector = "//*[name()='svg'][@class='recharts-surface']/*[name()='g']/*[name()='g']/*[name()='g'][%d]/*[name()='text'][text()]"
+        val diagSelector = "g.recharts-pie>g.recharts-pie-labels>g:nth-child(%d)>text"
+//        val noDigitDiagSelector = "g.recharts-pie>g.recharts-pie-labels>g:nth-child(%s)>text>tspan"
         //diagNew = element(byCssSelector("svg.recharts-surface>g>g.recharts-pie-labels>g:nth-child(1)>text")).ownText.toInt()
         var diagProcessing = 0
         var diagReaction = 0
         var diagDone = 0
         var daigCansel = 0
         var daagClose = 0
-        if (elements(byXpath(diagSelector.format(2))).size == 1){
-            diagProcessing = element(byXpath(diagSelector.format(2))).ownText.toInt()
-            Assertions.assertTrue(diagProcessing == (legendProcessingBefore + 2))
+        for (i in 2..6){
+            if (element(byCssSelector(diagSelector.format(i))).getCssValue("stroke") == "white"){
+                when(i){
+                    2 -> { diagProcessing = element(byXpath(diagSelector.format(i))).ownText.toInt()
+                        Assertions.assertTrue(diagProcessing == (legendProcessingBefore + 2)) }
+                    3 -> { diagReaction = element(byXpath(diagSelector.format(i))).ownText.toInt()
+                        Assertions.assertTrue(diagReaction == (legendReactionBefore + 1)) }
+                    4 -> { diagDone = element(byXpath(diagSelector.format(i))).ownText.toInt()
+                        Assertions.assertTrue(diagDone == (legendDoneBefore + 1)) }
+                    5 -> {daigCansel = element(byXpath(diagSelector.format(i))).ownText.toInt()
+                        Assertions.assertTrue(daigCansel == (legendCanselBefore + 1))}
+                    6 -> {daagClose = element(byXpath(diagSelector.format(i))).ownText.toInt()
+                        Assertions.assertTrue(daagClose == (legendCloseBefore + 1))}
+                }
+            }
         }
-        if (elements(byXpath(diagSelector.format(3))).size == 1){
-            diagReaction = element(byXpath(diagSelector.format(3))).ownText.toInt()
-            Assertions.assertTrue(diagReaction == (legendReactionBefore + 1))
-        }
-        if (elements(byXpath(diagSelector.format(4))).size == 1){
-            diagDone = element(byXpath(diagSelector.format(4))).ownText.toInt()
-            Assertions.assertTrue(diagDone == (legendDoneBefore + 1))
-        }
-        if (elements(byXpath(diagSelector.format(5))).size == 1){
-            daigCansel = element(byXpath(diagSelector.format(5))).ownText.toInt()
-            Assertions.assertTrue(daigCansel == (legendCanselBefore + 1))
-        }
-        if (elements(byXpath(diagSelector.format(6))).size == 1){
-            daagClose = element(byXpath(diagSelector.format(6))).ownText.toInt()
-            Assertions.assertTrue(daagClose == (legendCloseBefore + 1))
-        }
+//        if (elements(byXpath(diagSelector.format(2))).size == 1){
+//            diagProcessing = element(byXpath(diagSelector.format(2))).ownText.toInt()
+//            Assertions.assertTrue(diagProcessing == (legendProcessingBefore + 2))
+//        }
+//        if (elements(byXpath(diagSelector.format(3))).size == 1){
+//            diagReaction = element(byXpath(diagSelector.format(3))).ownText.toInt()
+//            Assertions.assertTrue(diagReaction == (legendReactionBefore + 1))
+//        }
+//        if (elements(byXpath(diagSelector.format(4))).size == 1){
+//            diagDone = element(byXpath(diagSelector.format(4))).ownText.toInt()
+//            Assertions.assertTrue(diagDone == (legendDoneBefore + 1))
+//        }
+//        if (elements(byXpath(diagSelector.format(5))).size == 1){
+//            daigCansel = element(byXpath(diagSelector.format(5))).ownText.toInt()
+//            Assertions.assertTrue(daigCansel == (legendCanselBefore + 1))
+//        }
+//        if (elements(byXpath(diagSelector.format(6))).size == 1){
+//            daagClose = element(byXpath(diagSelector.format(6))).ownText.toInt()
+//            Assertions.assertTrue(daagClose == (legendCloseBefore + 1))
+//        }
         //сравниваем две леганды - старую и новую
         Assertions.assertTrue(legendAllAfter == (legendAllBefore + 6))
         Assertions.assertTrue(legendNewBefore == legendNewAfter)
@@ -2382,18 +2450,21 @@ class PimTests {
         //Thread.sleep(50000)
         element(byXpath("//span[text()='Создать']/parent::button")).click()
         //переходим в созданный отчет
-        element(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']"))
+        element(byXpath("//tbody/tr/td[1]"))
             .shouldHave(text("A.3.25 Проверка формирования отчетов по происшествиям $dateTime пострадавшие max"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
-        //ждем таблицу
-        element(byCssSelector("main > div:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div"))
+        //ждем заголовок
+        element(byXpath("//h5[text()='A.3.25 Проверка формирования отчетов по происшествиям $dateTime пострадавшие max']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //считаем строки в таблице, их должно быть 0
-        var tableStringCount = elements(byCssSelector("table[role='grid']>tbody>tr[data-testid^='MUIDataTableBodyRow-']")).size
-        Assertions.assertTrue(tableStringCount==0)
+        var tableStringCount = elements(byXpath("//table[@aria-label='sticky table']/tbody/tr")).size
+//        Assertions.assertTrue(tableStringCount==0)
+        element(byXpath("//table[@aria-label='sticky table']/tbody/tr/td//*[text()='Нет данных']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //строим отчет с числом пострадавших на 1 меньше и ожидаем, что записей будет столько сколько должно быть)
         //кликаем по иконке отчетов
@@ -2420,18 +2491,18 @@ class PimTests {
         //Thread.sleep(50000)
         element(byXpath("//span[text()='Создать']/parent::button")).click()
         //переходим в созданный отчет
-        element(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']"))
+        element(byXpath("//tbody/tr/td[1]"))
             .shouldHave(text("A.3.25 Проверка формирования отчетов по происшествиям $dateTime пострадавшие max -1"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
-        //ждем таблицу
-        element(byCssSelector("main > div:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div"))
+        //ждем заголовок
+        element(byXpath("//h5[text()='A.3.25 Проверка формирования отчетов по происшествиям $dateTime пострадавшие max -1']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //считаем строки, и ожидаем что их столько же, сколько наибольшего числа в массиве пострадавших
         val amountMaxAffected = newAmountAffectedPeopleList.filter { it == maximumAffectedPeople}
-        tableStringCount = elements(byCssSelector("table[role='grid']>tbody>tr[data-testid^='MUIDataTableBodyRow-']")).size
+        tableStringCount = elements(byXpath("//table[@aria-label='sticky table']/tbody/tr")).size
         Assertions.assertTrue(amountMaxAffected.size == tableStringCount)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //создаем отчет с указанием типа происшествия и просто проверяем, что строка одна
@@ -2454,24 +2525,24 @@ class PimTests {
             .sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
         tools.addressInput("address", "Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач",waitTime)
         //вбиваем тип происшествия
-        element(byCssSelector("input#incidentTypeId"))
+        element(byCssSelector("input#incidentTypeId-autocomplete"))
             .sendKeys(newIncidentTypeList[0])
-        element(byCssSelector("input#incidentTypeId"))
+        element(byCssSelector("input#incidentTypeId-autocomplete"))
             .sendKeys(Keys.DOWN, Keys.ENTER)
         //создаем отчет
         //Thread.sleep(50000)
         element(byXpath("//span[text()='Создать']/parent::button")).click()
         //переходим в созданный отчет
-        element(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']"))
+        element(byXpath("//tbody/tr/td[1]"))
             .shouldHave(text("A.3.25 Проверка формирования отчетов по происшествиям $dateTime Тип происшествия"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
-        //ждем таблицу
-        element(byCssSelector("main > div:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div"))
+        //ждем заголовок
+        element(byXpath("//h5[text()='A.3.25 Проверка формирования отчетов по происшествиям $dateTime Тип происшествия']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        tableStringCount = elements(byCssSelector("table[role='grid']>tbody>tr[data-testid^='MUIDataTableBodyRow-']")).size
+        tableStringCount = elements(byXpath("//table[@aria-label='sticky table']/tbody/tr")).size
         Assertions.assertTrue(tableStringCount == 1)
 
         tools.logoffTool()
@@ -2664,14 +2735,15 @@ class PimTests {
     //                                && searchValue.contains("(")
     //                                && searchValue.contains(")")
     //                                && searchValue.contains("-"))
-                                if (telRegex.containsMatchIn(searchValue) || workTelRegex.containsMatchIn(searchValue)) {
-                                    val newSearchValue = searchValue.filter { it.isDigit() }
-                                    searchValue = newSearchValue
-                                } else if (ioRegex.containsMatchIn(searchValue)) {
-                                    val searchValueList = searchValue.split(" ")
-                                    searchValue = searchValueList[0]
-
-                                }
+                                    if (telRegex.containsMatchIn(searchValue)
+                                        || workTelRegex.containsMatchIn(searchValue)
+                                    ) {
+                                        val newSearchValue = searchValue.filter { it.isDigit() }
+                                        searchValue = newSearchValue
+                                    } else if (ioRegex.containsMatchIn(searchValue)) {
+                                        val searchValueList = searchValue.split(" ")
+                                        searchValue = searchValueList[0]
+                                    }
 //                                else if (workTelRegex.containsMatchIn(searchValue)){
 //                                    val newSearchValue = searchValue.filter { it.isDigit() }
 //                                    searchValue = newSearchValue
@@ -2995,7 +3067,8 @@ class PimTests {
 ////            .shouldBe(visible, ofSeconds(waitTime))
 ////            .scrollIntoView(false)
 //            .sendKeys(Keys.END)
-        tools.inputRandom("labels")
+//        tools.inputRandom("labels")
+        tools.inputRandomNew("labelsId-textfield", true, waitTime)
 ////        Thread.sleep(2000)
 //        element(byXpath("//input[@name='labels']")).click()
 ////        Thread.sleep(2000)
@@ -3223,7 +3296,44 @@ class PimTests {
         dateTime = LocalDateTime.now().toString()
         date = LocalDate.now().toString()
         tools.logonTool()
-
+        //сначала проверим остатки неудачных запусков и удалим их.
+        tools.menuNavigation("Справочники", "Должностные лица", waitTime)
+        //воспользуемся поиском
+        var menuColumnNubber = tools.numberOfColumn(" ", waitTime)
+        val fioColumnNubber = tools.numberOfColumn("ФИО", waitTime)
+        element(byXpath("//*[@name='search']/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byCssSelector("input[placeholder^='ФИО']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byCssSelector("input[placeholder^='ФИО']")).sendKeys("N 0270 AutoTest", Keys.ENTER)
+        //ждем результатов
+        Thread.sleep(1000)
+        while (elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size == 0){
+            //запоминаем ФИО что бы проконтролировать удаление
+            val removedPersonFIO = element(byXpath("//table/tbody/tr[1]/td[$fioColumnNubber]")).ownText
+            //открываем три точки
+            element(byXpath("//table/tbody/tr[1]/td[$menuColumnNubber]//button"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+            //удаляем
+            element(byXpath("//span[text()='Удалить']/parent::button"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+            //подтверждаем удаление
+            element(byXpath("//div[@role='dialog']//span[text()='Удалить']/parent::button"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+            element(byXpath("//table/tbody/tr[1]/td[$fioColumnNubber and text()='$removedPersonFIO']"))
+                .shouldNot(exist, ofSeconds(waitTime))
+            Thread.sleep(500)
+        }
         //идем в справочник ДС что бы достать оттуда ДС и их организации, что бы лицо создавать с этими параметрами
         tools.menuNavigation("Справочники", "Дежурные службы", waitTime)
         //ждем загрузки таблицы
@@ -3247,9 +3357,9 @@ class PimTests {
 //        hotLineANDOrganization.remove("in")
 //        hotLineANDOrganization.clear()
 //        var hotLineList: MutableListOf<String>
-        var hotLineList = mutableListOf("init")
+        val hotLineList = mutableListOf("init")
         hotLineList.remove("init")
-        var organizationList = mutableListOf("init")
+        val organizationList = mutableListOf("init")
         organizationList.remove("init")
 
 //        var organizationList: MutableList<String>
@@ -3297,7 +3407,7 @@ class PimTests {
         element(byCssSelector("main table>tbody"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        val menuColumnNubber = tools.numberOfColumn(" ", waitTime)
+        menuColumnNubber = tools.numberOfColumn(" ", waitTime)
         //удалим потуги неудачных тестов
         //воспользуемся поиском
 //        element(byXpath("//*[@name='search']/ancestor::button"))
@@ -3339,7 +3449,7 @@ class PimTests {
         element(byXpath(addAtributeSelector.format("Фамилия"))).sendKeys(dateTime)
         element(byXpath(addAtributeSelector.format("Имя"))).sendKeys("N 0270")
         element(byXpath(addAtributeSelector.format("Отчество"))).sendKeys("AutoTest")
-        var telR = (1000000..9999999).random()
+        val telR = (1000000..9999999).random()
         element(byXpath(addAtributeSelector.format("Рабочий телефон"))).sendKeys("+7918$telR")
         element(byXpath(addAtributeSelector.format("Должность"))).sendKeys("Robot")
         element(byXpath(addAtributeSelector.format("E-mail"))).sendKeys("test@test.com")
@@ -3417,11 +3527,12 @@ class PimTests {
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //смотрим историю развернув всё
-        element(byXpath("//table/thead//*[name()='svg'][@id='expandable-button']/parent::span/parent::button"))
+        element(byXpath("//table/thead//*[@name='arrowRight']/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
-        val atributeSelector = "//label[text()='%s']/following-sibling::span[text()='%s']"
+//        val atributeSelector = "//label[text()='%s']/following-sibling::span[text()='%s']"
+        val atributeSelector = "//table/tbody//li/label[text()='%s']/following-sibling::*[text()='%s']"
         //проверяем что в истории
         element(byXpath(atributeSelector.format("Дежурная служба", hotlineId)))
             .should(exist, ofSeconds(waitTime))
@@ -3430,10 +3541,14 @@ class PimTests {
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //разворачиваем ФИО и пр.
-        element(byXpath("//label[text()='ФИО']/parent::li/div/div"))
+        element(byXpath("//label[text()='ФИО']/preceding-sibling::div/div[text()='▶']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
+//        element(byXpath("//label[text()='ФИО']/parent::li/div/div"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+//            .click()
         //проверяем то что развернули
 //        element(byXpath("//label[text()='Фамилия']/following-sibling::span[text()='$dateTime']"))
         element(byXpath(atributeSelector.format("Фамилия", dateTime)))
@@ -3505,11 +3620,11 @@ class PimTests {
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
-        element(byXpath("//table/tbody/tr"))
-            .shouldNot(exist, ofSeconds(waitTime))
-//        element(byXpath("//tbody/tr//div[text()='Нет данных']"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
+//        element(byXpath("//table/tbody/tr"))
+//            .shouldNot(exist, ofSeconds(waitTime))
+        element(byXpath("//tbody/tr//*[text()='Нет данных']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
 //        Thread.sleep(5000)
     }
 

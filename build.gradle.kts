@@ -32,7 +32,7 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.0")
-    testImplementation("com.codeborne:selenide:6.6.6")
+    testImplementation("com.codeborne:selenide:6.7.2")
     testImplementation("org.awaitility:awaitility:4.2.0")
     testImplementation("org.apache.directory.studio:org.apache.commons.io:2.4")
     testImplementation("org.testng:testng:7.6.1")

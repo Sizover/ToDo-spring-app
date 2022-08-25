@@ -19,7 +19,7 @@ class Removal {
 
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 9998`(){
+    fun `R 9998`(){
         //Удаляем все отчеты
         tools.logonTool()
 //        tools.menuNavigation("Отчеты", "По происшествиям", waitTime)
@@ -55,7 +55,7 @@ class Removal {
                         } else {
                             element(byXpath("//tbody/tr[$i]")).sendKeys(Keys.END)
                         }
-                        val deletedReport = element(byXpath("//tbody/tr[$i]/td[1]//*[text()]")).ownText
+                        val deletedReport = element(byXpath("//tbody/tr[$i]/td[1 and contains(text(),'Проверка формирования отчетов')]")).ownText
                         element(byXpath("//tbody/tr[$i]/td[$menuColumn]//button")).click()
                         element(byXpath("//*[text()='Удалить']/parent::button"))
                             .should(exist, ofSeconds(waitTime))
@@ -93,7 +93,7 @@ class Removal {
 
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 9999`(){
+    fun `R 9999`(){
         //Закроем все происшествия созданные автотестом , например за неделю
 //        date = LocalDate.now().toString()
         date = LocalDate.now()

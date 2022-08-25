@@ -239,7 +239,7 @@ class Tools {
         element(byXpath("//div[@role='presentation']")).click()
     }
 
-    fun inputRandom(inputName: String)
+    fun inputRandomOld(inputName: String)
     //Выбирает случайное значение в переданном импуте (сначала проклацывает весь список, считая проклацывания, потом проклацывает, до некоторого случайного значения)
     {
         while (elements(byXpath("//body/div[@role='presentation']//*[text()]")).size == 0){
@@ -258,6 +258,47 @@ class Tools {
         }
         element(byXpath("//input[@name='$inputName']")).sendKeys(Keys.ENTER)
 
+    }
+
+
+    fun inputRandomNew(inputName: String, parentInclusive: Boolean, waitTime: Long){
+        //Выбирает случайное значение в переданном по id импуте, учитывая иерархический он или нет
+        while (elements(byXpath("//body/div[@role='presentation']//*[text()]")).size == 0){
+            element(byXpath("//input[@name='$inputName']")).click()
+            Thread.sleep(500)
+        }
+        //определяем иерархический ли селект, и если да, то обрабатываем по новому, если нет, по старому
+        if (elements(byCssSelector("body div[role='presentation'] li svg[name^='arrow']")).size > 0){
+            if (elements(byXpath("//body//div[@role='presentation']//li[1]//*[@name='arrowRight']")).size > 0) {
+                element(byXpath("//div[@role='presentation']/div/ul/li[1]/div")).click()
+                Thread.sleep(500)
+            }
+            val incTypes = mutableListOf<String>()
+            val count = elements(byXpath("//div[@role='presentation']/div/ul/li")).size
+            for (i in 1..count ){
+                if (elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[text()]")).size == 1){
+                    if ((elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[name()='svg']")).size == 0)
+                        || parentInclusive){
+                        incTypes.add(element(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[text()]")).ownText)
+                    }
+                }
+            }
+            val rndInputValueIndex = (0 until incTypes.size).random()
+            element(byXpath("//input[@name='$inputName']")).sendKeys(incTypes[rndInputValueIndex])
+            element(byXpath("//input[@name='$inputName']")).sendKeys(Keys.DOWN, Keys.ENTER)
+        } else {
+            var countInputString = 0
+            do {
+                element(byXpath("//input[@name='$inputName']")).sendKeys(Keys.DOWN)
+                countInputString += 1
+            } while (elements(byCssSelector("input[name='$inputName'][aria-activedescendant^='$inputName-option']")).size > 0)
+            //выбираем случайную строчку из доступных
+            val rndInputValue = (1 until countInputString).random()
+            repeat(rndInputValue){
+                element(byXpath("//input[@name='$inputName']")).sendKeys(Keys.DOWN)
+            }
+            element(byXpath("//input[@name='$inputName']")).sendKeys(Keys.ENTER)
+        }
     }
 
     fun menuNavigation(menu: String, subMenu: String, waitTime: Long)

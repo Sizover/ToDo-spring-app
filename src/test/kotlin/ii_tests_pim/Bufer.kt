@@ -1,6 +1,17 @@
 package ii_tests_pim
 
+//import com.codeborne.selenide.Condition.visible
+//import com.codeborne.selenide.Selectors.byXpath
+//import com.codeborne.selenide.Selenide.elements
 import Tools
+import com.codeborne.selenide.CollectionCondition
+import com.codeborne.selenide.Condition.exist
+import com.codeborne.selenide.Condition.visible
+import com.codeborne.selenide.Selectors.byCssSelector
+import com.codeborne.selenide.Selectors.byXpath
+import com.codeborne.selenide.Selenide.element
+import com.codeborne.selenide.Selenide.elements
+import java.time.Duration.ofSeconds
 import java.time.LocalDateTime
 
 //import java.time.ZonedDateTime
@@ -53,10 +64,78 @@ class Bufer {
     @org.testng.annotations.Test
     fun `N 02500`(){
         tools.logonTool()
-        tools.menuNavigation("Справочники","Дежурные службы", waitTime)
-        tools.numberOfColumn(" ", waitTime)
-        println(tools.numberOfColumn(" ", waitTime))
-        Thread.sleep(20000)
+        tools.menuNavigation("Происшествия","Список происшествий",waitTime)
+        //кликаем по "создать обращение"
+        for (i in 1..20) {
+            element(byXpath("//span[text()='Создать обращение']/.."))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+            element(byXpath("//form"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+            element(byCssSelector("input[id='fio.lastname']"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+            element(byCssSelector("input[id='fio.lastname']")).sendKeys("asd")
+            element(byCssSelector("input[id='fio.firstname']"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+            element(byCssSelector("input[id='fio.firstname']")).sendKeys("asd")
+            element(byCssSelector("input[id='phone']"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+            element(byCssSelector("input[id='phone']")).sendKeys("asd")
+            element(byXpath("//*[text()='Консультация']/parent::button"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+        }
+    }
+    @org.testng.annotations.Test
+    fun `N 02501`(){
+
+        tools.logonTool()
+        tools.menuNavigation("Происшествия","Список происшествий",waitTime)
+        elements(byXpath("//table/tbody/tr")).shouldHave(
+            CollectionCondition.sizeGreaterThanOrEqual(1))
+        //открываем фильтр "Типы происшествий"
+        element(byXpath("//*[text()='Типы происшествий']/ancestor::button")).click()
+        element(byXpath("//label[text()='Типы происшествий']/..//input[@id='incidentTypeId-autocomplete']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+
+        Thread.sleep(5000)
+
+
+    }
+    @org.testng.annotations.Test
+    fun `N 02502`(){
+        tools.logonTool()
+        tools.menuNavigation("Происшествия","Создать карточку",waitTime)
+        element(byXpath("//*[text()='Создать карточку']/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byXpath("//input[@name='incidentTypeId-textfield']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        Thread.sleep(500)
+        element(byXpath("//div[@role='presentation']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        val test = elements(byXpath("//div[@role='presentation']/*"))
+        test.forEach {
+            println(it)
+        }
+//        println(elements(byXpath("//body//div[role='presentation']//li[1]//*")) )
+
+//        Thread.sleep(20000)
 
     }
 }
