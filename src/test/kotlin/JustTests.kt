@@ -61,6 +61,7 @@ class JustTests {
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
         }
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         val labelList = listOf<String>("AutoTest", "Child label")
         val labelListName = mutableListOf<String>()
         labelList.forEach {
@@ -110,6 +111,7 @@ class JustTests {
         }
         tools.logoffTool()
         Thread.sleep(500)
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //Регистрируем КП
         tools.logonTool()
         tools.menuNavigation("Происшествия","Создать карточку", waitTime)
@@ -117,16 +119,36 @@ class JustTests {
         element(byXpath("//span[text()='Создать карточку']/parent::button")).click()
         tools.inputRandomNew("incidentTypeId-textfield", false, waitTime)
         //добавляем метку при создании КП
-        tools.inputRandomNew("labelsId-textfield", true, waitTime)
-        var createLabel = element(byXpath("//label[text()='Метки']/..//span[@style='line-height: 1;'][1]//span[text()]")).ownText
-        while (labelListName.contains(createLabel)){
-            element(byXpath("//label[text()='Метки']/..//span[text()='$createLabel']/../*[name()='svg']"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
+        //т.к. меток может добавится много, нам придется проверить все на совпадение с создаваемыми
+
+        val createdLabel = mutableListOf<String>()
+        var again: Boolean
+        do {
+            again = false
             tools.inputRandomNew("labelsId-textfield", true, waitTime)
-            createLabel = element(byXpath("//label[text()='Метки']/..//span[@style='line-height: 1;'][1]//span[text()]")).ownText
-        }
+            repeat(element(byXpath("//input[@name='labelsId-textfield']")).getAttribute("value")!!.length){
+                element(byXpath("//input[@name='labelsId-textfield']")).sendKeys(Keys.BACK_SPACE)
+            }
+            val labelElementsCollection = elements(byXpath("//label[text()='Метки']/..//span[@style='line-height: 1;']//span[text()]"))
+            labelElementsCollection.forEach {
+                createdLabel.add(it.ownText)
+            }
+            labelListName.forEach{
+                if (createdLabel.contains(it)){
+                    again = true
+                }
+            }
+            if (again){
+                createdLabel.forEach {
+                    element(byXpath("//label[text()='Метки']/..//span[text()='$it']/../*[name()='svg']"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                        .click()
+                    element(byXpath("//label[text()='Метки']/..//span[text()='$it']/../*[name()='svg']"))
+                        .shouldNot(exist, ofSeconds(waitTime))
+                }
+            }
+        } while (again)
         element(byXpath("//span[text()='Сохранить карточку']/parent::button")).click()
         //Убеждаемся, что нам загрузило созданную карточку
         //проверяя что нам в принципе загрузило какую-то карточку
@@ -139,12 +161,18 @@ class JustTests {
         //и что это именно так карточка которую мы только что создали
         element(byCssSelector("div#panel1a-content div[style='gap: 16px 0px;']>div:nth-child(5)"))
             .shouldHave(text("AutoTest T 0010 $dateTime"), ofSeconds(waitTime))
-        element(byXpath(" //span[contains(text(),'$createLabel')]"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
+        createdLabel.forEach {
+            element(byXpath(" //span[contains(text(),'$it')]"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+        }
         //добавляем метку
         element(byXpath("//h3[text()='Метки']/following-sibling::span/button")).click()
-        element(byCssSelector("input[name='labels']"))
+        element(byCssSelector("input[name='labelsId-textfield']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byXpath("//body/div[@role='presentation']//ul/li[1]/div"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
@@ -161,16 +189,18 @@ class JustTests {
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
         }
-        element(byXpath(" //span[contains(text(),'$createLabel')]"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
+        createdLabel.forEach {
+            element(byXpath(" //span[contains(text(),'$it')]"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+        }
         tools.logoffTool()
         //перезалогиниваемся, что бы исключить кеширование и расширить тест
         Thread.sleep(500)
         tools.logonTool()
         tools.menuNavigation("Справочники", "Метки", waitTime)
         //воспользуемся поиском, что бы найти созданную метку
-        element(byCssSelector("button[data-testid='Поиск-iconButton']"))
+        element(byXpath("//*[@name='search']/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
@@ -182,8 +212,8 @@ class JustTests {
 //            .should(exist, ofSeconds(waitTime))
 //            .shouldBe(visible, ofSeconds(waitTime))
         Thread.sleep(500)
-        if (elements(byXpath("//tbody/tr//div[text()='Нет данных']")).size == 0){
-            while (elements(byXpath("//tbody/tr//div[text()='Нет данных']")).size == 0) {
+        if (elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size == 0){
+            while (elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size == 0) {
                 val removedLabel = element(byXpath("(//tbody/tr/td[1]//*[text()])[last()]")).ownText.toString()
                 //открываем трехточечное меню
                 element(byXpath("(//tbody/tr//button)[last()]")).click()
@@ -202,7 +232,7 @@ class JustTests {
             }
         }
         //убеждаемся что удалили
-        element(byXpath("//tbody/tr//div[text()='Нет данных']"))
+        element(byXpath("//table/tbody/tr//*[text()='Нет данных']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
     }

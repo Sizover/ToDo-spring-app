@@ -129,7 +129,7 @@ class Bufer {
         element(byXpath("//div[@role='presentation']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        val test = elements(byXpath("//div[@role='presentation']/*"))
+        val test = elements(byXpath("//div[@role='presentation']"))
         test.forEach {
             println(it)
         }
