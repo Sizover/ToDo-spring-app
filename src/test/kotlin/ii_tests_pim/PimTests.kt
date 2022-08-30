@@ -19,6 +19,7 @@ import com.codeborne.selenide.Selenide.open
 import org.apache.commons.io.FileUtils
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
+import org.testng.annotations.DataProvider
 import java.io.File
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
@@ -44,6 +45,14 @@ class PimTests {
     val waitTime: Long = 5
     val longWait: Long = 10
 
+    @DataProvider(name = "BrowserProvider")
+    open fun Statuses(): Any {
+        return arrayOf<Array<Any>>(
+            arrayOf("CHROME"),
+            arrayOf("FIREFOX"),
+        )
+    }
+
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
     fun `N 0010`() {
         //A31 Убедиться в наличии списка объектов  в справочнике «Муниципальные образования»
@@ -53,6 +62,7 @@ class PimTests {
         //A37 Убедиться в наличии списка объектов  в справочнике «Датчики»
         //логинимся
         //val tools = Tools()
+//        tools.logonTool()
         tools.logonTool()
         //кликаем по иконке справочников в боковом меню
         //Переходим в "Муниципальные образования"
@@ -2149,8 +2159,12 @@ class PimTests {
             if (oldIncidentTypeListCount >= i && i<7){
                 element(byCssSelector("input#incidentTypeId-autocomplete"))
                     .sendKeys(oldIncidentTypeList[i-1])
-                element(byCssSelector("input#incidentTypeId-autocomplete"))
-                    .sendKeys(Keys.DOWN, Keys.ENTER)
+                element(byXpath("//div[@role='presentation']//ul/li[last()]"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .click()
+//                element(byCssSelector("input#incidentTypeId-autocomplete"))
+//                    .sendKeys(Keys.DOWN, Keys.ENTER)
 //                Thread.sleep(10000)
 //            if (oldIncidentTypeListCount > 5 && i == 6) {
 //                //(oldIncidentTypeListCount >= i && i<7)
@@ -2662,7 +2676,7 @@ class PimTests {
             //проходимся по заголовкам столбцов, сверяя их с каждой позицией подсказки
             var searchValue = ""
             for (col in 1 until comumnCount) {
-                var hierarchy: Boolean
+//                var hierarchy: Boolean
                 element(byXpath("//table/thead/tr/th[$col]"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
@@ -2677,7 +2691,7 @@ class PimTests {
                     element(byCssSelector("thead>tr>th svg[name='arrowDown']"))
                         .should(exist, ofSeconds(waitTime))
                         .shouldBe(visible, ofSeconds(waitTime))
-                    hierarchy = true
+//                    hierarchy = true
                     if (dicts == 10){
                         allRecordCountUse = elements(byXpath("//tbody/tr")).size
                     }
@@ -2685,25 +2699,26 @@ class PimTests {
                 //проверяем существует ли заголовок столбца, и если существует, то:
 //                if (elements(byXpath("//table/thead/tr/th[$q]//*[text()]")).size == 1){
                 else {
-                    hierarchy = false
+//                    hierarchy = false
                     val columnName = element(byXpath("//table/thead/tr/th[$col]//*[text()]")).ownText.toString()
     //                println("columnName $columnName")
-                    searchHintList?.forEach { it ->
+                    for (hint in 0 until searchHintList!!.size){
+//                    searchHintList?.forEach { it ->
     //                    println("$i searchHintList $it")
                         //если заголовок столбца совпал с подсказкой, то вбиваем значение этого столбца из каждой строки в список из которого выберем случайное значение для поиска, ждем что нижний счетчик строк будет строго меньше исходного
-                        println("i = $dicts columnName = $columnName подсказка = $it")
-                        if (columnName.contains(it)
-                            || (columnName == "Телефонный код" && it == "Тел.код")
-                            || (columnName == "Метка" && it == "Имя метки")
-                            || (columnName == "№" && it == "Номер пункта")
+//                        println("i = $dicts columnName = $columnName подсказка = $it")
+                        if (columnName.contains(searchHintList[hint])
+                            || ((columnName == "Телефонный код") && (searchHintList[hint] == "Тел.код"))
+                            || ((columnName == "Метка") && (searchHintList[hint] == "Имя метки"))
+                            || ((columnName == "№") && (searchHintList[hint] == "Номер пункта"))
                         ) {
-                            println("i = $dicts true columnName = $columnName подсказка = $it")
+//                            println("i = $dicts true columnName = $columnName подсказка = ${searchHintList[hint]}")
                             //искомое значение определяем случайно, среди имеющихся но с типами происшествий и откидыванием пустых значений других справочников придется возится
                             var maxRandom: Int = 1
                             var randomColumnValue = 0
                             if (dicts != 10) {
                                 val countAllString = elements(byXpath("//table/tbody/tr")).size
-                                var trueValueList = mutableListOf<String>()
+                                val trueValueList = mutableListOf<String>()
                                 for (str in 1..countAllString) {
     //                                if (elements(byXpath("//table/tbody/tr[$r]/td[$q]//*[text()]")).size == 1) {
     //                                    trueValueList.add(element(byXpath("//table/tbody/tr[$r]/td[$q]//*[text()]")).ownText.trim())
@@ -2760,7 +2775,7 @@ class PimTests {
 //                                    .should(exist, ofSeconds(waitTime))
 //                                    .shouldBe(visible, ofSeconds(waitTime))
 //                                val countAllString = elements(byXpath("//table/tbody/tr")).size
-                                var trueValueList = mutableListOf<String>()
+                                val trueValueList = mutableListOf<String>()
                                 for (r in 1..allRecordCountUse) {
                                     if (elements(byXpath("//table/tbody/tr[$r]/td[$col]//button")).size == 0
                                         && elements(byXpath("//table/tbody/tr[$r]/td[$col][text()]")).size != 0
@@ -2803,8 +2818,8 @@ class PimTests {
     //                        println("allRecordCountUse $allRecordCountUse")
     //                        println("nowRecordCountUse $nowRecordCountUse")
 //                            Assertions.assertTrue(allRecordCountUse > nowRecordCountUse)
-                            println("allRecordCountUse $allRecordCountUse")
-                            println("nowRecordCountUse $nowRecordCountUse")
+//                            println("allRecordCountUse $allRecordCountUse")
+//                            println("nowRecordCountUse $nowRecordCountUse")
                             Assertions.assertTrue(allRecordCountUse > nowRecordCountUse)
 //                            if (dicts == 10) {
 //                                Assertions.assertTrue(nowRecordCountUse == 1)
@@ -2816,7 +2831,8 @@ class PimTests {
                             element(byXpath("//input[@placeholder]/following-sibling::div/button")).click()
                             element(byCssSelector("input[placeholder]")).click()
                             Thread.sleep(1000)
-                        }
+                            break
+                            }
                         }
                     }
                 }
@@ -3298,6 +3314,7 @@ class PimTests {
         tools.logonTool()
         //сначала проверим остатки неудачных запусков и удалим их.
         tools.menuNavigation("Справочники", "Должностные лица", waitTime)
+        tools.checkbox("", true, waitTime)
         //воспользуемся поиском
         var menuColumnNubber = tools.numberOfColumn(" ", waitTime)
         val fioColumnNubber = tools.numberOfColumn("ФИО", waitTime)
@@ -3312,27 +3329,56 @@ class PimTests {
         element(byCssSelector("input[placeholder^='ФИО']")).sendKeys("N 0270 AutoTest", Keys.ENTER)
         //ждем результатов
         Thread.sleep(1000)
-        while (elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size == 0){
-            //запоминаем ФИО что бы проконтролировать удаление
-            val removedPersonFIO = element(byXpath("//table/tbody/tr[1]/td[$fioColumnNubber]")).ownText
-            //открываем три точки
-            element(byXpath("//table/tbody/tr[1]/td[$menuColumnNubber]//button"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
-            //удаляем
-            element(byXpath("//span[text()='Удалить']/parent::button"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
-            //подтверждаем удаление
-            element(byXpath("//div[@role='dialog']//span[text()='Удалить']/parent::button"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
-            element(byXpath("//table/tbody/tr[1]/td[$fioColumnNubber and text()='$removedPersonFIO']"))
-                .shouldNot(exist, ofSeconds(waitTime))
-            Thread.sleep(500)
+        val userColumn = tools.numberOfColumn("Пользователь", waitTime)
+//        while ((elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size == 0)
+//            ||(elements(byXpath("//table/tbody/tr/td[$userColumn]//*[@name='user']")).size
+//                ==elements(byXpath("//table/tbody/tr")).size )
+//        ){
+//            //запоминаем ФИО что бы проконтролировать удаление
+//            val removedPersonFIO = element(byXpath("//table/tbody/tr[1]/td[$fioColumnNubber]")).ownText
+//            //открываем три точки
+//            element(byXpath("//table/tbody/tr[1]/td[$menuColumnNubber]//button"))
+//                .should(exist, ofSeconds(waitTime))
+//                .shouldBe(visible, ofSeconds(waitTime))
+//                .click()
+//            //удаляем
+//            element(byXpath("//span[text()='Удалить']/parent::button"))
+//                .should(exist, ofSeconds(waitTime))
+//                .shouldBe(visible, ofSeconds(waitTime))
+//                .click()
+//            //подтверждаем удаление
+//            element(byXpath("//div[@role='dialog']//span[text()='Удалить']/parent::button"))
+//                .should(exist, ofSeconds(waitTime))
+//                .shouldBe(visible, ofSeconds(waitTime))
+//                .click()
+//            element(byXpath("//table/tbody/tr[1]/td[$fioColumnNubber][text()='$removedPersonFIO']"))
+//                .shouldNot(exist, ofSeconds(waitTime))
+//            Thread.sleep(500)
+//        }
+        if (elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size == 0) {
+            for (i in 1..elements(byXpath("//table/tbody/tr")).size) {
+                if (elements(byXpath("//table/tbody/tr[$i]/td[$userColumn]//*[@name='user']")).size == 0) {
+                    val removedPersonFIO = element(byXpath("//table/tbody/tr[$i]/td[$fioColumnNubber]")).ownText
+                    //открываем три точки
+                    element(byXpath("//table/tbody/tr[$i]/td[$menuColumnNubber]//button"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                        .click()
+                    //удаляем
+                    element(byXpath("//span[text()='Удалить']/parent::button"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                        .click()
+                    //подтверждаем удаление
+                    element(byXpath("//div[@role='dialog']//span[text()='Удалить']/parent::button"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                        .click()
+                    element(byXpath("//table/tbody/tr[$i]/td[$fioColumnNubber][text()='$removedPersonFIO']"))
+                        .shouldNot(exist, ofSeconds(waitTime))
+                    Thread.sleep(500)
+                }
+            }
         }
         //идем в справочник ДС что бы достать оттуда ДС и их организации, что бы лицо создавать с этими параметрами
         tools.menuNavigation("Справочники", "Дежурные службы", waitTime)
@@ -3591,6 +3637,7 @@ class PimTests {
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
         tools.menuNavigation("Справочники", "Должностные лица", waitTime)
+        menuColumnNubber = tools.numberOfColumn(" ", waitTime)
         //ждем загрузки таблицы
         element(byCssSelector("main table>tbody"))
             .should(exist, ofSeconds(waitTime))

@@ -247,48 +247,79 @@ class JustTests {
         tools.checkbox("", true, waitTime)
         Thread.sleep(1000)
         //внесем существующие телефонные коды в отдельный список
-        var telCodeElementsCollection = elements(byXpath(""))
+//        var telCodeElementsCollection = elements(byXpath(""))
         val telCodeList = mutableListOf<String>()
-        var telCodeColumnIndex = 10
         //Выясняем в каком столбце хранятся телефонные коды
-        val telCodeElements = elements(byXpath("//thead/tr/th"))
-        telCodeElements.forEachIndexed{index, element ->
-            if (element.ownText == "Телефонный код"){
-                telCodeColumnIndex = index + 1
-            }
-        }
+        var telCodeColumnIndex = tools.numberOfColumn("Телефонный код", waitTime)
+        //Выясняем в каком столбце хранятся телефонные коды
+//        val telCodeElements = elements(byXpath("//thead/tr/th"))
+//        telCodeElements.forEachIndexed{index, element ->
+//            println(index.toString() + " ," + element.ownText )
+//            if (element.ownText == "Телефонный код"){
+//                telCodeColumnIndex = index + 1
+//            }
+//        }
 //        for (i in 1..elements(byXpath("//thead/tr/th")).size){
 //            if (element(byXpath("//thead/tr/th[$i]//*[text()]")).ownText == "Телефонный код"){
 //                telCodeColumnIndex = i
 //            }
 //        }
         //Внесем телефонные коды в отдельный список
-        do {
-            telCodeElementsCollection = elements(byXpath("//tbody/tr/td[$telCodeColumnIndex]//*[text()]"))
+        //пагинации теперь нет
+//        do {
+//            telCodeElementsCollection = elements(byXpath("//tbody/tr/td[$telCodeColumnIndex]//*[text()]"))
+//            telCodeElementsCollection.forEach {
+//                telCodeList.add(it.ownText)
+//            }
+//            //побеждаем пагинацию, проходясь по всему справочнику и собирая телефонное коды
+//            val pagesLi = elements(byXpath("//nav/ul/li")).size
+//            if (!element(byXpath("//nav/ul/li[${pagesLi - 2}]/div")).getAttribute("style")?.contains("color: blue")!!){
+//                element(byXpath("//nav/ul/li[${pagesLi - 1}]/div")).click()
+//            }
+//            Thread.sleep(1000)
+//        }
+//        while (!element(byXpath("//nav/ul/li[${pagesLi - 2}]/div")).getAttribute("style")?.contains("color: blue")!!)
+        while(elements(byXpath("//table/thead/tr/th[1]//*[@name='arrowRight']/ancestor::button")).size == 1){
+            element(byXpath("//table/thead/tr/th[1]//*[@name='arrowRight']/ancestor::button")).click()
+        }
+        val telCodeElementsCollection = elements(byXpath("//tbody/tr/td[$telCodeColumnIndex][text()]"))
             telCodeElementsCollection.forEach {
                 telCodeList.add(it.ownText)
             }
-            //побеждаем пагинацию, проходясь по всему справочнику и собирая телефонное коды
-            val pagesLi = elements(byXpath("//nav/ul/li")).size
-            if (!element(byXpath("//nav/ul/li[${pagesLi - 2}]/div")).getAttribute("style")?.contains("color: blue")!!){
-                element(byXpath("//nav/ul/li[${pagesLi - 1}]/div")).click()
-            }
-            Thread.sleep(1000)
-        }
-        while (!element(byXpath("//nav/ul/li[${pagesLi - 2}]/div")).getAttribute("style")?.contains("color: blue")!!)
         //воспользуемся поиском что бы найти МО с "AutoTest" в названии
-        element(byCssSelector("button[data-testid='Поиск-iconButton']"))
+        element(byXpath("//*[@name='search']/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
-        element(byCssSelector("input[placeholder]"))
+        element(byXpath("//*[@name='search']/following-sibling::input"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        element(byCssSelector("input[placeholder]")).sendKeys("AutoTest", Keys.ENTER)
+        element(byXpath("//*[@name='search']/following-sibling::input"))
+            .sendKeys("AutoTest", Keys.ENTER)
         Thread.sleep(1000)
+        if (elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size == 0){
+            val moNameColumn = tools.numberOfColumn("Наименование", waitTime)
+            val moParentNameColumn = tools.numberOfColumn("Субъект", waitTime)
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         //если они есть, то составляем их список, не удаляем из него "AutoTest Основное МО" (что бы еще раз не искать его потом)
         // и поштучно удаляем все МО из списка
-        if (elements(byXpath("//tbody/tr//div[text()='Нет данных']")).size == 0) {
+        if (elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size == 0) {
             val autotestMOElementsList = elements(byXpath("//tbody/tr/td[1]//*[contains(text(),'AutoTest')]"))
             //можно при наполнении moATItWas через else if проверить на соответствие заголовка МО "AutoTest Основное МО"
             // и удалить его из moAtCreated в таком случае

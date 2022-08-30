@@ -9,8 +9,10 @@ import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Selectors.byCssSelector
 import com.codeborne.selenide.Selectors.byXpath
+import com.codeborne.selenide.Selenide
 import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
+import com.codeborne.selenide.Selenide.open
 import java.time.Duration.ofSeconds
 import java.time.LocalDateTime
 
@@ -116,26 +118,29 @@ class Bufer {
     @org.testng.annotations.Test
     fun `N 02502`(){
         tools.logonTool()
-        tools.menuNavigation("Происшествия","Создать карточку",waitTime)
-        element(byXpath("//*[text()='Создать карточку']/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        element(byXpath("//input[@name='incidentTypeId-textfield']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        Thread.sleep(500)
-        element(byXpath("//div[@role='presentation']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        val test = elements(byXpath("//div[@role='presentation']"))
-        test.forEach {
-            println(it)
-        }
-//        println(elements(byXpath("//body//div[role='presentation']//li[1]//*")) )
-
-//        Thread.sleep(20000)
+        tools.menuNavigation("Происшествия", "Создать карточку", waitTime)
+        Thread.sleep(10000)
+//        tools.logonTool()
+//        tools.menuNavigation("Происшествия","Создать карточку",waitTime)
+//        element(byXpath("//*[text()='Создать карточку']/ancestor::button"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+//            .click()
+//        element(byXpath("//input[@name='incidentTypeId-textfield']"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+//            .click()
+//        Thread.sleep(500)
+//        element(byXpath("//div[@role='presentation']"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+//        val test = elements(byXpath("//div[@role='presentation']"))
+//        test.forEach {
+//            println(it)
+//        }
+////        println(elements(byXpath("//body//div[role='presentation']//li[1]//*")) )
+//
+////        Thread.sleep(20000)
 
     }
 }

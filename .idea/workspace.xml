@@ -4,10 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="91c598e0-d724-4c0e-9c0f-45d8884c7de4" name="#7 Переделка тестов, под новый табличный и иерархический движок" comment="#7 Переделка тестов, под новый табличный и иерархический движок. Множество правок тестов под новые селекты, новую логику запуска и пр...">
+    <list default="true" id="91c598e0-d724-4c0e-9c0f-45d8884c7de4" name="#7 Переделка тестов, под новый табличный и иерархический движок" comment="#7 поправил тест на создание и добавление меток">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/kotlin/JustTests.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/JustTests.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/kotlin/Retry.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/Retry.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/kotlin/Tools.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/Tools.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/kotlin/ii_tests_pim/Bufer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/ii_tests_pim/Bufer.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/kotlin/ii_tests_pim/PimTests.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/ii_tests_pim/PimTests.kt" afterDir="false" />
     </list>
     <list id="ca149d85-a975-4ce8-a892-1395e65d3c80" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -65,9 +68,6 @@
       </map>
     </option>
   </component>
-  <component name="KotlinCodeInsightWorkspaceSettings">
-    <option name="optimizeImportsOnTheFly" value="true" />
-  </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
@@ -79,22 +79,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "last.edited.regexp": "Sample Text",
-    "last_opened_file_path": "/home/isizov/projects/testing-e2e/src/test/testng.xml",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "advanced.settings",
-    "start.from.branch": "develop"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last.edited.regexp&quot;: &quot;Sample Text&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/isizov/projects/testing-e2e/src/test/testng.xml&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.import&quot;,
+    &quot;start.from.branch&quot;: &quot;develop&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
@@ -104,7 +104,7 @@
       <recent name="" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.JustTests.T 0010">
+  <component name="RunManager" selected="Gradle.StatusTests.S 0010">
     <configuration name="Bufer.N 02502" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -128,7 +128,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="JustTests.T 0010" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="PimTests.N 0010" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -141,7 +141,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;JustTests.T 0010&quot;" />
+            <option value="&quot;ii_tests_pim.PimTests.N 0010&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -151,7 +151,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="Removal.R 9998" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="PimTests.N 0020" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -164,7 +164,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;Removal.R 9998&quot;" />
+            <option value="&quot;ii_tests_pim.PimTests.N 0020&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -174,7 +174,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="Removal.R 9999" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="PimTests.N 0230" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -187,7 +187,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;Removal.R 9999&quot;" />
+            <option value="&quot;ii_tests_pim.PimTests.N 0230&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -239,19 +239,19 @@
     </configuration>
     <list>
       <item itemvalue="Gradle.Bufer.N 02502" />
-      <item itemvalue="Gradle.Removal.R 9998" />
-      <item itemvalue="Gradle.Removal.R 9999" />
       <item itemvalue="Gradle.StatusTests.S 0010" />
-      <item itemvalue="Gradle.JustTests.T 0010" />
+      <item itemvalue="Gradle.PimTests.N 0010" />
+      <item itemvalue="Gradle.PimTests.N 0020" />
+      <item itemvalue="Gradle.PimTests.N 0230" />
       <item itemvalue="TestNG.Run_1" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.JustTests.T 0010" />
-        <item itemvalue="Gradle.Bufer.N 02502" />
-        <item itemvalue="Gradle.Removal.R 9999" />
-        <item itemvalue="Gradle.Removal.R 9998" />
         <item itemvalue="Gradle.StatusTests.S 0010" />
+        <item itemvalue="Gradle.Bufer.N 02502" />
+        <item itemvalue="Gradle.PimTests.N 0010" />
+        <item itemvalue="Gradle.PimTests.N 0020" />
+        <item itemvalue="Gradle.PimTests.N 0230" />
       </list>
     </recent_temporary>
   </component>
@@ -291,14 +291,15 @@
       <option name="presentableId" value="#7" />
       <option name="project" value="Тестирование - сквозные автотесты" />
       <option name="type" value="BUG" />
-      <updated>1661440650903</updated>
+      <updated>1661766679904</updated>
       <workItem from="1660212118333" duration="2013000" />
       <workItem from="1660217893289" duration="48099000" />
       <workItem from="1660745543052" duration="79000" />
       <workItem from="1660745632076" duration="23463000" />
       <workItem from="1660908774158" duration="18708000" />
       <workItem from="1661339436019" duration="69000" />
-      <workItem from="1661339512737" duration="42123000" />
+      <workItem from="1661339512737" duration="61859000" />
+      <workItem from="1661857135175" duration="3946000" />
     </task>
     <option name="localTasksCounter" value="3" />
     <option name="clearContext" value="false" />
@@ -339,7 +340,8 @@
     <MESSAGE value="#7 Переделка тестов, под новый табличный и иерархический движок недоделана. сихра срепозиторием для переезда на другой ПК" />
     <MESSAGE value="#7 Переделка тестов, под новый табличный и иерархический движок" />
     <MESSAGE value="#7 Переделка тестов, под новый табличный и иерархический движок. Множество правок тестов под новые селекты, новую логику запуска и пр..." />
-    <option name="LAST_COMMIT_MESSAGE" value="#7 Переделка тестов, под новый табличный и иерархический движок. Множество правок тестов под новые селекты, новую логику запуска и пр..." />
+    <MESSAGE value="#7 поправил тест на создание и добавление меток" />
+    <option name="LAST_COMMIT_MESSAGE" value="#7 поправил тест на создание и добавление меток" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

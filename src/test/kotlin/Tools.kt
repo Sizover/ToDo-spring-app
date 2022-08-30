@@ -1,5 +1,7 @@
 //import kotlin.collections.EmptyMap.keys
 import com.codeborne.selenide.Browsers.CHROME
+import com.codeborne.selenide.Browsers.FIREFOX
+import com.codeborne.selenide.Browsers.*
 import com.codeborne.selenide.Condition.attribute
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.visible
@@ -14,9 +16,11 @@ import com.codeborne.selenide.Selenide.closeWindow
 import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
 import com.codeborne.selenide.Selenide.open
+import com.codeborne.selenide.Selenide.webdriver
 import com.codeborne.selenide.WebDriverRunner
 import org.openqa.selenium.Keys
 import org.openqa.selenium.chrome.ChromeOptions
+import org.openqa.selenium.firefox.FirefoxOptions
 import java.time.Duration.ofSeconds
 
 
@@ -32,7 +36,7 @@ class Tools {
         //на случай невыполнения шага, ждем что бы можно было успеть глазками посмотреть и руками потыкать
         Configuration.timeout = 20000
         //выбираем браузер
-        //Configuration.browser = FIREFOX
+//        Configuration.browser = FIREFOX
 //        Configuration.browser = CHROME
         WebDriverRunner.isChrome()
         Configuration.browserSize = "1920x1080"
@@ -56,6 +60,58 @@ class Tools {
         element(byName("password")).sendKeys("a.sizov")
         element(byName("login")).click()
     }
+
+
+//    fun logonTool2(browser: String){
+//
+//        //https://overcoder.net/q/1369284/%D0%BA%D0%B0%D0%BA-%D1%80%D0%B0%D0%B7%D1%80%D0%B5%D1%88%D0%B8%D1%82%D1%8C-%D0%B8%D0%BB%D0%B8-%D0%B7%D0%B0%D0%BF%D1%80%D0%B5%D1%82%D0%B8%D1%82%D1%8C-%D1%83%D0%B2%D0%B5%D0%B4%D0%BE%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BE-%D0%B2%D1%81%D0%BF%D0%BB%D1%8B%D0%B2%D0%B0%D1%8E%D1%89%D0%B5%D0%B9-%D0%BA%D0%B0%D0%BC%D0%B5%D1%80%D0%B5-%D0%BC%D0%B8%D0%BA%D1%80%D0%BE%D1%84%D0%BE%D0%BD%D0%B0
+//
+//
+//        //ChromeOptions addArguments
+//
+//
+//        //на случай невыполнения шага, ждем что бы можно было успеть глазками посмотреть и руками потыкать
+//        Configuration.timeout = 20000
+//        //выбираем браузер
+//        //Configuration.browser = FIREFOX
+////        Configuration.browser = CHROME
+////        Configuration.browser = browser
+//        when (browser){
+//            CHROME -> {
+//                Configuration.browser = CHROME
+//                WebDriverRunner.isChrome()
+//                val chromeOpt = ChromeOptions()
+//                chromeOpt.addArguments("use-fake-device-for-media-stream")
+//                chromeOpt.addArguments("use-fake-ui-for-media-stream")
+//            }
+//            FIREFOX -> {
+//                Configuration.browser = FIREFOX
+//                WebDriverRunner.isFirefox()
+//                val firefoxOpt = FirefoxOptions()
+//                firefoxOpt.addArguments("-profile")
+//                firefoxOpt.addArguments("/home/isizov/snap/firefox/common/.mozilla/firefox/4m2vdd0k.default")
+//            }
+//        }
+//        Configuration.browserSize = "1920x1080"
+//        Configuration.holdBrowserOpen = false
+//        //Открываем КИАП
+//        //Selenide.open("http://test.kiap.local:8000")
+//
+//        Selenide.open("https://test.kiap.local/")
+//
+//        //Костыль для обхода проблем с тестами которые не завершились и упали
+//        clearBrowserCookies()
+//        clearBrowserLocalStorage()
+//        closeWindow()
+//        //Thread.sleep(1000)
+//        open("https://test.kiap.local/")
+//        //логинимся
+////        element(byName("username")).value = "a.sizov"
+////        element(byName("password")).value = "a.sizov"
+//        element(byName("username")).sendKeys("a.sizov")
+//        element(byName("password")).sendKeys("a.sizov")
+//        element(byName("login")).click()
+//    }
 
     fun anyLogonTool(username: String, password: String){
         //https://overcoder.net/q/1369284/%D0%BA%D0%B0%D0%BA-%D1%80%D0%B0%D0%B7%D1%80%D0%B5%D1%88%D0%B8%D1%82%D1%8C-%D0%B8%D0%BB%D0%B8-%D0%B7%D0%B0%D0%BF%D1%80%D0%B5%D1%82%D0%B8%D1%82%D1%8C-%D1%83%D0%B2%D0%B5%D0%B4%D0%BE%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BE-%D0%B2%D1%81%D0%BF%D0%BB%D1%8B%D0%B2%D0%B0%D1%8E%D1%89%D0%B5%D0%B9-%D0%BA%D0%B0%D0%BC%D0%B5%D1%80%D0%B5-%D0%BC%D0%B8%D0%BA%D1%80%D0%BE%D1%84%D0%BE%D0%BD%D0%B0
