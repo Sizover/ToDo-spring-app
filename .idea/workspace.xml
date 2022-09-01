@@ -4,12 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="91c598e0-d724-4c0e-9c0f-45d8884c7de4" name="#7 Переделка тестов, под новый табличный и иерархический движок" comment="#7 поправил тест на создание и добавление меток">
+    <list default="true" id="91c598e0-d724-4c0e-9c0f-45d8884c7de4" name="#7 Переделка тестов, под новый табличный и иерархический движок" comment="мелкие правки и эксперименты">
+      <change afterPath="$PROJECT_DIR$/src/test/kotlin/SearchTests.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/kotlin/JustTests.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/JustTests.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/kotlin/Retry.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/Retry.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/kotlin/StatusTests.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/StatusTests.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/kotlin/Tools.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/Tools.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/kotlin/ii_tests_pim/Bufer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/ii_tests_pim/Bufer.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/kotlin/ii_tests_pim/PimTests.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/ii_tests_pim/PimTests.kt" afterDir="false" />
     </list>
     <list id="ca149d85-a975-4ce8-a892-1395e65d3c80" name="Changes" comment="" />
@@ -46,8 +48,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Kotlin Class" />
         <option value="Class" />
+        <option value="Kotlin Class" />
       </list>
     </option>
   </component>
@@ -104,8 +106,8 @@
       <recent name="" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.StatusTests.S 0010">
-    <configuration name="Bufer.N 02502" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+  <component name="RunManager" selected="Gradle.PimTests.N 0230">
+    <configuration name="MapTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -118,7 +120,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;ii_tests_pim.Bufer.N 02502&quot;" />
+            <option value="&quot;MapTest&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -128,7 +130,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="PimTests.N 0010" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="PimTests.N 0112" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -141,30 +143,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;ii_tests_pim.PimTests.N 0010&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <method v="2" />
-    </configuration>
-    <configuration name="PimTests.N 0020" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;ii_tests_pim.PimTests.N 0020&quot;" />
+            <option value="&quot;ii_tests_pim.PimTests.N 0112&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -197,7 +176,7 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="StatusTests.S 0010" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="SearchTests" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -210,7 +189,30 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;StatusTests.S 0010&quot;" />
+            <option value="&quot;SearchTests&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="SearchTests.Search 0010" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;SearchTests.Search 0010&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -238,20 +240,20 @@
       </method>
     </configuration>
     <list>
-      <item itemvalue="Gradle.Bufer.N 02502" />
-      <item itemvalue="Gradle.StatusTests.S 0010" />
-      <item itemvalue="Gradle.PimTests.N 0010" />
-      <item itemvalue="Gradle.PimTests.N 0020" />
+      <item itemvalue="Gradle.MapTest" />
+      <item itemvalue="Gradle.PimTests.N 0112" />
+      <item itemvalue="Gradle.SearchTests" />
+      <item itemvalue="Gradle.SearchTests.Search 0010" />
       <item itemvalue="Gradle.PimTests.N 0230" />
       <item itemvalue="TestNG.Run_1" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.StatusTests.S 0010" />
-        <item itemvalue="Gradle.Bufer.N 02502" />
-        <item itemvalue="Gradle.PimTests.N 0010" />
-        <item itemvalue="Gradle.PimTests.N 0020" />
         <item itemvalue="Gradle.PimTests.N 0230" />
+        <item itemvalue="Gradle.SearchTests.Search 0010" />
+        <item itemvalue="Gradle.SearchTests" />
+        <item itemvalue="Gradle.MapTest" />
+        <item itemvalue="Gradle.PimTests.N 0112" />
       </list>
     </recent_temporary>
   </component>
@@ -291,7 +293,7 @@
       <option name="presentableId" value="#7" />
       <option name="project" value="Тестирование - сквозные автотесты" />
       <option name="type" value="BUG" />
-      <updated>1661766679904</updated>
+      <updated>1661952690996</updated>
       <workItem from="1660212118333" duration="2013000" />
       <workItem from="1660217893289" duration="48099000" />
       <workItem from="1660745543052" duration="79000" />
@@ -299,7 +301,7 @@
       <workItem from="1660908774158" duration="18708000" />
       <workItem from="1661339436019" duration="69000" />
       <workItem from="1661339512737" duration="61859000" />
-      <workItem from="1661857135175" duration="3946000" />
+      <workItem from="1661857135175" duration="36542000" />
     </task>
     <option name="localTasksCounter" value="3" />
     <option name="clearContext" value="false" />
@@ -341,7 +343,8 @@
     <MESSAGE value="#7 Переделка тестов, под новый табличный и иерархический движок" />
     <MESSAGE value="#7 Переделка тестов, под новый табличный и иерархический движок. Множество правок тестов под новые селекты, новую логику запуска и пр..." />
     <MESSAGE value="#7 поправил тест на создание и добавление меток" />
-    <option name="LAST_COMMIT_MESSAGE" value="#7 поправил тест на создание и добавление меток" />
+    <MESSAGE value="мелкие правки и эксперименты" />
+    <option name="LAST_COMMIT_MESSAGE" value="мелкие правки и эксперименты" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

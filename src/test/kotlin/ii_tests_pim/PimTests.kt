@@ -53,6 +53,22 @@ class PimTests {
         )
     }
 
+    @DataProvider(name = "Справочники")
+    open fun Справочники(): Any {
+        return arrayOf<Array<Any>>(
+            arrayOf("Алгоритмы реагирования"),
+            arrayOf("Видеокамеры"),
+            arrayOf("Датчики"),
+            arrayOf("Дежурные службы"),
+            arrayOf("Должностные лица"),
+            arrayOf("Метки"),
+            arrayOf("Муниципальные образования"),
+            arrayOf("Организации"),
+            arrayOf("Силы и средства"),
+            arrayOf("Типы происшествий"),
+        )
+    }
+
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
     fun `N 0010`() {
         //A31 Убедиться в наличии списка объектов  в справочнике «Муниципальные образования»
@@ -2613,18 +2629,19 @@ class PimTests {
     tools.logoffTool()
     }
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 0230`() {
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class, dataProvider = "Справочники")
+    fun `N 0230`(subMenu: String) {
         //A.3.29 Проверка поиска справочных данных
         //хорошо бы в таблицу включать все столбцы, но это потом доработаю //доработано
         tools.logonTool()
         //временно не проверяем поиск по справочнику типов происшествий т.к. не можем там контролировать число строк
         //(ну как бы можем, но не по такому алгоритму, а вероятно в отдельном тесте. еще подумаю...)
-        for (dicts in 1..10) {
-            //кликаем по иконке справочников
-            element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul")).click()
-            //переходим в каждый справочник
-            element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul//div/ul[$dicts]")).click()
+//        for (dicts in 1..10) {
+//            //кликаем по иконке справочников
+//            element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul")).click()
+//            //переходим в каждый справочник
+//            element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul//div/ul[$dicts]")).click()
+        tools.menuNavigation("Справочники", subMenu, waitTime)
             //ждем загрузки таблицы
             element(byCssSelector("main table>tbody"))
                 .should(exist, ofSeconds(waitTime))
@@ -2648,7 +2665,7 @@ class PimTests {
 //            element(byXpath("//fieldset[@aria-label='Показать/скрыть колонки']/../button")).click()
             //получаем счетчик строк в левом нижнем углу страницы, в виде числа
             var allRecordCountUse: Int
-            if (dicts != 10) {
+            if (subMenu != "Типы происшествий") {
                 val allRecordCountString =
                     element(byXpath("//table/tfoot//p[contains(text(),'Всего ')]")).ownText.toString().split("\n")
                 val allRecordCountNotUse = allRecordCountString[1].split(" ")
@@ -2692,7 +2709,7 @@ class PimTests {
                         .should(exist, ofSeconds(waitTime))
                         .shouldBe(visible, ofSeconds(waitTime))
 //                    hierarchy = true
-                    if (dicts == 10){
+                    if (subMenu == "Типы происшествий"){
                         allRecordCountUse = elements(byXpath("//tbody/tr")).size
                     }
                 }
@@ -2716,7 +2733,7 @@ class PimTests {
                             //искомое значение определяем случайно, среди имеющихся но с типами происшествий и откидыванием пустых значений других справочников придется возится
                             var maxRandom: Int = 1
                             var randomColumnValue = 0
-                            if (dicts != 10) {
+                            if (subMenu != "Типы происшествий") {
                                 val countAllString = elements(byXpath("//table/tbody/tr")).size
                                 val trueValueList = mutableListOf<String>()
                                 for (str in 1..countAllString) {
@@ -2769,7 +2786,7 @@ class PimTests {
     //                                println("randomColumnValue $i $randomColumnValue")
     //                                println("searchValue $searchValue")
     //                            searchValue = element(byXpath("//table/tbody/tr[1]/td[$q]//*[text()]")).ownText.toString()
-                            } else if (dicts == 10) { //Отдельно обрабатываем справочник типов происшествий
+                            } else if (subMenu == "Типы происшествий") { //Отдельно обрабатываем справочник типов происшествий
 //                                element(byXpath("//thead//*[name()='svg'][@id='expandable-button']/../parent::button")).click()
 //                                element(byXpath("//thead//*[name()='svg'][@id='expandable-button']/../parent::button//*[name()='path'][@d='M19 13H5v-2h14v2z']"))
 //                                    .should(exist, ofSeconds(waitTime))
@@ -2801,7 +2818,7 @@ class PimTests {
                             Thread.sleep(1000)
 
                             val nowRecordCountUse:Int
-                            if (dicts != 10){
+                            if (subMenu != "Типы происшествий"){
                                 element(byXpath("//table/tfoot//p[contains(text(),'Всего ')]"))
                                     .should(exist, ofSeconds(longWait))
                                     .shouldBe(visible, ofSeconds(longWait))
@@ -2836,7 +2853,7 @@ class PimTests {
                         }
                     }
                 }
-        }
+//        }
         tools.logoffTool()
     }
 

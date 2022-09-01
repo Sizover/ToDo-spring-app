@@ -339,9 +339,10 @@ class Tools {
                     }
                 }
             }
-            val rndInputValueIndex = (0 until incTypes.size).random()
-            element(byXpath("//input[@name='$inputName']")).sendKeys(incTypes[rndInputValueIndex])
-            element(byXpath("//input[@name='$inputName']")).sendKeys(Keys.DOWN, Keys.ENTER)
+//            val rndInputValueIndex = (0 until incTypes.size).random()
+            element(byXpath("//input[@name='$inputName']")).sendKeys(incTypes.random(), Keys.DOWN, Keys.ENTER)
+//            element(byXpath("//input[@name='$inputName']")).sendKeys(incTypes[rndInputValueIndex])
+//            element(byXpath("//input[@name='$inputName']")).sendKeys(Keys.DOWN, Keys.ENTER)
         } else {
             var countInputString = 0
             do {

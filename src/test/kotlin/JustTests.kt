@@ -126,6 +126,7 @@ class JustTests {
         do {
             again = false
             tools.inputRandomNew("labelsId-textfield", true, waitTime)
+            element(byXpath("//input[@name='labelsId-textfield']")).sendKeys(Keys.END)
             repeat(element(byXpath("//input[@name='labelsId-textfield']")).getAttribute("value")!!.length){
                 element(byXpath("//input[@name='labelsId-textfield']")).sendKeys(Keys.BACK_SPACE)
             }
