@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="91c598e0-d724-4c0e-9c0f-45d8884c7de4" name="#7 Переделка тестов, под новый табличный и иерархический движок" comment="Дополнены тесты поиска, переделан основной тест поиска на использование провайдера">
+    <list default="true" id="91c598e0-d724-4c0e-9c0f-45d8884c7de4" name="#7 Переделка тестов, под новый табличный и иерархический движок" comment="Мелкие правки тестов, устранение замечания по расположению метаданных">
+      <change afterPath="$PROJECT_DIR$/src/test/fixtures/AutoTest.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/fixtures/test.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/fixtures/Тестовый файл_.docx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/kotlin/Retry.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/Retry.kt" afterDir="false" />
@@ -300,7 +303,7 @@
       <workItem from="1660908774158" duration="18708000" />
       <workItem from="1661339436019" duration="69000" />
       <workItem from="1661339512737" duration="61859000" />
-      <workItem from="1661857135175" duration="45055000" />
+      <workItem from="1661857135175" duration="45388000" />
     </task>
     <option name="localTasksCounter" value="3" />
     <option name="clearContext" value="false" />
@@ -344,7 +347,8 @@
     <MESSAGE value="#7 поправил тест на создание и добавление меток" />
     <MESSAGE value="мелкие правки и эксперименты" />
     <MESSAGE value="Дополнены тесты поиска, переделан основной тест поиска на использование провайдера" />
-    <option name="LAST_COMMIT_MESSAGE" value="Дополнены тесты поиска, переделан основной тест поиска на использование провайдера" />
+    <MESSAGE value="Мелкие правки тестов, устранение замечания по расположению метаданных" />
+    <option name="LAST_COMMIT_MESSAGE" value="Мелкие правки тестов, устранение замечания по расположению метаданных" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
