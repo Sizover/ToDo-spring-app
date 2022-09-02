@@ -20,7 +20,7 @@ class JustTests {
     var waitTime: Long = 5
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `T 0010`() {
+    fun `T 0010 Проверка создания, прикрепления к КП и удаления метки`() {
         //проверим создание метки и прикрепление метки к происшествию, возможно с удалением метки из КИАП
         date = LocalDate.now()
         dateTime = LocalDateTime.now()

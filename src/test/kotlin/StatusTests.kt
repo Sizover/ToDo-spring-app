@@ -24,7 +24,7 @@ open class StatusTests {
 
 //    @DataProvider(name = "Provider S 0010")
 //    fun Object[][]
-    @DataProvider(name = "Provider S 0010")
+    @DataProvider(name = "Статусы детей и родителей")
     open fun Statuses(): Any {
         return arrayOf<Array<Any>>(
             arrayOf("Завершена", "Завершена", "Завершена"),
@@ -33,8 +33,8 @@ open class StatusTests {
         )
     }
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class, dataProvider = "Provider S 0010")
-    fun `Status 0010`(Status1: String, Status2: String, StutusSum: String) {
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class, dataProvider = "Статусы детей и родителей")
+    fun `Status 0010 Проверка сумарного статуса родительской КП`(Status1: String, Status2: String, StutusSum: String) {
         //Проверка изменения статусов родительской карточки в зависимости от статусов дочерних
 
 

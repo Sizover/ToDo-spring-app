@@ -5,16 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="91c598e0-d724-4c0e-9c0f-45d8884c7de4" name="#7 Переделка тестов, под новый табличный и иерархический движок" comment="Мелкие правки тестов, устранение замечания по расположению метаданных">
-      <change afterPath="$PROJECT_DIR$/src/test/fixtures/AutoTest.webp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/fixtures/test.pdf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/fixtures/Тестовый файл_.docx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/kotlin/JustTests.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/JustTests.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/kotlin/MapTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/MapTest.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/kotlin/Removal.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/Removal.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/kotlin/Retry.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/Retry.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/kotlin/SearchTests.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/SearchTests.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/kotlin/ii_tests_pim/Bufer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/ii_tests_pim/Bufer.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/kotlin/StatusTests.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/StatusTests.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/kotlin/Tools.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/Tools.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/kotlin/ii_tests_pim/PimTests.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/ii_tests_pim/PimTests.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/testng.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/testng.xml" afterDir="false" />
     </list>
     <list id="ca149d85-a975-4ce8-a892-1395e65d3c80" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -303,7 +303,7 @@
       <workItem from="1660908774158" duration="18708000" />
       <workItem from="1661339436019" duration="69000" />
       <workItem from="1661339512737" duration="61859000" />
-      <workItem from="1661857135175" duration="45388000" />
+      <workItem from="1661857135175" duration="54204000" />
     </task>
     <option name="localTasksCounter" value="3" />
     <option name="clearContext" value="false" />

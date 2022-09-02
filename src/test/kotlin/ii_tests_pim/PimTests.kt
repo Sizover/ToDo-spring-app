@@ -54,24 +54,10 @@ class PimTests {
         )
     }
 
-    @DataProvider(name = "Справочники")
-    open fun Справочники(): Any {
-        return arrayOf<Array<Any>>(
-            arrayOf("Алгоритмы реагирования"),
-            arrayOf("Видеокамеры"),
-            arrayOf("Датчики"),
-            arrayOf("Дежурные службы"),
-            arrayOf("Должностные лица"),
-            arrayOf("Метки"),
-            arrayOf("Муниципальные образования"),
-            arrayOf("Организации"),
-            arrayOf("Силы и средства"),
-            arrayOf("Типы происшествий"),
-        )
-    }
+
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 0010`() {
+    fun `PMI 0010 Проверка загрузки таблиц справочников`() {
         //A31 Убедиться в наличии списка объектов  в справочнике «Муниципальные образования»
         //A34 Убедиться в наличии списка объектов  в справочнике «Должностные лица»
         //A35 Убедиться в наличии списка объектов  в справочнике «Дежурные службы»
@@ -105,7 +91,7 @@ class PimTests {
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 0020`() {
+    fun `PMI 0020 Проверка загрузки и иерархии справочника "Типы происшествий"`() {
         //A32 Убедиться в наличии списка объектов  в справочнике «Типы происшествий»
         //логинимся
         //val tools = Tools()
@@ -141,7 +127,7 @@ class PimTests {
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
 
-    fun `N 0030`() {
+    fun `PMI 0030 Проверка наличия Организаций с метками ОМПЛ, ПОО и СЗО в справочнике «Организации»`() {
         //A33 Убедиться в наличии списка объектов  в справочнике «Организации»
         //логинимся
         //val tools = Tools()
@@ -168,76 +154,8 @@ class PimTests {
     }
 
 
-//    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-//    fun `N 0040`() {
-//        //A34 Убедиться в наличии списка объектов  в справочнике «Должностные лица»
-//        //логинимся
-//        //val tools = Tools()
-//        tools.logonTool()
-//        //кликаем по иконке справочников в боковом меню
-//        //Переходим в справочник "Должностные лица"
-//        tools.menuNavigation("Справочники", "Должностные лица", waitTime)
-//        //сравниваем колличество строк должностных лиц, по условию больше или равно с 5
-//        element(byXpath("//table/tbody/tr"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//        elements(byXpath("//table/tbody/tr"))
-//            .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(5))
-//        tools.logoffTool()
-//    }
-
-//    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-//    fun `N 0050`() {
-//        //A35 Убедиться в наличии списка объектов  в справочнике «Дежурные службы»
-//        //логинимся
-//        //val tools = Tools()
-//        tools.logonTool()
-//        //кликаем по иконке справочников в боковом меню
-//        //Переходим в справочник "Дежурные службы"
-//        tools.menuNavigation("Справочники", "Дежурные службы", waitTime)
-//        //сравниваем колличество строк дежурных служб, по условию больше или равно с 3
-//        element(byXpath("//table/tbody/tr"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//        elements(byXpath("//table/tbody/tr"))
-//            .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(3))
-//        tools.logoffTool()
-//    }
-
-//    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-//    fun `N 0060`() {
-//        //A36 Убедиться в наличии списка объектов  в справочнике «Видеокамеры»
-//        //логинимся
-//        //val tools = Tools()
-//        tools.logonTool()
-//        //кликаем по иконке справочников в боковом меню
-//        //Переходим в справочник "Видеокамеры"
-//        tools.menuNavigation("Справочники", "Видеокамеры", waitTime)
-//        //сравниваем колличество строк дежурных служб, по условию больше или равно с 2
-//        elements(byXpath("//table/tbody/tr"))
-//            .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(2))
-//        tools.logoffTool()
-//    }
-
-//    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-//    fun `N 0070`() {
-//        //A37 Убедиться в наличии списка объектов  в справочнике «Датчики»
-//        //логинимся
-//        //val tools = Tools()
-//        tools.logonTool()
-//        //кликаем по иконке справочников в боковом меню
-//        tools.menuNavigation("Справочники", "Датчики", waitTime)
-//        //сравниваем колличество строк дежурных служб, по условию больше или равно с 2
-//        element(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//        elements(byCssSelector("tr[data-testid^='MUIDataTableBodyRow-']"))
-//            .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(2))
-//        tools.logoffTool()
-//    }
-
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 0080`() {
+    fun `PMI 0080 Проверка наличия КП в различных статусах`() {
         //A38 Убедиться в наличии списка объектов  в меню «Список происшествий»
         //логинимся
         //val tools = Tools()
@@ -276,7 +194,7 @@ class PimTests {
 
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 0090`() {
+    fun `PMI 0090 Проверка загрузки таблицы «Архив происшествий»`() {
         //A39 Убедиться в наличии списка объектов  в меню «Архив происшествий»
         //логинимся
         tools.logonTool()
@@ -294,7 +212,7 @@ class PimTests {
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 0100`() {
+    fun `PMI 0100 Проверка процедуры авторизации в системе`() {
         //A310 Проверка процедуры авторизации в системе 1
         //val tools = Tools()
         tools.aThreeHundredAndTenOne()
@@ -311,26 +229,10 @@ class PimTests {
         element(byCssSelector("#input-error")).shouldHave(exactText("Неправильное имя пользователя или пароль."))
         tools.logoffTool()
     }
-/*
-    @Test
-    fun `A310 Проверка процедуры авторизации в системе 2` (){
-        val tools = Tools()
-        tools.aThreeHundredAndTenTwo()
-        Selenide.element(Selectors.byName("login")).click()
-        Selenide.element(Selectors.byCssSelector("#input-error")).shouldHave(Condition.exactText("Неправильное имя пользователя или пароль."))
-    }
 
-    @Test
-    fun `A310 Проверка процедуры авторизации в системе 3` (){
-        val tools = Tools()
-        tools.aThreeHundredAndTenThree()
-        Selenide.element(Selectors.byName("login")).click()
-        Selenide.element(Selectors.byCssSelector("#input-error")).shouldHave(Condition.exactText("Неправильное имя пользователя или пароль."))
-    }
-*/
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 0110`() {
+    fun `PMI 0110 Регистрация вызова (формирование карточки происшествия)(С прикреплением файлов)`() {
         //A311 Регистрация вызова (формирование карточки происшествия)(С прикреплением файлов)
         //A312 Проверка прикрепления файла к происшествию
         dateTime = LocalDateTime.now().toString()
@@ -448,7 +350,7 @@ class PimTests {
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 0120`() {
+    fun `PMI 0120 Проверка наличия опросника абонента (заявителя)`() {
         //A313 Проверка наличия опросника абонента (заявителя)
         //val tools = Tools()
         //логинимся
@@ -482,7 +384,7 @@ class PimTests {
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 0130`() {
+    fun `PMI 0130 Регистрация вызова (формирование карточки происшествия) с проверкой выполнения плана реагирования`() {
         //A.3.11 Регистрация вызова (формирование карточки происшествия)
         //А.3.14 Проверка формирования плана (алгоритма) реагирования по заданному событию (происшествию)
         //A.3.15 Проверка формирования действий оператора системы в рамках плана (алгоритма) реагирования с автоматизированным контролем выполнения
@@ -682,7 +584,7 @@ class PimTests {
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 0140`() {
+    fun `PMI 0140 Проверка фильтрации карточек происшествия`() {
         //A.3.16 Фильтрация карточек происшествия
         tools.logonTool()
         //кликаем по иконке происшествий в боковом меню
@@ -906,7 +808,7 @@ class PimTests {
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 0150`() {
+    fun `PMI 0150 Назначение карточки происшествия на службу ДДС-ЕДДС с последующей проверкой изменения статуса родительской карточки`() {
         //A311 Регистрация вызова (формирование карточки происшествия)
         //A.3.17 Назначение карточки происшествия на службу ДДС/ЕДДС (только службы, которые подключены к Системе)
         //Проверка изменения статуса родительской карточки при изменении статуса карточки назначения
@@ -1072,7 +974,7 @@ class PimTests {
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 0160`() {
+    fun `PMI 0160 Назначение сил и средств в КП`() {
         //A.3.18 Назначение сил и средств ДДС
         tools.logonTool()
         //кликаем по иконке происшествий в боковом меню
@@ -1111,10 +1013,10 @@ class PimTests {
         //element(byCssSelector("table[role='grid']")).sendKeys(Keys.END)
         //Thread.sleep(5000)
         //Выбираем случайную КП
-
-        val rndA = (1..20).random()
+        elements(byXpath("//table/tbody/tr")).size
+        val rndA = (1..elements(byXpath("//table/tbody/tr")).size).random()
         //rndA = 0
-        if (rndA == 20) {
+        if (rndA == elements(byXpath("//table/tbody/tr")).size) {
             element(byCssSelector("table[role='grid']")).sendKeys(Keys.END)
         } else {
             element(byXpath("//table/tbody/tr[${rndA + 1}]")).scrollIntoView(false)
@@ -1159,7 +1061,7 @@ class PimTests {
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 0112`() {
+    fun `PMI 0112 Назначение КП из 112 в КИАП`() {
         //A.3.19 Убедиться на стороне Системы-112 в наличии возможности назначать   карточку на ЕЦОР  (КИАП) из Системы-112
         //A.3.20 Прием карточки из Системы-112
         dateTime = LocalDateTime.now().toString()
@@ -1255,7 +1157,7 @@ class PimTests {
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 0180`() {
+    fun `PMI 0180 Просмотр паспортов опасных объектов`() {
         //A.3.21 Просмотр паспортов опасных объектов
         tools.logonTool()
         tools.menuNavigation("Справочники", "Организации", waitTime)
@@ -1359,7 +1261,7 @@ class PimTests {
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 0190`() {
+    fun `PMI 0190 Проверка формирования отчетов по обращениям`() {
         //A.3.23 Проверка формирования отчетов по обращениям
         dateTime = LocalDateTime.now().toString()
         date = LocalDate.now().toString()
@@ -1723,7 +1625,7 @@ class PimTests {
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 0200`() {
+    fun `PMI 0200 Проверка формирования отчетов по деятельности сотрудников`() {
         //A.3.24 Проверка формирования отчетов по деятельности сотрудников
         dateTime = LocalDateTime.now().toString()
         date = LocalDate.now().toString()
@@ -2044,7 +1946,7 @@ class PimTests {
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 0210`() {
+    fun `PMI 0210 Проверка формирования отчетов по происшествиям`() {
         //A.3.25 Проверка формирования отчетов по происшествиям
         //просто кошмар какой объемный тест получился(
         dateTime = LocalDateTime.now().toString()
@@ -2580,7 +2482,7 @@ class PimTests {
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 0220`() {
+    fun `PMI 0220 Проверка открытия карточек справочных сущностей`() {
         //A.3.28 Проверка централизованного хранения и управления структурированной справочной информации
         tools.logonTool()
 
@@ -2630,8 +2532,24 @@ class PimTests {
     tools.logoffTool()
     }
 
+    @DataProvider(name = "Справочники")
+    open fun Справочники(): Any {
+        return arrayOf<Array<Any>>(
+            arrayOf("Алгоритмы реагирования"),
+            arrayOf("Видеокамеры"),
+            arrayOf("Датчики"),
+            arrayOf("Дежурные службы"),
+            arrayOf("Должностные лица"),
+            arrayOf("Метки"),
+            arrayOf("Муниципальные образования"),
+            arrayOf("Организации"),
+            arrayOf("Силы и средства"),
+            arrayOf("Типы происшествий")
+        )
+    }
+
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, dataProvider = "Справочники")
-    fun `N 0230`(subMenu: String) {
+    fun `PMI 0230 Проверка поиска справочных данных`(subMenu: String) {
         //A.3.29 Проверка поиска справочных данных
         //хорошо бы в таблицу включать все столбцы, но это потом доработаю //доработано
         tools.logonTool()
@@ -2863,7 +2781,7 @@ class PimTests {
 
 
 //    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 0231`() {
+    fun `PMI 0231`() {
         tools.logonTool()
         //для каждого справочника выполнить
         for (dict in 1..9){
@@ -2990,32 +2908,8 @@ class PimTests {
 
     }
 
-//    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 0240`(){
-        //A.3.30 Проверка наличия справочников с иерархической системой классификации
-        tools.logonTool()
-        //кликаем по иконке справочников
-        //переходим в нужный справочник
-        tools.menuNavigation("Справочники", "Типы происшествий", waitTime)
-        //ждем загрузки таблицы
-        element(byCssSelector("main table>tbody"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        //считаем и запоминаем строки в tbody
-        val stringCountBefore = elements(byCssSelector("tbody>tr[data-testid^='MUIDataTableBodyRow-']")).size
-        //раскрываем весь список
-        element(byXpath("//thead//*[name()='svg'][@id='expandable-button']/../parent::button")).click()
-        element(byXpath("//thead//*[name()='svg'][@id='expandable-button']/../parent::button//*[name()='path'][@d='M19 13H5v-2h14v2z']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        //считаем количество строк
-        val stringCountAfter = elements(byCssSelector("tbody>tr[data-testid^='MUIDataTableBodyRow-']")).size
-        //сравниваем число строк
-        Assertions.assertTrue(stringCountAfter > stringCountBefore)
-        tools.logoffTool()
-    }
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 0241`(){
+    fun `PMI 0241 Проверка наличия справочников с иерархической системой классификации`(){
         //иерархических справосников стало больше, проверяем все
         tools.logonTool()
         for (dicts in 1..10) {
@@ -3045,7 +2939,7 @@ class PimTests {
 
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 0250`(){
+    fun `PMI 0250 Проверка присвоения и удаления меток в карточке организации`(){
         //A.3.31 Проверка задания меток для указания признаков объектов
         tools.logonTool()
         //кликаем по иконке справочников
@@ -3243,7 +3137,7 @@ class PimTests {
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 0260`(){
+    fun `PMI 0260 Проверка использования ассоциативных связей-ссылок между объектами справочников`(){
         //A.3.32 Проверка использования ассоциативных связей-ссылок между объектами справочников
         tools.logonTool()
         //кликаем по иконке справочников
@@ -3326,7 +3220,7 @@ class PimTests {
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 0270`(){
+    fun `PMI 0270 Проверка возможности создания, удаления записей, просмотра детальной истории в справочнике должностных лиц`(){
         //A.3.33 Проверка возможности создания записей в справочниках
         //A.3.34 Проверка возможности удаления записей в справочниках
         //A.3.35 Просмотр детальной истории записи/источников данных записи

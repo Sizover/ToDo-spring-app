@@ -47,7 +47,8 @@ class SearchTests
 
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, dataProvider = "Справочники единого алгоритма полной проверки поиска")
-    fun `Search 0010`(subMenu: String, nameOfName: String, nameColumnName: String) {
+    fun `Search 0010 Проверка создания, поиска и удаления справочных сущностей некоторых справочников`
+            (subMenu: String, nameOfName: String, nameColumnName: String) {
         //Видеокамеры
         tools.logonTool()
         tools.menuNavigation("Справочники", subMenu, waitTime)

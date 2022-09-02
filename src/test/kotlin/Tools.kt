@@ -34,7 +34,7 @@ class Tools {
 
 
         //на случай невыполнения шага, ждем что бы можно было успеть глазками посмотреть и руками потыкать
-        Configuration.timeout = 20000
+        Configuration.timeout = 10000
         //выбираем браузер
 //        Configuration.browser = FIREFOX
 //        Configuration.browser = CHROME
@@ -52,7 +52,7 @@ class Tools {
         clearBrowserLocalStorage()
         closeWindow()
         //Thread.sleep(1000)
-        open("https://test.kiap.local/")
+        open("https://stage.kiap.local/")
         //логинимся
 //        element(byName("username")).value = "a.sizov"
 //        element(byName("password")).value = "a.sizov"

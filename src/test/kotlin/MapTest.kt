@@ -46,7 +46,7 @@ class MapTest
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `MT_001`(){
+    fun `MT_001 Проверка отображения значов на карте при применении различных фильтров карты`(){
         tools.logonTool()
     //открываем карту
     element(byXpath("//span[@title='Открыть карту в отдельном окне']/button"))
