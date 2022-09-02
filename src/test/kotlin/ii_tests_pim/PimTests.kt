@@ -12,13 +12,14 @@ import com.codeborne.selenide.Selectors.byCssSelector
 import com.codeborne.selenide.Selectors.byName
 import com.codeborne.selenide.Selectors.byText
 import com.codeborne.selenide.Selectors.byXpath
-import com.codeborne.selenide.Selenide.back
-import com.codeborne.selenide.Selenide.element
-import com.codeborne.selenide.Selenide.elements
-import com.codeborne.selenide.Selenide.open
+import com.codeborne.selenide.Selenide.*
+//import com.codeborne.selenide.Selenide.element
+//import com.codeborne.selenide.Selenide.elements
+//import com.codeborne.selenide.Selenide.open
 import org.apache.commons.io.FileUtils
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
+import org.openqa.selenium.WebElement
 import org.testng.annotations.DataProvider
 import java.io.File
 import java.time.Duration.ofSeconds
@@ -396,12 +397,12 @@ class PimTests {
             .shouldBe(visible, ofSeconds(waitTime))
         //загружаем файлы проверяя их прикрепление
         element(byCssSelector("input#upload-file"))
-            .uploadFile(File("/home/isizov/Метаданные/AutoTest.webp"))
+            .uploadFile(File("/home/isizov/projects/testing-e2e/src/test/fixtures/AutoTest.webp"))
         //Thread.sleep(50000)
         element(byCssSelector("div[style='padding: 5px;'] > div:first-child"))
             .shouldHave(text("AutoTest.webp"), ofSeconds(waitTime))
         element(byCssSelector("input#upload-file"))
-            .uploadFile(File("/home/isizov/Метаданные/Тестовый файл_.docx"))
+            .uploadFile(File("/home/isizov/projects/testing-e2e/src/test/fixtures/Тестовый файл_.docx"))
         element(byCssSelector("div[style='padding: 5px;'] > div:first-child"))
             .shouldHave(text("Тестовый файл_.docx"), ofSeconds(waitTime))
 
@@ -438,7 +439,7 @@ class PimTests {
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //Прикрепляем файл
-        element(byCssSelector("input#upload-file")).uploadFile(File("/home/isizov/Метаданные/test.pdf"))
+        element(byCssSelector("input#upload-file")).uploadFile(File("/home/isizov/projects/testing-e2e/src/test/fixtures/test.pdf"))
         //Thread.sleep(50000)
         element(byCssSelector("div[style='padding: 5px;'] > div:first-child"))
             .shouldHave(text("test.pdf"), ofSeconds(waitTime))
@@ -1506,7 +1507,7 @@ class PimTests {
                 element(byCssSelector("input[id='fio.firstname']")).sendKeys("AutoTestFirstname")
             }
             //Вводим случайный адрес
-            var aA = ('A'..'Z').random()
+//            var aA = ('A'..'Z').random()
             val bB = (1..100).random()
             if (i != 3){
                 tools.addressInput("callAddress", "Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач $bB", waitTime)
@@ -1820,7 +1821,7 @@ class PimTests {
             //заполняем карточку
             //Источник события - выбираем случайно
             element(byCssSelector("div#calltype")).click()
-            var iI = (1..10).random()
+            val iI = (1..10).random()
             element(byCssSelector("div#menu->div>ul[role='listbox']>li:nth-child($iI)")).click() //не случайно =)
             //element(byCssSelector("li[role='option'][data-value='cd73ccc0-e740-4c5d-98ec-28bbe9a13be0']")).click()
             //Номер телефона
@@ -1835,8 +1836,8 @@ class PimTests {
                 element(byCssSelector("input[id='fio.firstname']")).sendKeys("AutoTestFirstname")
             }
             //Вводим случайный адрес
-            var aA = ('A'..'Z').random()
-            var bB = (1..100).random()
+//            var aA = ('A'..'Z').random()
+            val bB = (1..100).random()
             if (i != 4){
                 tools.addressInput("callAddress", "Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач $bB", waitTime)
             } else {
@@ -2665,13 +2666,13 @@ class PimTests {
 //            element(byXpath("//fieldset[@aria-label='Показать/скрыть колонки']/../button")).click()
             //получаем счетчик строк в левом нижнем углу страницы, в виде числа
             var allRecordCountUse: Int
-            if (subMenu != "Типы происшествий") {
+            allRecordCountUse = if (subMenu != "Типы происшествий") {
                 val allRecordCountString =
                     element(byXpath("//table/tfoot//p[contains(text(),'Всего ')]")).ownText.toString().split("\n")
                 val allRecordCountNotUse = allRecordCountString[1].split(" ")
-                allRecordCountUse = allRecordCountNotUse[0].toInt()
+                allRecordCountNotUse[0].toInt()
             } else {
-                allRecordCountUse = elements(byXpath("//tbody/tr")).size
+                elements(byXpath("//tbody/tr")).size
             }
             //ситаем количество слолбцов, при том что последний нам не пригодится
             val comumnCount = elements(byXpath("//table/thead/tr/th")).size
@@ -2687,9 +2688,10 @@ class PimTests {
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
             //читаем что есть в подсказке
-            val searchHintString = element(byCssSelector("input[placeholder]")).getAttribute("placeholder")
-            val searchHintList = searchHintString?.split(", ")
+//            val searchHintString = element(byCssSelector("input[placeholder]")).getAttribute("placeholder")
+//            val searchHintList = searchHintString?.split(", ")
 //            println("searchHintList $searchHintList")
+            val searchHintList = element(byCssSelector("input[placeholder]")).getAttribute("placeholder")!!.split(", ")
             //проходимся по заголовкам столбцов, сверяя их с каждой позицией подсказки
             var searchValue = ""
             for (col in 1 until comumnCount) {
@@ -2754,9 +2756,10 @@ class PimTests {
                                             trueValueList.add(element(byXpath("//table/tbody/tr[$str]/td[$col]//*[text()]")).ownText.trim())
                                     }
                                 }
-                                maxRandom = trueValueList.size - 1
-                                randomColumnValue = (0..maxRandom).random()
-                                searchValue = trueValueList[randomColumnValue].toString()
+//                                maxRandom = trueValueList.size - 1
+//                                randomColumnValue = (0..maxRandom).random()
+//                                searchValue = trueValueList[randomColumnValue].toString()
+                                searchValue = trueValueList.random()
                                 //проверяем не номер ли это телефона и видоизменяем запись , к.т. в формате +Х(ХХХ)ХХХ-ХХ-ХХ в поисковой строке не вернет результатов, только +ХХХХХХХХХХ
                                 //аналогично с ФИО
 //                                val ioRegex = Regex("[А-ЯA-Z]{1}[.]\\s{1}[А-ЯA-Z]{1}[.]{1}")
@@ -2800,9 +2803,10 @@ class PimTests {
                                         trueValueList.add(element(byXpath("//table/tbody/tr[$r]/td[$col][text()]")).ownText)
                                     }
                                 }
-                                maxRandom = trueValueList.size - 1
-                                randomColumnValue = (0..maxRandom).random()
-                                searchValue = trueValueList[randomColumnValue].toString()
+//                                maxRandom = trueValueList.size - 1
+//                                randomColumnValue = (0..maxRandom).random()
+//                                searchValue = trueValueList[randomColumnValue].toString()
+                                searchValue = trueValueList.random()
     //                            println("countAllString $i $countAllString")
     //                            println("trueValueList $i $trueValueList")
     //                            println("maxRandom $i $maxRandom")

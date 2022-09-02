@@ -9,6 +9,7 @@
             <class name="MapTest"></class>
             <class name="StatusTests"></class>
             <class name="JustTests"></class>
+            <class name="SearchTests"></class>
             <class name="Removal"></class>
         </classes>
     </test>

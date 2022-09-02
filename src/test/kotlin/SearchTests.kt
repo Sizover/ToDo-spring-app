@@ -257,5 +257,6 @@ class SearchTests
                 Thread.sleep(500)
             }
         }
+        tools.logoffTool()
     }
 }

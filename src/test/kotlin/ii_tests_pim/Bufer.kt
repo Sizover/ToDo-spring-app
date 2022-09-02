@@ -1,20 +1,27 @@
 package ii_tests_pim
 
 //import com.codeborne.selenide.Condition.visible
-//import com.codeborne.selenide.Selectors.byXpath
+import com.codeborne.selenide.Selectors.*
+//import com.codeborne.selenide.Selenide.$
 //import com.codeborne.selenide.Selenide.elements
 import Tools
+import org.openqa.selenium.By
+import org.openqa.selenium.WebElement
 import com.codeborne.selenide.CollectionCondition
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Selectors.byCssSelector
-import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide
+import com.codeborne.selenide.Selenide.`$$`
+import com.codeborne.selenide.Selenide.`$x`
+import java.lang.String.*
 import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
 import com.codeborne.selenide.Selenide.open
 import java.time.Duration.ofSeconds
 import java.time.LocalDateTime
+import org.openqa.selenium.interactions.Locatable
+import org.openqa.selenium.SearchContext
 
 //import java.time.ZonedDateTime
 //import java.io.File
