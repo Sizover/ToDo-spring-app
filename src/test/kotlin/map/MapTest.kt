@@ -1,5 +1,7 @@
-
+package map
 //import kotlin.collections.EmptyMap.keys
+import Retry
+import Tools
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Selectors.byCssSelector
@@ -45,7 +47,7 @@ class MapTest
 
     }
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `MT_001 Проверка отображения значов на карте при применении различных фильтров карты`(){
         tools.logonTool()
     //открываем карту

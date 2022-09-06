@@ -18,8 +18,8 @@ class Removal {
     var waitTime: Long = 5
 
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `R 9998 Удаление отчетов созданных автотестами (по наличию части имени в отчете)`(){
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["Removal"])
+    fun `Removal 9998 Удаление отчетов созданных автотестами (по наличию части имени в отчете)`(){
         //Удаляем все отчеты
         tools.logonTool()
 //        tools.menuNavigation("Отчеты", "По происшествиям", waitTime)
@@ -92,8 +92,8 @@ class Removal {
     }
 
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `R 9999 Закрытие КП созданных под логином работы автотестов` (){
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["Removal"])
+    fun `Removal 9999 Закрытие КП созданных под логином работы автотестов` (){
         //Закроем все происшествия созданные автотестом , например за неделю
 //        date = LocalDate.now().toString()
         date = LocalDate.now()

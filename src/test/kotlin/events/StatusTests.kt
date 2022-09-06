@@ -1,4 +1,6 @@
-
+package events
+import Retry
+import Tools
 import com.codeborne.selenide.CollectionCondition
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.text
@@ -33,7 +35,7 @@ open class StatusTests {
         )
     }
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class, dataProvider = "Статусы детей и родителей")
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class, dataProvider = "Статусы детей и родителей", groups = ["ALL"])
     fun `Status 0010 Проверка сумарного статуса родительской КП`(Status1: String, Status2: String, StutusSum: String) {
         //Проверка изменения статусов родительской карточки в зависимости от статусов дочерних
 

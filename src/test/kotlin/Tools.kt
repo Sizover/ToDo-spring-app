@@ -52,7 +52,7 @@ class Tools {
         clearBrowserLocalStorage()
         closeWindow()
         //Thread.sleep(1000)
-        open("https://stage.kiap.local/")
+        open("https://test.kiap.local/")
         //логинимся
 //        element(byName("username")).value = "a.sizov"
 //        element(byName("password")).value = "a.sizov"
@@ -173,40 +173,8 @@ class Tools {
     fun logon112(){
         Selenide.open("http://11202:11202@172.16.41.21/")
     }
-    /*
-    fun aThreeHundredAndTenTwo(){
-        //на случай невыполнения шага, ждем что бы можно было успеть глазками посмотреть и руками потыкать
-        Configuration.timeout = 10000
-        //выбираем браузер
-        //Configuration.browser = FIREFOX
-        Configuration.browser = Browsers.CHROME
-        //Открываем КИАП
-        Selenide.open("http://test.kiap.local:8000")
-        Selenide.element(Selectors.byName("username")).value = "test"
-    }
-
-    fun aThreeHundredAndTenThree(){
-        //на случай невыполнения шага, ждем что бы можно было успеть глазками посмотреть и руками потыкать
-        Configuration.timeout = 10000
-        //выбираем браузер
-        //Configuration.browser = FIREFOX
-        Configuration.browser = Browsers.CHROME
-        //Открываем КИАП
-        Selenide.open("http://test.kiap.local:8000")
-        Selenide.element(Selectors.byName("username")).value = "test"
-        Selenide.element(Selectors.byName("password")).value = "test"
-    }
 
 
-     */
-//    //добавляем в таблицу происшествий столбец "Дополнительная информация"
-//    element(byCssSelector("button[data-testid='Колонки-iconButton']")).click()
-//    element(byCssSelector("input[value='description']")).click()
-//    //ждем пока выделится чекбокс
-//    val checkboxTrue = "path(\"M 19 3 H 5 C 3.89 3 3 3.9 3 5 V 19 C 3 20.1 3.89 21 5 21 H 19 C 20.11 21 21 20.1 21 19 V 5 C 21 3.9 20.11 3 19 3 Z M 10 17 L 5 12 L 6.41 10.59 L 10 14.17 L 17.59 6.58 L 19 8 L 10 17 Z\")"
-//    element(byXpath("//span[text()='Дополнительная информация']/../span/span/*[name()='svg']/*[name()='path']"))
-//    .shouldHave(cssValue("d", checkboxTrue), ofSeconds(waitTime))
-//    element(byCssSelector("button[aria-label='Close']")).click()
 
 
     fun checkbox(checkboxName: String, checkboxCondition: Boolean, waitTime: Long)

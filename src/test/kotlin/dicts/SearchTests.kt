@@ -1,25 +1,17 @@
+package dicts
+
 import Retry
 import Tools
 import com.codeborne.selenide.CollectionCondition
-import com.codeborne.selenide.Condition.exactText
 import com.codeborne.selenide.Condition.exist
-import com.codeborne.selenide.Condition.text
 import com.codeborne.selenide.Condition.visible
-import com.codeborne.selenide.Selectors.byCssSelector
-import com.codeborne.selenide.Selectors.byName
-import com.codeborne.selenide.Selectors.byText
 import com.codeborne.selenide.Selectors.byXpath
-import com.codeborne.selenide.Selenide.back
 import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
-import com.codeborne.selenide.Selenide.open
-import org.apache.commons.io.FileUtils
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import org.testng.annotations.DataProvider
-import java.io.File
 import java.time.Duration.ofSeconds
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 class SearchTests
@@ -46,7 +38,7 @@ class SearchTests
     }
 
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class, dataProvider = "Справочники единого алгоритма полной проверки поиска")
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class, dataProvider = "Справочники единого алгоритма полной проверки поиска" , groups = ["ALL"])
     fun `Search 0010 Проверка создания, поиска и удаления справочных сущностей некоторых справочников`
             (subMenu: String, nameOfName: String, nameColumnName: String) {
         //Видеокамеры

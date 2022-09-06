@@ -1,5 +1,3 @@
-package ii_tests_pim
-
 //import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Selectors.*
 //import com.codeborne.selenide.Selenide.$
