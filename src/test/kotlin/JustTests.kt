@@ -13,7 +13,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 class JustTests : BaseTest(){
-//    val baseTest = BaseTest()
     var date = LocalDate.now()
     var dateTime = LocalDateTime.now()
     var waitTime: Long = 5

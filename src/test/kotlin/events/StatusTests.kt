@@ -17,7 +17,6 @@ import java.time.LocalDateTime
 
 open class StatusTests : BaseTest(){
 
-//    val baseTest = BaseTest()
     var date = LocalDate.now()
     var dateTime = LocalDateTime.now()
     //Время ожидания элементов при выполнении теста

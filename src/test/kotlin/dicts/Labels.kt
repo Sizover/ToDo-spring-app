@@ -18,7 +18,6 @@ import java.time.LocalDateTime
 
 class Labels : BaseTest(){
 
-//    val baseTest = BaseTest()
     var date = ""
     var dateTime = ""
     //Время ожидания элементов при выполнении теста

@@ -14,7 +14,6 @@ import java.time.Duration.ofSeconds
 
 class MapTest  : BaseTest(){
     var waitTime: Long = 5
-//    val baseTest = BaseTest()
 
     fun `MTtool_001`(checkboxName: String){
         val checkboxSelector = "//h6[text()='%s']/../parent::span/parent::label/span[@style]//input"
