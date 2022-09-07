@@ -1,33 +1,37 @@
-import com.codeborne.selenide.Condition.*
-import com.codeborne.selenide.Selectors.*
-import com.codeborne.selenide.Selenide.*
+
+import com.codeborne.selenide.Condition.exist
+import com.codeborne.selenide.Condition.visible
+import com.codeborne.selenide.Selectors.byCssSelector
+import com.codeborne.selenide.Selectors.byXpath
+import com.codeborne.selenide.Selenide.back
+import com.codeborne.selenide.Selenide.element
+import com.codeborne.selenide.Selenide.elements
 import org.openqa.selenium.Keys
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-class Removal {
-    val tools = Tools()
+class Removal : BaseTest(){
     var date = LocalDate.now()
     var dateTime = LocalDateTime.now()
     var waitTime: Long = 5
 
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 9998`(){
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["Removal"])
+    fun `Removal 9998 Удаление отчетов созданных автотестами (по наличию части имени в отчете)`(){
         //Удаляем все отчеты
-        tools.logonTool()
+        logonTool()
 //        tools.menuNavigation("Отчеты", "По происшествиям", waitTime)
         var menuVariable =1
         for (m in 1..3){
             when (m) {
-                1 -> {tools.menuNavigation("Отчеты", "По происшествиям", waitTime)}
-                2 -> {tools.menuNavigation("Отчеты", "По обращениям", waitTime)}
-                3 -> {tools.menuNavigation("Отчеты", "По сотрудникам", waitTime)}
+                1 -> {menuNavigation("Отчеты", "По происшествиям", waitTime)}
+                2 -> {menuNavigation("Отчеты", "По обращениям", waitTime)}
+                3 -> {menuNavigation("Отчеты", "По сотрудникам", waitTime)}
             }
 //        tools.menuNavigation("Отчеты", "По обращениям", waitTime)
 //        tools.menuNavigation("Отчеты", "По сотрудникам", waitTime)
-            tools.stringsOnPage(50, waitTime)
+            stringsOnPage(50, waitTime)
 //            var stringNumder = 1
             //считаем количество строк - понадобится для прерываемого цикла
             var countString = elements(byXpath("//tbody/tr")).size
@@ -37,7 +41,7 @@ class Removal {
 //            println(menuColumn)
             //входим в большой цикл без защитного счетчика
             var control = 1 //хотя вот он готовый счетчик
-            tools.checkbox("Наименование отчета", true, waitTime)
+            checkbox("Наименование отчета", true, waitTime)
             //"Проверка формирования отчетов" это часть названия отчета присваемого всем отчетам создаваемыми автотестами
             while (elements(byXpath("//tbody/tr//*[contains(text(),'Проверка формирования отчетов')]")).size > 0 ){
                 countString = elements(byXpath("//tbody/tr")).size
@@ -50,7 +54,7 @@ class Removal {
                         } else {
                             element(byXpath("//tbody/tr[$i]")).sendKeys(Keys.END)
                         }
-                        val deletedReport = element(byXpath("//tbody/tr[$i]/td[1]//*[text()]")).ownText
+                        val deletedReport = element(byXpath("//tbody/tr[$i]/td[1 and contains(text(),'Проверка формирования отчетов')]")).ownText
                         element(byXpath("//tbody/tr[$i]/td[$menuColumn]//button")).click()
                         element(byXpath("//*[text()='Удалить']/parent::button"))
                             .should(exist, ofSeconds(waitTime))
@@ -87,15 +91,15 @@ class Removal {
     }
 
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `N 9999`(){
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["Removal"])
+    fun `Removal 9999 Закрытие КП созданных под логином работы автотестов` (){
         //Закроем все происшествия созданные автотестом , например за неделю
 //        date = LocalDate.now().toString()
         date = LocalDate.now()
 //        val date2 = date.minusDays(7).toString()
         val dateStart = LocalDate.now().minusDays(7).toString()
         val dateEnd = LocalDate.now().toString()
-        tools.logonTool()
+        logonTool()
         //убедимся что мы за оператор:
         //кликаем по иконке оператора сверху справа
         //element(byCssSelector("header>div>div>div>span>button")).click()
@@ -115,7 +119,7 @@ class Removal {
 //        println("ФИО $operator")
 //        println("operatorFIO $operatorFIO")
         //переходим к списку происшествий и ждем загрузки
-        tools.menuNavigation("Происшествия","Список происшествий",waitTime)
+        menuNavigation("Происшествия","Список происшествий",waitTime)
         element(byCssSelector("table>tbody>tr"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -174,18 +178,34 @@ class Removal {
         // и войдя в цикл без защитного счетчика
         while (noData == 0){
             //переходим в каждую первую карточку и меняем статус, на "Закрыта"
-            element(byXpath("//table/tbody/tr[1]")).click()
-            element(byXpath("(//span[text()]/parent::button)[2]"))
+            element(byXpath("//table/tbody/tr[1]"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
-            val statusIC = element(byXpath("(//span[text()]/parent::button)[2]//*[text()]")).ownText
-            element(byXpath("(//span[text()]/parent::button)[2]")).click()
+                .click()
+            Thread.sleep(500)
+//            element(byXpath("(//span[text()]/parent::button)[2]"))
+//                .should(exist, ofSeconds(waitTime))
+//                .shouldBe(visible, ofSeconds(waitTime))
+//            element(byXpath("//main/div[3]/div[1]/div[1]/div[2]//button[1]"))
+//                .should(exist, ofSeconds(waitTime))
+//                .shouldBe(visible, ofSeconds(waitTime))
+            element(byXpath("//div[contains(@class,'MuiBox-root')]/div/div/div[contains(@class,'MuiGrid-root')]//button[1]"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+            val statusIC = element(byXpath("//div[contains(@class,'MuiBox-root')]/div/div/div[contains(@class,'MuiGrid-root')]//button[1]//*[text()]"))
+                .ownText
+            element(byXpath("//div[contains(@class,'MuiBox-root')]/div/div/div[contains(@class,'MuiGrid-root')]//button[1]"))
+                .click()
+            Thread.sleep(500)
             element(byXpath("//span[text()='Закрыта']/parent::button"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
                 .click()
+            Thread.sleep(500)
             element(byXpath("(//span[text()='$statusIC']/parent::button)[@style]"))
                 .shouldNot(exist, ofSeconds(waitTime))
+            element(byXpath("(//span[text()='Закрыта']/parent::button)[@style]"))
+                .should(exist, ofSeconds(waitTime))
             back()
             element(byXpath("//table/tbody/tr[1]"))
                 .should(exist, ofSeconds(waitTime))

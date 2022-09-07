@@ -1,17 +1,26 @@
 //import kotlin.collections.EmptyMap.keys
 import com.codeborne.selenide.Browsers.CHROME
-import com.codeborne.selenide.Condition.*
+import com.codeborne.selenide.Condition.attribute
+import com.codeborne.selenide.Condition.exist
+import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Configuration
-import com.codeborne.selenide.Selectors.*
+import com.codeborne.selenide.Selectors.byCssSelector
+import com.codeborne.selenide.Selectors.byName
+import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide
-import com.codeborne.selenide.Selenide.*
+import com.codeborne.selenide.Selenide.clearBrowserCookies
+import com.codeborne.selenide.Selenide.clearBrowserLocalStorage
+import com.codeborne.selenide.Selenide.closeWindow
+import com.codeborne.selenide.Selenide.element
+import com.codeborne.selenide.Selenide.elements
+import com.codeborne.selenide.Selenide.open
 import com.codeborne.selenide.WebDriverRunner
 import org.openqa.selenium.Keys
 import org.openqa.selenium.chrome.ChromeOptions
 import java.time.Duration.ofSeconds
 
 
-class Tools {
+open class BaseTest {
     fun logonTool(){
 
         //https://overcoder.net/q/1369284/%D0%BA%D0%B0%D0%BA-%D1%80%D0%B0%D0%B7%D1%80%D0%B5%D1%88%D0%B8%D1%82%D1%8C-%D0%B8%D0%BB%D0%B8-%D0%B7%D0%B0%D0%BF%D1%80%D0%B5%D1%82%D0%B8%D1%82%D1%8C-%D1%83%D0%B2%D0%B5%D0%B4%D0%BE%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BE-%D0%B2%D1%81%D0%BF%D0%BB%D1%8B%D0%B2%D0%B0%D1%8E%D1%89%D0%B5%D0%B9-%D0%BA%D0%B0%D0%BC%D0%B5%D1%80%D0%B5-%D0%BC%D0%B8%D0%BA%D1%80%D0%BE%D1%84%D0%BE%D0%BD%D0%B0
@@ -21,9 +30,9 @@ class Tools {
 
 
         //на случай невыполнения шага, ждем что бы можно было успеть глазками посмотреть и руками потыкать
-        Configuration.timeout = 20000
+        Configuration.timeout = 10000
         //выбираем браузер
-        //Configuration.browser = FIREFOX
+//        Configuration.browser = FIREFOX
 //        Configuration.browser = CHROME
         WebDriverRunner.isChrome()
         Configuration.browserSize = "1920x1080"
@@ -47,6 +56,58 @@ class Tools {
         element(byName("password")).sendKeys("a.sizov")
         element(byName("login")).click()
     }
+
+
+//    fun logonTool2(browser: String){
+//
+//        //https://overcoder.net/q/1369284/%D0%BA%D0%B0%D0%BA-%D1%80%D0%B0%D0%B7%D1%80%D0%B5%D1%88%D0%B8%D1%82%D1%8C-%D0%B8%D0%BB%D0%B8-%D0%B7%D0%B0%D0%BF%D1%80%D0%B5%D1%82%D0%B8%D1%82%D1%8C-%D1%83%D0%B2%D0%B5%D0%B4%D0%BE%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BE-%D0%B2%D1%81%D0%BF%D0%BB%D1%8B%D0%B2%D0%B0%D1%8E%D1%89%D0%B5%D0%B9-%D0%BA%D0%B0%D0%BC%D0%B5%D1%80%D0%B5-%D0%BC%D0%B8%D0%BA%D1%80%D0%BE%D1%84%D0%BE%D0%BD%D0%B0
+//
+//
+//        //ChromeOptions addArguments
+//
+//
+//        //на случай невыполнения шага, ждем что бы можно было успеть глазками посмотреть и руками потыкать
+//        Configuration.timeout = 20000
+//        //выбираем браузер
+//        //Configuration.browser = FIREFOX
+////        Configuration.browser = CHROME
+////        Configuration.browser = browser
+//        when (browser){
+//            CHROME -> {
+//                Configuration.browser = CHROME
+//                WebDriverRunner.isChrome()
+//                val chromeOpt = ChromeOptions()
+//                chromeOpt.addArguments("use-fake-device-for-media-stream")
+//                chromeOpt.addArguments("use-fake-ui-for-media-stream")
+//            }
+//            FIREFOX -> {
+//                Configuration.browser = FIREFOX
+//                WebDriverRunner.isFirefox()
+//                val firefoxOpt = FirefoxOptions()
+//                firefoxOpt.addArguments("-profile")
+//                firefoxOpt.addArguments("/home/isizov/snap/firefox/common/.mozilla/firefox/4m2vdd0k.default")
+//            }
+//        }
+//        Configuration.browserSize = "1920x1080"
+//        Configuration.holdBrowserOpen = false
+//        //Открываем КИАП
+//        //Selenide.open("http://test.kiap.local:8000")
+//
+//        Selenide.open("https://test.kiap.local/")
+//
+//        //Костыль для обхода проблем с тестами которые не завершились и упали
+//        clearBrowserCookies()
+//        clearBrowserLocalStorage()
+//        closeWindow()
+//        //Thread.sleep(1000)
+//        open("https://test.kiap.local/")
+//        //логинимся
+////        element(byName("username")).value = "a.sizov"
+////        element(byName("password")).value = "a.sizov"
+//        element(byName("username")).sendKeys("a.sizov")
+//        element(byName("password")).sendKeys("a.sizov")
+//        element(byName("login")).click()
+//    }
 
     fun anyLogonTool(username: String, password: String){
         //https://overcoder.net/q/1369284/%D0%BA%D0%B0%D0%BA-%D1%80%D0%B0%D0%B7%D1%80%D0%B5%D1%88%D0%B8%D1%82%D1%8C-%D0%B8%D0%BB%D0%B8-%D0%B7%D0%B0%D0%BF%D1%80%D0%B5%D1%82%D0%B8%D1%82%D1%8C-%D1%83%D0%B2%D0%B5%D0%B4%D0%BE%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BE-%D0%B2%D1%81%D0%BF%D0%BB%D1%8B%D0%B2%D0%B0%D1%8E%D1%89%D0%B5%D0%B9-%D0%BA%D0%B0%D0%BC%D0%B5%D1%80%D0%B5-%D0%BC%D0%B8%D0%BA%D1%80%D0%BE%D1%84%D0%BE%D0%BD%D0%B0
@@ -108,48 +169,19 @@ class Tools {
     fun logon112(){
         Selenide.open("http://11202:11202@172.16.41.21/")
     }
-    /*
-    fun aThreeHundredAndTenTwo(){
-        //на случай невыполнения шага, ждем что бы можно было успеть глазками посмотреть и руками потыкать
-        Configuration.timeout = 10000
-        //выбираем браузер
-        //Configuration.browser = FIREFOX
-        Configuration.browser = Browsers.CHROME
-        //Открываем КИАП
-        Selenide.open("http://test.kiap.local:8000")
-        Selenide.element(Selectors.byName("username")).value = "test"
-    }
-
-    fun aThreeHundredAndTenThree(){
-        //на случай невыполнения шага, ждем что бы можно было успеть глазками посмотреть и руками потыкать
-        Configuration.timeout = 10000
-        //выбираем браузер
-        //Configuration.browser = FIREFOX
-        Configuration.browser = Browsers.CHROME
-        //Открываем КИАП
-        Selenide.open("http://test.kiap.local:8000")
-        Selenide.element(Selectors.byName("username")).value = "test"
-        Selenide.element(Selectors.byName("password")).value = "test"
-    }
 
 
-     */
-//    //добавляем в таблицу происшествий столбец "Дополнительная информация"
-//    element(byCssSelector("button[data-testid='Колонки-iconButton']")).click()
-//    element(byCssSelector("input[value='description']")).click()
-//    //ждем пока выделится чекбокс
-//    val checkboxTrue = "path(\"M 19 3 H 5 C 3.89 3 3 3.9 3 5 V 19 C 3 20.1 3.89 21 5 21 H 19 C 20.11 21 21 20.1 21 19 V 5 C 21 3.9 20.11 3 19 3 Z M 10 17 L 5 12 L 6.41 10.59 L 10 14.17 L 17.59 6.58 L 19 8 L 10 17 Z\")"
-//    element(byXpath("//span[text()='Дополнительная информация']/../span/span/*[name()='svg']/*[name()='path']"))
-//    .shouldHave(cssValue("d", checkboxTrue), ofSeconds(waitTime))
-//    element(byCssSelector("button[aria-label='Close']")).click()
 
 
     fun checkbox(checkboxName: String, checkboxCondition: Boolean, waitTime: Long)
     //По названию колонки, необходимому значению чекбокса и waitTime выставляет отображаемые колонки в табличных РМ
     //При пустом имени, выклацывает весь список в указанное состояние
+    //Допустимо передавать несколько значений разделяя их ; без пробелов
     {
-        val checkboxTrue = "M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
-        val checkboxFalse = "M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+//        val checkboxTrue = "M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+//        val checkboxFalse = "M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+        val checkboxTrue = "checkboxFocus"
+        val checkboxFalse = "checkboxNormal"
 //        val checkboxAlias = ""
         val checkboxNameList = mutableListOf<String>()
         //Открываем выпадающий список
@@ -181,6 +213,11 @@ class Tools {
             checkboxes.forEach{
                 checkboxNameList.add(it.ownText)
             }
+        } else if (checkboxName.contains(";")){
+//            checkboxNameList = checkboxName.split(";").toMutableList()
+            checkboxName.split(";").forEach {
+                checkboxNameList.add(it)
+            }
         } else {
             checkboxNameList.add(checkboxName)
         }
@@ -188,37 +225,41 @@ class Tools {
             //проверяем что нам выдали и что надо сделать
             element(byXpath("//span[text()='$it']/parent::label//input"))
                 .should(exist, ofSeconds(waitTime))
-            var checkboxState = element(byXpath("//span[text()='$it']/parent::label//*[name()='path']"))
+            var checkboxState = element(byXpath("//span[text()='$it']/parent::label//*[name()='svg'][@name]"))
                 .should(exist, ofSeconds(waitTime))
-                .getAttribute("d")
+                .getAttribute("name")
             //если чекбокс выбран, а надо не выбирать
             if (checkboxState == checkboxTrue && !checkboxCondition){
                 //иногда драйвер опережает браузер и чек-бокс не прокликивается с первого раза, поэтому делаем так:
                 while (checkboxState == checkboxTrue){
                     element(byXpath("//span[text()='$it']/parent::label//input")).click()
-                    checkboxState = element(byXpath("//span[text()='$it']/parent::label//*[name()='path']"))
+                    checkboxState = element(byXpath("//span[text()='$it']/parent::label//*[name()='svg'][@name]"))
                         .should(exist, ofSeconds(waitTime))
-                        .getAttribute("d")
+                        .getAttribute("name")
                 }
-                element(byXpath("//span[text()='$it']/parent::label//*[name()='path']"))
-                    .shouldHave(attribute("d", checkboxFalse), ofSeconds(waitTime))
+                element(byXpath("//span[text()='$it']/parent::label//*[name()='svg'][@name]"))
+                    .shouldHave(attribute("name", checkboxFalse), ofSeconds(waitTime))
                 //если чекбокс не выбран, а надо выбирать
             } else if (checkboxState == checkboxFalse && checkboxCondition){
                 //иногда драйвер опережает браузер и чек-бокс не прокликивается с первого раза, поэтому делаем так:
                 while (checkboxState == checkboxFalse){
                     element(byXpath("//span[text()='$it']/parent::label//input")).click()
-                    checkboxState = element(byXpath("//span[text()='$it']/parent::label//*[name()='path']"))
+                    checkboxState = element(byXpath("//span[text()='$it']/parent::label//*[name()='svg'][@name]"))
                         .should(exist, ofSeconds(waitTime))
-                        .getAttribute("d")
+                        .getAttribute("name")
                 }
-                element(byXpath("//span[text()='$it']/parent::label//*[name()='path']"))
-                    .shouldHave(attribute("d", checkboxTrue), ofSeconds(waitTime))
+                element(byXpath("//span[text()='$it']/parent::label//*[name()='svg'][@name]"))
+                    .shouldHave(attribute("name", checkboxTrue), ofSeconds(waitTime))
+//                element(byXpath("//table/thead/tr/th//*[text()='$it']"))
+//                    .should(exist, ofSeconds(waitTime))
+//                    .shouldBe(visible, ofSeconds(waitTime))
             }
         }
-        element(byCssSelector("button[aria-label='Close']")).click()
+//        element(byCssSelector("button[aria-label='Close']")).click()
+        element(byXpath("//div[@role='presentation']")).click()
     }
 
-    fun inputRundom(inputName: String)
+    fun inputRandomOld(inputName: String)
     //Выбирает случайное значение в переданном импуте (сначала проклацывает весь список, считая проклацывания, потом проклацывает, до некоторого случайного значения)
     {
         while (elements(byXpath("//body/div[@role='presentation']//*[text()]")).size == 0){
@@ -237,6 +278,48 @@ class Tools {
         }
         element(byXpath("//input[@name='$inputName']")).sendKeys(Keys.ENTER)
 
+    }
+
+
+    fun inputRandomNew(inputName: String, parentInclusive: Boolean, waitTime: Long){
+        //Выбирает случайное значение в переданном по id импуте, учитывая иерархический он или нет
+        while (elements(byXpath("//body/div[@role='presentation']//*[text()]")).size == 0){
+            element(byXpath("//input[@name='$inputName']")).click()
+            Thread.sleep(500)
+        }
+        //определяем иерархический ли селект, и если да, то обрабатываем по новому, если нет, по старому
+        if (elements(byCssSelector("body div[role='presentation'] li svg[name^='arrow']")).size > 0){
+            if (elements(byXpath("//body//div[@role='presentation']//li[1]//*[@name='arrowRight']")).size > 0) {
+                element(byXpath("//div[@role='presentation']/div/ul/li[1]/div")).click()
+                Thread.sleep(500)
+            }
+            val incTypes = mutableListOf<String>()
+            val count = elements(byXpath("//div[@role='presentation']/div/ul/li")).size
+            for (i in 1..count ){
+                if (elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[text()]")).size == 1){
+                    if ((elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[name()='svg']")).size == 0)
+                        || parentInclusive){
+                        incTypes.add(element(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[text()]")).ownText)
+                    }
+                }
+            }
+//            val rndInputValueIndex = (0 until incTypes.size).random()
+            element(byXpath("//input[@name='$inputName']")).sendKeys(incTypes.random(), Keys.DOWN, Keys.ENTER)
+//            element(byXpath("//input[@name='$inputName']")).sendKeys(incTypes[rndInputValueIndex])
+//            element(byXpath("//input[@name='$inputName']")).sendKeys(Keys.DOWN, Keys.ENTER)
+        } else {
+            var countInputString = 0
+            do {
+                element(byXpath("//input[@name='$inputName']")).sendKeys(Keys.DOWN)
+                countInputString += 1
+            } while (elements(byCssSelector("input[name='$inputName'][aria-activedescendant^='$inputName-option']")).size > 0)
+            //выбираем случайную строчку из доступных
+            val rndInputValue = (1 until countInputString).random()
+            repeat(rndInputValue){
+                element(byXpath("//input[@name='$inputName']")).sendKeys(Keys.DOWN)
+            }
+            element(byXpath("//input[@name='$inputName']")).sendKeys(Keys.ENTER)
+        }
     }
 
     fun menuNavigation(menu: String, subMenu: String, waitTime: Long)
@@ -345,6 +428,32 @@ class Tools {
         element(byCssSelector(".MuiList-padding"))
             .shouldNot(exist, ofSeconds(waitTime))
         Thread.sleep((10*stringsOnPage).toLong())
+    }
+
+//    fun numberOfColumn(columnName: String, waitTime: Long): Int{
+//        //Возвращаем порядковый номер искомого столбца
+//        val columnCount = elements(byXpath("//table/thead/tr/th")).size
+//        var result = 0
+//        for (i in 1..columnCount){
+//            element(byXpath("//table/thead/tr/th[$i]//*[text()]")).ownText
+//            if (element(byXpath("//table/thead/tr/th[$i]//*[text()]")).ownText == columnName){
+//                result = i
+//            }
+//        }
+//        return result
+//    }
+
+
+    fun numberOfColumn(columnName: String, waitTime: Long): Int{
+//        val columnsElements = elements(byXpath("//table/thead/tr/th//*[text()]"))
+        val columnsElements = elements(byXpath("//table/thead/tr/th"))
+        val columsName = mutableListOf<String>()
+        columnsElements.forEachIndexed{index, element ->
+            if (elements(byXpath("//table/thead/tr/th[${index + 1}]//*[text()]")).size == 1){
+                columsName.add(element(byXpath("//table/thead/tr/th[${index + 1}]//*[text()]")).ownText)
+            } else {columsName.add("")}
+                }
+        return columsName.indexOf(columnName) + 1
     }
 
 

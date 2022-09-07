@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+
+<suite name="PMI Test Suite">
+    <test name="PMI">
+        <groups>
+            <run>
+                <include name="ПМИ"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="dicts.SearchTests"></class>
+            <class name="dicts.Labels"></class>
+            <class name="events.StatusTests"></class>
+            <class name="map.MapTest"></class>
+            <class name="pmi_tests.PimTests"></class>
+            <class name="reports.Reports"></class>
+            <!--class name="JustTests"></class-->
+            <class name="Removal"></class>
+        </classes>
+    </test>
+</suite>
