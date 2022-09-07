@@ -1,7 +1,7 @@
 package dicts
 
 import Retry
-import Tools
+import BaseTest
 import com.codeborne.selenide.CollectionCondition
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.visible
@@ -14,13 +14,13 @@ import org.testng.annotations.DataProvider
 import java.time.Duration.ofSeconds
 import java.time.LocalDateTime
 
-class SearchTests
+class SearchTests : BaseTest(){
 //Поштучная проверка справочников на работоспособность поиска,
 // путем создания записи справочника с уникальными значениями поисковых атрибутов,
 // с последующим удалением записи
 //набор поисковых полей определяется как считыванием из тултипа подсказки, так и хардкодом, в случае несоответствия подсказки названиям полей.
-{
-    val tools = Tools()
+
+//    val baseTest = BaseTest()
     var date = ""
     var dateTime = ""
     //Время ожидания элементов при выполнении теста
@@ -42,8 +42,8 @@ class SearchTests
     fun `Search 0010 Проверка создания, поиска и удаления справочных сущностей некоторых справочников`
             (subMenu: String, nameOfName: String, nameColumnName: String) {
         //Видеокамеры
-        tools.logonTool()
-        tools.menuNavigation("Справочники", subMenu, waitTime)
+        logonTool()
+        menuNavigation("Справочники", subMenu, waitTime)
         //открываем поиск что бы прочитать подсказку
         element(byXpath("//*[@name='search']/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
@@ -167,7 +167,7 @@ class SearchTests
         //проверяем что записей в таблице более одной
         elements(byXpath("//table/tbody/tr"))
             .shouldHave(CollectionCondition.sizeGreaterThan(1), ofSeconds(waitTime))
-        tools.checkbox(nameColumnName, true, waitTime)
+        checkbox(nameColumnName, true, waitTime)
         //проверяем открыт ли, и если нет открываем поиск
         if (elements(byXpath("//*[@name='search']/following-sibling::input")).size != 1){
             element(byXpath("//*[@name='search']/ancestor::button"))
@@ -194,7 +194,7 @@ class SearchTests
             Thread.sleep(500)
             elements(byXpath("//table/tbody/tr"))
                 .shouldHave(CollectionCondition.size(1), ofSeconds(waitTime))
-            val nameColumn = tools.numberOfColumn(nameColumnName, waitTime)
+            val nameColumn = numberOfColumn(nameColumnName, waitTime)
 //            elements(byXpath("//table/tbody/tr/td[$nameColumn][text()='AT_${nameOfName}_$uniqueName']"))
 //                .shouldHave(CollectionCondition.size(1), ofSeconds(waitTime))
             Assertions.assertTrue(
@@ -250,6 +250,6 @@ class SearchTests
                 Thread.sleep(500)
             }
         }
-        tools.logoffTool()
+        logoffTool()
     }
 }

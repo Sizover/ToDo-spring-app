@@ -11,8 +11,8 @@ import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-class Removal {
-    val tools = Tools()
+class Removal : BaseTest(){
+//    val baseTest = BaseTest()
     var date = LocalDate.now()
     var dateTime = LocalDateTime.now()
     var waitTime: Long = 5
@@ -21,18 +21,18 @@ class Removal {
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["Removal"])
     fun `Removal 9998 Удаление отчетов созданных автотестами (по наличию части имени в отчете)`(){
         //Удаляем все отчеты
-        tools.logonTool()
+        logonTool()
 //        tools.menuNavigation("Отчеты", "По происшествиям", waitTime)
         var menuVariable =1
         for (m in 1..3){
             when (m) {
-                1 -> {tools.menuNavigation("Отчеты", "По происшествиям", waitTime)}
-                2 -> {tools.menuNavigation("Отчеты", "По обращениям", waitTime)}
-                3 -> {tools.menuNavigation("Отчеты", "По сотрудникам", waitTime)}
+                1 -> {menuNavigation("Отчеты", "По происшествиям", waitTime)}
+                2 -> {menuNavigation("Отчеты", "По обращениям", waitTime)}
+                3 -> {menuNavigation("Отчеты", "По сотрудникам", waitTime)}
             }
 //        tools.menuNavigation("Отчеты", "По обращениям", waitTime)
 //        tools.menuNavigation("Отчеты", "По сотрудникам", waitTime)
-            tools.stringsOnPage(50, waitTime)
+            stringsOnPage(50, waitTime)
 //            var stringNumder = 1
             //считаем количество строк - понадобится для прерываемого цикла
             var countString = elements(byXpath("//tbody/tr")).size
@@ -42,7 +42,7 @@ class Removal {
 //            println(menuColumn)
             //входим в большой цикл без защитного счетчика
             var control = 1 //хотя вот он готовый счетчик
-            tools.checkbox("Наименование отчета", true, waitTime)
+            checkbox("Наименование отчета", true, waitTime)
             //"Проверка формирования отчетов" это часть названия отчета присваемого всем отчетам создаваемыми автотестами
             while (elements(byXpath("//tbody/tr//*[contains(text(),'Проверка формирования отчетов')]")).size > 0 ){
                 countString = elements(byXpath("//tbody/tr")).size
@@ -100,7 +100,7 @@ class Removal {
 //        val date2 = date.minusDays(7).toString()
         val dateStart = LocalDate.now().minusDays(7).toString()
         val dateEnd = LocalDate.now().toString()
-        tools.logonTool()
+        logonTool()
         //убедимся что мы за оператор:
         //кликаем по иконке оператора сверху справа
         //element(byCssSelector("header>div>div>div>span>button")).click()
@@ -120,7 +120,7 @@ class Removal {
 //        println("ФИО $operator")
 //        println("operatorFIO $operatorFIO")
         //переходим к списку происшествий и ждем загрузки
-        tools.menuNavigation("Происшествия","Список происшествий",waitTime)
+        menuNavigation("Происшествия","Список происшествий",waitTime)
         element(byCssSelector("table>tbody>tr"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))

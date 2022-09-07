@@ -2,7 +2,7 @@ package pmi_tests
 
 //import kotlin.collections.EmptyMap.keys
 import Retry
-import Tools
+import BaseTest
 import com.codeborne.selenide.CollectionCondition
 import com.codeborne.selenide.Condition.exactText
 import com.codeborne.selenide.Condition.exist
@@ -35,8 +35,8 @@ import java.time.LocalDateTime
 //import org.junit.Assert.*
 
 //@org.testng.annotations.Test (retryAnalyzer = Retry::class)
-class PimTests {
-    val tools = Tools()
+class PimTests : BaseTest(){
+//    val baseTest = BaseTest()
     var date = ""
     var dateTime = ""
 //    val checkboxTrue = "M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
@@ -66,7 +66,7 @@ class PimTests {
         //логинимся
         //val tools = Tools()
 //        tools.logonTool()
-        tools.logonTool()
+        logonTool()
         //кликаем по иконке справочников в боковом меню
         //Переходим в "Муниципальные образования"
         var subMenu = ""
@@ -78,7 +78,7 @@ class PimTests {
                 4 -> {subMenu = "Видеокамеры"}
                 5 -> {subMenu = "Датчики"}
             }
-            tools.menuNavigation("Справочники", subMenu, waitTime)
+            menuNavigation("Справочники", subMenu, waitTime)
             //сравниваем количество записей в таблице, на больше или равно 5
             element(byXpath("//table/tbody/tr"))
                 .should(exist, ofSeconds(waitTime))
@@ -87,7 +87,7 @@ class PimTests {
                 .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(5))
         }
         //разлогиниваемся и закрываем браузер
-        tools.logoffTool()
+        logoffTool()
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
@@ -95,10 +95,10 @@ class PimTests {
         //A32 Убедиться в наличии списка объектов  в справочнике «Типы происшествий»
         //логинимся
         //val tools = Tools()
-        tools.logonTool()
+        logonTool()
         //кликаем по иконке справочников в боковом меню
         //Переходим в "Типы происшествий"
-        tools.menuNavigation("Справочники", "Типы происшествий", waitTime)
+        menuNavigation("Справочники", "Типы происшествий", waitTime)
         //сравниваем количество записей в таблице, на больше или равно 5
         element(byXpath("//table/tbody/tr"))
             .should(exist, ofSeconds(waitTime))
@@ -122,7 +122,7 @@ class PimTests {
             }
         }
         Assertions.assertTrue(leafStringCount >= 5)
-        tools.logoffTool()
+        logoffTool()
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
@@ -131,10 +131,10 @@ class PimTests {
         //A33 Убедиться в наличии списка объектов  в справочнике «Организации»
         //логинимся
         //val tools = Tools()
-        tools.logonTool()
+        logonTool()
         //кликаем по иконке справочников в боковом меню
         //Переходим в справочник "Организации"
-        tools.menuNavigation("Справочники","Организации",waitTime)
+        menuNavigation("Справочники","Организации",waitTime)
         //сравниваем колличество строк организаций, по условию больше или равно с 5
         element(byCssSelector("tbody>tr"))
             .should(exist, ofSeconds(waitTime))
@@ -150,7 +150,7 @@ class PimTests {
         //ищем метки СЗО и сравниваем их количество на больше или равно 1
         elements(byXpath("//tbody/tr//*[text()='СЗО']"))
             .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(1))
-        tools.logoffTool()
+        logoffTool()
     }
 
 
@@ -159,10 +159,10 @@ class PimTests {
         //A38 Убедиться в наличии списка объектов  в меню «Список происшествий»
         //логинимся
         //val tools = Tools()
-        tools.logonTool()
+        logonTool()
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
-        tools.menuNavigation("Происшествия","Список происшествий",waitTime)
+        menuNavigation("Происшествия","Список происшествий",waitTime)
         //Подсчитываем всего карточек происшествий на странице и убеждаемся, что их больше чем необходимый минимум
         element(byXpath("//table/tbody/tr"))
             .should(exist, ofSeconds(waitTime))
@@ -189,7 +189,7 @@ class PimTests {
         //println("$countB countB")
         //println("$countC countC")
         //println("$countD countD")
-        tools.logoffTool()
+        logoffTool()
     }
 
 
@@ -197,17 +197,17 @@ class PimTests {
     fun `PMI 0090 Проверка загрузки таблицы «Архив происшествий»`() {
         //A39 Убедиться в наличии списка объектов  в меню «Архив происшествий»
         //логинимся
-        tools.logonTool()
+        logonTool()
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Архив происшетвий"
-        tools.menuNavigation("Происшествия","Архив происшествий",waitTime)
+        menuNavigation("Происшествия","Архив происшествий",waitTime)
         //сравниваем колличество карточек в архиве, по условию больше или равно с 2
         element(byXpath("//table/tbody/tr"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         elements(byXpath("//table/tbody/tr"))
             .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(2))
-        tools.logoffTool()
+        logoffTool()
 
     }
 
@@ -216,19 +216,19 @@ class PimTests {
     fun `PMI 0100 Проверка процедуры авторизации в системе`() {
         //A310 Проверка процедуры авторизации в системе 1
         //val tools = Tools()
-        tools.aThreeHundredAndTenOne()
+        aThreeHundredAndTenOne()
         element(byName("login")).click()
         element(byCssSelector("#input-error")).shouldHave(exactText("Неправильное имя пользователя или пароль."))
-        tools.aThreeHundredAndTenOne()
+        aThreeHundredAndTenOne()
         element(byName("username")).sendKeys("test")
         element(byName("login")).click()
         element(byCssSelector("#input-error")).shouldHave(exactText("Неправильное имя пользователя или пароль."))
-        tools.aThreeHundredAndTenOne()
+        aThreeHundredAndTenOne()
         element(byName("username")).sendKeys("test")
         element(byName("password")).sendKeys("test")
         element(byName("login")).click()
         element(byCssSelector("#input-error")).shouldHave(exactText("Неправильное имя пользователя или пароль."))
-        tools.logoffTool()
+        logoffTool()
     }
 
 
@@ -238,10 +238,10 @@ class PimTests {
         //A312 Проверка прикрепления файла к происшествию
         dateTime = LocalDateTime.now().toString()
         date = LocalDate.now().toString()
-        tools.logonTool()
+        logonTool()
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
-        tools.menuNavigation("Происшествия", "Список происшествий", waitTime)
+        menuNavigation("Происшествия", "Список происшествий", waitTime)
         //кликаем по "создать обращение"
         element(byXpath("//span[text()='Создать обращение']/parent::button")).click()
         //заполняем карточку
@@ -266,7 +266,7 @@ class PimTests {
             element(byCssSelector("input[id='fio.firstname']")).sendKeys("AutoTestFirstname")
         }
         //адрес с тестированием транслитерации и клик по dadata
-        tools.addressInput("callAddress","vbhf5", waitTime)
+        addressInput("callAddress","vbhf5", waitTime)
 //        element(byCssSelector("#callAddress")).click()
 //        element(byCssSelector("#callAddress"))
 //        element(byCssSelector("#callAddress")).sendKeys("vbhf5")
@@ -309,19 +309,19 @@ class PimTests {
         element(byCssSelector("div[style='padding: 5px;'] > div:first-child"))
             .shouldHave(text("Тестовый файл_.docx"), ofSeconds(waitTime))
 
-        tools.logoffTool()
+        logoffTool()
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
         //`A312 Проверка прикрепления файла к происшествию`
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        tools.logonTool()
+        logonTool()
         //кликаем по иконке происшествий в боковом меню
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий" )
-        tools.menuNavigation("Происшествия", "Список происшествий", waitTime)
+        menuNavigation("Происшествия", "Список происшествий", waitTime)
         //добавляем в таблицу происшествий столбец "Описание"
-        tools.checkbox("Описание", true, waitTime)
+        checkbox("Описание", true, waitTime)
 //        //Открываем выпадающий список
 //        element(byCssSelector("button[data-testid='Колонки-iconButton']"))
 //            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
@@ -346,8 +346,7 @@ class PimTests {
         //Thread.sleep(50000)
         element(byCssSelector("div[style='padding: 5px;'] > div:first-child"))
             .shouldHave(text("test.pdf"), ofSeconds(waitTime))
-
-        tools.logoffTool()
+        logoffTool()
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
@@ -355,10 +354,10 @@ class PimTests {
         //A313 Проверка наличия опросника абонента (заявителя)
         //val tools = Tools()
         //логинимся
-        tools.logonTool()
+        logonTool()
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
-        tools.menuNavigation("Происшествия", "Список происшествий", waitTime)
+        menuNavigation("Происшествия", "Список происшествий", waitTime)
         //кликаем по "создать обращение"
         element(byXpath("//span[text()='Создать обращение']/parent::button")).click()
         //Проверяем форму подсказки по положению стрелки и части текста
@@ -380,7 +379,7 @@ class PimTests {
             .should(exist, ofSeconds(waitTime))
         element(byText("Опросник")).click()
 
-        tools.logoffTool()
+        logoffTool()
 
     }
 
@@ -392,11 +391,11 @@ class PimTests {
         //логинимся
         dateTime = LocalDateTime.now().toString()
         date = LocalDate.now().toString()
-        tools.logonTool()
+        logonTool()
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
         //кликаем по "создать обращение"
-        tools.menuNavigation("Происшествия", "Список происшествий", waitTime)
+        menuNavigation("Происшествия", "Список происшествий", waitTime)
         element(byXpath("//span[text()='Создать обращение']/parent::button")).click()
         //заполняем карточку
         //Источник события - выбираем случайно
@@ -417,7 +416,7 @@ class PimTests {
             element(byCssSelector("input[id='fio.firstname']")).sendKeys("AutoTestFirstname")
         }
         //адрес с тестированием транслитерации и клик по dadata
-        tools.addressInput("callAddress","vbhf5", waitTime)
+        addressInput("callAddress","vbhf5", waitTime)
         //заполняем дополнительную информацию
         //element(byCssSelector("textarea[name='comment']")).value = "AutoTest N 0130 $dateTime"
         element(byCssSelector("div[role='textbox']>p")).click()
@@ -488,18 +487,18 @@ class PimTests {
 //        element(byCssSelector("div#simple-tabpanel-iplan > div > div > div > div:nth-child(2) >div>div>div>div>div#panel1a-content>div>div>div:nth-child(13)>form"))
 //            .shouldHave(text("Оператор AutoTest"))
 
-        tools.logoffTool()
+        logoffTool()
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
         //`A315 Проверка формирования действий оператора системы в рамках плана (алгоритма) реагирования с автоматизированным контролем выполнения
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        tools.logonTool()
+        logonTool()
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
-        tools.menuNavigation("Происшествия", "Список происшествий", waitTime)
+        menuNavigation("Происшествия", "Список происшествий", waitTime)
         //добавляем в таблицу происшествий столбец "Описание"
-        tools.checkbox("Описание", true, waitTime)
+        checkbox("Описание", true, waitTime)
 //        //Открываем выпадающий список
 //        element(byCssSelector("button[data-testid='Колонки-iconButton']"))
 //            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
@@ -581,16 +580,16 @@ class PimTests {
             }
         }
 
-        tools.logoffTool()
+        logoffTool()
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `PMI 0140 Проверка фильтрации карточек происшествия`() {
         //A.3.16 Фильтрация карточек происшествия
-        tools.logonTool()
+        logonTool()
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
-        tools.menuNavigation("Происшествия", "Список происшествий", waitTime)
+        menuNavigation("Происшествия", "Список происшествий", waitTime)
         elements(byXpath("//table/tbody/tr")).shouldHave(
             CollectionCondition.sizeGreaterThanOrEqual(1))
         //открываем фильтр "Типы происшествий"
@@ -632,8 +631,8 @@ class PimTests {
 //        elements(byText("Ложные")).shouldHave(CollectionCondition.sizeGreaterThanOrEqual(0))
 //        elements(byText("Консультации")).shouldHave(CollectionCondition.sizeGreaterThanOrEqual(0))
 //        tools.checkbox("Группа", false, waitTime)
-        tools.checkbox("Подгруппа", true, waitTime)
-        var targetColumn = tools.numberOfColumn("Подгруппа", waitTime)
+        checkbox("Подгруппа", true, waitTime)
+        var targetColumn = numberOfColumn("Подгруппа", waitTime)
         Thread.sleep(500)
         var intA: Int = elements(byXpath("//table/tbody/tr")).size
         var intB: Int = elements(byXpath("//table/tbody/tr/td[$targetColumn][text()='Ложные']")).size
@@ -648,7 +647,7 @@ class PimTests {
         element(byXpath("//span[text()='Типы происшествий']/button")).click()
         /////////////////////////////////////////////////////////////////////////////////////////
         //Открываем фильтр "Статусы"
-        tools.checkbox("Статус", true, waitTime)
+        checkbox("Статус", true, waitTime)
         element(byXpath("//span[text()='Статусы']/..")).click()
         element(byCssSelector("div[tabindex='-1'] div[role='combobox']")).should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime)).click()
@@ -670,7 +669,7 @@ class PimTests {
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
 //        elements(byText("В обработке")).shouldHave(CollectionCondition.sizeGreaterThanOrEqual(0))
 //        elements(byText("Реагирование")).shouldHave(CollectionCondition.sizeGreaterThanOrEqual(0))
-        targetColumn = tools.numberOfColumn("Статус", waitTime)
+        targetColumn = numberOfColumn("Статус", waitTime)
         intA = elements(byXpath("//table/tbody/tr")).size
         intB = elements(byXpath("//tbody/tr/td[$targetColumn]//*[text()='В обработке']")).size
         intC = elements(byXpath("//tbody/tr/td[$targetColumn]//*[text()='Реагирование']")).size
@@ -718,8 +717,8 @@ class PimTests {
             element(byXpath("//span[text()='Уровни']/button"))
                 .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
         }
-        tools.checkbox("Уровень происшествия", true, waitTime)
-        targetColumn = tools.numberOfColumn("Уровень происшествия", waitTime)
+        checkbox("Уровень происшествия", true, waitTime)
+        targetColumn = numberOfColumn("Уровень происшествия", waitTime)
         Thread.sleep(500)
         intA = elements(byXpath("//table/tbody/tr")).size
         intB = elements(byXpath("//tbody/tr/td[$targetColumn][text()='Угроза ЧС']")).size
@@ -745,8 +744,8 @@ class PimTests {
         }
         /////////////////////////////////////////////////////////////////////////////////////////
         //Открываем фильтр "Источники"
-        tools.checkbox("Источник", true, waitTime)
-        targetColumn = tools.numberOfColumn("Источник", waitTime)
+        checkbox("Источник", true, waitTime)
+        targetColumn = numberOfColumn("Источник", waitTime)
         element(byXpath("//span[text()='Источники']/..")).click()
         element(byCssSelector("div[tabindex='-1'] div[role='combobox']"))
             .should(exist, ofSeconds(waitTime))
@@ -805,7 +804,7 @@ class PimTests {
         } else {
             Assertions.assertTrue(intS == intA)
         }
-        tools.logoffTool()
+        logoffTool()
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
@@ -816,11 +815,11 @@ class PimTests {
         //логинимся
         dateTime = LocalDateTime.now().toString()
         date = LocalDate.now().toString()
-        tools.logonTool()
+        logonTool()
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
         //кликаем по "создать обращение"
-        tools.menuNavigation("Происшествия", "Список происшествий", waitTime)
+        menuNavigation("Происшествия", "Список происшествий", waitTime)
         element(byXpath("//span[text()='Создать обращение']/parent::button")).click()
 //        element(byCssSelector("div span[aria-label='add'] button[type='button']")).shouldHave(exactText("Создать обращение"))
 //            .click()
@@ -843,7 +842,7 @@ class PimTests {
             element(byCssSelector("input[id='fio.firstname']")).sendKeys("AutoTestFirstname")
         }
         //адрес с тестированием транслитерации и клик по dadata
-        tools.addressInput("callAddress","vbhf5",waitTime)
+        addressInput("callAddress","vbhf5",waitTime)
         //заполняем дополнительную информацию
         //element(byCssSelector("textarea[name='comment']")).value = "AutoTest N 0150 $dateTime"
         element(byCssSelector("div[role='textbox']>p")).click()
@@ -869,9 +868,9 @@ class PimTests {
         )
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
-        tools.menuNavigation("Происшествия", "Список происшествий", waitTime)
+        menuNavigation("Происшествия", "Список происшествий", waitTime)
         //добавляем в таблицу происшествий столбец "Описание"
-        tools.checkbox("Описание", true, waitTime)
+        checkbox("Описание", true, waitTime)
 //        //Открываем выпадающий список
 //        element(byCssSelector("button[data-testid='Колонки-iconButton']"))
 //            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
@@ -907,14 +906,14 @@ class PimTests {
         element(byText("ДДС-02 г.Черкесск")).should(exist, ofSeconds(waitTime))
         element(byText("AutoTest N 0150 $dateTime")).should(exist, ofSeconds(waitTime))
 
-        tools.logoffTool()
-        tools.logonDds()
+        logoffTool()
+        logonDds()
 
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
-        tools.menuNavigation("Происшествия", "Список происшествий", waitTime)
+        menuNavigation("Происшествия", "Список происшествий", waitTime)
         //добавляем в таблицу происшествий столбец "Описание"
-        tools.checkbox("Описание", true, waitTime)
+        checkbox("Описание", true, waitTime)
 //        //Открываем выпадающий список
 //        element(byCssSelector("button[data-testid='Колонки-iconButton']"))
 //            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
@@ -943,15 +942,15 @@ class PimTests {
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
         //Thread.sleep(500)
 
-        tools.logoffTool()
+        logoffTool()
 
         //Возвращаемся в КИАП и проверяем статус родительской карточки
-        tools.logonTool()
+        logonTool()
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
-        tools.menuNavigation("Происшествия", "Список происшествий", waitTime)
+        menuNavigation("Происшествия", "Список происшествий", waitTime)
         //добавляем в таблицу происшествий столбец "Описание"
-        tools.checkbox("Описание", true, waitTime)
+        checkbox("Описание", true, waitTime)
 //        //Открываем выпадающий список
 //        element(byCssSelector("button[data-testid='Колонки-iconButton']"))
 //            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
@@ -971,16 +970,16 @@ class PimTests {
         element(byXpath("//span[contains(@class,'MuiButton-label')][text()='Реагирование']/.."))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
 
-        tools.logoffTool()
+        logoffTool()
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `PMI 0160 Назначение сил и средств в КП`() {
         //A.3.18 Назначение сил и средств ДДС
-        tools.logonTool()
+        logonTool()
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
-        tools.menuNavigation("Происшествия", "Список происшествий", waitTime)
+        menuNavigation("Происшествия", "Список происшествий", waitTime)
         element(byCssSelector("table"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -1058,7 +1057,7 @@ class PimTests {
         element(byText("Team$team")).should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
         //Thread.sleep(10000)
 
-        tools.logoffTool()
+        logoffTool()
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
@@ -1067,7 +1066,7 @@ class PimTests {
         //A.3.20 Прием карточки из Системы-112
         dateTime = LocalDateTime.now().toString()
         date = LocalDate.now().toString()
-        tools.logon112()
+        logon112()
         //Thread.sleep(100000)
         //Создаем новое происшествие
         //element(byCssSelector("button#btnNewEvent")).click()
@@ -1106,9 +1105,9 @@ class PimTests {
         //"input#street"firstName
         //Thread.sleep(50000)
 
-        tools.logoffTool()
+        logoffTool()
 
-        tools.logonTool()
+        logonTool()
         //кликаем по иконке происшествий в боковом меню
         element(byXpath("//span[@title='Происшествия']/..")).click()
         //Переходим в "Список происшетвий"
@@ -1129,7 +1128,7 @@ class PimTests {
         //element(byCssSelector("div[role='toolbar'] form button:nth-child(9)")).click()
         element(byXpath("//span[text()='Очистить все']/..")).click()
         //добавляем в таблицу происшествий столбец "Описание"
-        tools.checkbox("Описание", true, waitTime)
+        checkbox("Описание", true, waitTime)
 //        //Открываем выпадающий список
 //        element(byCssSelector("button[data-testid='Колонки-iconButton']"))
 //            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
@@ -1153,16 +1152,16 @@ class PimTests {
             .shouldHave(text("AutoTest 112 $dateTime"), ofSeconds(waitTime))
         element(byCssSelector("div#panel1a-header")).shouldHave(text("Система-112"), ofSeconds(waitTime))
 
-        tools.logoffTool()
+        logoffTool()
 
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `PMI 0180 Просмотр паспортов опасных объектов`() {
         //A.3.21 Просмотр паспортов опасных объектов
-        tools.logonTool()
-        tools.menuNavigation("Справочники", "Организации", waitTime)
-        tools.stringsOnPage(50, waitTime)
+        logonTool()
+        menuNavigation("Справочники", "Организации", waitTime)
+        stringsOnPage(50, waitTime)
         //кликаем по иконке справочников в боковом меню
 //        element(byXpath("//span[@title='Справочники']/..")).click()
 //        //Переходим в справочник "Организации"
@@ -1172,7 +1171,7 @@ class PimTests {
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
         //ищем столбец "файлы"
 //        tools.checkbox("Файлы",true,waitTime)
-        tools.checkbox("",true,waitTime)
+        checkbox("",true,waitTime)
         val columsNameElements = elements(byXpath("//thead/tr/th//*[text()]"))
         val columsName = mutableListOf<String>()
         columsNameElements.forEach {
@@ -1258,7 +1257,7 @@ class PimTests {
         //Удаляем нафиг все что скачали
         FileUtils.deleteDirectory(File("/home/isizov/Kotlin_tests/build/downloads"))
 
-        tools.logoffTool()
+        logoffTool()
     }
 
 
@@ -1270,7 +1269,7 @@ class PimTests {
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `PMI 0220 Проверка открытия карточек справочных сущностей`() {
         //A.3.28 Проверка централизованного хранения и управления структурированной справочной информации
-        tools.logonTool()
+        logonTool()
 
         for (i in 1..10){
             //кликаем по иконке справочников
@@ -1315,7 +1314,7 @@ class PimTests {
                 .shouldBe(visible, ofSeconds(waitTime))
         //Thread.sleep(5000)
         }
-    tools.logoffTool()
+    logoffTool()
     }
 
     @DataProvider(name = "Справочники")
@@ -1338,7 +1337,7 @@ class PimTests {
     fun `PMI 0230 Проверка поиска справочных данных`(subMenu: String) {
         //A.3.29 Проверка поиска справочных данных
         //хорошо бы в таблицу включать все столбцы, но это потом доработаю //доработано
-        tools.logonTool()
+        logonTool()
         //временно не проверяем поиск по справочнику типов происшествий т.к. не можем там контролировать число строк
         //(ну как бы можем, но не по такому алгоритму, а вероятно в отдельном тесте. еще подумаю...)
 //        for (dicts in 1..10) {
@@ -1346,13 +1345,13 @@ class PimTests {
 //            element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul")).click()
 //            //переходим в каждый справочник
 //            element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul//div/ul[$dicts]")).click()
-        tools.menuNavigation("Справочники", subMenu, waitTime)
+        menuNavigation("Справочники", subMenu, waitTime)
             //ждем загрузки таблицы
             element(byCssSelector("main table>tbody"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
             //добавляем все доступные колонки в таблицу
-            tools.checkbox("", true, waitTime)
+            checkbox("", true, waitTime)
 //            element(byCssSelector("button[data-testid='Колонки-iconButton']")).click()
 //            element(byCssSelector("fieldset[aria-label='Показать/скрыть колонки']"))
 //                .should(exist, ofSeconds(waitTime))
@@ -1562,13 +1561,13 @@ class PimTests {
                     }
                 }
 //        }
-        tools.logoffTool()
+        logoffTool()
     }
 
 
 //    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
     fun `PMI 0231`() {
-        tools.logonTool()
+        logonTool()
         //для каждого справочника выполнить
         for (dict in 1..9){
             //кликаем по иконке справочников
@@ -1580,7 +1579,7 @@ class PimTests {
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
             //добавляем все доступные колонки в таблицу
-            tools.checkbox("", true, waitTime)
+            checkbox("", true, waitTime)
             //получаем счетчик строк в левом нижнем углу страницы, в виде числа
             val allRecordCountString = element(byXpath("//table/tfoot//p[contains(text(),'Всего ')]")).ownText.toString().split("\n")
             val allRecordCountNotUse = allRecordCountString[1].split(" ")
@@ -1623,7 +1622,7 @@ class PimTests {
                     val stringElement = elements(byXpath("//table/tbody/tr"))
                     val inColumnsValueList = mutableListOf<String>()
                     stringElement.forEachIndexed { elind, el ->
-                        val colNum = tools.numberOfColumn(colVal, waitTime)
+                        val colNum = numberOfColumn(colVal, waitTime)
 //                        println(it)
                         if (
                             (elements(byXpath("//table/tbody/tr[$elind]/td[$colNum][text()]")).size == 1)
@@ -1697,7 +1696,7 @@ class PimTests {
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `PMI 0241 Проверка наличия справочников с иерархической системой классификации`(){
         //иерархических справосников стало больше, проверяем все
-        tools.logonTool()
+        logonTool()
         for (dicts in 1..10) {
             //кликаем по иконке справочников
             element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul")).click()
@@ -1720,17 +1719,17 @@ class PimTests {
 
             }
         }
-        tools.logoffTool()
+        logoffTool()
     }
 
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `PMI 0250 Проверка присвоения и удаления меток в карточке организации`(){
         //A.3.31 Проверка задания меток для указания признаков объектов
-        tools.logonTool()
+        logonTool()
         //кликаем по иконке справочников
         //переходим в нужный справочник
-        tools.menuNavigation("Справочники", "Организации", waitTime)
+        menuNavigation("Справочники", "Организации", waitTime)
         //ждем загрузки таблицы
         element(byCssSelector("main table>tbody"))
             .should(exist, ofSeconds(waitTime))
@@ -1785,7 +1784,7 @@ class PimTests {
 ////            .scrollIntoView(false)
 //            .sendKeys(Keys.END)
 //        tools.inputRandom("labels")
-        tools.inputRandomNew("labelsId-textfield", true, waitTime)
+        inputRandomNew("labelsId-textfield", true, waitTime)
 ////        Thread.sleep(2000)
 //        element(byXpath("//input[@name='labels']")).click()
 ////        Thread.sleep(2000)
@@ -1842,13 +1841,13 @@ class PimTests {
         Assertions.assertTrue(newLabelsList.containsAll(oldLabelsList))
 //        Assertions.assertTrue(newLabelsList.size == oldLabelsList.size +1)
 
-        tools.logoffTool()
+        logoffTool()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //теперь удалим эту (эти) метку(и)
-        tools.logonTool()
+        logonTool()
         //кликаем по иконке справочников
         //переходим в нужный справочник
-        tools.menuNavigation("Справочники", "Организации", waitTime)
+        menuNavigation("Справочники", "Организации", waitTime)
         //ждем загрузки таблицы
         element(byCssSelector("main table>tbody"))
             .should(exist, ofSeconds(waitTime))
@@ -1914,7 +1913,7 @@ class PimTests {
                 .shouldNot(exist, ofSeconds(waitTime))
                 .shouldNotBe(visible, ofSeconds(waitTime))
         }
-        tools.logoffTool()
+        logoffTool()
 //        println("newLabel $newLabel")
 //        println("oldLabelsList $oldLabelsList")
 //        println("newLabelsList $newLabelsList")
@@ -1925,17 +1924,17 @@ class PimTests {
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `PMI 0260 Проверка использования ассоциативных связей-ссылок между объектами справочников`(){
         //A.3.32 Проверка использования ассоциативных связей-ссылок между объектами справочников
-        tools.logonTool()
+        logonTool()
         //кликаем по иконке справочников
         //переходим в нужный справочник
-        tools.menuNavigation("Справочники", "Дежурные службы", waitTime)
+        menuNavigation("Справочники", "Дежурные службы", waitTime)
         //ждем загрузки таблицы
         element(byCssSelector("main table>tbody"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //Собираем все ФИО, что бы не проверять организацию у которой руководитель не указан
-        tools.checkbox("Руководитель", true, waitTime)
-        val officialIdColumn = tools.numberOfColumn("Руководитель", waitTime)
+        checkbox("Руководитель", true, waitTime)
+        val officialIdColumn = numberOfColumn("Руководитель", waitTime)
 //        val officialIdElementList = elements(byXpath("//table/tbody/tr/td[$officialIdColumn][text()]"))
 //        val officialIdFIOList = mutableListOf<String>()
 //        officialIdElementList.forEach {
@@ -2002,7 +2001,7 @@ class PimTests {
 //            .should(exist, ofSeconds(waitTime))
 //            .shouldBe(visible, ofSeconds(waitTime))
 //            .shouldHave(attribute("value", companyName.toString()))
-        tools.logoffTool()
+        logoffTool()
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
@@ -2012,13 +2011,13 @@ class PimTests {
         //A.3.35 Просмотр детальной истории записи/источников данных записи
         dateTime = LocalDateTime.now().toString()
         date = LocalDate.now().toString()
-        tools.logonTool()
+        logonTool()
         //сначала проверим остатки неудачных запусков и удалим их.
-        tools.menuNavigation("Справочники", "Должностные лица", waitTime)
-        tools.checkbox("", true, waitTime)
+        menuNavigation("Справочники", "Должностные лица", waitTime)
+        checkbox("", true, waitTime)
         //воспользуемся поиском
-        var menuColumnNubber = tools.numberOfColumn(" ", waitTime)
-        val fioColumnNubber = tools.numberOfColumn("ФИО", waitTime)
+        var menuColumnNubber = numberOfColumn(" ", waitTime)
+        val fioColumnNubber = numberOfColumn("ФИО", waitTime)
         element(byXpath("//*[@name='search']/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -2030,7 +2029,7 @@ class PimTests {
         element(byCssSelector("input[placeholder^='ФИО']")).sendKeys("N 0270 AutoTest", Keys.ENTER)
         //ждем результатов
         Thread.sleep(1000)
-        val userColumn = tools.numberOfColumn("Пользователь", waitTime)
+        val userColumn = numberOfColumn("Пользователь", waitTime)
 //        while ((elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size == 0)
 //            ||(elements(byXpath("//table/tbody/tr/td[$userColumn]//*[@name='user']")).size
 //                ==elements(byXpath("//table/tbody/tr")).size )
@@ -2082,15 +2081,15 @@ class PimTests {
             }
         }
         //идем в справочник ДС что бы достать оттуда ДС и их организации, что бы лицо создавать с этими параметрами
-        tools.menuNavigation("Справочники", "Дежурные службы", waitTime)
+        menuNavigation("Справочники", "Дежурные службы", waitTime)
         //ждем загрузки таблицы
         element(byCssSelector("main table>tbody"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //переключаемся на 500 записей на странице
-        tools.stringsOnPage(500, waitTime)
+        stringsOnPage(500, waitTime)
         //выставляем отображение нужных столбцов
-        tools.checkbox("Наименование;Организация", true, waitTime)
+        checkbox("Наименование;Организация", true, waitTime)
         element(byXpath("//table/thead/tr/th//*[text()='Наименование']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -2149,12 +2148,12 @@ class PimTests {
 //            .should(exist, ofSeconds(waitTime))
 //            .shouldBe(visible, ofSeconds(waitTime))
 //            .click()
-        tools.menuNavigation("Справочники","Должностные лица",waitTime)
+        menuNavigation("Справочники","Должностные лица",waitTime)
         //ждем загрузки таблицы
         element(byCssSelector("main table>tbody"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        menuColumnNubber = tools.numberOfColumn(" ", waitTime)
+        menuColumnNubber = numberOfColumn(" ", waitTime)
         //удалим потуги неудачных тестов
         //воспользуемся поиском
 //        element(byXpath("//*[@name='search']/ancestor::button"))
@@ -2323,10 +2322,10 @@ class PimTests {
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
 
-        tools.logoffTool()
+        logoffTool()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //а теперь удалим его
-        tools.logonTool()
+        logonTool()
         //кликаем по иконке справочников
         element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul"))
             .should(exist, ofSeconds(waitTime))
@@ -2337,8 +2336,8 @@ class PimTests {
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
-        tools.menuNavigation("Справочники", "Должностные лица", waitTime)
-        menuColumnNubber = tools.numberOfColumn(" ", waitTime)
+        menuNavigation("Справочники", "Должностные лица", waitTime)
+        menuColumnNubber = numberOfColumn(" ", waitTime)
         //ждем загрузки таблицы
         element(byCssSelector("main table>tbody"))
             .should(exist, ofSeconds(waitTime))

@@ -1,31 +1,25 @@
 package reports
 
 import Retry
-import Tools
-import com.codeborne.selenide.CollectionCondition
-import com.codeborne.selenide.Condition.exactText
+import BaseTest
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.text
 import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Selectors.byCssSelector
-import com.codeborne.selenide.Selectors.byName
 import com.codeborne.selenide.Selectors.byText
 import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.*
 //import com.codeborne.selenide.Selenide.element
 //import com.codeborne.selenide.Selenide.elements
 //import com.codeborne.selenide.Selenide.open
-import org.apache.commons.io.FileUtils
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
-import org.testng.annotations.DataProvider
-import java.io.File
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 class Reports {
-    val tools = Tools()
+    val baseTest = BaseTest()
     var date = ""
     var dateTime = ""
     //Время ожидания элементов при выполнении теста
@@ -37,10 +31,10 @@ class Reports {
         //A.3.23 Проверка формирования отчетов по обращениям
         dateTime = LocalDateTime.now().toString()
         date = LocalDate.now().toString()
-        tools.logonTool()
+        baseTest.logonTool()
         //кликаем по иконке отчетов
         //Переходим в "отчет по обращениям"
-        tools.menuNavigation("Отчеты","По обращениям", waitTime)
+        baseTest.menuNavigation("Отчеты","По обращениям", waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/.."))
             .should(exist, ofSeconds(waitTime))
@@ -56,7 +50,7 @@ class Reports {
             .sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
         element(byCssSelector("input#periodEnd")).sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
         //вбиваем адрес
-        tools.addressInput("address", "Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач", waitTime)
+        baseTest.addressInput("address", "Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач", waitTime)
 //        element(byCssSelector("input#address"))
 //            .sendKeys("Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач")
 //        //кликаем по первому адресу dadata
@@ -163,7 +157,7 @@ class Reports {
             date = LocalDate.now().toString()
             //кликаем по иконке происшествий в боковом меню
             //Переходим в "Список происшетвий"
-            tools.menuNavigation("Происшествия","Список происшествий",waitTime)
+            baseTest.menuNavigation("Происшествия","Список происшествий",waitTime)
             //кликаем по "создать обращение"
             element(byXpath("//span[text()='Создать обращение']/..")).click()
             //заполняем карточку
@@ -184,9 +178,9 @@ class Reports {
 //            var aA = ('A'..'Z').random()
             val bB = (1..100).random()
             if (i != 3){
-                tools.addressInput("callAddress", "Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач $bB", waitTime)
+                baseTest.addressInput("callAddress", "Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач $bB", waitTime)
             } else {
-                tools.addressInput("callAddress", adr, waitTime)
+                baseTest.addressInput("callAddress", adr, waitTime)
             }
 //            element(byCssSelector("#callAddress"))
 //                .sendKeys("Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач$bB")
@@ -272,7 +266,7 @@ class Reports {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //кликаем по иконке отчетов
         //Переходим в "отчет по обращениям"
-        tools.menuNavigation("Отчеты", "По обращениям", waitTime)
+        baseTest.menuNavigation("Отчеты", "По обращениям", waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/parent::button")).click()
         //Заполняем поля отчета - название
@@ -284,7 +278,7 @@ class Reports {
         element(byCssSelector("input#periodEnd"))
             .sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
         //вбиваем адрес
-        tools.addressInput("address","Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач",waitTime)
+        baseTest.addressInput("address","Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач",waitTime)
 //        element(byCssSelector("input#address"))
 //            .sendKeys("Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач")
 //        //кликаем по первому адресу dadata
@@ -393,7 +387,7 @@ class Reports {
         //Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач
         //Thread.sleep(50000)
 
-        tools.logoffTool()
+        baseTest.logoffTool()
     }
 
 
@@ -403,10 +397,10 @@ class Reports {
         //A.3.24 Проверка формирования отчетов по деятельности сотрудников
         dateTime = LocalDateTime.now().toString()
         date = LocalDate.now().toString()
-        tools.logonTool()
+        baseTest.logonTool()
         //кликаем по иконке отчетов
         //Переходим в "отчет по деятельности сотрудников"
-        tools.menuNavigation("Отчеты", "По сотрудникам", waitTime)
+        baseTest.menuNavigation("Отчеты", "По сотрудникам", waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/parent::button")).click()
         //Заполняем поля отчета - название
@@ -419,7 +413,7 @@ class Reports {
             .sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
         element(byCssSelector("input#periodEnd"))
             .sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
-        tools.addressInput("address", "Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач", waitTime)
+        baseTest.addressInput("address", "Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач", waitTime)
 //        element(byCssSelector("input#address"))
 //            .sendKeys("Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач")
 //        //кликаем по первому адресу dadata
@@ -491,7 +485,7 @@ class Reports {
             date = LocalDate.now().toString()
             //кликаем по иконке происшествий в боковом меню
             //Переходим в "Список происшетвий"
-            tools.menuNavigation("Происшествия", "Список происшествий", waitTime)
+            baseTest.menuNavigation("Происшествия", "Список происшествий", waitTime)
             //кликаем по "создать обращение"
             element(byXpath("//span[text()='Создать обращение']/parent::button")).click()
             //заполняем карточку
@@ -515,9 +509,9 @@ class Reports {
 //            var aA = ('A'..'Z').random()
             val bB = (1..100).random()
             if (i != 4){
-                tools.addressInput("callAddress", "Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач $bB", waitTime)
+                baseTest.addressInput("callAddress", "Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач $bB", waitTime)
             } else {
-                tools.addressInput("callAddress", adr, waitTime)
+                baseTest.addressInput("callAddress", adr, waitTime)
             }
 
 //            element(byCssSelector("#callAddress"))
@@ -622,7 +616,7 @@ class Reports {
 //            .shouldBe(visible, ofSeconds(waitTime))
         //кликаем по иконке отчетов
         //Переходим в "отчет по деятельности сотрудников"
-        tools.menuNavigation("Отчеты", "По сотрудникам", waitTime)
+        baseTest.menuNavigation("Отчеты", "По сотрудникам", waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/parent::button"))
             .should(exist, ofSeconds(waitTime))
@@ -634,7 +628,7 @@ class Reports {
         //заполняем дату начала и конца периода отчета сегоднешним числом
         element(byCssSelector("input#periodStart")).sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
         element(byCssSelector("input#periodEnd")).sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
-        tools.addressInput("address","Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач",waitTime)
+        baseTest.addressInput("address","Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач",waitTime)
 //        element(byCssSelector("input#address"))
 //            .sendKeys("Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач")
 //        //кликаем по первому адресу dadata
@@ -715,7 +709,7 @@ class Reports {
         Assertions.assertTrue(seventhT == seventh + 1)
 
         //Thread.sleep(50000)
-        tools.logoffTool()
+        baseTest.logoffTool()
 
     }
 
@@ -727,10 +721,10 @@ class Reports {
         //просто кошмар какой объемный тест получился(
         dateTime = LocalDateTime.now().toString()
         date = LocalDate.now().toString()
-        tools.logonTool()
+        baseTest.logonTool()
         //кликаем по иконке отчетов
         //Переходим в "отчет По происшествиям"
-        tools.menuNavigation("Отчеты", "По происшествиям", waitTime)
+        baseTest.menuNavigation("Отчеты", "По происшествиям", waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/parent::button"))
             .should(exist, ofSeconds(waitTime))
@@ -744,7 +738,7 @@ class Reports {
         //заполняем дату начала и конца периода отчета сегоднешним числом
         element(byCssSelector("input#periodStart")).sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
         element(byCssSelector("input#periodEnd")).sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
-        tools.addressInput("address","Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач",waitTime)
+        baseTest.addressInput("address","Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач",waitTime)
 //        element(byCssSelector("input#address"))
 //            .sendKeys("Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач")
 //        //кликаем по первому адресу dadata
@@ -808,7 +802,7 @@ class Reports {
             date = LocalDate.now().toString()
             //кликаем по иконке происшествий в боковом меню
             //Переходим в "Список происшетвий"
-            tools.menuNavigation("Происшествия", "Список происшествий", waitTime)
+            baseTest.menuNavigation("Происшествия", "Список происшествий", waitTime)
             //кликаем по "создать обращение"
             element(byXpath("//span[text()='Создать обращение']/parent::button")).click()
             //заполняем карточку
@@ -833,9 +827,9 @@ class Reports {
             val randomNumber = (1..100).random()
             //Вбиваем первый символ
             if (i==4){
-                tools.addressInput("callAddress","Карачаево-Черкесская Респ, г Усть-Джегута, ул Мира $randomNumber",waitTime)
+                baseTest.addressInput("callAddress","Карачаево-Черкесская Респ, г Усть-Джегута, ул Мира $randomNumber",waitTime)
             } else {
-                tools.addressInput("callAddress","Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач $randomNumber",waitTime)
+                baseTest.addressInput("callAddress","Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач $randomNumber",waitTime)
             }
             //заполняем дополнительную информацию
             //element(byCssSelector("textarea[name='comment']")).value = "AutoTest N 0190, i=$i $dateTime"
@@ -897,7 +891,7 @@ class Reports {
 //                }
 //                element(byCssSelector("input#incidentTypeId")).sendKeys(Keys.ENTER)
 //                tools.inputRandom("incidentTypeId")
-                tools.inputRandomNew("incidentTypeId-textfield", false, waitTime)
+                baseTest.inputRandomNew("incidentTypeId-textfield", false, waitTime)
                 element(byCssSelector("input#incidentTypeId-autocomplete[value*='.']"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
@@ -911,7 +905,7 @@ class Reports {
                     repeat(longSelectedIncidentType.length)
                     {element(byCssSelector("input#incidentTypeId-autocomplete")).sendKeys(Keys.BACK_SPACE) }
 //                    tools.inputRandom("incidentTypeId")
-                    tools.inputRandomNew("incidentTypeId-textfield", false, waitTime)
+                    baseTest.inputRandomNew("incidentTypeId-textfield", false, waitTime)
                     longSelectedIncidentType = element(byCssSelector("input#incidentTypeId-autocomplete")).getAttribute("value").toString()
                     shortSelectedIncidentType = longSelectedIncidentType.substring(longSelectedIncidentType.indexOf(' ') + 1)
 
@@ -982,7 +976,7 @@ class Reports {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //кликаем по иконке отчетов
         //Переходим в "отчет по деятельности сотрудников"
-        tools.menuNavigation("Отчеты", "По происшествиям", waitTime)
+        baseTest.menuNavigation("Отчеты", "По происшествиям", waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/parent::button"))
             .should(exist, ofSeconds(waitTime))
@@ -997,7 +991,7 @@ class Reports {
             .sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
         element(byCssSelector("input#periodEnd"))
             .sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
-        tools.addressInput("address","Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач",waitTime)
+        baseTest.addressInput("address","Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач",waitTime)
         //создаем отчет
         //Thread.sleep(50000)
         element(byXpath("//span[text()='Создать']/parent::button")).click()
@@ -1138,7 +1132,7 @@ class Reports {
         val maximumAffectedPeople = newAmountAffectedPeopleList.maxOrNull()
         //кликаем по иконке отчетов
         //Переходим в "отчет по деятельности сотрудников"
-        tools.menuNavigation("Отчеты", "По происшествиям", waitTime)
+        baseTest.menuNavigation("Отчеты", "По происшествиям", waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/parent::button"))
             .should(exist, ofSeconds(waitTime))
@@ -1153,7 +1147,7 @@ class Reports {
             .sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
         element(byCssSelector("input#periodEnd"))
             .sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
-        tools.addressInput("address", "Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач",waitTime)
+        baseTest.addressInput("address", "Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач",waitTime)
         //вбиваем число пострадавших соответствующее максимальному числу второго отчета, ждем 0 строк потом
         element(byXpath("//label[text()='Число пострадавших, более']/following-sibling::div/input"))
             .sendKeys(maximumAffectedPeople.toString())
@@ -1180,7 +1174,7 @@ class Reports {
 //строим отчет с числом пострадавших на 1 меньше и ожидаем, что записей будет столько сколько должно быть)
         //кликаем по иконке отчетов
         //Переходим в "отчет по деятельности сотрудников"
-        tools.menuNavigation("Отчеты", "По происшествиям", waitTime)
+        baseTest.menuNavigation("Отчеты", "По происшествиям", waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/parent::button"))
             .should(exist, ofSeconds(waitTime))
@@ -1195,7 +1189,7 @@ class Reports {
             .sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
         element(byCssSelector("input#periodEnd"))
             .sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
-        tools.addressInput("address", "Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач",waitTime)
+        baseTest.addressInput("address", "Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач",waitTime)
         //вбиваем число пострадавших соответствующее максимальному числу второго отчета, ждем строк более 0 потом
         element(byXpath("//label[text()='Число пострадавших, более']/following-sibling::div/input")).sendKeys((maximumAffectedPeople?.minus(1)).toString())
         //создаем отчет
@@ -1219,7 +1213,7 @@ class Reports {
 //создаем отчет с указанием типа происшествия и просто проверяем, что строка одна
         //кликаем по иконке отчетов
         //Переходим в "отчет по деятельности сотрудников"
-        tools.menuNavigation("Отчеты", "По происшествиям", waitTime)
+        baseTest.menuNavigation("Отчеты", "По происшествиям", waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/parent::button"))
             .should(exist, ofSeconds(waitTime))
@@ -1234,7 +1228,7 @@ class Reports {
             .sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
         element(byCssSelector("input#periodEnd"))
             .sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
-        tools.addressInput("address", "Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач",waitTime)
+        baseTest.addressInput("address", "Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач",waitTime)
         //вбиваем тип происшествия
         element(byCssSelector("input#incidentTypeId-autocomplete"))
             .sendKeys(newIncidentTypeList[0])
@@ -1256,6 +1250,6 @@ class Reports {
         tableStringCount = elements(byXpath("//table[@aria-label='sticky table']/tbody/tr")).size
         Assertions.assertTrue(tableStringCount == 1)
 
-        tools.logoffTool()
+        baseTest.logoffTool()
     }
 }

@@ -2,7 +2,6 @@
 
 
 import com.codeborne.selenide.Condition.exist
-import com.codeborne.selenide.Condition.text
 import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Selectors.byCssSelector
 import com.codeborne.selenide.Selectors.byXpath
@@ -13,8 +12,8 @@ import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-class JustTests {
-    val tools = Tools()
+class JustTests : BaseTest(){
+//    val baseTest = BaseTest()
     var date = LocalDate.now()
     var dateTime = LocalDateTime.now()
     var waitTime: Long = 5
@@ -26,15 +25,15 @@ class JustTests {
         //создадим пару МО, один оставив навсегда, а второй создавая и удаляя каждый раз
         val moATItWas = mutableListOf<String>()
         var moATCreated = mutableListOf<String>("AutoTest T 0020 МО")
-        tools.logonTool()
-        tools.menuNavigation("Справочники","Муниципальные образования", waitTime)
-        tools.checkbox("", true, waitTime)
+        logonTool()
+        menuNavigation("Справочники","Муниципальные образования", waitTime)
+        checkbox("", true, waitTime)
         Thread.sleep(1000)
         //внесем существующие телефонные коды в отдельный список
 //        var telCodeElementsCollection = elements(byXpath(""))
         val telCodeList = mutableListOf<String>()
         //Выясняем в каком столбце хранятся телефонные коды
-        var telCodeColumnIndex = tools.numberOfColumn("Телефонный код", waitTime)
+        var telCodeColumnIndex = numberOfColumn("Телефонный код", waitTime)
         //Выясняем в каком столбце хранятся телефонные коды
 //        val telCodeElements = elements(byXpath("//thead/tr/th"))
 //        telCodeElements.forEachIndexed{index, element ->
@@ -82,8 +81,8 @@ class JustTests {
             .sendKeys("AutoTest", Keys.ENTER)
         Thread.sleep(1000)
         if (elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size == 0){
-            val moNameColumn = tools.numberOfColumn("Наименование", waitTime)
-            val moParentNameColumn = tools.numberOfColumn("Субъект", waitTime)
+            val moNameColumn = numberOfColumn("Наименование", waitTime)
+            val moParentNameColumn = numberOfColumn("Субъект", waitTime)
 
         }
 
@@ -177,7 +176,7 @@ class JustTests {
                 .click()
             element(byXpath("//label[text()='КЛАДР']/parent::div//input[@id='kladrId']"))
                 .sendKeys("${kladr}00000000000")
-            tools.addressInput("address","г Краснодар, ул Путевая",waitTime)
+            addressInput("address","г Краснодар, ул Путевая",waitTime)
             var telCode: Int
             do {
                 telCode = (10000..99999).random()

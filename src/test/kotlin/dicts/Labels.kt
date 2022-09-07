@@ -1,32 +1,24 @@
 package dicts
 
 import Retry
-import Tools
-import com.codeborne.selenide.CollectionCondition
-import com.codeborne.selenide.Condition.exactText
+import BaseTest
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.text
 import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Selectors.byCssSelector
-import com.codeborne.selenide.Selectors.byName
-import com.codeborne.selenide.Selectors.byText
 import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.*
 //import com.codeborne.selenide.Selenide.element
 //import com.codeborne.selenide.Selenide.elements
 //import com.codeborne.selenide.Selenide.open
-import org.apache.commons.io.FileUtils
-import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
-import org.testng.annotations.DataProvider
-import java.io.File
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-class Labels {
+class Labels : BaseTest(){
 
-    val tools = Tools()
+//    val baseTest = BaseTest()
     var date = ""
     var dateTime = ""
     //Время ожидания элементов при выполнении теста
@@ -38,8 +30,8 @@ class Labels {
         //проверим создание метки и прикрепление метки к происшествию, возможно с удалением метки из КИАП
         date = LocalDate.now().toString()
         dateTime = LocalDateTime.now().toString()
-        tools.logonTool()
-        tools.menuNavigation("Справочники", "Метки", waitTime)
+        logonTool()
+        menuNavigation("Справочники", "Метки", waitTime)
         //воспользуемся поиском, что бы найти созданную метку не удаленную в упавший проход
         element(byXpath("//*[@name='search']/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
@@ -123,15 +115,15 @@ class Labels {
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
         }
-        tools.logoffTool()
+        logoffTool()
         Thread.sleep(500)
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //Регистрируем КП
-        tools.logonTool()
-        tools.menuNavigation("Происшествия","Создать карточку", waitTime)
-        tools.firstHalfIC("T 0010", date, dateTime, waitTime)
+        logonTool()
+        menuNavigation("Происшествия","Создать карточку", waitTime)
+        firstHalfIC("T 0010", date, dateTime, waitTime)
         element(byXpath("//span[text()='Создать карточку']/parent::button")).click()
-        tools.inputRandomNew("incidentTypeId-textfield", false, waitTime)
+        inputRandomNew("incidentTypeId-textfield", false, waitTime)
         //добавляем метку при создании КП
         //т.к. меток может добавится много, нам придется проверить все на совпадение с создаваемыми
 
@@ -139,7 +131,7 @@ class Labels {
         var again: Boolean
         do {
             again = false
-            tools.inputRandomNew("labelsId-textfield", true, waitTime)
+            inputRandomNew("labelsId-textfield", true, waitTime)
             element(byXpath("//input[@name='labelsId-textfield']")).sendKeys(Keys.END)
             repeat(element(byXpath("//input[@name='labelsId-textfield']")).getAttribute("value")!!.length){
                 element(byXpath("//input[@name='labelsId-textfield']")).sendKeys(Keys.BACK_SPACE)
@@ -209,11 +201,11 @@ class Labels {
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
         }
-        tools.logoffTool()
+        logoffTool()
         //перезалогиниваемся, что бы исключить кеширование и расширить тест
         Thread.sleep(500)
-        tools.logonTool()
-        tools.menuNavigation("Справочники", "Метки", waitTime)
+        logonTool()
+        menuNavigation("Справочники", "Метки", waitTime)
         //воспользуемся поиском, что бы найти созданную метку
         element(byXpath("//*[@name='search']/ancestor::button"))
             .should(exist, ofSeconds(waitTime))

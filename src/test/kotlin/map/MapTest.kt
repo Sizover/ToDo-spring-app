@@ -1,7 +1,7 @@
 package map
 //import kotlin.collections.EmptyMap.keys
 import Retry
-import Tools
+import BaseTest
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Selectors.byCssSelector
@@ -12,10 +12,9 @@ import org.openqa.selenium.Keys
 import java.time.Duration.ofSeconds
 
 
-class MapTest
-{
+class MapTest  : BaseTest(){
     var waitTime: Long = 5
-    val tools = Tools()
+//    val baseTest = BaseTest()
 
     fun `MTtool_001`(checkboxName: String){
         val checkboxSelector = "//h6[text()='%s']/../parent::span/parent::label/span[@style]//input"
@@ -49,7 +48,7 @@ class MapTest
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `MT_001 Проверка отображения значов на карте при применении различных фильтров карты`(){
-        tools.logonTool()
+        logonTool()
     //открываем карту
     element(byXpath("//span[@title='Открыть карту в отдельном окне']/button"))
         .should(exist, ofSeconds(waitTime))
@@ -151,7 +150,7 @@ class MapTest
         MTtool_001("Датчики")
         MTtool_001("Организации")
 
-        tools.logoffTool()
+        logoffTool()
 
 
 

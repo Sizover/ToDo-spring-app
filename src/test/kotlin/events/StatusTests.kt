@@ -1,6 +1,6 @@
 package events
 import Retry
-import Tools
+import BaseTest
 import com.codeborne.selenide.CollectionCondition
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.text
@@ -15,9 +15,9 @@ import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-open class StatusTests {
+open class StatusTests : BaseTest(){
 
-    val tools = Tools()
+//    val baseTest = BaseTest()
     var date = LocalDate.now()
     var dateTime = LocalDateTime.now()
     //Время ожидания элементов при выполнении теста
@@ -51,14 +51,14 @@ open class StatusTests {
 //        val statusList = mutableListOf<String>()
 //        statusList.add(Status1)
 //        statusList.add(Status2)
-        tools.logonTool()
-        tools.menuNavigation("Происшествия", "Создать карточку", waitTime)
-        tools.firstHalfIC("S 0010 $Status1 $Status2 $StutusSum", date.toString(), dateTime.toString(), waitTime)
+        logonTool()
+        menuNavigation("Происшествия", "Создать карточку", waitTime)
+        firstHalfIC("S 0010 $Status1 $Status2 $StutusSum", date.toString(), dateTime.toString(), waitTime)
 //            tools.addressInput("callAddress", "ktyyf", waitTime)
         element(byXpath("//span[text()='Создать карточку']/parent::button")).click()
-        tools.inputRandomNew("incidentTypeId-textfield", false, waitTime)
+        inputRandomNew("incidentTypeId-textfield", false, waitTime)
             //добавляем метку при создании КП
-        tools.inputRandomNew("labelsId-textfield", true, waitTime)
+        inputRandomNew("labelsId-textfield", true, waitTime)
             //Создаем карточку
         element(byXpath("//span[text()='Сохранить карточку']/..")).click()
             //Убеждаемся, что нам загрузило созданную карточку
@@ -115,7 +115,7 @@ open class StatusTests {
                 .should(exist, ofSeconds(waitTime))
             elements(byText("AutoTest S 0010 $Status1 $Status2 $StutusSum $dateTime"))
                 .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(hotlinesMap.size))
-            tools.logoffTool()
+            logoffTool()
 
             var i = 1
         var statusI = ""
@@ -124,9 +124,9 @@ open class StatusTests {
                     1 -> statusI = Status1
                     2 -> statusI = Status2
                 }
-                tools.anyLogonTool(login, login)
-                tools.menuNavigation("Происшествия", "Список происшествий", waitTime)
-                tools.checkbox("Описание", true, waitTime)
+                anyLogonTool(login, login)
+                menuNavigation("Происшествия", "Список происшествий", waitTime)
+                checkbox("Описание", true, waitTime)
                 //Находим созданную КП в КИАП ДДС
                 element(byText("AutoTest S 0010 $Status1 $Status2 $StutusSum $dateTime"))
                     .should(exist, ofSeconds(waitTime))
@@ -149,11 +149,11 @@ open class StatusTests {
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                 i += 1
-                tools.logoffTool()
+                logoffTool()
             }
-            tools.logonTool()
-            tools.menuNavigation("Происшествия", "Список происшествий", waitTime)
-            tools.checkbox("Описание", true, waitTime)
+            logonTool()
+            menuNavigation("Происшествия", "Список происшествий", waitTime)
+            checkbox("Описание", true, waitTime)
             //Находим созданную родительскую КП
             element(byText("AutoTest S 0010 $Status1 $Status2 $StutusSum $dateTime"))
                 .should(exist, ofSeconds(waitTime))
