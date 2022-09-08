@@ -11,14 +11,14 @@ import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-class Removal : BaseTest(){
+class CleanUp : BaseTest(){
     var date = LocalDate.now()
     var dateTime = LocalDateTime.now()
     var waitTime: Long = 5
 
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["Removal"])
-    fun `Removal 9998 Удаление отчетов созданных автотестами (по наличию части имени в отчете)`(){
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["CleanUp"])
+    fun `CleanUp 9998 Удаление отчетов созданных автотестами (по наличию части имени в отчете)`(){
         //Удаляем все отчеты
         logonTool()
 //        tools.menuNavigation("Отчеты", "По происшествиям", waitTime)
@@ -92,8 +92,8 @@ class Removal : BaseTest(){
     }
 
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["Removal"])
-    fun `Removal 9999 Закрытие КП созданных под логином работы автотестов` (){
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["CleanUp"])
+    fun `CleanUp 9999 Закрытие КП созданных под логином работы автотестов` (){
         //Закроем все происшествия созданные автотестом , например за неделю
 //        date = LocalDate.now().toString()
         date = LocalDate.now()
@@ -104,7 +104,7 @@ class Removal : BaseTest(){
         //убедимся что мы за оператор:
         //кликаем по иконке оператора сверху справа
         //element(byCssSelector("header>div>div>div>span>button")).click()
-        element(byXpath("//span[contains(text(),'.sizov')]/parent::button")).click()
+        element(byXpath("//header//button//*[text()]/ancestor::button")).click()
         //пероеходим в профиль пользователя
         element(byCssSelector("a[href='/profile']>button"))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))

@@ -425,7 +425,7 @@ class Reports : BaseTest(){
         //убедимся что мы за оператор:
         //кликаем по иконке оператора сверху справа
         //element(byCssSelector("header>div>div>div>span>button")).click()
-        element(byXpath("//span[contains(text(),'.sizov')]/parent::button")).click()
+        element(byXpath("//header//button//*[text()]/ancestor::button")).click()
         //пероеходим в профиль пользователя
         element(byCssSelector("a[href='/profile']>button"))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
@@ -435,12 +435,6 @@ class Reports : BaseTest(){
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
         //val operator = element(byCssSelector("main>div:nth-child(3)>div:nth-child(3)>p")).ownText
         val operator = element(byXpath("//p[text()='Должностное лицо:']/following-sibling::p")).ownText.trim()
-//        val operatorMas = operator.split("\n")
-//        val operatorFIO = operatorMas[1].trim()
-//        val operatorFIO = operator.trim()
-//        println("ФИО $operator")
-//        println("operatorMas $operatorMas")
-//        println("operatorFIO $operatorFIO")
         back()
         //$$("tr[data-testid^=MUIDataTableBodyRow-1]>td[data-testid='MuiDataTableBodyCell-0-1']>div:nth-child(2)") - фио в отчете
         //ждем
@@ -509,15 +503,6 @@ class Reports : BaseTest(){
             } else {
                 addressInput("callAddress", adr, waitTime)
             }
-
-//            element(byCssSelector("#callAddress"))
-//                .sendKeys("Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач$bB")
-//            //ждем появления списка dadata
-//            element(byCssSelector("div.react-dadata__suggestions"))
-//                .should(exist, ofSeconds(waitTime))
-//                .shouldBe(visible, ofSeconds(waitTime))
-//            //Кликаем на первую строку списка
-//            element(byCssSelector("div.react-dadata__suggestions>div.react-dadata__suggestion.react-dadata__suggestion--current")).click()
             //запоминаем адрес
             //Thread.sleep(500)
             if (i == 3) {
@@ -589,12 +574,6 @@ class Reports : BaseTest(){
                 element(byCssSelector("button[style='min-width: 140px; white-space: nowrap;']"))
                     .shouldHave(text("Закрыта"), ofSeconds(waitTime))
             }
-//            это нужно было пока создание ложной и консультации перекидывало в КП, а не в список КП
-//            else {
-//                element(byCssSelector("button[style='min-width: 140px; white-space: nowrap;']"))
-//                    .shouldHave(text("Завершена"), ofSeconds(waitTime))
-//                    .shouldBe(visible, ofSeconds(waitTime))
-//            }
             //и что это именно так карточка которую мы только что создали
             if (i < 4) {
                 element(byXpath("//strong[text()='Дополнительная информация:']/parent::div"))
@@ -605,11 +584,6 @@ class Reports : BaseTest(){
             }
         }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //Thread.sleep(500)
-        //ждем загрузки таблицы происшествий
-//        element(byCssSelector("main div table>tbody"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
         //кликаем по иконке отчетов
         //Переходим в "отчет по деятельности сотрудников"
         menuNavigation("Отчеты", "По сотрудникам", waitTime)
@@ -625,34 +599,12 @@ class Reports : BaseTest(){
         element(byCssSelector("input#periodStart")).sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
         element(byCssSelector("input#periodEnd")).sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
         addressInput("address","Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач",waitTime)
-//        element(byCssSelector("input#address"))
-//            .sendKeys("Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач")
-//        //кликаем по первому адресу dadata
-//        element(byCssSelector("div.react-dadata__suggestions>div.react-dadata__suggestion.react-dadata__suggestion--current"))
-//            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-//            .click()
         //создаем отчет
         element(byXpath("//span[text()='Создать']/parent::button")).click()
         //переходим в созданный отчет
         element(byXpath("//tbody/tr/td"))
             .shouldHave(text("A.3.24 Проверка формирования отчетов по деятельности сотрудников $dateTime сверка"))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime)).click()
-//        //убедимся что мы за оператор:
-//        //кликаем по иконке оператора сверху справа
-//        element(byCssSelector("header>div>div>div>span>button")).click()
-//        //пероеходим в профиль пользователя
-//        element(byCssSelector("a[href='/profile']>button"))
-//            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-//        element(byCssSelector("a[href='/profile']>button")).click()
-//        element(byCssSelector("main>div:nth-child(3)>div:nth-child(3)>p"))
-//            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-////        val operator = element(byCssSelector("main>div:nth-child(3)>div:nth-child(3)>p")).ownText
-////        val operatorMas = operator.split("\n")
-////        val operatorFIO = operatorMas[1].toString()
-//        //println("ФИО ${operator[1]}")
-//        //println(operatorFIO)
-//        back()
-//        //$$("tr[data-testid^=MUIDataTableBodyRow-1]>td[data-testid='MuiDataTableBodyCell-0-1']>div:nth-child(2)") - фио в отчете
         //ждем
         element(byXpath("//h6[contains(text(),'по муниципальному образованию')]/../h5"))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))

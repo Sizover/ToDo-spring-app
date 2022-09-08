@@ -342,24 +342,14 @@ open class BaseTest {
     //унификация введения адреса
     {
         element(byCssSelector("#$inputID")).click()
-//        element(byCssSelector("#callAddress[aria-controls='callAddress-popup']"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
         element(byXpath("//div[@role='presentation']//*[text()='Начните вводить адрес для подсказки']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        val addressList = address.split(" ")
-
-//        address.toList()
-
-
+//        val addressList = address.split(" ")
         address.toList().forEach{
-//        addressList.forEach{
             element(byCssSelector("#$inputID")).sendKeys("$it")
             Thread.sleep(100)
         }
-//        element(byCssSelector("#$inputID")).sendKeys(address)
-//        Thread.sleep(1000)
         element(byXpath("//div[@role='presentation']//*[text()='Начните вводить адрес для подсказки']"))
             .shouldNot(exist, ofSeconds(waitTime))
         element(byXpath("//div[@role='presentation']//*[text()]"))

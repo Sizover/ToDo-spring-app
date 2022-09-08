@@ -12,6 +12,7 @@ import org.openqa.selenium.Keys
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
+import org.testng.annotations.Test
 
 class Labels : BaseTest(){
 
@@ -21,7 +22,7 @@ class Labels : BaseTest(){
     val waitTime: Long = 5
     val longWait: Long = 10
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ALL"])
+    @Test (retryAnalyzer = Retry::class, groups = ["ALL"])
     fun `Labels 0010 Проверка создания, прикрепления к КП и удаления метки`() {
         //проверим создание метки и прикрепление метки к происшествию, возможно с удалением метки из КИАП
         date = LocalDate.now().toString()
