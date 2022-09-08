@@ -161,5 +161,6 @@ open class StatusTests : BaseTest(){
             element(byXpath("//span[contains(@class,'MuiButton-label')][text()='$StutusSum']/parent::button"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
+        logoffTool()
     }
 }

@@ -9,9 +9,6 @@ import com.codeborne.selenide.Selectors.byCssSelector
 import com.codeborne.selenide.Selectors.byText
 import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.*
-//import com.codeborne.selenide.Selenide.element
-//import com.codeborne.selenide.Selenide.elements
-//import com.codeborne.selenide.Selenide.open
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import java.time.Duration.ofSeconds

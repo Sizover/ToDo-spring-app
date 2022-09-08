@@ -88,6 +88,7 @@ class Removal : BaseTest(){
                 //            println(control)
             }
         }
+        logoffTool()
     }
 
 
@@ -215,5 +216,6 @@ class Removal : BaseTest(){
 //            noData = elements(byXpath("//p[contains(text(),'Всего ')]")).size
 //            println("noData 2 $noData")
         }
+        logoffTool()
     }
 }

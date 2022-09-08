@@ -8,9 +8,6 @@ import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Selectors.byCssSelector
 import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.*
-//import com.codeborne.selenide.Selenide.element
-//import com.codeborne.selenide.Selenide.elements
-//import com.codeborne.selenide.Selenide.open
 import org.openqa.selenium.Keys
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
@@ -241,5 +238,6 @@ class Labels : BaseTest(){
         element(byXpath("//table/tbody/tr//*[text()='Нет данных']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
+        logoffTool()
     }
 }

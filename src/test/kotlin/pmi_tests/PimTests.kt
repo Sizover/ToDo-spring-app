@@ -13,9 +13,6 @@ import com.codeborne.selenide.Selectors.byName
 import com.codeborne.selenide.Selectors.byText
 import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.*
-//import com.codeborne.selenide.Selenide.element
-//import com.codeborne.selenide.Selenide.elements
-//import com.codeborne.selenide.Selenide.open
 import org.apache.commons.io.FileUtils
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
@@ -299,12 +296,12 @@ class PimTests : BaseTest(){
             .shouldBe(visible, ofSeconds(waitTime))
         //загружаем файлы проверяя их прикрепление
         element(byCssSelector("input#upload-file"))
-            .uploadFile(File("/home/isizov/projects/testing-e2e/src/test/fixtures/AutoTest.webp"))
+            .uploadFile(File("/home/isizov/IdeaProjects/testing-e2e/src/test/resources/fixtures/AutoTest.webp"))
         //Thread.sleep(50000)
         element(byCssSelector("div[style='padding: 5px;'] > div:first-child"))
             .shouldHave(text("AutoTest.webp"), ofSeconds(waitTime))
         element(byCssSelector("input#upload-file"))
-            .uploadFile(File("/home/isizov/projects/testing-e2e/src/test/fixtures/Тестовый файл_.docx"))
+            .uploadFile(File("/home/isizov/IdeaProjects/testing-e2e/src/test/resources/fixtures/Тестовый файл_.docx"))
         element(byCssSelector("div[style='padding: 5px;'] > div:first-child"))
             .shouldHave(text("Тестовый файл_.docx"), ofSeconds(waitTime))
 
@@ -341,7 +338,7 @@ class PimTests : BaseTest(){
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //Прикрепляем файл
-        element(byCssSelector("input#upload-file")).uploadFile(File("/home/isizov/projects/testing-e2e/src/test/fixtures/test.pdf"))
+        element(byCssSelector("input#upload-file")).uploadFile(File("/home/isizov/IdeaProjects/testing-e2e/src/test/resources/fixtures/test.pdf"))
         //Thread.sleep(50000)
         element(byCssSelector("div[style='padding: 5px;'] > div:first-child"))
             .shouldHave(text("test.pdf"), ofSeconds(waitTime))
