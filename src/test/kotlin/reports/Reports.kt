@@ -192,10 +192,6 @@ class Reports : BaseTest(){
             } else if (i == 4) {
                 //регистрируем ложное обращение
                 element(byXpath("//*[text()='Ложное обращение']/ancestor::button")).click()
-//                element(byXpath("//*[text()='Звонок без информации']/.."))
-//                    .should(exist, ofSeconds(waitTime))
-//                    .shouldBe(visible, ofSeconds(waitTime))
-//                    .click()
                 //ждем загрузки таблицы происшествий
                 element(byCssSelector("main div table>tbody"))
                     .should(exist, ofSeconds(waitTime))
@@ -347,12 +343,6 @@ class Reports : BaseTest(){
         element(byCssSelector("input#periodEnd"))
             .sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
         addressInput("address", "Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач", waitTime)
-//        element(byCssSelector("input#address"))
-//            .sendKeys("Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач")
-//        //кликаем по первому адресу dadata
-//        element(byCssSelector("div.react-dadata__suggestions>div.react-dadata__suggestion.react-dadata__suggestion--current"))
-//            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-//            .click()
         //создаем отчет
         element(byXpath("//span[text()='Создать']/parent::button")).click()
         //переходим в созданный отчет
@@ -361,7 +351,6 @@ class Reports : BaseTest(){
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime)).click()
         //убедимся что мы за оператор:
         //кликаем по иконке оператора сверху справа
-        //element(byCssSelector("header>div>div>div>span>button")).click()
         element(byXpath("//header//button//*[text()]/ancestor::button")).click()
         //пероеходим в профиль пользователя
         element(byCssSelector("a[href='/profile']>button"))
@@ -370,10 +359,8 @@ class Reports : BaseTest(){
         //Извлекаем имя оператора
         element(byXpath("//p[text()='Должностное лицо:']/following-sibling::p"))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-        //val operator = element(byCssSelector("main>div:nth-child(3)>div:nth-child(3)>p")).ownText
         val operator = element(byXpath("//p[text()='Должностное лицо:']/following-sibling::p")).ownText.trim()
         back()
-        //$$("tr[data-testid^=MUIDataTableBodyRow-1]>td[data-testid='MuiDataTableBodyCell-0-1']>div:nth-child(2)") - фио в отчете
         //ждем
         element(byXpath("//h6[contains(text(),'по муниципальному образованию')]/../h5"))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
@@ -416,11 +403,10 @@ class Reports : BaseTest(){
             //кликаем по "создать обращение"
             element(byXpath("//span[text()='Создать обращение']/parent::button")).click()
             //заполняем карточку
-            //Источник события - выбираем случайно
+            //Источник события
             element(byCssSelector("div#calltype")).click()
             val iI = (1..10).random()
             element(byCssSelector("div#menu->div>ul[role='listbox']>li:nth-child($iI)")).click() //не случайно =)
-            //element(byCssSelector("li[role='option'][data-value='cd73ccc0-e740-4c5d-98ec-28bbe9a13be0']")).click()
             //Номер телефона
             if (elements(byCssSelector("#phone")).size > 0){
                 val tel = (1000000..9999999).random()
@@ -472,10 +458,6 @@ class Reports : BaseTest(){
             } else if (i == 5) {
                 //регистрируем ложное обращение
                 element(byXpath("//*[text()='Ложное обращение']/ancestor::button")).click()
-//                element(byXpath("//*[text()='Звонок без информации']/.."))
-//                    .should(exist, ofSeconds(waitTime))
-//                    .shouldBe(visible, ofSeconds(waitTime))
-//                    .click()
                 //ждем загрузки таблицы происшествий
                 element(byCssSelector("main div table>tbody"))
                     .should(exist, ofSeconds(waitTime))
@@ -624,12 +606,6 @@ class Reports : BaseTest(){
         element(byCssSelector("input#periodStart")).sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
         element(byCssSelector("input#periodEnd")).sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
         addressInput("address","Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач",waitTime)
-//        element(byCssSelector("input#address"))
-//            .sendKeys("Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач")
-//        //кликаем по первому адресу dadata
-//        element(byCssSelector("div.react-dadata__suggestions>div.react-dadata__suggestion.react-dadata__suggestion--current"))
-//            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-//            .click()
         //создаем отчет
         //Thread.sleep(50000)
         element(byXpath("//span[text()='Создать']/parent::button")).click()
@@ -644,7 +620,6 @@ class Reports : BaseTest(){
         //Запоминаем значения отчета
         //значения в легенде
         val colorTableSelector = "//table/tbody/tr/td[text()='%s']/following-sibling::td"
-//        val legendSelector = "table[aria-label='simple table'] tr:nth-child(%d)>td:nth-child(2)"
         val legendAllBefore = element(byXpath(colorTableSelector.format("Всего"))).ownText.toInt()
         val legendNewBefore = element(byXpath(colorTableSelector.format("Новые"))).ownText.toInt()
         val legendProcessingBefore = element(byXpath(colorTableSelector.format("В обработке"))).ownText.toInt()
@@ -695,7 +670,6 @@ class Reports : BaseTest(){
             element(byCssSelector("div#calltype")).click()
             val listbox = (1..10).random()
             element(byCssSelector("div#menu->div>ul[role='listbox']>li:nth-child($listbox)")).click()
-            //element(byCssSelector("li[role='option'][data-value='cd73ccc0-e740-4c5d-98ec-28bbe9a13be0']")).click()//это фиксированное значение "факс"
             //Номер телефона
             if (elements(byCssSelector("#phone")).size > 0){
                 val tel = (1000000..9999999).random()
@@ -708,7 +682,6 @@ class Reports : BaseTest(){
                 element(byCssSelector("input[id='fio.firstname']")).sendKeys("AutoTestFirstname")
             }
             //Вводим случайный адрес
-//                val randomLetter = ('A'..'Z').random()
             val randomNumber = (1..100).random()
             //Вбиваем первый символ
             if (i==4){
@@ -733,7 +706,6 @@ class Reports : BaseTest(){
             if (oldIncidentTypeListCount >= i && i<7){
                 element(byCssSelector("input#incidentTypeId-autocomplete"))
                     .sendKeys(oldIncidentTypeList[i-1])
-//                element(byXpath("//div[@role='presentation']//ul/li[last()]"))
                 //недоконца осмысленная конструкция стыренная с интернета, указывающая на элемент, текст которого в конце содержит нечто
                 element(byXpath("//*[substring(text(), string-length(text())- string-length('${oldIncidentTypeList[i-1]}') + 1) = '${oldIncidentTypeList[i-1]}']"))
                     .should(exist, ofSeconds(waitTime))
@@ -759,7 +731,6 @@ class Reports : BaseTest(){
                 {
                     repeat(longSelectedIncidentType.length)
                     {element(byCssSelector("input#incidentTypeId-autocomplete")).sendKeys(Keys.BACK_SPACE) }
-//                    tools.inputRandom("incidentTypeId")
                     inputRandomNew("incidentTypeId-textfield", false, waitTime)
                     longSelectedIncidentType = element(byCssSelector("input#incidentTypeId-autocomplete")).getAttribute("value").toString()
                     shortSelectedIncidentType = longSelectedIncidentType.substring(longSelectedIncidentType.indexOf(' ') + 1)
@@ -877,13 +848,9 @@ class Reports : BaseTest(){
         }
 //            var newIncidentTypeListCount: Int = newIncidentTypeList.count()
         //значения в диаграмме
-//        var diagNew = 0
-//        val diagSelector = "svg.recharts-surface>g>g.recharts-pie-labels>g:nth-child(%d)>text"
         //сравниваем новую диаграмму со старой легендой, учитывая созданные КП. "Новые" происшествия не рассматриваем
         //т.к. наличие цифры на диаграмме зависит от соотношения количества разных карточек, перед сравнением диаграммы убеждаемся, что вобще есть что сравнивать
         val diagSelector = "g.recharts-pie>g.recharts-pie-labels>g:nth-child(%d)>text"
-//        val noDigitDiagSelector = "g.recharts-pie>g.recharts-pie-labels>g:nth-child(%s)>text>tspan"
-        //diagNew = element(byCssSelector("svg.recharts-surface>g>g.recharts-pie-labels>g:nth-child(1)>text")).ownText.toInt()
         var diagProcessing = 0
         var diagReaction = 0
         var diagDone = 0
@@ -990,7 +957,6 @@ class Reports : BaseTest(){
             .shouldBe(visible, ofSeconds(waitTime))
         //считаем строки в таблице, их должно быть 0
         var tableStringCount = elements(byXpath("//table[@aria-label='sticky table']/tbody/tr")).size
-//        Assertions.assertTrue(tableStringCount==0)
         element(byXpath("//table[@aria-label='sticky table']/tbody/tr/td//*[text()='Нет данных']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))

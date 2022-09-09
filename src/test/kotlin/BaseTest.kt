@@ -324,7 +324,6 @@ open class BaseTest {
         element(byXpath("//div[@role='presentation']//*[text()='Начните вводить адрес для подсказки']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-//        val addressList = address.split(" ")
         address.toList().forEach{
             element(byCssSelector("#$inputID")).sendKeys("$it")
             Thread.sleep(100)
@@ -342,7 +341,6 @@ open class BaseTest {
 
 
     fun firstHalfIC(testName: String, date: String, dateTime: String, waitTime: Long){
-//        val dateTime = LocalDateTime.now().toString()
         //Источник события - выбираем случайно
         element(byCssSelector("div#calltype"))
             .should(exist, ofSeconds(waitTime))
@@ -398,19 +396,6 @@ open class BaseTest {
             .shouldNot(exist, ofSeconds(waitTime))
         Thread.sleep((10*stringsOnPage).toLong())
     }
-
-//    fun numberOfColumn(columnName: String, waitTime: Long): Int{
-//        //Возвращаем порядковый номер искомого столбца
-//        val columnCount = elements(byXpath("//table/thead/tr/th")).size
-//        var result = 0
-//        for (i in 1..columnCount){
-//            element(byXpath("//table/thead/tr/th[$i]//*[text()]")).ownText
-//            if (element(byXpath("//table/thead/tr/th[$i]//*[text()]")).ownText == columnName){
-//                result = i
-//            }
-//        }
-//        return result
-//    }
 
 
     fun numberOfColumn(columnName: String, waitTime: Long): Int{
