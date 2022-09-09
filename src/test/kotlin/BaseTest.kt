@@ -50,10 +50,10 @@ open class BaseTest {
         //Thread.sleep(1000)
         open("https://test.kiap.local/")
         //логинимся
-//        element(byName("username")).value = "a.sizov"
-//        element(byName("password")).value = "a.sizov"
         element(byName("username")).sendKeys("a.sizov")
         element(byName("password")).sendKeys("a.sizov")
+//        element(byName("username")).sendKeys("test")
+//        element(byName("password")).sendKeys("test!1+1")
         element(byName("login")).click()
     }
 
@@ -153,7 +153,6 @@ open class BaseTest {
         //Configuration.browser = FIREFOX
         Configuration.browser = CHROME
         //Открываем КИАП
-        //Selenide.open("http://test.kiap.local:8000")
         open("https://test.kiap.local/")
 
     }
@@ -178,43 +177,26 @@ open class BaseTest {
     //При пустом имени, выклацывает весь список в указанное состояние
     //Допустимо передавать несколько значений разделяя их ; без пробелов
     {
-//        val checkboxTrue = "M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
-//        val checkboxFalse = "M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
         val checkboxTrue = "checkboxFocus"
         val checkboxFalse = "checkboxNormal"
 //        val checkboxAlias = ""
         val checkboxNameList = mutableListOf<String>()
         //Открываем выпадающий список
-//        element(byCssSelector("button[data-testid='Колонки-iconButton']"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//            .click()
         element(byXpath("//*[@name='table']/../parent::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
         //Дожидаемся, что список появился
-//        element(byCssSelector("fieldset[aria-label='Показать/скрыть колонки']>div>label"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
         element(byCssSelector("div.MuiPaper-root.MuiPopover-paper.MuiPaper-rounded[class*=MuiPaper-elevation] label"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //если передали пустое значение, то проходимся по всем чек-боксам, если нет, то нет =)
         if (checkboxName.isEmpty()){
-//            val checkboxesCount =
-////                elements(byXpath("//fieldset[@aria-label='Показать/скрыть колонки']//label/span[text()]"))
-//                elements(byXpath("//label/span[text()]"))
-//                .size
-//            for (i in 1..checkboxesCount){
-//                checkboxNameList.add(element(byXpath("//fieldset[@aria-label='Показать/скрыть колонки']//label[$i]/span[text()]")).ownText)
-//            }
             val checkboxes = elements(byXpath("//label/span[text()]"))
             checkboxes.forEach{
                 checkboxNameList.add(it.ownText)
             }
         } else if (checkboxName.contains(";")){
-//            checkboxNameList = checkboxName.split(";").toMutableList()
             checkboxName.split(";").forEach {
                 checkboxNameList.add(it)
             }
@@ -250,12 +232,9 @@ open class BaseTest {
                 }
                 element(byXpath("//span[text()='$it']/parent::label//*[name()='svg'][@name]"))
                     .shouldHave(attribute("name", checkboxTrue), ofSeconds(waitTime))
-//                element(byXpath("//table/thead/tr/th//*[text()='$it']"))
-//                    .should(exist, ofSeconds(waitTime))
-//                    .shouldBe(visible, ofSeconds(waitTime))
+
             }
         }
-//        element(byCssSelector("button[aria-label='Close']")).click()
         element(byXpath("//div[@role='presentation']")).click()
     }
 
@@ -342,24 +321,13 @@ open class BaseTest {
     //унификация введения адреса
     {
         element(byCssSelector("#$inputID")).click()
-//        element(byCssSelector("#callAddress[aria-controls='callAddress-popup']"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
         element(byXpath("//div[@role='presentation']//*[text()='Начните вводить адрес для подсказки']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        val addressList = address.split(" ")
-
-//        address.toList()
-
-
         address.toList().forEach{
-//        addressList.forEach{
             element(byCssSelector("#$inputID")).sendKeys("$it")
             Thread.sleep(100)
         }
-//        element(byCssSelector("#$inputID")).sendKeys(address)
-//        Thread.sleep(1000)
         element(byXpath("//div[@role='presentation']//*[text()='Начните вводить адрес для подсказки']"))
             .shouldNot(exist, ofSeconds(waitTime))
         element(byXpath("//div[@role='presentation']//*[text()]"))
@@ -373,7 +341,6 @@ open class BaseTest {
 
 
     fun firstHalfIC(testName: String, date: String, dateTime: String, waitTime: Long){
-//        val dateTime = LocalDateTime.now().toString()
         //Источник события - выбираем случайно
         element(byCssSelector("div#calltype"))
             .should(exist, ofSeconds(waitTime))
@@ -429,19 +396,6 @@ open class BaseTest {
             .shouldNot(exist, ofSeconds(waitTime))
         Thread.sleep((10*stringsOnPage).toLong())
     }
-
-//    fun numberOfColumn(columnName: String, waitTime: Long): Int{
-//        //Возвращаем порядковый номер искомого столбца
-//        val columnCount = elements(byXpath("//table/thead/tr/th")).size
-//        var result = 0
-//        for (i in 1..columnCount){
-//            element(byXpath("//table/thead/tr/th[$i]//*[text()]")).ownText
-//            if (element(byXpath("//table/thead/tr/th[$i]//*[text()]")).ownText == columnName){
-//                result = i
-//            }
-//        }
-//        return result
-//    }
 
 
     fun numberOfColumn(columnName: String, waitTime: Long): Int{

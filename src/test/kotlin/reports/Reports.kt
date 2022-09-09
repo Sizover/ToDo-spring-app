@@ -9,9 +9,6 @@ import com.codeborne.selenide.Selectors.byCssSelector
 import com.codeborne.selenide.Selectors.byText
 import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.*
-//import com.codeborne.selenide.Selenide.element
-//import com.codeborne.selenide.Selenide.elements
-//import com.codeborne.selenide.Selenide.open
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import java.time.Duration.ofSeconds
@@ -50,12 +47,6 @@ class Reports : BaseTest(){
         element(byCssSelector("input#periodEnd")).sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
         //вбиваем адрес
         addressInput("address", "Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач", waitTime)
-//        element(byCssSelector("input#address"))
-//            .sendKeys("Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач")
-//        //кликаем по первому адресу dadata
-//        element(byCssSelector("div.react-dadata__suggestions>div.react-dadata__suggestion.react-dadata__suggestion--current"))
-//            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-//            .click()
         //создаем отчет
         element(byXpath("//span[text()='Создать']/..")).click()
         //переходим в созданный отчет
@@ -102,7 +93,6 @@ class Reports : BaseTest(){
         var tableSensor = 0
         var tablePortal = 0
         var tableUIV = 0
-//            element(byCssSelector("tr[data-testid='MUIDataTableBodyRow-0']>td[data-colindex='1']>div")).ownText.toInt()
         //println(tableAll)
         if (elements(byXpath("//table/tbody/tr[1]//*[text()='Нет данных']")).size == 0) {
             //всего записей в смысле в графе всего
@@ -118,26 +108,6 @@ class Reports : BaseTest(){
             //Портал УИВ из общего числа
             tableUIV = element(byXpath(tableSelector.format("Портал УИВ"))).ownText.toInt()
         }
-
-        //служебный счетчик, всего строк
-//        var tableStringCount = elements(byCssSelector("tr[id^='MUIDataTableBodyRow-']")).size
-//        //запоминаем те значения, что будем создавать
-//        for (y in 0 until tableStringCount) {
-//            if (y!=1){
-//            val st: String =
-//                element(byCssSelector("tr[data-testid='MUIDataTableBodyRow-$y']>td[data-colindex='0']>div")).ownText
-//            val va: Int =
-//                element(byCssSelector("tr[data-testid='MUIDataTableBodyRow-$y']>td[data-colindex='1']>div")).ownText.toInt()
-//            when (st) {
-//                "Всего" -> {tableAll = va}
-//                "Видеоаналитика" -> {tableVideo = va}
-//                "Внешняя АИС" -> {tableAIS = va}
-//                "Датчик" -> {tableSensor = va}
-//                "Портал населения" -> {tablePortal = va}
-//                "Портал УИВ" -> {tableUIV = va}
-//            }
-//            }
-//        }
 //        println("all $all")
 //        println("fal $fal")
 //        println("con $con")
@@ -222,10 +192,6 @@ class Reports : BaseTest(){
             } else if (i == 4) {
                 //регистрируем ложное обращение
                 element(byXpath("//*[text()='Ложное обращение']/ancestor::button")).click()
-//                element(byXpath("//*[text()='Звонок без информации']/.."))
-//                    .should(exist, ofSeconds(waitTime))
-//                    .shouldBe(visible, ofSeconds(waitTime))
-//                    .click()
                 //ждем загрузки таблицы происшествий
                 element(byCssSelector("main div table>tbody"))
                     .should(exist, ofSeconds(waitTime))
@@ -248,11 +214,6 @@ class Reports : BaseTest(){
                     .shouldHave(text("В обработке"), ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
             }
-//            else {
-//                element(byCssSelector("button[style='min-width: 140px; white-space: nowrap;']"))
-//                    .shouldHave(text("Завершена"), ofSeconds(waitTime))
-//                    .shouldBe(visible, ofSeconds(waitTime))
-//            }
             //и что это именно так карточка которую мы только что создали
             if (i < 3) {
                 element(byXpath("//strong[text()='Дополнительная информация:']/parent::div"))
@@ -278,12 +239,6 @@ class Reports : BaseTest(){
             .sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
         //вбиваем адрес
         addressInput("address","Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач",waitTime)
-//        element(byCssSelector("input#address"))
-//            .sendKeys("Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач")
-//        //кликаем по первому адресу dadata
-//        element(byCssSelector("div.react-dadata__suggestions>div.react-dadata__suggestion.react-dadata__suggestion--current"))
-//            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-//            .click()
         //создаем отчет
         element(byXpath("//span[text()='Создать']/parent::button")).click()
         //переходим в созданный отчет
@@ -314,16 +269,6 @@ class Reports : BaseTest(){
             incD = element(byCssSelector(diagramSelector.format(3))).ownText.toInt()
             Assertions.assertTrue(incT == incD)
         }
-//        falD = element(byCssSelector(diagramSelector.format(1))).ownText.toInt()
-//        falD = element(byCssSelector("g.recharts-layer.recharts-pie-labels>g:nth-child(1)>text")).ownText.toInt()
-//        //консультации
-//        conD = element(byCssSelector("g.recharts-layer.recharts-pie-labels>g:nth-child(2)>text")).ownText.toInt()
-//        //происшествия
-//        incD = element(byCssSelector("g.recharts-layer.recharts-pie-labels>g:nth-child(3)>text")).ownText.toInt()
-//        //Сверяем
-//        Assertions.assertTrue(falT == falD)
-//        Assertions.assertTrue(conT == conD)
-//        Assertions.assertTrue(incT == incD)
         //рассматриваем таблицу источников
         //всего записей в смысле в графе всего
         val tableAllT =
@@ -345,21 +290,6 @@ class Reports : BaseTest(){
         val tableUIVT: Int =
             element(byXpath(tableSelector.format("Портал УИВ"))).ownText.toInt()
         //служебный счетчик, всего строк
-//        tableStringCount = elements(byCssSelector("tr[id^='MUIDataTableBodyRow-']")).size
-//        for (u in 2 until tableStringCount) {
-//            val st: String =
-//                element(byCssSelector("tr[data-testid='MUIDataTableBodyRow-$u']>td[data-colindex='0']>div")).ownText.toString()
-//            val va: Int =
-//                element(byCssSelector("tr[data-testid='MUIDataTableBodyRow-$u']>td[data-colindex='1']>div")).ownText.toInt()
-//            when (st) {
-//                "Видеоаналитика" -> { tableVideoT = va }
-//                "Внешняя АИС" -> { tableAIST = va }
-//                "Датчик" -> { tableSensorT = va }
-//                "Портал населения" -> { tablePortalT = va }
-//                "Портал УИВ" -> { tableUIVT = va }
-//            }
-//        }
-
 //        println("allT $allT")
 //        println("falT $falT")
 //        println("conT $conT")
@@ -413,12 +343,6 @@ class Reports : BaseTest(){
         element(byCssSelector("input#periodEnd"))
             .sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
         addressInput("address", "Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач", waitTime)
-//        element(byCssSelector("input#address"))
-//            .sendKeys("Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач")
-//        //кликаем по первому адресу dadata
-//        element(byCssSelector("div.react-dadata__suggestions>div.react-dadata__suggestion.react-dadata__suggestion--current"))
-//            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-//            .click()
         //создаем отчет
         element(byXpath("//span[text()='Создать']/parent::button")).click()
         //переходим в созданный отчет
@@ -427,8 +351,7 @@ class Reports : BaseTest(){
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime)).click()
         //убедимся что мы за оператор:
         //кликаем по иконке оператора сверху справа
-        //element(byCssSelector("header>div>div>div>span>button")).click()
-        element(byXpath("//span[contains(text(),'.sizov')]/parent::button")).click()
+        element(byXpath("//header//button//*[text()]/ancestor::button")).click()
         //пероеходим в профиль пользователя
         element(byCssSelector("a[href='/profile']>button"))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
@@ -436,16 +359,8 @@ class Reports : BaseTest(){
         //Извлекаем имя оператора
         element(byXpath("//p[text()='Должностное лицо:']/following-sibling::p"))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-        //val operator = element(byCssSelector("main>div:nth-child(3)>div:nth-child(3)>p")).ownText
         val operator = element(byXpath("//p[text()='Должностное лицо:']/following-sibling::p")).ownText.trim()
-//        val operatorMas = operator.split("\n")
-//        val operatorFIO = operatorMas[1].trim()
-//        val operatorFIO = operator.trim()
-//        println("ФИО $operator")
-//        println("operatorMas $operatorMas")
-//        println("operatorFIO $operatorFIO")
         back()
-        //$$("tr[data-testid^=MUIDataTableBodyRow-1]>td[data-testid='MuiDataTableBodyCell-0-1']>div:nth-child(2)") - фио в отчете
         //ждем
         element(byXpath("//h6[contains(text(),'по муниципальному образованию')]/../h5"))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
@@ -488,11 +403,10 @@ class Reports : BaseTest(){
             //кликаем по "создать обращение"
             element(byXpath("//span[text()='Создать обращение']/parent::button")).click()
             //заполняем карточку
-            //Источник события - выбираем случайно
+            //Источник события
             element(byCssSelector("div#calltype")).click()
             val iI = (1..10).random()
             element(byCssSelector("div#menu->div>ul[role='listbox']>li:nth-child($iI)")).click() //не случайно =)
-            //element(byCssSelector("li[role='option'][data-value='cd73ccc0-e740-4c5d-98ec-28bbe9a13be0']")).click()
             //Номер телефона
             if (elements(byCssSelector("#phone")).size > 0){
                 val tel = (1000000..9999999).random()
@@ -512,15 +426,6 @@ class Reports : BaseTest(){
             } else {
                 addressInput("callAddress", adr, waitTime)
             }
-
-//            element(byCssSelector("#callAddress"))
-//                .sendKeys("Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач$bB")
-//            //ждем появления списка dadata
-//            element(byCssSelector("div.react-dadata__suggestions"))
-//                .should(exist, ofSeconds(waitTime))
-//                .shouldBe(visible, ofSeconds(waitTime))
-//            //Кликаем на первую строку списка
-//            element(byCssSelector("div.react-dadata__suggestions>div.react-dadata__suggestion.react-dadata__suggestion--current")).click()
             //запоминаем адрес
             //Thread.sleep(500)
             if (i == 3) {
@@ -553,10 +458,6 @@ class Reports : BaseTest(){
             } else if (i == 5) {
                 //регистрируем ложное обращение
                 element(byXpath("//*[text()='Ложное обращение']/ancestor::button")).click()
-//                element(byXpath("//*[text()='Звонок без информации']/.."))
-//                    .should(exist, ofSeconds(waitTime))
-//                    .shouldBe(visible, ofSeconds(waitTime))
-//                    .click()
                 //ждем загрузки таблицы происшествий
                 element(byCssSelector("main div table>tbody"))
                     .should(exist, ofSeconds(waitTime))
@@ -592,12 +493,6 @@ class Reports : BaseTest(){
                 element(byCssSelector("button[style='min-width: 140px; white-space: nowrap;']"))
                     .shouldHave(text("Закрыта"), ofSeconds(waitTime))
             }
-//            это нужно было пока создание ложной и консультации перекидывало в КП, а не в список КП
-//            else {
-//                element(byCssSelector("button[style='min-width: 140px; white-space: nowrap;']"))
-//                    .shouldHave(text("Завершена"), ofSeconds(waitTime))
-//                    .shouldBe(visible, ofSeconds(waitTime))
-//            }
             //и что это именно так карточка которую мы только что создали
             if (i < 4) {
                 element(byXpath("//strong[text()='Дополнительная информация:']/parent::div"))
@@ -608,11 +503,6 @@ class Reports : BaseTest(){
             }
         }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //Thread.sleep(500)
-        //ждем загрузки таблицы происшествий
-//        element(byCssSelector("main div table>tbody"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
         //кликаем по иконке отчетов
         //Переходим в "отчет по деятельности сотрудников"
         menuNavigation("Отчеты", "По сотрудникам", waitTime)
@@ -628,34 +518,12 @@ class Reports : BaseTest(){
         element(byCssSelector("input#periodStart")).sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
         element(byCssSelector("input#periodEnd")).sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
         addressInput("address","Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач",waitTime)
-//        element(byCssSelector("input#address"))
-//            .sendKeys("Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач")
-//        //кликаем по первому адресу dadata
-//        element(byCssSelector("div.react-dadata__suggestions>div.react-dadata__suggestion.react-dadata__suggestion--current"))
-//            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-//            .click()
         //создаем отчет
         element(byXpath("//span[text()='Создать']/parent::button")).click()
         //переходим в созданный отчет
         element(byXpath("//tbody/tr/td"))
             .shouldHave(text("A.3.24 Проверка формирования отчетов по деятельности сотрудников $dateTime сверка"))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime)).click()
-//        //убедимся что мы за оператор:
-//        //кликаем по иконке оператора сверху справа
-//        element(byCssSelector("header>div>div>div>span>button")).click()
-//        //пероеходим в профиль пользователя
-//        element(byCssSelector("a[href='/profile']>button"))
-//            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-//        element(byCssSelector("a[href='/profile']>button")).click()
-//        element(byCssSelector("main>div:nth-child(3)>div:nth-child(3)>p"))
-//            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-////        val operator = element(byCssSelector("main>div:nth-child(3)>div:nth-child(3)>p")).ownText
-////        val operatorMas = operator.split("\n")
-////        val operatorFIO = operatorMas[1].toString()
-//        //println("ФИО ${operator[1]}")
-//        //println(operatorFIO)
-//        back()
-//        //$$("tr[data-testid^=MUIDataTableBodyRow-1]>td[data-testid='MuiDataTableBodyCell-0-1']>div:nth-child(2)") - фио в отчете
         //ждем
         element(byXpath("//h6[contains(text(),'по муниципальному образованию')]/../h5"))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
@@ -738,12 +606,6 @@ class Reports : BaseTest(){
         element(byCssSelector("input#periodStart")).sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
         element(byCssSelector("input#periodEnd")).sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
         addressInput("address","Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач",waitTime)
-//        element(byCssSelector("input#address"))
-//            .sendKeys("Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач")
-//        //кликаем по первому адресу dadata
-//        element(byCssSelector("div.react-dadata__suggestions>div.react-dadata__suggestion.react-dadata__suggestion--current"))
-//            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-//            .click()
         //создаем отчет
         //Thread.sleep(50000)
         element(byXpath("//span[text()='Создать']/parent::button")).click()
@@ -758,7 +620,6 @@ class Reports : BaseTest(){
         //Запоминаем значения отчета
         //значения в легенде
         val colorTableSelector = "//table/tbody/tr/td[text()='%s']/following-sibling::td"
-//        val legendSelector = "table[aria-label='simple table'] tr:nth-child(%d)>td:nth-child(2)"
         val legendAllBefore = element(byXpath(colorTableSelector.format("Всего"))).ownText.toInt()
         val legendNewBefore = element(byXpath(colorTableSelector.format("Новые"))).ownText.toInt()
         val legendProcessingBefore = element(byXpath(colorTableSelector.format("В обработке"))).ownText.toInt()
@@ -809,7 +670,6 @@ class Reports : BaseTest(){
             element(byCssSelector("div#calltype")).click()
             val listbox = (1..10).random()
             element(byCssSelector("div#menu->div>ul[role='listbox']>li:nth-child($listbox)")).click()
-            //element(byCssSelector("li[role='option'][data-value='cd73ccc0-e740-4c5d-98ec-28bbe9a13be0']")).click()//это фиксированное значение "факс"
             //Номер телефона
             if (elements(byCssSelector("#phone")).size > 0){
                 val tel = (1000000..9999999).random()
@@ -822,7 +682,6 @@ class Reports : BaseTest(){
                 element(byCssSelector("input[id='fio.firstname']")).sendKeys("AutoTestFirstname")
             }
             //Вводим случайный адрес
-//                val randomLetter = ('A'..'Z').random()
             val randomNumber = (1..100).random()
             //Вбиваем первый символ
             if (i==4){
@@ -847,35 +706,11 @@ class Reports : BaseTest(){
             if (oldIncidentTypeListCount >= i && i<7){
                 element(byCssSelector("input#incidentTypeId-autocomplete"))
                     .sendKeys(oldIncidentTypeList[i-1])
-//                element(byXpath("//div[@role='presentation']//ul/li[last()]"))
                 //недоконца осмысленная конструкция стыренная с интернета, указывающая на элемент, текст которого в конце содержит нечто
                 element(byXpath("//*[substring(text(), string-length(text())- string-length('${oldIncidentTypeList[i-1]}') + 1) = '${oldIncidentTypeList[i-1]}']"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
-//                element(byCssSelector("input#incidentTypeId-autocomplete"))
-//                    .sendKeys(Keys.DOWN, Keys.ENTER)
-//                Thread.sleep(10000)
-//            if (oldIncidentTypeListCount > 5 && i == 6) {
-//                //(oldIncidentTypeListCount >= i && i<7)
-//                element(byCssSelector("input#incidentTypeId")).setValue(oldIncidentTypeList[5])
-//                    .sendKeys(Keys.DOWN, Keys.ENTER)
-//            } else if (oldIncidentTypeListCount > 4 && i == 5) {
-//                element(byCssSelector("input#incidentTypeId")).setValue(oldIncidentTypeList[4])
-//                    .sendKeys(Keys.DOWN, Keys.ENTER)
-//            } else if (oldIncidentTypeListCount > 3 && i == 4) {
-//                element(byCssSelector("input#incidentTypeId")).setValue(oldIncidentTypeList[3])
-//                    .sendKeys(Keys.DOWN, Keys.ENTER)
-//            } else if (oldIncidentTypeListCount > 2 && i == 3) {
-//                element(byCssSelector("input#incidentTypeId")).setValue(oldIncidentTypeList[2])
-//                    .sendKeys(Keys.DOWN, Keys.ENTER)
-//            } else if (oldIncidentTypeListCount > 1 && i == 2) {
-//                element(byCssSelector("input#incidentTypeId")).setValue(oldIncidentTypeList[1])
-//                    .sendKeys(Keys.DOWN, Keys.ENTER)
-//            } else if (oldIncidentTypeListCount > 0 && i == 1) {
-//                //element(byCssSelector("input#incidentTypeId")).setValue("${incidentTypeList[0]}")
-//                element(byCssSelector("input#incidentTypeId")).setValue(oldIncidentTypeList[0])
-//                    .sendKeys(Keys.DOWN, Keys.ENTER)
                 //контрольное, заренее известное по типу, происшествие
             } else if(i == 7){
                 element(byCssSelector("input#incidentTypeId-autocomplete"))
@@ -883,13 +718,6 @@ class Reports : BaseTest(){
                 //случайные типы происшествий на те первые 6 позиций отчета, которых в первом отчете могло не быть
             } else {
                 //кликаем по типу происшествия
-//                element(byCssSelector("input#incidentTypeId")).click()
-//                //случайное число раз жмем вниз, выбирая тип происшествия
-//                repeat(rnd+i){
-//                    element(byCssSelector("input#incidentTypeId")).sendKeys(Keys.DOWN)
-//                }
-//                element(byCssSelector("input#incidentTypeId")).sendKeys(Keys.ENTER)
-//                tools.inputRandom("incidentTypeId")
                 inputRandomNew("incidentTypeId-textfield", false, waitTime)
                 element(byCssSelector("input#incidentTypeId-autocomplete[value*='.']"))
                     .should(exist, ofSeconds(waitTime))
@@ -903,20 +731,9 @@ class Reports : BaseTest(){
                 {
                     repeat(longSelectedIncidentType.length)
                     {element(byCssSelector("input#incidentTypeId-autocomplete")).sendKeys(Keys.BACK_SPACE) }
-//                    tools.inputRandom("incidentTypeId")
                     inputRandomNew("incidentTypeId-textfield", false, waitTime)
                     longSelectedIncidentType = element(byCssSelector("input#incidentTypeId-autocomplete")).getAttribute("value").toString()
                     shortSelectedIncidentType = longSelectedIncidentType.substring(longSelectedIncidentType.indexOf(' ') + 1)
-
-//                    element(byCssSelector("input#incidentTypeId")).sendKeys(Keys.DOWN)
-//                    element(byCssSelector("input#incidentTypeId")).sendKeys(Keys.DOWN)
-//                    //убеждаемся что не переклацали список попав на невводимое значение между началом и концом
-//                    if (elements(byCssSelector("input[name='incidentTypeId'][aria-activedescendant^='incidentTypeId-option']")).size ==0){
-//                        element(byCssSelector("input#incidentTypeId")).sendKeys(Keys.DOWN)
-//                    }
-//                    element(byCssSelector("input#incidentTypeId")).sendKeys(Keys.ENTER)
-//                    longSelectedIncidentType = element(byCssSelector("input#incidentTypeId")).getAttribute("value").toString()
-//                    shortSelectedIncidentType = longSelectedIncidentType.substring(longSelectedIncidentType.indexOf(' ') + 1)
                 }
                 //кладем созданные происшествия в список
                 shortSelectedIncidentTypeList.add(
@@ -945,7 +762,6 @@ class Reports : BaseTest(){
             element(byXpath("//span[text()='Сохранить карточку']/parent::button")).click()
             //Убеждаемся, что нам загрузило созданную карточку
             //проверяя что нам в принципе загрузило какую-то карточку
-
             element(byCssSelector("#simple-tabpanel-card"))
                 .should(exist, ofSeconds(waitTime))
             //что она в нужном статусе
@@ -1032,13 +848,9 @@ class Reports : BaseTest(){
         }
 //            var newIncidentTypeListCount: Int = newIncidentTypeList.count()
         //значения в диаграмме
-//        var diagNew = 0
-//        val diagSelector = "svg.recharts-surface>g>g.recharts-pie-labels>g:nth-child(%d)>text"
         //сравниваем новую диаграмму со старой легендой, учитывая созданные КП. "Новые" происшествия не рассматриваем
         //т.к. наличие цифры на диаграмме зависит от соотношения количества разных карточек, перед сравнением диаграммы убеждаемся, что вобще есть что сравнивать
         val diagSelector = "g.recharts-pie>g.recharts-pie-labels>g:nth-child(%d)>text"
-//        val noDigitDiagSelector = "g.recharts-pie>g.recharts-pie-labels>g:nth-child(%s)>text>tspan"
-        //diagNew = element(byCssSelector("svg.recharts-surface>g>g.recharts-pie-labels>g:nth-child(1)>text")).ownText.toInt()
         var diagProcessing = 0
         var diagReaction = 0
         var diagDone = 0
@@ -1060,26 +872,6 @@ class Reports : BaseTest(){
                 }
             }
         }
-//        if (elements(byXpath(diagSelector.format(2))).size == 1){
-//            diagProcessing = element(byXpath(diagSelector.format(2))).ownText.toInt()
-//            Assertions.assertTrue(diagProcessing == (legendProcessingBefore + 2))
-//        }
-//        if (elements(byXpath(diagSelector.format(3))).size == 1){
-//            diagReaction = element(byXpath(diagSelector.format(3))).ownText.toInt()
-//            Assertions.assertTrue(diagReaction == (legendReactionBefore + 1))
-//        }
-//        if (elements(byXpath(diagSelector.format(4))).size == 1){
-//            diagDone = element(byXpath(diagSelector.format(4))).ownText.toInt()
-//            Assertions.assertTrue(diagDone == (legendDoneBefore + 1))
-//        }
-//        if (elements(byXpath(diagSelector.format(5))).size == 1){
-//            daigCansel = element(byXpath(diagSelector.format(5))).ownText.toInt()
-//            Assertions.assertTrue(daigCansel == (legendCanselBefore + 1))
-//        }
-//        if (elements(byXpath(diagSelector.format(6))).size == 1){
-//            daagClose = element(byXpath(diagSelector.format(6))).ownText.toInt()
-//            Assertions.assertTrue(daagClose == (legendCloseBefore + 1))
-//        }
         //сравниваем две леганды - старую и новую
         Assertions.assertTrue(legendAllAfter == (legendAllBefore + 6))
         Assertions.assertTrue(legendNewBefore == legendNewAfter)
@@ -1165,7 +957,6 @@ class Reports : BaseTest(){
             .shouldBe(visible, ofSeconds(waitTime))
         //считаем строки в таблице, их должно быть 0
         var tableStringCount = elements(byXpath("//table[@aria-label='sticky table']/tbody/tr")).size
-//        Assertions.assertTrue(tableStringCount==0)
         element(byXpath("//table[@aria-label='sticky table']/tbody/tr/td//*[text()='Нет данных']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))

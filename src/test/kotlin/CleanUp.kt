@@ -1,4 +1,5 @@
 
+import com.codeborne.selenide.Condition
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Selectors.byCssSelector
@@ -11,14 +12,14 @@ import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-class Removal : BaseTest(){
+class CleanUp : BaseTest(){
     var date = LocalDate.now()
     var dateTime = LocalDateTime.now()
     var waitTime: Long = 5
 
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["Removal"])
-    fun `Removal 9998 Удаление отчетов созданных автотестами (по наличию части имени в отчете)`(){
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["CleanUp"])
+    fun `CleanUp 9998 Удаление отчетов созданных автотестами (по наличию части имени в отчете)`(){
         //Удаляем все отчеты
         logonTool()
 //        tools.menuNavigation("Отчеты", "По происшествиям", waitTime)
@@ -88,11 +89,12 @@ class Removal : BaseTest(){
                 //            println(control)
             }
         }
+        logoffTool()
     }
 
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["Removal"])
-    fun `Removal 9999 Закрытие КП созданных под логином работы автотестов` (){
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["CleanUp"])
+    fun `CleanUp 9999 Закрытие КП созданных под логином работы автотестов` (){
         //Закроем все происшествия созданные автотестом , например за неделю
 //        date = LocalDate.now().toString()
         date = LocalDate.now()
@@ -103,7 +105,7 @@ class Removal : BaseTest(){
         //убедимся что мы за оператор:
         //кликаем по иконке оператора сверху справа
         //element(byCssSelector("header>div>div>div>span>button")).click()
-        element(byXpath("//span[contains(text(),'.sizov')]/parent::button")).click()
+        element(byXpath("//header//button//*[text()]/ancestor::button")).click()
         //пероеходим в профиль пользователя
         element(byCssSelector("a[href='/profile']>button"))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
@@ -123,6 +125,8 @@ class Removal : BaseTest(){
         element(byCssSelector("table>tbody>tr"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
+        checkbox("Статус", true, waitTime)
+        val statusColumn = numberOfColumn("Статус", waitTime)
         //отчищаем фильтры, что бы закрывать и дочерние карточки ДДС
         element(byXpath("//span[contains(text(),'Еще фильтры')]/.."))
             .should(exist, ofSeconds(waitTime))
@@ -173,22 +177,26 @@ class Removal : BaseTest(){
         Thread.sleep(2500)
         //ищем надпись "Нет данных"
         var noData = elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size
-//        var noData = elements(byXpath("//p[contains(text(),'Всего ')]")).size
 //        println("noData 1 $noData")
         // и войдя в цикл без защитного счетчика
-        while (noData == 0){
-            //переходим в каждую первую карточку и меняем статус, на "Закрыта"
-            element(byXpath("//table/tbody/tr[1]"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
+        while (noData == 0){//переходим в каждую первую карточку и меняем статус, на "Закрыта"
+            //карточки в статусе новая, вызывают проблемы из-за того что меняют статус автоматически, даже когда по нему клацаешь
+            //поэтому для них дождемся перехода в статус "в обработке"
+            if (element(byXpath("//table/tbody/tr[1]/td[$statusColumn]//*[text()]")).ownText == "Новая" ){
+                element(byXpath("//table/tbody/tr[1]"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .click()
+                element(byCssSelector("button[style='min-width: 140px; white-space: nowrap;']"))
+                    .shouldHave(Condition.text("В обработке"), ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+            } else {
+                element(byXpath("//table/tbody/tr[1]"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .click()
+            }
             Thread.sleep(500)
-//            element(byXpath("(//span[text()]/parent::button)[2]"))
-//                .should(exist, ofSeconds(waitTime))
-//                .shouldBe(visible, ofSeconds(waitTime))
-//            element(byXpath("//main/div[3]/div[1]/div[1]/div[2]//button[1]"))
-//                .should(exist, ofSeconds(waitTime))
-//                .shouldBe(visible, ofSeconds(waitTime))
             element(byXpath("//div[contains(@class,'MuiBox-root')]/div/div/div[contains(@class,'MuiGrid-root')]//button[1]"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
@@ -212,8 +220,8 @@ class Removal : BaseTest(){
                 .shouldBe(visible, ofSeconds(waitTime))
             Thread.sleep(1000)
             noData = elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size
-//            noData = elements(byXpath("//p[contains(text(),'Всего ')]")).size
 //            println("noData 2 $noData")
         }
+        logoffTool()
     }
 }

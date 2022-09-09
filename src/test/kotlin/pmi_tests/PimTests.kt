@@ -13,9 +13,6 @@ import com.codeborne.selenide.Selectors.byName
 import com.codeborne.selenide.Selectors.byText
 import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.*
-//import com.codeborne.selenide.Selenide.element
-//import com.codeborne.selenide.Selenide.elements
-//import com.codeborne.selenide.Selenide.open
 import org.apache.commons.io.FileUtils
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
@@ -25,21 +22,12 @@ import java.io.File
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
-//import selenium.webdriver.common.keys
 
 
-
-
-
-
-//import org.junit.Assert.*
-
-//@org.testng.annotations.Test (retryAnalyzer = Retry::class)
 class PimTests : BaseTest(){
     var date = ""
     var dateTime = ""
-//    val checkboxTrue = "M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
-//    val checkboxFalse = "M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+
 
     //Время ожидания элементов при выполнении теста
     val waitTime: Long = 5
@@ -299,12 +287,12 @@ class PimTests : BaseTest(){
             .shouldBe(visible, ofSeconds(waitTime))
         //загружаем файлы проверяя их прикрепление
         element(byCssSelector("input#upload-file"))
-            .uploadFile(File("/home/isizov/projects/testing-e2e/src/test/fixtures/AutoTest.webp"))
+            .uploadFile(File("/home/isizov/IdeaProjects/testing-e2e/src/test/resources/fixtures/AutoTest.webp"))
         //Thread.sleep(50000)
         element(byCssSelector("div[style='padding: 5px;'] > div:first-child"))
             .shouldHave(text("AutoTest.webp"), ofSeconds(waitTime))
         element(byCssSelector("input#upload-file"))
-            .uploadFile(File("/home/isizov/projects/testing-e2e/src/test/fixtures/Тестовый файл_.docx"))
+            .uploadFile(File("/home/isizov/IdeaProjects/testing-e2e/src/test/resources/fixtures/Тестовый файл_.docx"))
         element(byCssSelector("div[style='padding: 5px;'] > div:first-child"))
             .shouldHave(text("Тестовый файл_.docx"), ofSeconds(waitTime))
 
@@ -341,7 +329,7 @@ class PimTests : BaseTest(){
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //Прикрепляем файл
-        element(byCssSelector("input#upload-file")).uploadFile(File("/home/isizov/projects/testing-e2e/src/test/fixtures/test.pdf"))
+        element(byCssSelector("input#upload-file")).uploadFile(File("/home/isizov/IdeaProjects/testing-e2e/src/test/resources/fixtures/test.pdf"))
         //Thread.sleep(50000)
         element(byCssSelector("div[style='padding: 5px;'] > div:first-child"))
             .shouldHave(text("test.pdf"), ofSeconds(waitTime))
@@ -2372,6 +2360,7 @@ class PimTests : BaseTest(){
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
 //        Thread.sleep(5000)
+        logoffTool()
     }
 
 }
