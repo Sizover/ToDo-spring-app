@@ -133,8 +133,6 @@ open class BaseTest {
         //Thread.sleep(1000)
         open("https://test.kiap.local/")
         //логинимся
-//        element(byName("username")).value = "a.sizov"
-//        element(byName("password")).value = "a.sizov"
         element(byName("username")).sendKeys(username)
         element(byName("password")).sendKeys(password)
         element(byName("login")).click()
