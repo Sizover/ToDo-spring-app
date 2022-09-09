@@ -39,7 +39,7 @@ class Incidents :BaseTest() {
     }
 
     @Test (retryAnalyzer = Retry::class, dataProvider = "Языки", groups = ["ALL"])
-    fun `INC 0010 Проверка наличия языка обращения в карточке обращения`(language1 : String, language2 : String) {
+    fun `INC 0010 Проверка наличия и работоспособности языка обращения в карточке обращения`(language1 : String, language2 : String) {
         dateTime = LocalDateTime.now().toString()
         date = LocalDate.now().toString()
         logonTool()
@@ -214,12 +214,6 @@ class Incidents :BaseTest() {
                 break
             }
         }
-
-
-
-
-
-
         logoffTool()
     }
 

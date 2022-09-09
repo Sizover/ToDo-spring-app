@@ -47,12 +47,6 @@ class Reports : BaseTest(){
         element(byCssSelector("input#periodEnd")).sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
         //вбиваем адрес
         addressInput("address", "Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач", waitTime)
-//        element(byCssSelector("input#address"))
-//            .sendKeys("Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач")
-//        //кликаем по первому адресу dadata
-//        element(byCssSelector("div.react-dadata__suggestions>div.react-dadata__suggestion.react-dadata__suggestion--current"))
-//            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-//            .click()
         //создаем отчет
         element(byXpath("//span[text()='Создать']/..")).click()
         //переходим в созданный отчет
@@ -99,7 +93,6 @@ class Reports : BaseTest(){
         var tableSensor = 0
         var tablePortal = 0
         var tableUIV = 0
-//            element(byCssSelector("tr[data-testid='MUIDataTableBodyRow-0']>td[data-colindex='1']>div")).ownText.toInt()
         //println(tableAll)
         if (elements(byXpath("//table/tbody/tr[1]//*[text()='Нет данных']")).size == 0) {
             //всего записей в смысле в графе всего
@@ -115,26 +108,6 @@ class Reports : BaseTest(){
             //Портал УИВ из общего числа
             tableUIV = element(byXpath(tableSelector.format("Портал УИВ"))).ownText.toInt()
         }
-
-        //служебный счетчик, всего строк
-//        var tableStringCount = elements(byCssSelector("tr[id^='MUIDataTableBodyRow-']")).size
-//        //запоминаем те значения, что будем создавать
-//        for (y in 0 until tableStringCount) {
-//            if (y!=1){
-//            val st: String =
-//                element(byCssSelector("tr[data-testid='MUIDataTableBodyRow-$y']>td[data-colindex='0']>div")).ownText
-//            val va: Int =
-//                element(byCssSelector("tr[data-testid='MUIDataTableBodyRow-$y']>td[data-colindex='1']>div")).ownText.toInt()
-//            when (st) {
-//                "Всего" -> {tableAll = va}
-//                "Видеоаналитика" -> {tableVideo = va}
-//                "Внешняя АИС" -> {tableAIS = va}
-//                "Датчик" -> {tableSensor = va}
-//                "Портал населения" -> {tablePortal = va}
-//                "Портал УИВ" -> {tableUIV = va}
-//            }
-//            }
-//        }
 //        println("all $all")
 //        println("fal $fal")
 //        println("con $con")
@@ -245,11 +218,6 @@ class Reports : BaseTest(){
                     .shouldHave(text("В обработке"), ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
             }
-//            else {
-//                element(byCssSelector("button[style='min-width: 140px; white-space: nowrap;']"))
-//                    .shouldHave(text("Завершена"), ofSeconds(waitTime))
-//                    .shouldBe(visible, ofSeconds(waitTime))
-//            }
             //и что это именно так карточка которую мы только что создали
             if (i < 3) {
                 element(byXpath("//strong[text()='Дополнительная информация:']/parent::div"))
@@ -275,12 +243,6 @@ class Reports : BaseTest(){
             .sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
         //вбиваем адрес
         addressInput("address","Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач",waitTime)
-//        element(byCssSelector("input#address"))
-//            .sendKeys("Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач")
-//        //кликаем по первому адресу dadata
-//        element(byCssSelector("div.react-dadata__suggestions>div.react-dadata__suggestion.react-dadata__suggestion--current"))
-//            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-//            .click()
         //создаем отчет
         element(byXpath("//span[text()='Создать']/parent::button")).click()
         //переходим в созданный отчет
@@ -311,16 +273,6 @@ class Reports : BaseTest(){
             incD = element(byCssSelector(diagramSelector.format(3))).ownText.toInt()
             Assertions.assertTrue(incT == incD)
         }
-//        falD = element(byCssSelector(diagramSelector.format(1))).ownText.toInt()
-//        falD = element(byCssSelector("g.recharts-layer.recharts-pie-labels>g:nth-child(1)>text")).ownText.toInt()
-//        //консультации
-//        conD = element(byCssSelector("g.recharts-layer.recharts-pie-labels>g:nth-child(2)>text")).ownText.toInt()
-//        //происшествия
-//        incD = element(byCssSelector("g.recharts-layer.recharts-pie-labels>g:nth-child(3)>text")).ownText.toInt()
-//        //Сверяем
-//        Assertions.assertTrue(falT == falD)
-//        Assertions.assertTrue(conT == conD)
-//        Assertions.assertTrue(incT == incD)
         //рассматриваем таблицу источников
         //всего записей в смысле в графе всего
         val tableAllT =
@@ -342,21 +294,6 @@ class Reports : BaseTest(){
         val tableUIVT: Int =
             element(byXpath(tableSelector.format("Портал УИВ"))).ownText.toInt()
         //служебный счетчик, всего строк
-//        tableStringCount = elements(byCssSelector("tr[id^='MUIDataTableBodyRow-']")).size
-//        for (u in 2 until tableStringCount) {
-//            val st: String =
-//                element(byCssSelector("tr[data-testid='MUIDataTableBodyRow-$u']>td[data-colindex='0']>div")).ownText.toString()
-//            val va: Int =
-//                element(byCssSelector("tr[data-testid='MUIDataTableBodyRow-$u']>td[data-colindex='1']>div")).ownText.toInt()
-//            when (st) {
-//                "Видеоаналитика" -> { tableVideoT = va }
-//                "Внешняя АИС" -> { tableAIST = va }
-//                "Датчик" -> { tableSensorT = va }
-//                "Портал населения" -> { tablePortalT = va }
-//                "Портал УИВ" -> { tableUIVT = va }
-//            }
-//        }
-
 //        println("allT $allT")
 //        println("falT $falT")
 //        println("conT $conT")
@@ -802,29 +739,6 @@ class Reports : BaseTest(){
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
-//                element(byCssSelector("input#incidentTypeId-autocomplete"))
-//                    .sendKeys(Keys.DOWN, Keys.ENTER)
-//                Thread.sleep(10000)
-//            if (oldIncidentTypeListCount > 5 && i == 6) {
-//                //(oldIncidentTypeListCount >= i && i<7)
-//                element(byCssSelector("input#incidentTypeId")).setValue(oldIncidentTypeList[5])
-//                    .sendKeys(Keys.DOWN, Keys.ENTER)
-//            } else if (oldIncidentTypeListCount > 4 && i == 5) {
-//                element(byCssSelector("input#incidentTypeId")).setValue(oldIncidentTypeList[4])
-//                    .sendKeys(Keys.DOWN, Keys.ENTER)
-//            } else if (oldIncidentTypeListCount > 3 && i == 4) {
-//                element(byCssSelector("input#incidentTypeId")).setValue(oldIncidentTypeList[3])
-//                    .sendKeys(Keys.DOWN, Keys.ENTER)
-//            } else if (oldIncidentTypeListCount > 2 && i == 3) {
-//                element(byCssSelector("input#incidentTypeId")).setValue(oldIncidentTypeList[2])
-//                    .sendKeys(Keys.DOWN, Keys.ENTER)
-//            } else if (oldIncidentTypeListCount > 1 && i == 2) {
-//                element(byCssSelector("input#incidentTypeId")).setValue(oldIncidentTypeList[1])
-//                    .sendKeys(Keys.DOWN, Keys.ENTER)
-//            } else if (oldIncidentTypeListCount > 0 && i == 1) {
-//                //element(byCssSelector("input#incidentTypeId")).setValue("${incidentTypeList[0]}")
-//                element(byCssSelector("input#incidentTypeId")).setValue(oldIncidentTypeList[0])
-//                    .sendKeys(Keys.DOWN, Keys.ENTER)
                 //контрольное, заренее известное по типу, происшествие
             } else if(i == 7){
                 element(byCssSelector("input#incidentTypeId-autocomplete"))
@@ -832,13 +746,6 @@ class Reports : BaseTest(){
                 //случайные типы происшествий на те первые 6 позиций отчета, которых в первом отчете могло не быть
             } else {
                 //кликаем по типу происшествия
-//                element(byCssSelector("input#incidentTypeId")).click()
-//                //случайное число раз жмем вниз, выбирая тип происшествия
-//                repeat(rnd+i){
-//                    element(byCssSelector("input#incidentTypeId")).sendKeys(Keys.DOWN)
-//                }
-//                element(byCssSelector("input#incidentTypeId")).sendKeys(Keys.ENTER)
-//                tools.inputRandom("incidentTypeId")
                 inputRandomNew("incidentTypeId-textfield", false, waitTime)
                 element(byCssSelector("input#incidentTypeId-autocomplete[value*='.']"))
                     .should(exist, ofSeconds(waitTime))
@@ -856,16 +763,6 @@ class Reports : BaseTest(){
                     inputRandomNew("incidentTypeId-textfield", false, waitTime)
                     longSelectedIncidentType = element(byCssSelector("input#incidentTypeId-autocomplete")).getAttribute("value").toString()
                     shortSelectedIncidentType = longSelectedIncidentType.substring(longSelectedIncidentType.indexOf(' ') + 1)
-
-//                    element(byCssSelector("input#incidentTypeId")).sendKeys(Keys.DOWN)
-//                    element(byCssSelector("input#incidentTypeId")).sendKeys(Keys.DOWN)
-//                    //убеждаемся что не переклацали список попав на невводимое значение между началом и концом
-//                    if (elements(byCssSelector("input[name='incidentTypeId'][aria-activedescendant^='incidentTypeId-option']")).size ==0){
-//                        element(byCssSelector("input#incidentTypeId")).sendKeys(Keys.DOWN)
-//                    }
-//                    element(byCssSelector("input#incidentTypeId")).sendKeys(Keys.ENTER)
-//                    longSelectedIncidentType = element(byCssSelector("input#incidentTypeId")).getAttribute("value").toString()
-//                    shortSelectedIncidentType = longSelectedIncidentType.substring(longSelectedIncidentType.indexOf(' ') + 1)
                 }
                 //кладем созданные происшествия в список
                 shortSelectedIncidentTypeList.add(
@@ -894,7 +791,6 @@ class Reports : BaseTest(){
             element(byXpath("//span[text()='Сохранить карточку']/parent::button")).click()
             //Убеждаемся, что нам загрузило созданную карточку
             //проверяя что нам в принципе загрузило какую-то карточку
-
             element(byCssSelector("#simple-tabpanel-card"))
                 .should(exist, ofSeconds(waitTime))
             //что она в нужном статусе
@@ -1009,26 +905,6 @@ class Reports : BaseTest(){
                 }
             }
         }
-//        if (elements(byXpath(diagSelector.format(2))).size == 1){
-//            diagProcessing = element(byXpath(diagSelector.format(2))).ownText.toInt()
-//            Assertions.assertTrue(diagProcessing == (legendProcessingBefore + 2))
-//        }
-//        if (elements(byXpath(diagSelector.format(3))).size == 1){
-//            diagReaction = element(byXpath(diagSelector.format(3))).ownText.toInt()
-//            Assertions.assertTrue(diagReaction == (legendReactionBefore + 1))
-//        }
-//        if (elements(byXpath(diagSelector.format(4))).size == 1){
-//            diagDone = element(byXpath(diagSelector.format(4))).ownText.toInt()
-//            Assertions.assertTrue(diagDone == (legendDoneBefore + 1))
-//        }
-//        if (elements(byXpath(diagSelector.format(5))).size == 1){
-//            daigCansel = element(byXpath(diagSelector.format(5))).ownText.toInt()
-//            Assertions.assertTrue(daigCansel == (legendCanselBefore + 1))
-//        }
-//        if (elements(byXpath(diagSelector.format(6))).size == 1){
-//            daagClose = element(byXpath(diagSelector.format(6))).ownText.toInt()
-//            Assertions.assertTrue(daagClose == (legendCloseBefore + 1))
-//        }
         //сравниваем две леганды - старую и новую
         Assertions.assertTrue(legendAllAfter == (legendAllBefore + 6))
         Assertions.assertTrue(legendNewBefore == legendNewAfter)
