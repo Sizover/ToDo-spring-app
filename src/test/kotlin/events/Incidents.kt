@@ -96,17 +96,52 @@ class Incidents :BaseTest() {
         element(byXpath("//*[@name='noteError']/ancestor::div[@role='alert']//*[text()='Номер данного абонента был зафиксирован ранее как ложный']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-
-
-
-
-
-
-
-
-
         logoffTool()
     }
 
 
+    @Test (retryAnalyzer = Retry::class, groups = ["ALL"])
+    fun `Event INC 5020 Test`() {
+        //Проверяем баг который нашел Коля, но который не удается воспроизвести. Т.о. положительный проход подтвердит невоспроизведение
+        logonTool()
+        open("https://test.kiap.local/audit/dicts?page=0&perPage=20&das=2021-12-31T21%3A00%3A00.000Z&dae=2022-04-01T20%3A59%3A59.999Z")
+        element(byXpath("//table/tbody"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        Thread.sleep(5000)
+        menuNavigation("Справочники", "Муниципальные образования", waitTime)
+        element(byXpath("//table/tbody"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        val buttonsColumn = numberOfColumn(" ", waitTime)
+        element(byXpath("//table/tbody/tr/td[$buttonsColumn]//button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byXpath("//div[@role='presentation']//*[text()='Редактировать']/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byXpath("//main/div"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//div[@role='textbox']/p[last()]"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byXpath("//div[@role='textbox']/p[last()]"))
+            .sendKeys(Keys.ENTER)
+        element(byXpath("//div[@role='textbox']/p[last()]"))
+            .sendKeys("Event INC 5020 Test")
+        element(byXpath("//*[text()='Сохранить']/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byXpath("//h2[text()='Муниципальные образования']/parent::div"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//*[text()='Добавить новое']/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+    }
 }
