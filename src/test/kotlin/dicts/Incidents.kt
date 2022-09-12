@@ -24,8 +24,8 @@ import java.time.LocalDateTime
 
 class Incidents :BaseTest() {
 
-    var date = LocalDate.now().toString()
-    var dateTime = LocalDateTime.now().toString()
+    var date = LocalDate.now()
+    var dateTime = LocalDateTime.now()
     //Время ожидания элементов при выполнении теста
     val waitTime: Long = 5
     val longWait: Long = 10
@@ -39,9 +39,9 @@ class Incidents :BaseTest() {
     }
 
     @Test (retryAnalyzer = Retry::class, dataProvider = "Языки", groups = ["ALL"])
-    fun `INC 0010 Проверка наличия и работоспособности языка обращения в карточке обращения`(language1 : String, language2 : String) {
-        dateTime = LocalDateTime.now().toString()
-        date = LocalDate.now().toString()
+    fun `Dicts INC 0010 Проверка наличия и работоспособности языка обращения в карточке обращения`(language1 : String, language2 : String) {
+        dateTime = LocalDateTime.now()
+        date = LocalDate.now()
         logonTool()
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
@@ -69,7 +69,7 @@ class Incidents :BaseTest() {
             .click()
         //Номер телефона
         if (elements(byCssSelector("#phone")).size > 0){
-            val tel = (9180000000..9189999999).random()
+            val tel = (9000000000..9999999999).random()
             element(byCssSelector("#phone")).sendKeys("+7$tel")
         }
         //ФИО
@@ -79,7 +79,6 @@ class Incidents :BaseTest() {
             element(byCssSelector("input[id='fio.firstname']")).sendKeys("INC 0010 Firstname")
         }
         //адрес
-//        addressInput("callAddress","INC 0010 adr $dateTime", waitTime)
         element(byXpath("//input[@id='callAddress']"))
             .click()
         element(byXpath("//input[@id='callAddress']"))
@@ -94,7 +93,6 @@ class Incidents :BaseTest() {
         //регистрируем обращение
         element(byXpath("//span[text()='Создать карточку']/parent::button")).click()
         //выбираем тип происшествия
-//        element(byCssSelector("input#incidentTypeId-autocomplete")).setValue("П.5.1.5 Auto-Test").sendKeys(Keys.DOWN, Keys.RETURN)
         inputRandomNew("incidentTypeId-textfield", false, waitTime)
         //Создаем карточку
         element(byXpath("//span[text()='Сохранить карточку']/..")).click()
