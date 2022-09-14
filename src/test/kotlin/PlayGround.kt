@@ -13,7 +13,7 @@ import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-class JustTests : BaseTest(){
+class PlayGround : BaseTest(){
     var date = LocalDate.now()
     var dateTime = LocalDateTime.now()
     var waitTime: Long = 5

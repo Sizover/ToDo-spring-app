@@ -139,7 +139,7 @@ class Incidents :BaseTest() {
     }
 
     //160 строк надо выполнять дважды с маленькой разницей, поэтому вынесено в отдельный метод без абстракции
-    fun `INC_5030_filters` (dateStart: String, dateEnd: String){
+    fun `Set_incident_filters` (dateStart: String, dateEnd: String){
 
         val dateStartList = dateStart.split("-")
         val dateEndList = dateEnd.split("-")
@@ -326,7 +326,7 @@ class Incidents :BaseTest() {
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //Отчищаем фильтры
-        INC_5030_filters(LocalDate.now().minusMonths(1).toString(), LocalDate.now().toString())
+        Set_incident_filters(LocalDate.now().minusMonths(1).toString(), LocalDate.now().toString())
         //устанавливаем фильры
         //заполнили фильтры
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -362,7 +362,7 @@ class Incidents :BaseTest() {
         } while (anotherRound)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //меняем фильтры и заполняем список ложных, но более месяца, не более чем 10 записями
-        INC_5030_filters("", LocalDate.now().minusMonths(1).minusDays(1).toString())
+        Set_incident_filters("", LocalDate.now().minusMonths(1).minusDays(1).toString())
         Thread.sleep(1000)
         val moreMonthFalseСallsNumbersList = mutableListOf<String>()
         do {
