@@ -21,7 +21,7 @@ class PlayGround : BaseTest(){
 
 
 //    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `T 0020`() {
+    fun `Черновик теста на создание МО`() {
         //создадим пару МО, один оставив навсегда, а второй создавая и удаляя каждый раз
         val moATItWas = mutableListOf<String>()
         var moATCreated = mutableListOf<String>("AutoTest T 0020 МО")
@@ -191,7 +191,7 @@ class PlayGround : BaseTest(){
         }
     }
     @Test(retryAnalyzer = Retry::class, groups = ["ALL"])
-    fun `T 0030`() {
+    fun `Отслеживание структуры элементов не уловимых в консоли разработчика`() {
         logonTool()
         menuNavigation("Происшествия","Список происшествий", waitTime)
         element(byXpath("//nav[@aria-label='pagination navigation']"))
