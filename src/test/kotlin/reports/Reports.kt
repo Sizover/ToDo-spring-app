@@ -121,7 +121,7 @@ class Reports : BaseTest(){
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         var adr: String = ""
         var dateTime2 = ""
-        for (i in 1..5) {
+        for (i in 1..6) {
             dateTime = LocalDateTime.now().toString()
             date = LocalDate.now().toString()
             //кликаем по иконке происшествий в боковом меню
@@ -146,31 +146,26 @@ class Reports : BaseTest(){
             //Вводим случайный адрес
 //            var aA = ('A'..'Z').random()
             val bB = (1..100).random()
-            if (i != 3){
+            if (i == 2){
                 addressInput("callAddress", "Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач $bB", waitTime)
-            } else {
-                addressInput("callAddress", adr, waitTime)
-            }
-//            element(byCssSelector("#callAddress"))
-//                .sendKeys("Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач$bB")
-//            //ждем появления списка dadata
-//            element(byCssSelector("div.react-dadata__suggestions"))
-//                .should(exist, ofSeconds(waitTime))
-//                .shouldBe(visible, ofSeconds(waitTime))
-//            //Кликаем на первую строку списка
-//            element(byCssSelector("div.react-dadata__suggestions>div.react-dadata__suggestion.react-dadata__suggestion--current")).click()
-            //запоминаем адрес
-            //Thread.sleep(500)
-            if (i == 2) {
+                //запоминаем адрес, что бы ввести его потом
                 adr = element(byCssSelector("input#callAddress")).value.toString()
                 dateTime2 = dateTime
+            } else if (i == 3){
+                //Вводим ранее запомненный адрес
+                addressInput("callAddress", adr, waitTime)
+            } else if (i == 6){
+                //Вводим адрес не попадающий в отчет
+                addressInput("callAddress", "г Черкесск, ул Мира $bB", waitTime)
+            } else {
+                addressInput("callAddress", "Карачаево-Черкесская Респ, Усть-Джегутинский р-н, аул Эльтаркач $bB", waitTime)
             }
             //заполняем дополнительную информацию
             //element(byCssSelector("textarea[name='comment']")).value = "AutoTest N 0190, i=$i $dateTime"
             element(byCssSelector("div[role='textbox']>p")).click()
             element(byCssSelector("div[role='textbox']"))
                 .sendKeys("Reports 0010, i=$i $dateTime")
-            if (i < 3) {
+            if (i < 3 || i == 6) {
                 //регистрируем обращение
                 element(byXpath("//span[text()='Создать карточку']/parent::button")).click()
                 //выбираем тип происшествия
@@ -185,8 +180,6 @@ class Reports : BaseTest(){
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
-//                val troubleshoot = element(byXpath("//*[contains(text(),'$adr')]")).ownText
-//                println("troubleshoot = $troubleshoot")
                 element(byXpath("//*[contains(text(),'$adr')]/ancestor::button")).click()
                 element(byXpath("//span[text()='Привязать к происшествию']/parent::button")).click()
             } else if (i == 4) {
@@ -204,7 +197,7 @@ class Reports : BaseTest(){
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
             }
-            if (i < 4) {
+            if (i < 4 || i == 6) {
                 //Убеждаемся, что нам загрузило созданную карточку
                 //проверяя что нам в принципе загрузило какую-то карточку
                 element(byCssSelector("#simple-tabpanel-card"))
@@ -215,7 +208,7 @@ class Reports : BaseTest(){
                     .shouldBe(visible, ofSeconds(waitTime))
             }
             //и что это именно так карточка которую мы только что создали
-            if (i < 3) {
+            if (i < 3 || i == 6) {
                 element(byXpath("//strong[text()='Дополнительная информация:']/parent::div"))
                     .shouldHave(text("Reports 0010, i=$i $dateTime"), ofSeconds(waitTime))
             } else if(i==3) {
