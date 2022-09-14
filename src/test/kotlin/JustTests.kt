@@ -8,6 +8,7 @@ import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
 import org.openqa.selenium.Keys
+import org.testng.annotations.Test
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -188,5 +189,14 @@ class JustTests : BaseTest(){
                 .shouldBe(visible, ofSeconds(waitTime))
                 .click()
         }
+    }
+    @Test(retryAnalyzer = Retry::class, groups = ["ALL"])
+    fun `T 0030`() {
+        logonTool()
+        menuNavigation("Происшествия","Список происшествий", waitTime)
+        element(byXpath("//nav[@aria-label='pagination navigation']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        println(element(byXpath("//nav[@aria-label='pagination navigation']")))
     }
 }

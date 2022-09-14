@@ -77,7 +77,7 @@ class CleanUp : BaseTest(){
                         //закрываем зеленую всплывашку
                         element(byXpath("//*[contains(@class, 'MuiAlert-standardSuccess')][@role='alert']//button"))
                             .click()
-                        //ждем исчезновения очета, который удаляли
+                        //ждем исчезновения отчета, который удаляли
                         element(byXpath("//tbody/tr[$i]/td[1]//*[text()='$deletedReport']"))
                             .shouldNot(exist, ofSeconds(waitTime))
                         Thread.sleep(300)
@@ -115,8 +115,6 @@ class CleanUp : BaseTest(){
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
         //val operator = element(byCssSelector("main>div:nth-child(3)>div:nth-child(3)>p")).ownText
         val operator = element(byXpath("//p[text()='Должностное лицо:']/following-sibling::p")).ownText
-//        val operatorMas = operator.split("\n")
-//        val operatorFIO = operatorMas[1].trim()
         val operatorFIO = operator.trim()
 //        println("ФИО $operator")
 //        println("operatorFIO $operatorFIO")
@@ -177,7 +175,6 @@ class CleanUp : BaseTest(){
         Thread.sleep(2500)
         //ищем надпись "Нет данных"
         var noData = elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size
-//        println("noData 1 $noData")
         // и войдя в цикл без защитного счетчика
         while (noData == 0){//переходим в каждую первую карточку и меняем статус, на "Закрыта"
             //карточки в статусе новая, вызывают проблемы из-за того что меняют статус автоматически, даже когда по нему клацаешь
@@ -220,7 +217,6 @@ class CleanUp : BaseTest(){
                 .shouldBe(visible, ofSeconds(waitTime))
             Thread.sleep(1000)
             noData = elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size
-//            println("noData 2 $noData")
         }
         logoffTool()
     }
