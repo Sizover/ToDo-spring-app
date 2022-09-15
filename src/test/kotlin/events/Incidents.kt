@@ -140,7 +140,7 @@ class Incidents :BaseTest() {
 
     //160 строк надо выполнять дважды с маленькой разницей, поэтому вынесено в отдельный метод без абстракции
     fun `SetIncidentFilters` (dateStart: String, dateEnd: String){
-
+        val callTypeId = listOf("Портал населения", "Система-112", "СМС", "Телефон (ССОП)", "Факс", "ЭРА Глонасс")
         val dateStartList = dateStart.split("-")
         val dateEndList = dateEnd.split("-")
         while (elements(byXpath("//form[@novalidate]//button//button")).size >0){
@@ -189,10 +189,15 @@ class Incidents :BaseTest() {
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
                 .click()
-            element(byXpath("//div[@role='presentation']//li[text()='Телефон (ССОП)']"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
+            callTypeId.forEach {
+                element(byXpath("//div[@role='presentation']//li[text()='$it']"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .click()
+                element(byXpath("//label[text()='Источники событий']/..//div[@role='button']/span[text()='$it']"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+            }
             if (dateStart.isNotEmpty()) {
                 element(byXpath("//label[text()='Дата регистрации']/ancestor::fieldset//input[@placeholder='с']"))
                     .should(exist, ofSeconds(waitTime))
@@ -236,10 +241,15 @@ class Incidents :BaseTest() {
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
                 Thread.sleep(500)
-                element(byXpath("//div[@role='presentation']//li[text()='Телефон (ССОП)']"))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
-                    .click()
+                callTypeId.forEach{
+                    element(byXpath("//div[@role='presentation']//li[text()='$it']"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                        .click()
+                    element(byXpath("//label[text()='Источники событий']/..//div[@role='button']/span[text()='$it']"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                }
                 element(byXpath("//div[@role='presentation']//*[text()='Применить']/ancestor::button"))
                     .click()
                 callTypeNeed = false
@@ -286,10 +296,15 @@ class Incidents :BaseTest() {
                         .should(exist, ofSeconds(waitTime))
                         .shouldBe(visible, ofSeconds(waitTime))
                         .click()
-                    element(byXpath("//div[@role='presentation']//li[text()='Телефон (ССОП)']"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
+                    callTypeId.forEach {
+                        element(byXpath("//div[@role='presentation']//li[text()='$it']"))
+                            .should(exist, ofSeconds(waitTime))
+                            .shouldBe(visible, ofSeconds(waitTime))
+                            .click()
+                        element(byXpath("//label[text()='Источники событий']/..//div[@role='button']/span[text()='$it']"))
+                            .should(exist, ofSeconds(waitTime))
+                            .shouldBe(visible, ofSeconds(waitTime))
+                    }
                 }
                 if (dataNeed){
                     if (dateStart.isNotEmpty()) {
@@ -330,7 +345,7 @@ class Incidents :BaseTest() {
         //устанавливаем фильры
         //заполнили фильтры
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Thread.sleep(500)
+        Thread.sleep(1000)
         //открываем все КП, проходясь и по пагинации и складываем контактный номер в список, не занося в него дубликаты
         val falseСallsNumbersList = mutableListOf<String>()
         var anotherRound: Boolean
@@ -373,7 +388,9 @@ class Incidents :BaseTest() {
                 element(byXpath("//strong[text()='Контактный номер:']"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
-
+                element(byXpath("//button/span[text()='Ложное']"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
                 if (!moreMonthFalseСallsNumbersList.contains(element(byXpath("//strong[text()='Контактный номер:']/following-sibling::span//*[text()]"))
                         .ownText
                         .filter { it.isLetterOrDigit() })){
@@ -414,6 +431,14 @@ class Incidents :BaseTest() {
         Thread.sleep(1000)
         element(byXpath("//*[@name='noteError']/ancestor::div[@role='alert']//*[text()='Номер данного абонента был зафиксирован ранее как ложный']"))
             .shouldNot(exist, ofSeconds(waitTime))
+        element(byXpath("//span[text()='Отменить']/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byXpath("//div[@role='dialog']//span[text()='Да, выйти без сохранения']/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
         logoffTool()
     }
 
