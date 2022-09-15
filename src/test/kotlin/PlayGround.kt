@@ -8,11 +8,12 @@ import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
 import org.openqa.selenium.Keys
+import org.testng.annotations.Test
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-class JustTests : BaseTest(){
+class PlayGround : BaseTest(){
     var date = LocalDate.now()
     var dateTime = LocalDateTime.now()
     var waitTime: Long = 5
@@ -20,7 +21,7 @@ class JustTests : BaseTest(){
 
 
 //    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `T 0020`() {
+    fun `Черновик теста на создание МО`() {
         //создадим пару МО, один оставив навсегда, а второй создавая и удаляя каждый раз
         val moATItWas = mutableListOf<String>()
         var moATCreated = mutableListOf<String>("AutoTest T 0020 МО")
@@ -188,5 +189,14 @@ class JustTests : BaseTest(){
                 .shouldBe(visible, ofSeconds(waitTime))
                 .click()
         }
+    }
+    @Test(retryAnalyzer = Retry::class, groups = ["ALL"])
+    fun `Отслеживание структуры элементов не уловимых в консоли разработчика`() {
+        logonTool()
+        menuNavigation("Происшествия","Список происшествий", waitTime)
+        element(byXpath("//nav[@aria-label='pagination navigation']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        println(element(byXpath("//nav[@aria-label='pagination navigation']")))
     }
 }
