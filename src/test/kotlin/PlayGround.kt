@@ -1,17 +1,24 @@
 
 
 
+import com.codeborne.selenide.CollectionCondition
+import com.codeborne.selenide.Condition
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Selectors.byCssSelector
+import com.codeborne.selenide.Selectors.byText
 import com.codeborne.selenide.Selectors.byXpath
+import com.codeborne.selenide.Selenide.back
 import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
+import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import org.testng.annotations.Test
+import java.time.Duration
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.util.LinkedHashMap
 
 class PlayGround : BaseTest(){
     var date = LocalDate.now()
@@ -190,13 +197,5 @@ class PlayGround : BaseTest(){
                 .click()
         }
     }
-    @Test(retryAnalyzer = Retry::class, groups = ["ALL"])
-    fun `Отслеживание структуры элементов не уловимых в консоли разработчика`() {
-        logonTool()
-        menuNavigation("Происшествия","Список происшествий", waitTime)
-        element(byXpath("//nav[@aria-label='pagination navigation']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        println(element(byXpath("//nav[@aria-label='pagination navigation']")))
-    }
+
 }

@@ -1339,21 +1339,6 @@ class PimTests : BaseTest(){
                 .shouldBe(visible, ofSeconds(waitTime))
             //добавляем все доступные колонки в таблицу
             checkbox("", true, waitTime)
-//            element(byCssSelector("button[data-testid='Колонки-iconButton']")).click()
-//            element(byCssSelector("fieldset[aria-label='Показать/скрыть колонки']"))
-//                .should(exist, ofSeconds(waitTime))
-//                .shouldBe(visible, ofSeconds(waitTime))
-//            val countString = elements(byCssSelector("fieldset label input")).size
-//            for (w in 1..countString){
-//                val d = element(byXpath("//fieldset//label[$w]//input/following-sibling::*[name()='svg']/*[name()='path']")).getAttribute("d")
-//                //val b = element(byXpath("//fieldset//label[$i]//input/following-sibling::*[name()='svg']/*[name()='path']")).getCssValue("d")
-//                if (d == checkboxFalse){
-//                    element(byXpath("//fieldset//label[$w]//input")).click()
-//                    element(byXpath("//fieldset//label[$w]//input/following-sibling::*[name()='svg']/*[name()='path']"))
-//                        .shouldHave(attribute("d", checkboxTrue))
-//                }
-//            }
-//            element(byXpath("//fieldset[@aria-label='Показать/скрыть колонки']/../button")).click()
             //получаем счетчик строк в левом нижнем углу страницы, в виде числа
             var allRecordCountUse: Int
             allRecordCountUse = if (subMenu != "Типы происшествий") {
@@ -1378,14 +1363,10 @@ class PimTests : BaseTest(){
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
             //читаем что есть в подсказке
-//            val searchHintString = element(byCssSelector("input[placeholder]")).getAttribute("placeholder")
-//            val searchHintList = searchHintString?.split(", ")
-//            println("searchHintList $searchHintList")
             val searchHintList = element(byCssSelector("input[placeholder]")).getAttribute("placeholder")!!.split(", ")
             //проходимся по заголовкам столбцов, сверяя их с каждой позицией подсказки
             var searchValue = ""
             for (col in 1 until comumnCount) {
-//                var hierarchy: Boolean
                 element(byXpath("//table/thead/tr/th[$col]"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
@@ -1406,22 +1387,15 @@ class PimTests : BaseTest(){
                     }
                 }
                 //проверяем существует ли заголовок столбца, и если существует, то:
-//                if (elements(byXpath("//table/thead/tr/th[$q]//*[text()]")).size == 1){
                 else {
-//                    hierarchy = false
                     val columnName = element(byXpath("//table/thead/tr/th[$col]//*[text()]")).ownText.toString()
-    //                println("columnName $columnName")
                     for (hint in 0 until searchHintList!!.size){
-//                    searchHintList?.forEach { it ->
-    //                    println("$i searchHintList $it")
                         //если заголовок столбца совпал с подсказкой, то вбиваем значение этого столбца из каждой строки в список из которого выберем случайное значение для поиска, ждем что нижний счетчик строк будет строго меньше исходного
-//                        println("i = $dicts columnName = $columnName подсказка = $it")
                         if (columnName.contains(searchHintList[hint])
                             || ((columnName == "Телефонный код") && (searchHintList[hint] == "Тел.код"))
                             || ((columnName == "Метка") && (searchHintList[hint] == "Имя метки"))
                             || ((columnName == "№") && (searchHintList[hint] == "Номер пункта"))
                         ) {
-//                            println("i = $dicts true columnName = $columnName подсказка = ${searchHintList[hint]}")
                             //искомое значение определяем случайно, среди имеющихся но с типами происшествий и откидыванием пустых значений других справочников придется возится
                             var maxRandom: Int = 1
                             var randomColumnValue = 0
@@ -1429,13 +1403,6 @@ class PimTests : BaseTest(){
                                 val countAllString = elements(byXpath("//table/tbody/tr")).size
                                 val trueValueList = mutableListOf<String>()
                                 for (str in 1..countAllString) {
-    //                                if (elements(byXpath("//table/tbody/tr[$r]/td[$q]//*[text()]")).size == 1) {
-    //                                    trueValueList.add(element(byXpath("//table/tbody/tr[$r]/td[$q]//*[text()]")).ownText.trim())
-    //                                }
-    //                                if (element(byXpath("//table/tbody/tr[$r]/td[$q]//*[text()]")).ownText.trim().isNotEmpty()
-    //                                    && elements(byXpath("//table/tbody/tr[$r]/td[$q]//*[text()]")).size > 0) {
-    //                                    trueValueList.add(element(byXpath("//table/tbody/tr[$r]/td[$q]//*[text()]")).ownText.trim())
-    //                                }
                                     if ((elements(byXpath("//table/tbody/tr[$str]/td[$col][text()]")).size == 1)
                                         && (element(byXpath("//table/tbody/tr[$str]/td[$col][text()]")).ownText.trim()
                                             .isNotEmpty())) {
@@ -1446,20 +1413,12 @@ class PimTests : BaseTest(){
                                             trueValueList.add(element(byXpath("//table/tbody/tr[$str]/td[$col]//*[text()]")).ownText.trim())
                                     }
                                 }
-//                                maxRandom = trueValueList.size - 1
-//                                randomColumnValue = (0..maxRandom).random()
-//                                searchValue = trueValueList[randomColumnValue].toString()
                                 searchValue = trueValueList.random()
                                 //проверяем не номер ли это телефона и видоизменяем запись , к.т. в формате +Х(ХХХ)ХХХ-ХХ-ХХ в поисковой строке не вернет результатов, только +ХХХХХХХХХХ
                                 //аналогично с ФИО
-//                                val ioRegex = Regex("[А-ЯA-Z]{1}[.]\\s{1}[А-ЯA-Z]{1}[.]{1}")
                                 val ioRegex = Regex("[а-яА-Яa-zA-Z]{1}[.]\\s{1}[а-яА-Яa-zA-Z]{1}[.]{1}")
                                 val telRegex = Regex("[+7(]{1}[0-9]{3}[)]{1}[0-9]{3}[-]{1}[0-9]{2}[-]{1}[0-9]{2}")
                                 val workTelRegex = Regex("[0-9]{1}[-][0-9]{5}[-][0-9]{3}[-][0-9]{3}")
-    //                            if (searchValue.contains("+")
-    //                                && searchValue.contains("(")
-    //                                && searchValue.contains(")")
-    //                                && searchValue.contains("-"))
                                     if (telRegex.containsMatchIn(searchValue)
                                         || workTelRegex.containsMatchIn(searchValue)
                                     ) {
@@ -1469,22 +1428,7 @@ class PimTests : BaseTest(){
                                         val searchValueList = searchValue.split(" ")
                                         searchValue = searchValueList[0]
                                     }
-//                                else if (workTelRegex.containsMatchIn(searchValue)){
-//                                    val newSearchValue = searchValue.filter { it.isDigit() }
-//                                    searchValue = newSearchValue
-//                                }
-    //                                println("countAllString $i $countAllString")
-    //                                println("trueValueList $i $trueValueList")
-    //                                println("maxRandom $i $maxRandom")
-    //                                println("randomColumnValue $i $randomColumnValue")
-    //                                println("searchValue $searchValue")
-    //                            searchValue = element(byXpath("//table/tbody/tr[1]/td[$q]//*[text()]")).ownText.toString()
                             } else if (subMenu == "Типы происшествий") { //Отдельно обрабатываем справочник типов происшествий
-//                                element(byXpath("//thead//*[name()='svg'][@id='expandable-button']/../parent::button")).click()
-//                                element(byXpath("//thead//*[name()='svg'][@id='expandable-button']/../parent::button//*[name()='path'][@d='M19 13H5v-2h14v2z']"))
-//                                    .should(exist, ofSeconds(waitTime))
-//                                    .shouldBe(visible, ofSeconds(waitTime))
-//                                val countAllString = elements(byXpath("//table/tbody/tr")).size
                                 val trueValueList = mutableListOf<String>()
                                 for (r in 1..allRecordCountUse) {
                                     if (elements(byXpath("//table/tbody/tr[$r]/td[$col]//button")).size == 0
@@ -1493,24 +1437,14 @@ class PimTests : BaseTest(){
                                         trueValueList.add(element(byXpath("//table/tbody/tr[$r]/td[$col][text()]")).ownText)
                                     }
                                 }
-//                                maxRandom = trueValueList.size - 1
-//                                randomColumnValue = (0..maxRandom).random()
-//                                searchValue = trueValueList[randomColumnValue].toString()
                                 searchValue = trueValueList.random()
-    //                            println("countAllString $i $countAllString")
-    //                            println("trueValueList $i $trueValueList")
-    //                            println("maxRandom $i $maxRandom")
-    //                            println("randomColumnValue $i $randomColumnValue")
-
                             }
-    //                        println("searchValue $searchValue")
                             //открываем строку поиска, если закрылась (бывает с иерархическими справочниками)
                             if (elements(byCssSelector("input[placeholder]")).size == 0) {
                                 element(byXpath("//*[@name='search']/ancestor::button")).click()
                             }
                             element(byCssSelector("input[placeholder]")).sendKeys(searchValue, Keys.ENTER)
                             Thread.sleep(1000)
-
                             val nowRecordCountUse:Int
                             if (subMenu != "Типы происшествий"){
                                 element(byXpath("//table/tfoot//p[contains(text(),'Всего ')]"))
@@ -1525,20 +1459,7 @@ class PimTests : BaseTest(){
                                 nowRecordCountUse = elements(byXpath("//tbody/tr")).size
                                 Assertions.assertTrue(nowRecordCountUse != 0)
                             }
-    //                        println("searchValue $searchValue")
-    //                        println("allRecordCountUse $allRecordCountUse")
-    //                        println("nowRecordCountUse $nowRecordCountUse")
-//                            Assertions.assertTrue(allRecordCountUse > nowRecordCountUse)
-//                            println("allRecordCountUse $allRecordCountUse")
-//                            println("nowRecordCountUse $nowRecordCountUse")
                             Assertions.assertTrue(allRecordCountUse > nowRecordCountUse)
-//                            if (dicts == 10) {
-//                                Assertions.assertTrue(nowRecordCountUse == 1)
-//                            } else {
-//                                Assertions.assertTrue(allRecordCountUse > nowRecordCountUse)
-//                            }
-    //                        println("nowRecordCountUse $nowRecordCountUse")
-                            //Thread.sleep(2500)
                             element(byXpath("//input[@placeholder]/following-sibling::div/button")).click()
                             element(byCssSelector("input[placeholder]")).click()
                             Thread.sleep(1000)
@@ -1572,21 +1493,13 @@ class PimTests : BaseTest(){
             val allRecordCountNotUse = allRecordCountString[1].split(" ")
             val allRecordCountUse = allRecordCountNotUse[0].toInt()
             //ситаем количество слолбцов, при том что последний нам не пригодится
-//            val comumnsCount = elements(byXpath("//table/thead/tr/th//*[text()]")).size
             //создаем список заголовков столбцов, обрезая последний элемент - заголовок трех точек
             val columnsElementList = elements(byXpath("//table/thead/tr/th//*[text()]"))
             val columnsList = mutableListOf<String>()
             columnsElementList.forEach {
                 columnsList.add(it.ownText.trim())
             }
-//            val del = columnsList.last()
-//            println(del)
             columnsList.remove(columnsList.last())
-//            println(columnsList)
-//            println("$dict ${columnsList.size}")
-//            println("allRecordCountString $allRecordCountString")
-//            println("allRecordCountNotUse $allRecordCountNotUse")
-//            println("allRecordCountUse $allRecordCountUse")
             //отркрываем поисковую строку
             element(byXpath("//*[@name='search']/ancestor::button"))
                 .should(exist, ofSeconds(waitTime))
@@ -1600,39 +1513,30 @@ class PimTests : BaseTest(){
             val searchHintList = searchHintString?.split(", ")
             //каждый столбец сверяем с каждым елементом подсказки (так сложно потому что нам еще на странице надо ориентироваться)
             //каждый столбец проверяем на наличие в списке подсказок
-
             columnsList.forEachIndexed { colInd, colVal ->
-//                println("1 colInd $colInd colVal $colVal searchHintList $searchHintList")
                 if (searchHintList!!.contains(colVal)){
-//                    println("2 colInd $colInd colVal $colVal searchHintList $searchHintList")
                     //если столбец есть в списке подсказок, то для каждой строки достаем его текстовое значение и кладем в список
                     val stringElement = elements(byXpath("//table/tbody/tr"))
                     val inColumnsValueList = mutableListOf<String>()
                     stringElement.forEachIndexed { elind, el ->
                         val colNum = numberOfColumn(colVal, waitTime)
-//                        println(it)
                         if (
                             (elements(byXpath("//table/tbody/tr[$elind]/td[$colNum][text()]")).size == 1)
                             && element(byXpath("//table/tbody/tr[$elind]/td[${colInd + 1}][text()]")).ownText != "  "
-//                            && (!Regex("\\s+").matches(element(byXpath("//table/tbody/tr[$elind]/td[$colNum][text()]")).ownText))
                             )
                         {
-//                            println("first")
                             inColumnsValueList.add(element(byXpath("//table/tbody/tr[$elind]/td[$colNum][text()]")).ownText.trim())
                         } else if (
                             (elements(byXpath("//table/tbody/tr[$elind]/td[$colNum]//*[text()]")).size == 1)
                             && element(byXpath("//table/tbody/tr[$elind]/td[${colInd + 1}]//*[text()]")).ownText != "  "
-//                            && (!Regex("\\s+").matches(element(byXpath("//table/tbody/tr[$elind]/td[$colNum]//*[text()]")).ownText))
                         )
                         {
-//                            println("second")
                             inColumnsValueList.add(element(byXpath("//table/tbody/tr[$elind]/td[$colNum]//*[text()]")).ownText.trim())
                         }
                     }
                     //получили список значений столбца на странице теперь преобразуем его в пригодный для поиска вид, если это ФИО или телефонный номер
                     val  rnd = (0 until inColumnsValueList.size).random()
                     var rndSearchValue = inColumnsValueList[rnd]
-//                    val fioRegex = Regex("[А-Я]{1}[.]\\s{1}[А-Я]{1}[.]{1}")
                     val fioRegex = Regex("[a-zA-Zа-яА-Я]{1}[.]\\s{1}[a-zA-Zа-яА-Я]{1}[.]{1}")
                     val telRegex = Regex("[+]{1}[7]{1}[(]{1}[0-9]{3}[)]{1}[0-9]{3}[-]{1}[0-9]{2}[-]{1}[0-9]{2}")
                     if (telRegex.containsMatchIn(rndSearchValue)) {
@@ -1649,11 +1553,6 @@ class PimTests : BaseTest(){
                     val newRecordCountString = element(byXpath("//table/tfoot//p[contains(text(),'Всего ')]")).ownText.toString().split("\n")
                     val newRecordCountNotUse = newRecordCountString[1].split(" ")
                     val newRecordCountUse = newRecordCountNotUse[0].toInt()
-//                    println("newRecordCountUse $newRecordCountUse")
-//                    println("allRecordCountUse $allRecordCountUse")
-//                    println("rndSearchValue |$rndSearchValue|")
-//                    println("inColumnsValueList |$inColumnsValueList|")
-
                     Assertions.assertTrue(allRecordCountUse > newRecordCountUse)
                     element(byXpath("//input[@placeholder]/following-sibling::div//button"))
                         .should(exist, ofSeconds(waitTime))
@@ -1661,21 +1560,6 @@ class PimTests : BaseTest(){
                         .click()
                 }
             }
-//            columnsList.forEachIndexed { colInd, colVal ->
-//                searchHintList!!.forEachIndexed {hintInd, hintVal ->
-//                    if ((colVal == hintVal)
-//                        || (colVal == "Телефонный код" && colVal == "Тел.код")
-//                        || (colVal == "Метка" && colVal == "Имя метки")
-//                        || (colVal == "№" && colVal == "Номер пункта")){
-//
-//                        if (elements(byXpath("")).size == 1){
-//
-//                        }
-//
-//                    }
-//                }
-//            }
-
         }
 
     }
@@ -1765,31 +1649,7 @@ class PimTests : BaseTest(){
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .scrollIntoView(false)
-//        element(byXpath("//body"))
-//            .should(exist, ofSeconds(waitTime))
-////            .shouldBe(visible, ofSeconds(waitTime))
-////            .scrollIntoView(false)
-//            .sendKeys(Keys.END)
-//        tools.inputRandom("labels")
         inputRandomNew("labelsId-textfield", true, waitTime)
-////        Thread.sleep(2000)
-//        element(byXpath("//input[@name='labels']")).click()
-////        Thread.sleep(2000)
-//        //считаем сколько меток нам доступно к выбору
-//        var countPotentialLabels = 0
-//        do {
-//            element(byXpath("//input[@name='labels']")).sendKeys(Keys.DOWN)
-//            countPotentialLabels += 1
-//        } while (elements(byCssSelector("input[name='labels'][aria-activedescendant^='labels-option']")).size > 0)
-//        //выбираем случайную метку из доступных
-////        Thread.sleep(2000)
-//        val rndLabel = (1 until countPotentialLabels).random()
-////        println("countPotentialLabels $countPotentialLabels")
-//        repeat(rndLabel){
-//            element(byXpath("//input[@name='labels']")).sendKeys(Keys.DOWN)
-//        }
-////        Thread.sleep(2000)
-//        element(byXpath("//input[@name='labels']")).sendKeys(Keys.ENTER)
         //жмем кнопки "Сохранить"
 //        Thread.sleep(2000)
         element(byXpath("//span[text()='Сохранить']/parent::button"))
@@ -1800,7 +1660,6 @@ class PimTests : BaseTest(){
         element(byCssSelector("main table>tbody"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-//        Thread.sleep(2000)
         //переходим в ту же организацию
         if (rndOrganization == organizationTableStringCount){
             element(byCssSelector("body")).sendKeys(Keys.END)
@@ -1808,7 +1667,6 @@ class PimTests : BaseTest(){
             .scrollIntoView(false)
         }
         element(byText(organizationName.toString())).click()
-//        Thread.sleep(2000)
         //ждем Редактировать
         element(byXpath("//span[text()='Редактировать']/parent::button"))
             .should(exist, ofSeconds(waitTime))
@@ -1822,12 +1680,7 @@ class PimTests : BaseTest(){
             newLabelsList.add(element(byXpath("//label[text()='Метки']/..//span[@style='line-height: 1;'][$i]//span[text()]")).ownText)
         }
         //убеждаемся, что не затерли ни одной метки, а именно добавили одну.
-//        println("organizationName $organizationName")
-//        println("oldLabelsList $oldLabelsList")
-//        println("newLabelsList $newLabelsList")
         Assertions.assertTrue(newLabelsList.containsAll(oldLabelsList))
-//        Assertions.assertTrue(newLabelsList.size == oldLabelsList.size +1)
-
         logoffTool()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //теперь удалим эту (эти) метку(и)
