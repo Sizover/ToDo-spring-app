@@ -1362,7 +1362,7 @@ class Reports : BaseTest(){
 
 
     @Test(retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
-    fun `Reports 0050 Расширенная проверка формирования отчетов по происшествиям черновик`() {
+    fun `Reports 0050 Расширенная проверка формирования отчетов по происшествиям`() {
         dateTime = LocalDateTime.now()
         date = LocalDate.now()
         val reportList = listOf("Зеленчукский район КЧР", "ГО Черкесский", "Оператор", "ЕДДС", "Уровень происшествия")
@@ -1785,6 +1785,8 @@ class Reports : BaseTest(){
             oneReportMap.clear()
             back()
         }
+        createdIncidentsType.add("Всего")
+        createdIncidentsType.add("В обработке")
         reportList.forEach{report ->
             createdIncidentsType.forEach{createdIncident ->
                 newReportsMap.get(report)

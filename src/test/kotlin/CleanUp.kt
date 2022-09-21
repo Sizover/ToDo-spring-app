@@ -99,7 +99,7 @@ class CleanUp : BaseTest(){
 //        date = LocalDate.now().toString()
         date = LocalDate.now()
 //        val date2 = date.minusDays(7).toString()
-        val dateStart = LocalDate.now().minusDays(7).toString()
+        val dateStart = LocalDate.now().minusDays(14).toString()
         val dateEnd = LocalDate.now().toString()
         logonTool()
         //убедимся что мы за оператор:
