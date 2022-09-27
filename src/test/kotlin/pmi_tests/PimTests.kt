@@ -1138,6 +1138,9 @@ class PimTests : BaseTest(){
         element(byXpath("//h3[text()='Описание происшествия']/../following-sibling::div//p"))
             .shouldHave(text("AutoTest 112 $dateTime"), ofSeconds(waitTime))
         element(byCssSelector("div#panel1a-header")).shouldHave(text("Система-112"), ofSeconds(waitTime))
+        element(byCssSelector("button[style='min-width: 140px; white-space: nowrap;']"))
+            .shouldHave(text("В обработке"), ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
 
         logoffTool()
 

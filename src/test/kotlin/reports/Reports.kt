@@ -318,7 +318,7 @@ class Reports : BaseTest(){
 
 
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
+    @Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `Reports 0020 Проверка формирования отчетов по деятельности сотрудников`() {
         //A.3.24 Проверка формирования отчетов по деятельности сотрудников
         dateTime = LocalDateTime.now()
@@ -631,11 +631,11 @@ class Reports : BaseTest(){
         val oldAmountAffectedChildrenList = mutableListOf<Int>()
         val oldAmountDiePeopleList = mutableListOf<Int>()
         val oldAmountDieChildrenList = mutableListOf<Int>()
-        val tableSelector = "//table[@aria-label='sticky table']/tbody/tr[%d]/td[%d]"
+        val tableSelector = "(//table[@aria-label='sticky table'])[1]/tbody/tr[%d]/td[%d]"
         //table[@aria-label='sticky table']/tbody/tr
         var oldTableStringCount = 0
         if (elements(byXpath("//table/tbody/tr[1]//*[text()='Нет данных']")).size == 0) {
-            oldTableStringCount = elements(byXpath("//table[@aria-label='sticky table']/tbody/tr")).size
+            oldTableStringCount = elements(byXpath("(//table[@aria-label='sticky table'])[1]/tbody/tr")).size
             for (i in 0 until oldTableStringCount) {
                 oldIncidentTypeList.add(i, element(byXpath(tableSelector.format(i + 1, 1))).ownText)
                 oldAmountIncidentList.add(i, element(byXpath(tableSelector.format(i + 1, 2))).ownText.toInt())
@@ -828,7 +828,7 @@ class Reports : BaseTest(){
         val legendCanselAfter = element(byXpath(colorTableSelector.format("Отменены"))).ownText.toInt()
         val legendCloseAfter = element(byXpath(colorTableSelector.format("Закрыты"))).ownText.toInt()
         //значения в таблице
-        val newTableStringCount = elements(byXpath("//table[@aria-label='sticky table']/tbody/tr")).size
+        val newTableStringCount = elements(byXpath("(//table[@aria-label='sticky table'])[1]/tbody/tr")).size
         val newIncidentTypeList = mutableListOf<String>()
         val newAmountIncidentList = mutableListOf<Int>()
         val newAmountAffectedPeopleList = mutableListOf<Int>()
@@ -953,8 +953,8 @@ class Reports : BaseTest(){
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //считаем строки в таблице, их должно быть 0
-        var tableStringCount = elements(byXpath("//table[@aria-label='sticky table']/tbody/tr")).size
-        element(byXpath("//table[@aria-label='sticky table']/tbody/tr/td//*[text()='Нет данных']"))
+        var tableStringCount = elements(byXpath("(//table[@aria-label='sticky table'])[1]/tbody/tr")).size
+        element(byXpath("(//table[@aria-label='sticky table'])[1]/tbody/tr/td//*[text()='Нет данных']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -994,7 +994,7 @@ class Reports : BaseTest(){
             .shouldBe(visible, ofSeconds(waitTime))
         //считаем строки, и ожидаем что их столько же, сколько наибольшего числа в массиве пострадавших
         val amountMaxAffected = newAmountAffectedPeopleList.filter { it == maximumAffectedPeople}
-        tableStringCount = elements(byXpath("//table[@aria-label='sticky table']/tbody/tr")).size
+        tableStringCount = elements(byXpath("(//table[@aria-label='sticky table'])[1]/tbody/tr")).size
         Assertions.assertTrue(amountMaxAffected.size == tableStringCount)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //создаем отчет с указанием типа происшествия и просто проверяем, что строка одна
@@ -1034,13 +1034,13 @@ class Reports : BaseTest(){
         element(byXpath("//h5[text()='Reports 0030 Проверка формирования отчетов по происшествиям $dateTime Тип происшествия']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        tableStringCount = elements(byXpath("//table[@aria-label='sticky table']/tbody/tr")).size
+        tableStringCount = elements(byXpath("(//table[@aria-label='sticky table'])[1]/tbody/tr")).size
         Assertions.assertTrue(tableStringCount == 1)
 
         logoffTool()
     }
 
-    @Test(retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
+//    @Test(retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `Reports 0040 Расширенная проверка формирования отчетов по обращениям`() {
         //A.3.23 Проверка формирования отчетов по обращениям
         dateTime = LocalDateTime.now()
@@ -1378,7 +1378,7 @@ class Reports : BaseTest(){
     }
 
 
-    @Test(retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
+//    @Test(retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `Reports 0050 Расширенная проверка формирования отчетов по происшествиям`() {
         dateTime = LocalDateTime.now()
         date = LocalDate.now()
@@ -1816,7 +1816,7 @@ class Reports : BaseTest(){
     }
 
 
-    @Test(retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
+//    @Test(retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `Reports 0060 Расширенная проверка формирования отчетов По сотрудникам черновик`() {
         dateTime = LocalDateTime.now()
         date = LocalDate.now()
@@ -1992,10 +1992,9 @@ class Reports : BaseTest(){
     @DataProvider(name = "Расширенная проверка формирования отчетов")
     open fun Statuses(): Any {
         return arrayOf<Array<Any>>(
-            arrayOf("По происшествиям", "2 МО, Зеленчукский район КЧР, ГО Черкесский, ЕДДС, Оператор, Уровень происшествия", 2)
-//            arrayOf("По происшествиям", listOf<String>("2 МО", "Зеленчукский район КЧР", "ГО Черкесский", "ЕДДС", "Оператор", "Уровень происшествия")),
-//            arrayOf("По обращениям", "2 МО, Зеленчукский район КЧР, ГО Черкесский, ЕДДС, Оператор", 2),
-//            arrayOf("По сотрудникам", "2 МО, Зеленчукский район КЧР, ГО Черкесский, ЕДДС", 3)
+            arrayOf("По происшествиям", "2 МО, Зеленчукский район КЧР, ГО Черкесский, ЕДДС, Оператор, Уровень происшествия", 2),
+            arrayOf("По обращениям", "2 МО, Зеленчукский район КЧР, ГО Черкесский, ЕДДС, Оператор", 2),
+            arrayOf("По сотрудникам", "2 МО, Зеленчукский район КЧР, ГО Черкесский, ЕДДС", 3)
         )
     }
 
@@ -2185,7 +2184,7 @@ class Reports : BaseTest(){
                 .click()
             //ждем
             elements(byXpath("//main//table"))
-                .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(2), ofSeconds(waitTime))
+                .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(1), ofSeconds(waitTime))
             element(byXpath("//*[text()='Печать']/ancestor::button"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
@@ -2515,7 +2514,7 @@ class Reports : BaseTest(){
                 .click()
             //ждем
             elements(byXpath("//main//table"))
-                .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(2), ofSeconds(waitTime))
+                .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(1), ofSeconds(waitTime))
             element(byXpath("//*[text()='Печать']/ancestor::button"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
@@ -2536,13 +2535,13 @@ class Reports : BaseTest(){
             newReportsMap.put(report, oneReportMap.clone() as MutableMap<String, Int>)
             oneReportMap.clear()
             back()
-        }
-        //т.к. сравниваем карты только по конкретным значениям созданных происшествий, то кладем в список значений "всего" и "в обработке", что бы сравнить и их
-        if (oldReportsMap.get("2 МО")!!.contains("Всего")){
-            validatedValues.add("Всего")
-        }
-        if (oldReportsMap.get("2 МО")!!.contains("В обработке")){
-            validatedValues.add("В обработке")
+            //т.к. сравниваем карты только по конкретным значениям созданных происшествий, то кладем в список значений "всего" и "в обработке", что бы сравнить и их
+            if (oldReportsMap.get(report)!!.contains("Всего")){
+                validatedValues.add(report)
+            }
+            if (oldReportsMap.get(report)!!.contains("В обработке")){
+                validatedValues.add("В обработке")
+            }
         }
         reportList.forEach{report ->
             validatedValues.forEach{assertionsValue ->

@@ -80,7 +80,7 @@ class CleanUp : BaseTest(){
                         //ждем исчезновения отчета, который удаляли
                         element(byXpath("//tbody/tr[$i]/td[1]//*[text()='$deletedReport']"))
                             .shouldNot(exist, ofSeconds(waitTime))
-                        Thread.sleep(300)
+                        Thread.sleep(1500)
                         // прерываем цикл for потому что таблица перестроилась после удаления отчета
                         break
                     }
