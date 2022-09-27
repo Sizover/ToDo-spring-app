@@ -80,7 +80,7 @@ class CleanUp : BaseTest(){
                         //ждем исчезновения отчета, который удаляли
                         element(byXpath("//tbody/tr[$i]/td[1]//*[text()='$deletedReport']"))
                             .shouldNot(exist, ofSeconds(waitTime))
-                        Thread.sleep(300)
+                        Thread.sleep(1500)
                         // прерываем цикл for потому что таблица перестроилась после удаления отчета
                         break
                     }
@@ -99,7 +99,7 @@ class CleanUp : BaseTest(){
 //        date = LocalDate.now().toString()
         date = LocalDate.now()
 //        val date2 = date.minusDays(7).toString()
-        val dateStart = LocalDate.now().minusDays(7).toString()
+        val dateStart = LocalDate.now().minusDays(14).toString()
         val dateEnd = LocalDate.now().toString()
         logonTool()
         //убедимся что мы за оператор:
