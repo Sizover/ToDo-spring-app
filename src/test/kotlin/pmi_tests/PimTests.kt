@@ -1302,6 +1302,7 @@ class PimTests : BaseTest(){
             element(byXpath("//h6[text()='Общие данные']/parent::form"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
+            shrinkCheckTool()
         //Thread.sleep(5000)
         }
     logoffTool()
