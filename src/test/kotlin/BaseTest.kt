@@ -15,8 +15,10 @@ import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
 import com.codeborne.selenide.Selenide.open
 import com.codeborne.selenide.WebDriverRunner
+import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import org.openqa.selenium.chrome.ChromeOptions
+import org.testng.asserts.Assertion
 import java.time.Duration.ofSeconds
 
 
@@ -409,9 +411,42 @@ open class BaseTest {
     }
 
 
-//    fun filterON(filterName: String, waitTime: Long){
-//    if (elements(byXpath("//span[text()='$filterName']/..")).size != 1){
-//
-//    }
-//    }
+    fun shrinkCheckTool()
+    //проверяем наплыв подписи на значение поля
+    {
+        Thread.sleep(500)
+//        Assertions.assertTrue(
+//            elements(byXpath("//label[@data-shrink]")).size ==
+//                (elements(byXpath("//input[@type='text']")).size +
+//                    elements(byXpath("//input[@type='number']")).size +
+//                    elements(byXpath("//input[contains(@class,'Select')]")).size)
+//        )
+        for (i in 1..elements(byXpath("//input[@type='text']")).size){
+            val shrinkStatus = element(byXpath("(//input[@type='text'])[$i]/parent::div/preceding-sibling::label")).getAttribute("data-shrink").toBoolean()
+            if (element(byXpath("(//input[@type='text'])[$i]")).getAttribute("value")!!.isNotEmpty()
+                || elements(byXpath("(//input[@type='text'])[$i]/preceding-sibling::div/span")).size > 0
+                || elements(byXpath("(//input[@type='text'])[$i]/preceding-sibling::span")).size > 0
+            ){
+                Assertions.assertTrue(shrinkStatus)
+            } else {Assertions.assertTrue(!shrinkStatus)}
+        }
+        for (i in 1..elements(byXpath("//input[@type='number']")).size){
+            val shrinkStatus = element(byXpath("(//input[@type='number'])[$i]/parent::div/preceding-sibling::label")).getAttribute("data-shrink").toBoolean()
+            if (element(byXpath("(//input[@type='number'])[$i]")).getAttribute("value")!!.isNotEmpty()){
+                Assertions.assertTrue(shrinkStatus)
+            } else {Assertions.assertTrue(!shrinkStatus)}
+        }
+        for (i in 1..elements(byXpath("//input[contains(@class,'Select')]")).size){
+            val shrinkStatus = element(byXpath("(//input[contains(@class,'Select')])[$i]/parent::div/preceding-sibling::label")).getAttribute("data-shrink").toBoolean()
+            if (element(byXpath("(//input[contains(@class,'Select')])[$i]")).getAttribute("value")!!.isNotEmpty()){
+                Assertions.assertTrue(shrinkStatus)
+            } else {Assertions.assertTrue(!shrinkStatus)}
+        }
+        for (i in 1..elements(byXpath("//textarea[@rows]")).size){
+            val shrinkStatus = element(byXpath("(//textarea[@rows])[$i]/parent::div/preceding-sibling::label")).getAttribute("data-shrink").toBoolean()
+            if (element(byXpath("(//textarea[@rows])[$i]")).ownText.isNotEmpty()){
+                Assertions.assertTrue(shrinkStatus)
+            } else {Assertions.assertTrue(!shrinkStatus)}
+        }
+    }
 }
