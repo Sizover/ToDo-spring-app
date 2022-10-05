@@ -277,7 +277,7 @@ class PimTests : BaseTest(){
         //проверяя что нам в принципе загрузило какую-то карточку
         element(byCssSelector("#simple-tabpanel-card")).should(exist, ofSeconds(waitTime))
         //что она в статусе "В обработке"
-        element(byCssSelector("button[style='min-width: 140px; white-space: nowrap;']"))
+        element(byCssSelector("button[style='min-width: 140px; white-space: nowrap; border-radius: 20px;']"))
             .shouldHave(text("В обработке"), ofSeconds(waitTime))
         //и что это именно так карточка которую мы только что создали
 //        element(byCssSelector("div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-md-8 > div:nth-child(4)"))
@@ -418,7 +418,7 @@ class PimTests : BaseTest(){
         //проверяя что нам в принципе загрузило какую-то карточку
         element(byCssSelector("#simple-tabpanel-card")).should(exist, ofSeconds(waitTime))
         //что она в статусе "В обработке"
-        element(byCssSelector("button[style='min-width: 140px; white-space: nowrap;']")).shouldHave(
+        element(byCssSelector("button[style='min-width: 140px; white-space: nowrap; border-radius: 20px;']")).shouldHave(
             text("В обработке"),
             ofSeconds(waitTime)
         ).shouldBe(visible, ofSeconds(waitTime))
@@ -844,7 +844,7 @@ class PimTests : BaseTest(){
         //проверяя что нам в принципе загрузило какую-то карточку
         element(byCssSelector("#simple-tabpanel-card")).should(exist, ofSeconds(waitTime))
         //что она в статусе "В обработке"
-        element(byCssSelector("button[style='min-width: 140px; white-space: nowrap;']")).shouldHave(
+        element(byCssSelector("button[style='min-width: 140px; white-space: nowrap; border-radius: 20px;']")).shouldHave(
             text("В обработке"),
             ofSeconds(waitTime)
         ).shouldBe(visible, ofSeconds(waitTime))
@@ -1138,7 +1138,7 @@ class PimTests : BaseTest(){
         element(byXpath("//h3[text()='Описание происшествия']/../following-sibling::div//p"))
             .shouldHave(text("AutoTest 112 $dateTime"), ofSeconds(waitTime))
         element(byCssSelector("div#panel1a-header")).shouldHave(text("Система-112"), ofSeconds(waitTime))
-        element(byCssSelector("button[style='min-width: 140px; white-space: nowrap;']"))
+        element(byCssSelector("button[style='min-width: 140px; white-space: nowrap; border-radius: 20px;']"))
             .shouldHave(text("В обработке"), ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
 
@@ -1976,21 +1976,6 @@ class PimTests : BaseTest(){
 //                )
         }
         Assertions.assertTrue(hotLineList.size == organizationList.size)
-
-
-
-
-
-//        //кликаем по иконке справочников
-//        element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//            .click()
-//        //переходим в нужный справочник
-//        element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul//div[@data-testid='app-menu-Должностные лица']"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//            .click()
         menuNavigation("Справочники","Должностные лица",waitTime)
         //ждем загрузки таблицы
         element(byCssSelector("main table>tbody"))

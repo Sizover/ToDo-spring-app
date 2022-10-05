@@ -207,7 +207,7 @@ class Reports : BaseTest(){
                 element(byCssSelector("#simple-tabpanel-card"))
                     .should(exist, ofSeconds(waitTime))
                 //что она в нужном статусе
-                element(byCssSelector("button[style='min-width: 140px; white-space: nowrap;']"))
+                element(byCssSelector("button[style='min-width: 140px; white-space: nowrap; border-radius: 20px;']"))
                     .shouldHave(text("В обработке"), ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
             }
@@ -475,19 +475,19 @@ class Reports : BaseTest(){
             }
             //что она в нужном статусе
             if (i < 4) {
-                element(byCssSelector("button[style='min-width: 140px; white-space: nowrap;']"))
+                element(byCssSelector("button[style='min-width: 140px; white-space: nowrap; border-radius: 20px;']"))
                     .shouldHave(text("В обработке"), ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
             } else if (i == 4) {
                 //закрываем одну карточку
-                element(byCssSelector("button[style='min-width: 140px; white-space: nowrap;']"))
+                element(byCssSelector("button[style='min-width: 140px; white-space: nowrap; border-radius: 20px;']"))
                     .shouldHave(text("В обработке"), ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
-                element(byCssSelector("button[style='min-width: 140px; white-space: nowrap;']")).click()
+                element(byCssSelector("button[style='min-width: 140px; white-space: nowrap; border-radius: 20px;']")).click()
                 element(byXpath("//span[text()='Закрыта']/parent::button"))
                     .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
                 element(byXpath("//span[text()='Закрыта']/parent::button")).click()
-                element(byCssSelector("button[style='min-width: 140px; white-space: nowrap;']"))
+                element(byCssSelector("button[style='min-width: 140px; white-space: nowrap; border-radius: 20px;']"))
                     .shouldHave(text("Закрыта"), ofSeconds(waitTime))
             }
             //и что это именно так карточка которую мы только что создали
@@ -762,7 +762,7 @@ class Reports : BaseTest(){
             element(byCssSelector("#simple-tabpanel-card"))
                 .should(exist, ofSeconds(waitTime))
             //что она в нужном статусе
-            element(byCssSelector("button[style='min-width: 140px; white-space: nowrap;']"))
+            element(byCssSelector("button[style='min-width: 140px; white-space: nowrap; border-radius: 20px;']"))
                 .shouldHave(text("В обработке"), ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
             //и что это именно так карточка которую мы только что создали
@@ -772,13 +772,13 @@ class Reports : BaseTest(){
             //стату "В обработке" не кликабелен для карточки в этом статусе.
             //попытка установить статус "Новая" может сработать, а может и не сработать, что ломает логику теста
             if ((i in (2..6)) && (i != 4)) {
-                element(byCssSelector("button[style='min-width: 140px; white-space: nowrap;']")).click()
+                element(byCssSelector("button[style='min-width: 140px; white-space: nowrap; border-radius: 20px;']")).click()
                 element(byCssSelector("div.MuiPaper-rounded>div.MuiGrid-spacing-xs-1>div:nth-child($i)>button"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                 element(byCssSelector("div.MuiPaper-rounded>div.MuiGrid-spacing-xs-1>div:nth-child($i)>button")).click()
                 //ждем загрузки нового статуса, а точнее есчезновения статуса "В обработке"
-                element(byCssSelector("button[style='min-width: 140px; white-space: nowrap;']"))
+                element(byCssSelector("button[style='min-width: 140px; white-space: nowrap; border-radius: 20px;']"))
                     .shouldNotHave(text("В обработке"), ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
             }
@@ -1643,7 +1643,7 @@ class Reports : BaseTest(){
             element(byCssSelector("#simple-tabpanel-card"))
                 .should(exist, ofSeconds(waitTime))
             //что она в нужном статусе
-            element(byCssSelector("button[style='min-width: 140px; white-space: nowrap;']"))
+            element(byCssSelector("button[style='min-width: 140px; white-space: nowrap; border-radius: 20px;']"))
                 .shouldHave(text("В обработке"), ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
             element(byXpath("//*[text()='Reports 0040, i=$i $dateTime $reportsMapKeysList']"))
@@ -2302,7 +2302,7 @@ class Reports : BaseTest(){
             element(byCssSelector("#simple-tabpanel-card"))
                 .should(exist, ofSeconds(waitTime))
             //что она в нужном статусе
-            element(byCssSelector("button[style='min-width: 140px; white-space: nowrap;']"))
+            element(byCssSelector("button[style='min-width: 140px; white-space: nowrap; border-radius: 20px;']"))
                 .shouldHave(text("В обработке"), ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
             element(byXpath("//*[text()='Reports 0040, i=$i $dateTime $reportsMapKeysList']"))
