@@ -184,7 +184,7 @@ class CleanUp : BaseTest(){
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
-                element(byCssSelector("button[style='min-width: 140px; white-space: nowrap;']"))
+                element(byCssSelector("button[style='min-width: 140px; white-space: nowrap; border-radius: 20px;']"))
                     .shouldHave(Condition.text("В обработке"), ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
             } else {

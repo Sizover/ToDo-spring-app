@@ -159,7 +159,7 @@ class Labels : BaseTest(){
         element(byCssSelector("#simple-tabpanel-card"))
             .should(exist, ofSeconds(waitTime))
         //что она в нужном статусе
-        element(byCssSelector("button[style='min-width: 140px; white-space: nowrap;']"))
+        element(byCssSelector("button[style='min-width: 140px; white-space: nowrap; border-radius: 20px;']"))
             .shouldHave(text("В обработке"), ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //и что это именно так карточка которую мы только что создали

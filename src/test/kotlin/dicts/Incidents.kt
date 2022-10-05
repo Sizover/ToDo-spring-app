@@ -100,7 +100,7 @@ class Incidents :BaseTest() {
         //проверяя что нам в принципе загрузило какую-то карточку
         element(byCssSelector("#simple-tabpanel-card")).should(exist, ofSeconds(waitTime))
         //что она в статусе "В обработке"
-        element(byCssSelector("button[style='min-width: 140px; white-space: nowrap;']"))
+        element(byCssSelector("button[style='min-width: 140px; white-space: nowrap; border-radius: 20px;']"))
             .shouldHave(text("В обработке"), ofSeconds(waitTime))
         //и что это именно так карточка которую мы только что создали
         element(byXpath("//div[text()='AutoTest INC 0010 inc $dateTime']/strong[text()='Дополнительная информация:']"))
@@ -111,6 +111,10 @@ class Incidents :BaseTest() {
                 .size
                 == 1
         )
+//        element(byCssSelector("button[style='min-width: 140px; white-space: nowrap; border-radius: 20px;']"))
+//            .scrollIntoView(true)
+        element(byXpath("//main//header//*[text()='Обращения']//ancestor::button"))
+            .scrollTo()
         element(byXpath("//main//header//*[text()='Обращения']//ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -184,7 +188,7 @@ class Incidents :BaseTest() {
         //проверяя что нам в принципе загрузило какую-то карточку
         element(byCssSelector("#simple-tabpanel-card")).should(exist, ofSeconds(waitTime))
         //что она в статусе "В обработке"
-        element(byCssSelector("button[style='min-width: 140px; white-space: nowrap;']"))
+        element(byCssSelector("button[style='min-width: 140px; white-space: nowrap; border-radius: 20px;']"))
             .shouldHave(text("В обработке"), ofSeconds(waitTime))
         //и что это именно так карточка которую мы только что создали
         element(byXpath("//div[text()='AutoTest INC 0010 inc $dateTime']/strong[text()='Дополнительная информация:']"))
