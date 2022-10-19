@@ -198,4 +198,163 @@ class PlayGround : BaseTest(){
         }
     }
 
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
+    fun `Черновик`() {
+        logonTool()
+        menuNavigation("Происшествия", "Создать карточку", waitTime)
+        element(byXpath("//*[text()='Создать карточку']/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        createICToolIsThreatPeople(true, "", "", "15", "", waitTime)
+        Thread.sleep(20000)
+    }
+
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
+    fun `Черновик2`() {
+        logonTool()
+        menuNavigation("Происшествия", "Список происшествий", waitTime)
+        element(byXpath("//table[@id='incidents']"))
+            .should(exist, ofSeconds(waitTime))
+        element(byXpath("//table[@id='incidents']/tbody/tr"))
+            .should(exist, ofSeconds(waitTime))
+            .click()
+
+//        updateICToolLabels(listOf("AutoTest.Child label", "хз", "random", "ТБО"), waitTime)
+        val labelsList = listOf("AutoTest.Child label", "хз", "random", "ТБО")
+
+        val availableLabelsList = mutableListOf<String>()
+        val unavailableLabelsList = mutableListOf<String>()
+        val randomLabelsList = mutableListOf<String>()
+        element(byXpath("//div[@id='labels']//h3[text()='Метки']/following-sibling::span//*[text()='Изменить']/ancestor::button"))
+            .click()
+        element(byXpath("//div[@id='labels']//h3[text()='Метки']/following-sibling::span//*[text()='Изменить']/ancestor::button"))
+            .shouldNot(exist, ofSeconds(waitTime))
+        element(byXpath("//div[@id='labels']//*[text()='Добавить']/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byXpath("//div[@role='presentation']//div[@data-testid='labelsId' and @role='combobox']"))
+            .should(exist, ofSeconds(waitTime))
+        element(byXpath("//div[@role='presentation']//div[@data-testid='labelsId']//button[@aria-label='Open']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byXpath("//div[@role='presentation']//div[@data-testid='labelsId']//button[@aria-label='Close']"))
+            .should(exist, ofSeconds(waitTime))
+        if (elements(byXpath("//body//div[@role='presentation']//li[1]//*[@name='arrowRight']")).size > 0) {
+            element(byXpath("//div[@role='presentation']/div/ul/li[1]/div"))
+                .should(exist, ofSeconds(waitTime))
+                .click()
+            element(byXpath("//body//div[@role='presentation']//li[1]//*[@name='arrowDown']"))
+                .should(exist, ofSeconds(waitTime))
+            Thread.sleep(500)
+        }
+        val count = elements(byXpath("//div[@role='presentation']/div/ul/li")).size
+//        for (i in 1..count ){
+//            if (elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[text()]")).size == 1){
+//                if (elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[name()='svg' and @name='checkboxNormal']")).size == 1){
+//                    availableLabelsList.add(element(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[text()]")).ownText)
+//                } else if (elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[name()='svg' and @name='checkboxExpanded']")).size == 1){
+//                    unavailableLabelsList.add(element(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[text()]")).ownText)
+//                }
+//            }
+//        }
+//        element(byXpath("//div[@role='presentation']//div[@data-testid='labelsId']//button[@aria-label='Close']"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+//            .click()
+
+        labelsList.forEachIndexed(){index, label ->
+            if (index != 0) {
+                element(byXpath("//div[@role='presentation']//div[@data-testid='labelsId']//button[@aria-label='Open']"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .click()
+                element(byXpath("//div[@role='presentation']//div[@data-testid='labelsId']//button[@aria-label='Close']"))
+                    .should(exist, ofSeconds(waitTime))
+            }
+            for (i in 1..count ){
+                if (elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[text()]")).size == 1){
+                    if (elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[name()='svg' and @name='checkboxNormal']")).size == 1){
+                        availableLabelsList.add(element(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[text()]")).ownText)
+                    } else if (elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[name()='svg' and @name='checkboxExpanded']")).size == 1){
+                        unavailableLabelsList.add(element(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[text()]")).ownText)
+                    }
+                }
+            }
+            if (label == "random" && availableLabelsList.isNotEmpty()){
+                val selectedLabel = availableLabelsList.random()
+                element(byXpath("//div[@role='presentation']//*[text()='$selectedLabel']/ancestor::li"))
+                    .click()
+                element(byXpath("//div[@role='presentation']//*[text()='Добавить']/ancestor::button"))
+                    .click()
+                element(byXpath("//div[@id='labels']//span//*[text()='$selectedLabel']"))
+                    .should(exist, ofSeconds(waitTime))
+                randomLabelsList.add(selectedLabel)
+            } else if (availableLabelsList.contains(label)){
+                element(byXpath("//div[@role='presentation']//*[text()='$label']/ancestor::li"))
+                    .click()
+                element(byXpath("//div[@role='presentation']//*[text()='Добавить']/ancestor::button"))
+                    .click()
+                element(byXpath("//div[@id='labels']//span//*[text()='$label']"))
+                    .should(exist, ofSeconds(waitTime))
+            }
+            availableLabelsList.clear()
+            unavailableLabelsList.clear()
+        }
+        element(byXpath("//div[@role='presentation']//*[text()='Отменить']/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byXpath("//div[@id='labels']//*[text()='Сохранить']/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        labelsList.filter { it != "random" }
+        val finishLabelList = (labelsList.filter { it != "random" } + randomLabelsList).toList()
+        finishLabelList.forEach{
+            element(byXpath("//div[@id='labels']//*[text()='$it']/ancestor::span[@title]"))
+                .should(exist, ofSeconds(waitTime))
+        }
+
+
+//        element(byXpath("//div[@id='labels']//h3[text()='Метки']/following-sibling::span//*[text()='Изменить']/ancestor::button"))
+//            .click()
+//        element(byXpath("//div[@id='labels']//h3[text()='Метки']/following-sibling::span//*[text()='Изменить']/ancestor::button"))
+//            .shouldNot(exist, ofSeconds(waitTime))
+//        element(byXpath("//div[@id='labels']//*[text()='Добавить']/ancestor::button"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+//            .click()
+//        element(byXpath("//div[@role='presentation']//div[@data-testid='labelsId' and @role='combobox']"))
+//            .should(exist, ofSeconds(waitTime))
+//        element(byXpath("//div[@role='presentation']//div[@data-testid='labelsId']//button[@aria-label='Open']"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+//            .click()
+//        if (elements(byXpath("//body//div[@role='presentation']//li[1]//*[@name='arrowRight']")).size > 0) {
+//            element(byXpath("//div[@role='presentation']/div/ul/li[1]/div"))
+//                .should(exist, ofSeconds(waitTime))
+//                .click()
+//            Thread.sleep(500)
+//        }
+
+//        println(elements(byXpath("//div[@role='presentation']/div[1]/ul/li[1]/div/*/*")))
+//        println(elements(byXpath("//div[@role='presentation']/div[1]/ul/li[2]//*")))
+//        println(elements(byXpath("//div[@role='presentation']/div[1]/ul/li[2]/div[2]/div/*[name()='span']/div//*")))
+//        println(elements(byXpath("//div[@role='presentation']/div[1]/ul/li[3]/div[1]/div/*")))
+//        println(elements(byXpath("//div[@role='presentation']/div[1]/ul/li[3]/div[2]/div/*")))
+//        println(elements(byXpath("//div[@role='presentation']/div[1]/ul/li[4]/div[1]/div/*")))
+//        println(elements(byXpath("//div[@role='presentation']/div[1]/ul/li[4]/div[2]/div/*")))
+//        println(elements(byXpath("//div[@role='presentation']/div[3]/div/div[1]/div/*")))
+//        println(elements(byXpath("//div[@role='presentation']/div[3]/div/div[2]/button[1]/*[name()='span'][1]/*")))
+//        println(elements(byXpath("//div[@role='presentation']/div[3]/div/div[2]/button[1]/*[name()='span'][2]/*")))
+//        println(elements(byXpath("//div[@role='presentation']/div[3]/div/div[2]/button[2]/*[name()='span'][1]/*")))
+//        println(elements(byXpath("//div[@role='presentation']/div[3]/div/div[2]/button[2]/*[name()='span'][2]/*")))
+//        println(elements(byXpath("//div[@role='presentation']/div[4]/*")))
+//        println(elements(byXpath("//div[@role='presentation']/div[5]/*")))
+
+    }
+
 }

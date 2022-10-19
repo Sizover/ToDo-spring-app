@@ -166,7 +166,7 @@ class Labels : BaseTest(){
         element(byCssSelector("div#panel1a-content div[style='gap: 16px 0px;']>div:nth-child(5)"))
             .shouldHave(text("AutoTest T 0010 $dateTime"), ofSeconds(waitTime))
         createdLabel.forEach {
-            element(byXpath(" //span[contains(text(),'$it')]"))
+            element(byXpath("//div[@id='labels']//*[contains(text(),'$it')]"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
         }
