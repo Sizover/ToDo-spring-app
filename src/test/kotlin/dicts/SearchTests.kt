@@ -54,6 +54,29 @@ class SearchTests : BaseTest(){
         val placeohlderList = element(byXpath("//*[@name='search']/following-sibling::input"))
             .getAttribute("placeholder")!!
             .split(", ")
+        element(byXpath("//*[@name='search']/following-sibling::input"))
+            .sendKeys("AT_", Keys.ENTER)
+        Thread.sleep(1000)
+        if (elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size != 0 ){
+
+        }
+        while (elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size == 0){
+            val elName = element(byXpath("//table/tbody/tr[1]/td[1]//text()/..")).ownText
+            element(byXpath("//table/tbody/tr[1]/td[last()]//button"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+            element(byXpath("//div[@role='presentation']//*[text()='Удалить']/ancestor::button"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+            element(byXpath("//div[@role='presentation']//div[@role='dialog']//*[text()='Удалить']/ancestor::button"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+            element(byXpath("//table/tbody/tr[1]/td[1]//text()/parent::*[text()='$elName']"))
+                .shouldNot(exist, ofSeconds(waitTime))
+        }
         //жмем добавить
         element(byXpath("//*[contains(text(),'Добавить ')]/ancestor::button"))
             .should(exist, ofSeconds(waitTime))

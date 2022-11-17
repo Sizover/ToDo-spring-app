@@ -480,6 +480,7 @@ open class BaseTest {
             .should(exist, ofSeconds(waitTime))
 //            .shouldBe(visible, ofSeconds(waitTime))
         if (clickButton){
+            Thread.sleep(300)
             element(byXpath("//div[@role='alert']//*[@name='snackbarClose']/ancestor::button"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
