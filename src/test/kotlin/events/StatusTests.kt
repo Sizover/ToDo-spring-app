@@ -64,8 +64,7 @@ open class StatusTests : BaseTest(){
             //проверяя что нам в принципе загрузило какую-то карточку
         element(byCssSelector("#simple-tabpanel-card")).should(exist, ofSeconds(waitTime))
             //что она в статусе "В обработке"
-        element(byCssSelector("button[style='min-width: 140px; white-space: nowrap; border-radius: 20px;']"))
-            .shouldHave(text("В обработке"), ofSeconds(waitTime))
+        checkICToolIsStatus("В обработке", waitTime)
             //и что это именно так карточка которую мы только что создали
 //        element(byCssSelector("div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-md-8 > div:nth-child(4)"))
 //            .shouldHave(text("AutoTest N 0110 $dateTime"), ofSeconds(waitTime))
@@ -87,8 +86,9 @@ open class StatusTests : BaseTest(){
             //p[text()='ДДС ЭОС']/../../../..
             //Thread.sleep(10000)
         val ddsSelector =
-            "//*[text()='%s']/ancestor::div[@class='MuiGrid-root MuiGrid-item']/following-sibling::div/label//input"
-        val ddsCheckboxSelector = "//*[text()='%s']/ancestor::div[@class='MuiGrid-root MuiGrid-item']/following-sibling::div/label//*[name()='svg']"
+            "//*[text()='%s']/ancestor::div/div/label//input"
+//        val ddsCheckboxSelector = "//*[text()='%s']/ancestor::div[@class='MuiGrid-root MuiGrid-item']/following-sibling::div/label//*[name()='svg']"
+        val ddsCheckboxSelector = "//*[text()='%s']/ancestor::div/div/label//*[name()='svg']"
 //            element(byXpath(ddsSelector.format("AutoTest dds-01 1"))).click()
 //            element(byXpath(ddsSelector.format("AutoTest dds-01 2"))).click()
         //Выбирает и назначаем ДДС

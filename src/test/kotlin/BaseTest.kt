@@ -279,16 +279,32 @@ open class BaseTest {
             val count = elements(byXpath("//div[@role='presentation']/div/ul/li")).size
             for (i in 1..count ){
                 if (elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[text()]")).size == 1){
-                    if ((elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[name()='svg']")).size == 0)
-                        || parentInclusive){
+                    if (
+                        ((elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[contains(@name,'arrow')]")).size == 0)
+                        ||
+                        parentInclusive)
+                        &&
+                        elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[@name='checkboxFocus']")).size == 0){
                         incTypes.add(element(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[text()]")).ownText)
                     }
                 }
             }
-//            val rndInputValueIndex = (0 until incTypes.size).random()
-            element(byXpath("//input[@name='$inputName']")).sendKeys(incTypes.random(), Keys.DOWN, Keys.ENTER)
-//            element(byXpath("//input[@name='$inputName']")).sendKeys(incTypes[rndInputValueIndex])
-//            element(byXpath("//input[@name='$inputName']")).sendKeys(Keys.DOWN, Keys.ENTER)
+            val incTypesRandom = incTypes.random()
+            element(byXpath("//div[@role='presentation']/div/ul//*[text()='$incTypesRandom']/ancestor::li"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+            while ((elements(byXpath("//div[@role='presentation']/div/ul//*[text()='$incTypesRandom']/ancestor::li//*[@name='checkboxFocus']")).size == 0)
+                &&
+                (elements(byCssSelector("div[role='presentation']")).size > 0)) {
+                element(byXpath("//div[@role='presentation']/div/ul//*[text()='$incTypesRandom']/ancestor::li"))
+                    .click()
+                Thread.sleep(100)
+                }
+//            element(byCssSelector("input[name='$inputName']")).sendKeys(incTypes.random(), Keys.DOWN, Keys.ENTER)
+            if (elements(byCssSelector("div[role='presentation']")).size > 0){
+                element(byCssSelector("input[name='$inputName']"))
+                    .click()
+            }
         } else {
             var countInputString = 0
             do {
@@ -453,6 +469,25 @@ open class BaseTest {
         }
     }
 
+
+
+    fun checkGreenAlert(text: String, clickButton: Boolean, waitTime: Long){
+        //Проверяем зеленую всплывашку
+        element(byXpath("//div[@role='alert']//*[@name='snackbarSuccess']"))
+            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//div[@role='alert']//*[text()='$text']"))
+            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+        if (clickButton){
+            element(byXpath("//div[@role='alert']//*[@name='snackbarClose']/ancestor::button"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+        }
+        Thread.sleep(300)
+    }
+
     //Что бы не править каждый тест, перевевожу создание и проверку полей КП на абстрактные методы для каждого поля
     fun createIcToolCalltype(calltype: String, waitTime: Long){
         element(byCssSelector("div#calltype"))
@@ -462,7 +497,7 @@ open class BaseTest {
         element(byCssSelector("div[role='presentation'] ul[aria-labelledby='calltype-label']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        if (calltype == "random"){
+        if (calltype == "random" || calltype.isEmpty()){
             elements(byCssSelector("div[role='presentation'] ul[aria-labelledby='calltype-label'] > li"))
                 .random()
                 .click()
@@ -480,7 +515,7 @@ open class BaseTest {
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
                 .click()
-            if (phone == "random") {
+            if (phone == "random" || phone.isEmpty()) {
                 val telNumber = (100000000..999999999).random().toString()
                 element(byCssSelector("input#phone"))
                     .sendKeys("+79$telNumber")
@@ -570,6 +605,12 @@ open class BaseTest {
         }
     }
 
+    fun createICToolsDopInfo(dopInfo: String, waitTime: Long){
+        element(byCssSelector("div[role='textbox']>p")).click()
+        element(byCssSelector("div[role='textbox']"))
+            .sendKeys(dopInfo)
+    }
+
 //    fun createICToolIsLabels(label: String, waitTime: Long){
 //        element(byXpath("//div[@data-testid='labelsId']//button[@title='Open']"))
 //            .should(exist, ofSeconds(waitTime))
@@ -578,14 +619,19 @@ open class BaseTest {
 //        if (){}
 //    }
 
-    fun checkICToolIsStatus(status: String, waitTime: Long): Boolean {
+    fun checkICToolIsStatus(status: String, waitTime: Long) {
         elements(byXpath("//div[@id='incidentButtons']//button"))
             .shouldHave(CollectionCondition.size(2))
-        return element(byXpath("//div[@id='incidentButtons']//button[1]//*[text()]")).ownText == status
+        element(byXpath("//div[@id='incidentButtons']//button[1]//*[text()='$status']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
     }
 
-    fun checkICToolsDopInfo(dopInfo: String, waitTime: Long): Boolean {
-        return element(byXpath("//strong[text()='Дополнительная информация:']/parent::div")).ownText == dopInfo
+    fun checkICToolsDopInfo(dopInfo: String, waitTime: Long) {
+        element(byXpath("//strong[text()='Дополнительная информация:']/parent::div[text()='$dopInfo']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+
     }
 
     fun updateICToolLabels(labelsList: List<String>, waitTime: Long){
@@ -684,6 +730,38 @@ open class BaseTest {
                 .should(exist, ofSeconds(waitTime))
         }
 
+    }
+
+    fun updateICToolStatus(iCStatus: String, waitTime: Long){
+        if (element(byXpath("//div[@id='incidentButtons']//button[1]//text()/..")).ownText != iCStatus) {
+            element(byXpath("//div[@id='incidentButtons']//button[1]"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+            element(byXpath("//div[@role='presentation']"))
+                .should(exist, ofSeconds(waitTime))
+            if (iCStatus.isNotEmpty()) {
+                element(byXpath("//div[@role='presentation']//*[text()='$iCStatus']/ancestor::button[not (@disabled)]"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .click()
+                element(byXpath("//div[@role='presentation']"))
+                    .shouldNot(exist, ofSeconds(waitTime))
+                element(byXpath("//div[@id='incidentButtons']//button[1]//*[text()='$iCStatus']"))
+                    .should(exist, ofSeconds(waitTime))
+            } else {
+                val rndSt = elements(byXpath("//div[@role='presentation']//*[not(text()='Новая')]/ancestor::button[not (@disabled)]//text()/.."))
+                    .random().ownText
+                element(byXpath("//div[@role='presentation']//*[text()='$rndSt']/ancestor::button[not (@disabled)]"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .click()
+                element(byXpath("//div[@role='presentation']"))
+                    .shouldNot(exist, ofSeconds(waitTime))
+                element(byXpath("//div[@id='incidentButtons']//button[1]//*[text()='$rndSt']"))
+                    .should(exist, ofSeconds(waitTime))
+            }
+        }
     }
 
 
