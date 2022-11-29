@@ -198,4 +198,128 @@ class PlayGround : BaseTest(){
         }
     }
 
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
+    fun `Черновик`() {
+        logonTool()
+        menuNavigation("Происшествия", "Создать карточку", waitTime)
+        element(byXpath("//*[text()='Создать карточку']/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        createICToolIsThreatPeople(true, "", "", "15", "", waitTime)
+        Thread.sleep(20000)
+    }
+
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
+    fun `Черновик2`() {
+        logonTool()
+        menuNavigation("Отчеты", "По происшествиям", waitTime)
+        element(byXpath("//*[text()='Создать отчет']/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        addressInput("address", "Карачаево-Черкесская Респ, г Карачаевск", waitTime)
+        element(byXpath("//*[text()='Определить адрес']"))
+            .should(exist, ofSeconds(waitTime))
+        Thread.sleep(10000)
+        println("width = ")
+        println(element(byXpath("//*[text()='Определить адрес']")).getCssValue("width"))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        element(byXpath("//form[@novalidate]"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//*[text()='Создать карточку']/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byXpath("//div[@data-testid='incidentTypeId']//input[@id='incidentTypeId-autocomplete']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byXpath("//div[@role='presentation']"))
+            .should(exist, ofSeconds(waitTime))
+        element(byXpath("//div[@role='presentation']/div/ul/li[1]/div"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        Thread.sleep(1000)
+        element(byXpath("//div[@role='presentation']/div/ul//*[text()='П.1.1.1 Авиационное происшествие']/ancestor::li"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        Thread.sleep(1000)
+        element(byXpath("//div[@data-testid='incidentTypeId']//input[@id='incidentTypeId-autocomplete']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        Thread.sleep(1000)
+        println(elements(byXpath("//div[@role='presentation']/div/ul/li[1]/div/*")))
+        println(elements(byXpath("//div[@role='presentation']/div/ul/li[2]/div[1]/*")))
+        println(elements(byXpath("//div[@role='presentation']/div/ul/li[2]/div[2]/*")))
+        println(elements(byXpath("//div[@role='presentation']/div/ul/li[2]/div[3]/*")))
+        println(elements(byXpath("//div[@role='presentation']/div/ul/li[3]/div[1]/*")))
+        println(elements(byXpath("//div[@role='presentation']/div/ul/li[3]/div[2]/*")))
+        println(elements(byXpath("//div[@role='presentation']/div/ul/li[3]/div[3]/*")))
+        println(elements(byXpath("//div[@role='presentation']/div/ul/li[4]/div[1]/*")))
+        println(elements(byXpath("//div[@role='presentation']/div/ul/li[4]/div[1]/div/*")))
+        println(elements(byXpath("//div[@role='presentation']/div/ul/li[4]/div[2]/*")))
+        println(elements(byXpath("//div[@role='presentation']/div/ul/li[4]/div[3]/*")))
+        println(elements(byXpath("//div[@role='presentation']/div/ul/li[5]/div[1]/*")))
+        println(elements(byXpath("//div[@role='presentation']/div/ul/li[5]/div[2]/*")))
+        println(elements(byXpath("//div[@role='presentation']/div/ul/li[5]/div[3]/*")))
+//        println(elements(byXpath("//div[@role='presentation']//*")))
+
+    }
+
+//    elements(byXpath("//table/tbody/tr[$str]/td[$col][text()]")).let { path1 ->
+//        if (path1.size == 1 && path1.get(0).ownText.trim().isNotEmpty()) {
+//            path1[0].ownText.trim()
+//        }
+//    }                                    }
+//
+//}
+//
+//val path1 = byXpath("//table/tbody/tr[$str]/td[$col]//*[text()]")
+//val path2 = byXpath("//table/tbody/tr[$str]/td[$col]//*[text(sdfasdf)]")
+//
+//if ((elements(path1)).size == 1)
+//&& (element(path1).ownText.trim()
+//.isNotEmpty())) {
+//    trueValueList.add(element(path1).ownText.trim())
+//
+//                                    if ((elements(byXpath("//table/tbody/tr[$str]/td[$col][text()]")).size == 1)
+//                                        && (element(byXpath("//table/tbody/tr[$str]/td[$col][text()]")).ownText.trim()
+//                                            .isNotEmpty())) {
+//                                            trueValueList.add(element(byXpath("//table/tbody/tr[$str]/td[$col][text()]")).ownText.trim())
+//                                    } else if ((elements(byXpath("//table/tbody/tr[$str]/td[$col]//*[text()]")).size == 1)
+//                                        &&(element(byXpath("//table/tbody/tr[$str]/td[$col]//*[text()]")).ownText.trim()
+//                                            .isNotEmpty())) {
+//                                            trueValueList.add(element(byXpath("//table/tbody/tr[$str]/td[$col]//*[text()]")).ownText.trim())
+//                                    }
+
+//}
+
+
+//    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
+//    fun main() {
+//        val length = "test4321".with() {
+//            println(this)
+//            this.length
+//        }
+//        println(length)
+//    }
+
 }

@@ -99,7 +99,7 @@ class CleanUp : BaseTest(){
 //        date = LocalDate.now().toString()
         date = LocalDate.now()
 //        val date2 = date.minusDays(7).toString()
-        val dateStart = LocalDate.now().minusDays(14).toString()
+        val dateStart = LocalDate.now().minusDays(50).toString()
         val dateEnd = LocalDate.now().toString()
         logonTool()
         //убедимся что мы за оператор:
@@ -156,8 +156,8 @@ class CleanUp : BaseTest(){
         element(byXpath("//span[text()='Применить']/parent::button")).click()
         Thread.sleep(2500)
         //устанавливаем фильтр по дате регистрации
-        if (elements(byXpath("//span[text()='Регистрация']/parent::button")).size == 1){
-            element(byXpath("//span[text()='Регистрация']/parent::button")).click()
+        if (elements(byXpath("//span[text()='Дата регистрации']/parent::button")).size == 1){
+            element(byXpath("//span[text()='Дата регистрации']/parent::button")).click()
         } else {
             element(byXpath("//span[contains(text(),'Еще фильтры')]/parent::button")).click()
         }
@@ -184,9 +184,14 @@ class CleanUp : BaseTest(){
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
-                element(byCssSelector("button[style='min-width: 140px; white-space: nowrap; border-radius: 20px;']"))
-                    .shouldHave(Condition.text("В обработке"), ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
+                try {
+                    checkICToolIsStatus("В обработке", waitTime)
+                } catch (_:  Throwable) {
+                }
+//                checkICToolIsStatus("В обработке", waitTime)
+//                element(byCssSelector("button[style='min-width: 140px; white-space: nowrap; border-radius: 20px;']"))
+//                    .shouldHave(Condition.text("В обработке"), ofSeconds(waitTime))
+//                    .shouldBe(visible, ofSeconds(waitTime))
             } else {
                 element(byXpath("//table/tbody/tr[1]"))
                     .should(exist, ofSeconds(waitTime))

@@ -1,5 +1,7 @@
 //import kotlin.collections.EmptyMap.keys
 import com.codeborne.selenide.Browsers.CHROME
+import com.codeborne.selenide.CollectionCondition
+import com.codeborne.selenide.Condition
 import com.codeborne.selenide.Condition.attribute
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.visible
@@ -19,6 +21,7 @@ import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import org.openqa.selenium.chrome.ChromeOptions
 import org.testng.asserts.Assertion
+import java.time.Duration
 import java.time.Duration.ofSeconds
 
 
@@ -276,16 +279,32 @@ open class BaseTest {
             val count = elements(byXpath("//div[@role='presentation']/div/ul/li")).size
             for (i in 1..count ){
                 if (elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[text()]")).size == 1){
-                    if ((elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[name()='svg']")).size == 0)
-                        || parentInclusive){
+                    if (
+                        ((elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[contains(@name,'arrow')]")).size == 0)
+                        ||
+                        parentInclusive)
+                        &&
+                        elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[@name='checkboxFocus']")).size == 0){
                         incTypes.add(element(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[text()]")).ownText)
                     }
                 }
             }
-//            val rndInputValueIndex = (0 until incTypes.size).random()
-            element(byXpath("//input[@name='$inputName']")).sendKeys(incTypes.random(), Keys.DOWN, Keys.ENTER)
-//            element(byXpath("//input[@name='$inputName']")).sendKeys(incTypes[rndInputValueIndex])
-//            element(byXpath("//input[@name='$inputName']")).sendKeys(Keys.DOWN, Keys.ENTER)
+            val incTypesRandom = incTypes.random()
+            element(byXpath("//div[@role='presentation']/div/ul//*[text()='$incTypesRandom']/ancestor::li"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+            while ((elements(byXpath("//div[@role='presentation']/div/ul//*[text()='$incTypesRandom']/ancestor::li//*[@name='checkboxFocus']")).size == 0)
+                &&
+                (elements(byCssSelector("div[role='presentation']")).size > 0)) {
+                element(byXpath("//div[@role='presentation']/div/ul//*[text()='$incTypesRandom']/ancestor::li"))
+                    .click()
+                Thread.sleep(100)
+                }
+//            element(byCssSelector("input[name='$inputName']")).sendKeys(incTypes.random(), Keys.DOWN, Keys.ENTER)
+            if (elements(byCssSelector("div[role='presentation']")).size > 0){
+                element(byCssSelector("input[name='$inputName']"))
+                    .click()
+            }
         } else {
             var countInputString = 0
             do {
@@ -449,4 +468,317 @@ open class BaseTest {
             } else {Assertions.assertTrue(!shrinkStatus)}
         }
     }
+
+
+
+    fun checkGreenAlert(text: String, clickButton: Boolean, waitTime: Long){
+        //Проверяем зеленую всплывашку
+        element(byXpath("//div[@role='alert']//*[@name='snackbarSuccess']"))
+            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//div[@role='alert']//*[text()='$text']"))
+            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+        if (clickButton){
+            Thread.sleep(300)
+            element(byXpath("//div[@role='alert']//*[@name='snackbarClose']/ancestor::button"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+        }
+        Thread.sleep(300)
+    }
+
+    //Что бы не править каждый тест, перевевожу создание и проверку полей КП на абстрактные методы для каждого поля
+    fun createIcToolCalltype(calltype: String, waitTime: Long){
+        element(byCssSelector("div#calltype"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byCssSelector("div[role='presentation'] ul[aria-labelledby='calltype-label']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        if (calltype == "random" || calltype.isEmpty()){
+            elements(byCssSelector("div[role='presentation'] ul[aria-labelledby='calltype-label'] > li"))
+                .random()
+                .click()
+        } else {
+            element(byXpath("//div[@role='presentation']//ul[@aria-labelledby='calltype-label']/li[text()='$calltype']"))
+                .click()
+        }
+        element(byCssSelector("div[role='presentation'] ul[aria-labelledby='calltype-label']"))
+            .shouldNot(exist, ofSeconds(waitTime))
+    }
+
+    fun createICToolPhone(phone: String, waitTime: Long){
+        if (elements(byCssSelector("input#phone")).size == 1) {
+            element(byCssSelector("input#phone"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+            if (phone == "random" || phone.isEmpty()) {
+                val telNumber = (100000000..999999999).random().toString()
+                element(byCssSelector("input#phone"))
+                    .sendKeys("+79$telNumber")
+            } else {
+                element(byCssSelector("input#phone"))
+                    .sendKeys(phone)
+            }
+        }
+    }
+
+    fun createICToolLanguage(language: String, waitTime: Long){
+        element(byCssSelector("div#calltype"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byCssSelector("div[role='presentation'] ul[aria-labelledby='calltype-label']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        if (language == "random"){
+            elements(byCssSelector("div[role='presentation'] ul[aria-labelledby='language-label'] > li"))
+                .random()
+                .click()
+        } else {
+            element(byXpath("//div[@role='presentation']//ul[@aria-labelledby='language-label']/li[text()='$language']"))
+                .click()
+        }
+        element(byCssSelector("div[role='presentation'] ul[aria-labelledby='language-label']"))
+            .shouldNot(exist, ofSeconds(waitTime))
+    }
+
+    fun createICToolFIO(lastname: String, firstname: String, middlename: String, waitTime: Long){
+        if (elements(byCssSelector("input[id^=fio]")).size == 3){
+            if (lastname.isNotEmpty()){
+                element(byCssSelector("input[id='fio.lastname']"))
+                    .click()
+                element(byCssSelector("input[id='fio.lastname']"))
+                    .sendKeys(lastname)
+            }
+            if (lastname.isNotEmpty()){
+                element(byCssSelector("input[id='fio.firstname']"))
+                    .click()
+                element(byCssSelector("input[id='fio.firstname']"))
+                    .sendKeys(firstname)
+            }
+            if (lastname.isNotEmpty()){
+                element(byCssSelector("input[id='fio.middlename']"))
+                    .click()
+                element(byCssSelector("input[id='fio.middlename']"))
+                    .sendKeys(middlename)
+            }
+            elements(byXpath("//input[contains(@id,'fio.')]/parent::div[contains(@class,'error')]"))
+                .should(CollectionCondition.size(0), ofSeconds(waitTime))
+        }
+    }
+
+
+    fun createICToolIsThreatPeople(isThreatPeople: Boolean, victimsCount: String, victimsChildren: String, deathToll: String, deathChildren: String, waitTime: Long){
+        val inputslist : List<List<String>> = listOf(listOf("victimsCount", victimsCount), listOf("victimsChildren", victimsChildren), listOf("deathToll", deathToll), listOf("deathChildren", deathChildren))
+        element(byCssSelector("input#isThreatPeople"))
+            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+        //сначала проверяем и меняем при необходимости состояние чекбокса угороз
+        if (element(byCssSelector("input#isThreatPeople")).getAttribute("value").toBoolean() != isThreatPeople){
+            var checkboxCondition = element(byCssSelector("input#isThreatPeople")).getAttribute("value").toBoolean()
+            while (checkboxCondition != isThreatPeople) {
+                element(byCssSelector("input#isThreatPeople"))
+                    .click()
+                Thread.sleep(100)
+                checkboxCondition = element(byCssSelector("input#isThreatPeople")).getAttribute("value").toBoolean()
+            }
+        }
+        if (isThreatPeople) {
+            inputslist.forEach{input ->
+                if (input[1].isNotEmpty()) {
+                    if (element(byCssSelector("input#${input[0]}")).getAttribute("value")!!.isNotEmpty()
+                        && element(byCssSelector("input#${input[0]}")).getAttribute("value") != input[1]) {
+                        element(byCssSelector("input#${input[0]}")).click()
+                        element(byCssSelector("input#${input[0]}")).sendKeys(Keys.END)
+                        repeat(element(byCssSelector("input#${input[0]}")).getAttribute("value")!!.length){
+                            element(byCssSelector("input#${input[0]}")).sendKeys(Keys.BACK_SPACE)
+                        }
+                    }
+                    element(byCssSelector("input#${input[0]}")).sendKeys(input[1])
+                    Assertions.assertTrue(element(byCssSelector("input#${input[0]}")).getAttribute("value") == input[1])
+                }
+            }
+        }
+    }
+
+    fun createICToolsDopInfo(dopInfo: String, waitTime: Long){
+        element(byCssSelector("div[role='textbox']>p")).click()
+        element(byCssSelector("div[role='textbox']"))
+            .sendKeys(dopInfo)
+    }
+
+//    fun createICToolIsLabels(label: String, waitTime: Long){
+//        element(byXpath("//div[@data-testid='labelsId']//button[@title='Open']"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+//            .click()
+//        if (){}
+//    }
+
+    fun checkICToolIsStatus(status: String, waitTime: Long) {
+        elements(byXpath("//div[@id='incidentButtons']//button"))
+            .shouldHave(CollectionCondition.size(2))
+        element(byXpath("//div[@id='incidentButtons']//button[1]//*[text()='$status']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+    }
+
+    fun checkICToolsDopInfo(dopInfo: String, waitTime: Long) {
+        element(byXpath("//strong[text()='Дополнительная информация:']/parent::div[text()='$dopInfo']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+
+    }
+
+    fun updateICToolLabels(labelsList: List<String>, waitTime: Long){
+        val availableLabelsList = mutableListOf<String>()
+        val unavailableLabelsList = mutableListOf<String>()
+        val randomLabelsList = mutableListOf<String>()
+        element(byXpath("//div[@id='labels']//h3[text()='Метки']/following-sibling::span//*[text()='Изменить']/ancestor::button"))
+            .click()
+        element(byXpath("//div[@id='labels']//h3[text()='Метки']/following-sibling::span//*[text()='Изменить']/ancestor::button"))
+            .shouldNot(exist, ofSeconds(waitTime))
+        element(byXpath("//div[@id='labels']//*[text()='Добавить']/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byXpath("//div[@role='presentation']//div[@data-testid='labelsId' and @role='combobox']"))
+            .should(exist, ofSeconds(waitTime))
+        element(byXpath("//div[@role='presentation']//div[@data-testid='labelsId']//button[@aria-label='Open']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byXpath("//div[@role='presentation']//div[@data-testid='labelsId']//button[@aria-label='Close']"))
+            .should(exist, ofSeconds(waitTime))
+        if (elements(byXpath("//body//div[@role='presentation']//li[1]//*[@name='arrowRight']")).size > 0) {
+            element(byXpath("//div[@role='presentation']/div/ul/li[1]/div"))
+                .should(exist, ofSeconds(waitTime))
+                .click()
+            element(byXpath("//body//div[@role='presentation']//li[1]//*[@name='arrowDown']"))
+                .should(exist, ofSeconds(waitTime))
+            Thread.sleep(500)
+        }
+        val count = elements(byXpath("//div[@role='presentation']/div/ul/li")).size
+//        for (i in 1..count ){
+//            if (elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[text()]")).size == 1){
+//                if (elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[name()='svg' and @name='checkboxNormal']")).size == 1){
+//                    availableLabelsList.add(element(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[text()]")).ownText)
+//                } else if (elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[name()='svg' and @name='checkboxExpanded']")).size == 1){
+//                    unavailableLabelsList.add(element(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[text()]")).ownText)
+//                }
+//            }
+//        }
+//        element(byXpath("//div[@role='presentation']//div[@data-testid='labelsId']//button[@aria-label='Close']"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+//            .click()
+
+        labelsList.forEachIndexed(){index, label ->
+            if (index != 0) {
+                element(byXpath("//div[@role='presentation']//div[@data-testid='labelsId']//button[@aria-label='Open']"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .click()
+                element(byXpath("//div[@role='presentation']//div[@data-testid='labelsId']//button[@aria-label='Close']"))
+                    .should(exist, ofSeconds(waitTime))
+            }
+            for (i in 1..count ){
+                if (elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[text()]")).size == 1){
+                    if (elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[name()='svg' and @name='checkboxNormal']")).size == 1){
+                        availableLabelsList.add(element(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[text()]")).ownText)
+                    } else if (elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[name()='svg' and @name='checkboxExpanded']")).size == 1){
+                        unavailableLabelsList.add(element(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[text()]")).ownText)
+                    }
+                }
+            }
+            if (label == "random" && availableLabelsList.isNotEmpty()){
+                val selectedLabel = availableLabelsList.random()
+                element(byXpath("//div[@role='presentation']//*[text()='$selectedLabel']/ancestor::li"))
+                    .click()
+                element(byXpath("//div[@role='presentation']//*[text()='Добавить']/ancestor::button"))
+                    .click()
+                element(byXpath("//div[@id='labels']//span//*[text()='$selectedLabel']"))
+                    .should(exist, ofSeconds(waitTime))
+                randomLabelsList.add(selectedLabel)
+            } else if (availableLabelsList.contains(label)){
+                element(byXpath("//div[@role='presentation']//*[text()='$label']/ancestor::li"))
+                    .click()
+                element(byXpath("//div[@role='presentation']//*[text()='Добавить']/ancestor::button"))
+                    .click()
+                element(byXpath("//div[@id='labels']//span//*[text()='$label']"))
+                    .should(exist, ofSeconds(waitTime))
+            }
+            availableLabelsList.clear()
+            unavailableLabelsList.clear()
+        }
+        element(byXpath("//div[@role='presentation']//*[text()='Отменить']/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byXpath("//div[@id='labels']//*[text()='Сохранить']/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        labelsList.filter { it != "random" }
+        val finishLabelList = (labelsList.filter { it != "random" } + randomLabelsList).toList()
+        finishLabelList.forEach{
+            element(byXpath("//div[@id='labels']//*[text()='$it']/ancestor::span[@title]"))
+                .should(exist, ofSeconds(waitTime))
+        }
+
+    }
+
+    fun updateICToolStatus(iCStatus: String, waitTime: Long){
+        if (element(byXpath("//div[@id='incidentButtons']//button[1]//text()/..")).ownText != iCStatus) {
+            element(byXpath("//div[@id='incidentButtons']//button[1]"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+            element(byXpath("//div[@role='presentation']"))
+                .should(exist, ofSeconds(waitTime))
+            elements(byXpath("//div[@role='presentation']//button[not (@disabled)]"))
+                .shouldHave(CollectionCondition.size(5), ofSeconds(waitTime))
+            elements(byXpath("//div[@role='presentation']//button[@disabled]"))
+                .shouldHave(CollectionCondition.size(1), ofSeconds(waitTime))
+            if (iCStatus.isNotEmpty()) {
+                element(byXpath("//div[@role='presentation']//*[text()='$iCStatus']/ancestor::button[not (@disabled)]"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .click()
+                element(byXpath("//div[@role='presentation']"))
+                    .shouldNot(exist, ofSeconds(waitTime))
+                element(byXpath("//div[@id='incidentButtons']//button[1]//*[text()='$iCStatus']"))
+                    .should(exist, ofSeconds(waitTime))
+            } else {
+                val rndSt = elements(byXpath("//div[@role='presentation']//*[not(text()='Новая')]/ancestor::button[not (@disabled)]//text()/.."))
+                    .random().ownText
+                element(byXpath("//div[@role='presentation']//*[text()='$rndSt']/ancestor::button[not (@disabled)]"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .click()
+                element(byXpath("//div[@role='presentation']"))
+                    .shouldNot(exist, ofSeconds(waitTime))
+                element(byXpath("//div[@id='incidentButtons']//button[1]//*[text()='$rndSt']"))
+                    .should(exist, ofSeconds(waitTime))
+            }
+        }
+    }
+
+
+    fun clearInput(xPathLocator: String, waitTime: Long){
+        if (element(byXpath(xPathLocator)).getAttribute("value")!!.isNotEmpty()){
+            element(byXpath(xPathLocator)).click()
+            element(byXpath(xPathLocator)).sendKeys(Keys.END)
+            repeat(element(byXpath(xPathLocator)).getAttribute("value")!!.length){
+                element(byXpath(xPathLocator)).sendKeys(Keys.BACK_SPACE)
+            }
+        }
+    }
+
+
 }

@@ -105,6 +105,15 @@ class Labels : BaseTest(){
             //создаем
             element(byXpath("//span[text()='Добавить']/parent::button")).click()
             //проверяем наличие созданной метки
+            element(byXpath("//table/thead/tr/th//*[contains(@name,'arrow')]/ancestor::button"))
+                .should(exist, ofSeconds(waitTime))
+            while (elements(byXpath("//table/tbody/tr/td//*[@name='arrowRight']/ancestor::button")).size>0){
+                element(byXpath("//table/thead/tr/th//*[contains(@name,'arrow')]/ancestor::button"))
+                    .click()
+                Thread.sleep(100)
+            }
+            element(byXpath("//table/thead/tr/th//*[@name='arrowDown']/ancestor::button"))
+                .should(exist, ofSeconds(waitTime))
             element(byXpath("//tr/td//*[contains(text(),'$labelSample')]"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
@@ -133,10 +142,10 @@ class Labels : BaseTest(){
             repeat(element(byXpath("//input[@name='labelsId-textfield']")).getAttribute("value")!!.length){
                 element(byXpath("//input[@name='labelsId-textfield']")).sendKeys(Keys.BACK_SPACE)
             }
-            val labelElementsCollection = elements(byXpath("//label[text()='Метки']/..//span[@style='line-height: 1;']//span[text()]"))
-            labelElementsCollection.forEach {
-                createdLabel.add(it.ownText)
-            }
+            elements(byXpath("//label[text()='Метки']/..//span[@style='line-height: 1;']//span[text()]"))
+                .forEach {
+                    createdLabel.add(it.ownText)
+                }
             labelListName.forEach{
                 if (createdLabel.contains(it)){
                     again = true
@@ -159,14 +168,12 @@ class Labels : BaseTest(){
         element(byCssSelector("#simple-tabpanel-card"))
             .should(exist, ofSeconds(waitTime))
         //что она в нужном статусе
-        element(byCssSelector("button[style='min-width: 140px; white-space: nowrap; border-radius: 20px;']"))
-            .shouldHave(text("В обработке"), ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
+        checkICToolIsStatus("В обработке", waitTime)
         //и что это именно так карточка которую мы только что создали
         element(byCssSelector("div#panel1a-content div[style='gap: 16px 0px;']>div:nth-child(5)"))
             .shouldHave(text("AutoTest T 0010 $dateTime"), ofSeconds(waitTime))
         createdLabel.forEach {
-            element(byXpath(" //span[contains(text(),'$it')]"))
+            element(byXpath("//div[@id='labels']//*[contains(text(),'$it')]"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
         }
@@ -186,7 +193,14 @@ class Labels : BaseTest(){
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
         }
-        element(byXpath("//span[text()='Сохранить']/parent::button")).click()
+        element(byCssSelector("input#labelsId-autocomplete"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byXpath("//span[text()='Сохранить']/parent::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
         //проверяем что все метки на месте
         labelListName.forEach {
             element(byXpath(" //span[contains(text(),'$it')]"))

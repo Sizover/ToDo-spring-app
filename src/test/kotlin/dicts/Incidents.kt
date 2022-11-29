@@ -58,7 +58,7 @@ class Incidents :BaseTest() {
         element(byCssSelector("div#menu->div>ul[role='listbox']>li:nth-child($iI)")).click()
         Thread.sleep(200)
         //язык обращения
-        element(byXpath("//label[@id='language-label' and text()='Язык']/following-sibling::div/div[@id='language']"))
+        element(byXpath("//label[@id='language-label' and text()='Язык общения']/following-sibling::div/div[@id='language']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
@@ -100,8 +100,7 @@ class Incidents :BaseTest() {
         //проверяя что нам в принципе загрузило какую-то карточку
         element(byCssSelector("#simple-tabpanel-card")).should(exist, ofSeconds(waitTime))
         //что она в статусе "В обработке"
-        element(byCssSelector("button[style='min-width: 140px; white-space: nowrap; border-radius: 20px;']"))
-            .shouldHave(text("В обработке"), ofSeconds(waitTime))
+        checkICToolIsStatus("В обработке", waitTime)
         //и что это именно так карточка которую мы только что создали
         element(byXpath("//div[text()='AutoTest INC 0010 inc $dateTime']/strong[text()='Дополнительная информация:']"))
             .should(exist, ofSeconds(waitTime))
@@ -111,8 +110,6 @@ class Incidents :BaseTest() {
                 .size
                 == 1
         )
-//        element(byCssSelector("button[style='min-width: 140px; white-space: nowrap; border-radius: 20px;']"))
-//            .scrollIntoView(true)
         element(byXpath("//main//header//*[text()='Обращения']//ancestor::button"))
             .scrollTo()
         element(byXpath("//main//header//*[text()='Обращения']//ancestor::button"))
@@ -122,16 +119,14 @@ class Incidents :BaseTest() {
         element(byXpath("//table"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
+        checkbox("", true, waitTime)
         var languageColumn = numberOfColumn("Язык", waitTime)
         var fioColumn = numberOfColumn("ФИО", waitTime)
         var callTypeColumm = numberOfColumn("Тип источника", waitTime)
-        for (str in 1..elements(byXpath("//table/tbody/tr")).size){
-            if (elements(byXpath("//table/tbody/tr[$str]/td[$fioColumn][contains(text(),'2022-09-08 AutoTestLastname inc')]")).size == 1){
-                Assertions.assertTrue(elements(byXpath("//table/tbody/tr[$str]/td[$languageColumn][text()='$language1']")).size == 1)
-                Assertions.assertTrue(elements(byXpath("//table/tbody/tr[$str]/td[$callTypeColumm][text()='$callType']")).size == 1)
-                break
-            }
-        }
+        element(byXpath("//table/tbody//*[text()='INC 0010 adr $dateTime']/ancestor::tr/td[$languageColumn][text()='$language1']"))
+            .should(exist, ofSeconds(waitTime))
+        element(byXpath("//table/tbody//*[text()='INC 0010 adr $dateTime']/ancestor::tr/td[$callTypeColumm][text()='$callType']"))
+            .should(exist, ofSeconds(waitTime))
         menuNavigation("Происшествия", "Создать карточку", waitTime)
         //заполняем карточку
         //Источник события - выбираем случайно
@@ -142,7 +137,7 @@ class Incidents :BaseTest() {
         iI = (1..10).random()
         element(byCssSelector("div#menu->div>ul[role='listbox']>li:nth-child($iI)")).click()
         //язык обращения
-        element(byXpath("//label[text()='Язык']/following-sibling::div/div[@id='language']"))
+        element(byXpath("//label[text()='Язык общения']/following-sibling::div/div[@id='language']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
@@ -188,8 +183,7 @@ class Incidents :BaseTest() {
         //проверяя что нам в принципе загрузило какую-то карточку
         element(byCssSelector("#simple-tabpanel-card")).should(exist, ofSeconds(waitTime))
         //что она в статусе "В обработке"
-        element(byCssSelector("button[style='min-width: 140px; white-space: nowrap; border-radius: 20px;']"))
-            .shouldHave(text("В обработке"), ofSeconds(waitTime))
+        checkICToolIsStatus("В обработке", waitTime)
         //и что это именно так карточка которую мы только что создали
         element(byXpath("//div[text()='AutoTest INC 0010 inc $dateTime']/strong[text()='Дополнительная информация:']"))
             .should(exist, ofSeconds(waitTime))
@@ -206,16 +200,14 @@ class Incidents :BaseTest() {
         element(byXpath("//table"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
+        checkbox("", true, waitTime)
         languageColumn = numberOfColumn("Язык", waitTime)
         fioColumn = numberOfColumn("ФИО", waitTime)
         callTypeColumm = numberOfColumn("Тип источника", waitTime)
-        for (str in 1..elements(byXpath("//table/tbody/tr")).size){
-            if (elements(byXpath("//table/tbody/tr[$str]/td[$fioColumn][contains(text(),'2022-09-08 AutoTestLastname call')]")).size == 1){
-                Assertions.assertTrue(elements(byXpath("//table/tbody/tr[$str]/td[$languageColumn][text()='$language2']")).size == 1)
-                Assertions.assertTrue(elements(byXpath("//table/tbody/tr[$str]/td[$callTypeColumm][text()='$callType']")).size == 1)
-                break
-            }
-        }
+        element(byXpath("//table/tbody//*[text()='INC 0010 adr2 $dateTime']/ancestor::tr/td[$languageColumn][text()='$language2']"))
+            .should(exist, ofSeconds(waitTime))
+        element(byXpath("//table/tbody//*[text()='INC 0010 adr2 $dateTime']/ancestor::tr/td[$callTypeColumm][text()='$callType']"))
+            .should(exist, ofSeconds(waitTime))
         logoffTool()
     }
 
