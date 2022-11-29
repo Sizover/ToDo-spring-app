@@ -741,6 +741,10 @@ open class BaseTest {
                 .click()
             element(byXpath("//div[@role='presentation']"))
                 .should(exist, ofSeconds(waitTime))
+            elements(byXpath("//div[@role='presentation']//button[not (@disabled)]"))
+                .shouldHave(CollectionCondition.size(5), ofSeconds(waitTime))
+            elements(byXpath("//div[@role='presentation']//button[@disabled]"))
+                .shouldHave(CollectionCondition.size(1), ofSeconds(waitTime))
             if (iCStatus.isNotEmpty()) {
                 element(byXpath("//div[@role='presentation']//*[text()='$iCStatus']/ancestor::button[not (@disabled)]"))
                     .should(exist, ofSeconds(waitTime))
@@ -761,6 +765,17 @@ open class BaseTest {
                     .shouldNot(exist, ofSeconds(waitTime))
                 element(byXpath("//div[@id='incidentButtons']//button[1]//*[text()='$rndSt']"))
                     .should(exist, ofSeconds(waitTime))
+            }
+        }
+    }
+
+
+    fun clearInput(xPathLocator: String, waitTime: Long){
+        if (element(byXpath(xPathLocator)).getAttribute("value")!!.isNotEmpty()){
+            element(byXpath(xPathLocator)).click()
+            element(byXpath(xPathLocator)).sendKeys(Keys.END)
+            repeat(element(byXpath(xPathLocator)).getAttribute("value")!!.length){
+                element(byXpath(xPathLocator)).sendKeys(Keys.BACK_SPACE)
             }
         }
     }

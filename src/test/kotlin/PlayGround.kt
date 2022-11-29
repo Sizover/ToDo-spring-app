@@ -213,7 +213,31 @@ class PlayGround : BaseTest(){
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
     fun `Черновик2`() {
         logonTool()
-        menuNavigation("Происшествия", "Создать карточку", waitTime)
+        menuNavigation("Отчеты", "По происшествиям", waitTime)
+        element(byXpath("//*[text()='Создать отчет']/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        addressInput("address", "Карачаево-Черкесская Респ, г Карачаевск", waitTime)
+        element(byXpath("//*[text()='Определить адрес']"))
+            .should(exist, ofSeconds(waitTime))
+        Thread.sleep(10000)
+        println("width = ")
+        println(element(byXpath("//*[text()='Определить адрес']")).getCssValue("width"))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         element(byXpath("//form[@novalidate]"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))

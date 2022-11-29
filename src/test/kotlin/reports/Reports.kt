@@ -1040,21 +1040,33 @@ class Reports : BaseTest(){
     }
 
 
-//    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
-    fun `Reports 0032 черновик`() {
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
+    fun `Reports 0032 проверка отчетов по происшествиям с использованием фильтров по пострадавшим, адресу и типу происшествия`() {
         dateTime = LocalDateTime.now()
         date = LocalDate.now()
         val reportsSubMenuList = listOf("По происшествиям", "По обращениям", "По сотрудникам")
         //два отчета, с адресом и без, вынесены с список, для сокращения кода через forEach
-        val reportsAddressList = listOf("без адреса", "адресный")
+        val reportsAddressList = mutableListOf("без адреса", "адресный")
+        //временный список отчетов в которые попадет создаваемая КП
+        val icReportsList = mutableListOf<String>()
         //одна строка любой таблицы (кроме первого столбца - он ключ)
-        var tableRowList: MutableList<Int> = mutableListOf()
+        val tableRowList: MutableList<Int> = mutableListOf()
         //Карта вмещающая в себя один отчет как значение и некоторое внутри тестовое значение как ключ (reportsAddressList)
         val oneReportMap: LinkedHashMap<String, MutableList<Int>> = linkedMapOf()
         //данные "старого" отчета к которым прибавятся новые, по мере их создания
         val oldValuesMap: LinkedHashMap<String, MutableMap<String, MutableList<Int>>> = linkedMapOf()
         //данные "нового" отчета для сравнения с "старыми" данными
         val newValuesMap: LinkedHashMap<String, MutableMap<String, MutableList<Int>>> = linkedMapOf()
+        //Операделим по какому типу потерь будем потом создавать отчет
+        val lookingForVictims = (1..4).random()
+        //Опеределим сколько жертв будем искать
+        val nVictims = if (lookingForVictims > 2){
+            (12..38).random()
+        } else {
+            (25..75).random()
+        }
+        //по какому типу происшествия строим отчет
+        var icReportCreate: String = ""
         logonTool()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         menuNavigation("Отчеты", "По происшествиям", waitTime)
@@ -1072,13 +1084,78 @@ class Reports : BaseTest(){
             .sendKeys("${today[2]}.${today[1]}.${today[0]}")
         element(byCssSelector("form[novalidate] input#periodEnd"))
             .sendKeys("${today[2]}.${today[1]}.${today[0]}")
-        //создаем пару отчетов
+        //Определим имя импута по потерям
+        val victimsName = element(byXpath("(//form[@novalidate]//label[contains(text(),'Число')])[$lookingForVictims]")).ownText
+        //добавим новый отчет в список
+        reportsAddressList.add("$victimsName N = $nVictims")
+        reportsAddressList.add("Тип происшествия")
+        //создаем отчеты по списку
         reportsAddressList.forEach { address ->
-            element(byCssSelector("form[novalidate] input#title")).let { el ->
-                el.sendKeys("Reports 0032 Проверка формирования отчетов по обращениям $dateTime отсчет $address")
-                if (address == "адресный") {
+//            element(byCssSelector("form[novalidate] input#title")).let { el ->
+            element(byCssSelector("form[novalidate] input#title"))
+                .sendKeys("Reports 0032 Проверка формирования отчетов по обращениям $dateTime отсчет $address")
+            when (address){
+                "адресный" -> {
                     addressInput("address", "Карачаево-Черкесская Респ, г Карачаевск", waitTime)
                 }
+                "$victimsName N = $nVictims" -> {
+                    element(byXpath("//form[@novalidate]//label[text()='$victimsName']/..//input"))
+                        .click()
+                    element(byXpath("//form[@novalidate]//label[text()='$victimsName']/..//input"))
+                        .sendKeys(nVictims.toString())
+                }
+                "Тип происшествия" -> {
+                    clearInput("//form[@novalidate]//label[text()='$victimsName']/..//input", waitTime)
+                    element(byXpath("//label[text()='Тип происшествия']/..//button[@title='Раскрыть']"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                        .click()
+                    element(byXpath("//div[@role='presentation']/div/ul//*[text()='П Повседневные']/ancestor::li/div[1]"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                        .click()
+                    Thread.sleep(150)
+                    var sbstr = elements(byXpath("//div[@role='presentation']/div/ul//text()[starts-with(.,'П.')]/.."))
+                        .random()
+                        .ownText
+                        .substringBefore(' ')
+                    element(byXpath("//div[@role='presentation']/div/ul//*[starts-with(text(),'$sbstr')]/ancestor::li/div[1]"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                        .click()
+                    Thread.sleep(150)
+                    sbstr = elements(byXpath("//div[@role='presentation']/div/ul//text()[starts-with(.,'$sbstr.')]/.."))
+                        .random()
+                        .ownText
+                        .substringBefore(' ')
+                    element(byXpath("//div[@role='presentation']/div/ul//*[starts-with(text(),'$sbstr')]/ancestor::li/div[1]"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                        .click()
+                    Thread.sleep(150)
+                    sbstr = elements(byXpath("//div[@role='presentation']/div/ul//text()[starts-with(.,'$sbstr.')]/.."))
+                        .random()
+                        .ownText
+                        .substringBefore(' ')
+                    element(byXpath("//div[@role='presentation']/div/ul//*[starts-with(text(),'$sbstr')]/ancestor::li"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                        .click()
+                    element(byXpath("//label[text()='Тип происшествия']/..//div[@role='button']"))
+                        .should(exist, ofSeconds(waitTime))
+                    elements(byXpath("//label[text()='Тип происшествия']/..//div[@role='button']"))
+                        .should(CollectionCondition.size(1), ofSeconds(waitTime))
+                    icReportCreate = element(byXpath("//label[text()='Тип происшествия']/..//div[@role='button']//text()/..")).ownText
+                    element(byXpath("//label[text()='Тип происшествия']/..//button[@title='Close']"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                        .click()
+                }
+            }
+
+//                if (address == "адресный") {
+//                    addressInput("address", "Карачаево-Черкесская Респ, г Карачаевск", waitTime)
+//                }
                 //создаем отчет
                 element(byXpath("//span[text()='Создать']/ancestor::button")).click()
                 //ждем созданный отчет
@@ -1086,13 +1163,17 @@ class Reports : BaseTest(){
                     .should(exist, ofSeconds(waitTime))
                 //очищаем поле названия если нам еще делать отчеты
                 if (address != reportsAddressList.last()) {
-                    el.click()
-                    el.sendKeys(Keys.END)
-                    repeat(el.getAttribute("value")!!.length) {
-                        el.sendKeys(Keys.BACK_SPACE)
-                    }
+//                    element(byCssSelector("form[novalidate] input#title"))
+//                        .click()
+//                    element(byCssSelector("form[novalidate] input#title"))
+//                        .sendKeys(Keys.END)
+//                    repeat(element(byCssSelector("form[novalidate] input#title")).getAttribute("value")!!.length) {
+//                        element(byCssSelector("form[novalidate] input#title"))
+//                            .sendKeys(Keys.BACK_SPACE)
+//                    }
+                    clearInput("//form[@novalidate]//input[@id='title']", waitTime)
                 }
-            }
+//            }
         }
         //скрываем форму создания отчета
         element(byXpath("//form[@novalidate]//*[text()='Очистить']/ancestor::button"))
@@ -1133,7 +1214,7 @@ class Reports : BaseTest(){
             //готовый отчет кладем в карту с ключем - внутритестовое название отчета
             oldValuesMap.put(address, oneReportMap.clone() as MutableMap<String, MutableList<Int>>)
             oneReportMap.clear()
-            //сверим диаграмму с легендой, не запоминая отдельно ни то, ни другое
+            //сверим диаграмму с легендой, не запоминая отдельно в этом блоке ни то, ни другое
             for (i in 2..elements(byXpath("//table[@id='legend']/tbody/tr")).size){
                 if (element(byXpath("//table[@id='legend']/tbody/tr[$i]/td[2]//text()/..")).ownText != "0"){
                     Assertions.assertTrue(
@@ -1150,7 +1231,8 @@ class Reports : BaseTest(){
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //Создаем КП
 //        menuNavigation("Происшествия", "Список происшествий", waitTime)
-        val rndIC = (1..8).random()
+        val rndIC = (2..8).random()
+        var maxVictims = 0
         for (i in 1..8){
 //            var icType = ""
 //            element(byXpath("//*[text()='Создать обращение']/ancestor::button"))
@@ -1180,34 +1262,17 @@ class Reports : BaseTest(){
                 .shouldBe(visible, ofSeconds(waitTime))
                 .click()
             //тип происшествия - случайный
-            inputRandomNew("incidentTypeId-textfield", false, waitTime)
+            if (i == 1){
+                element(byXpath("//label[text()='Типы происшествий']/ancestor::div[@data-testid='incidentTypeId']//input"))
+                    .click()
+                element(byXpath("//label[text()='Типы происшествий']/ancestor::div[@data-testid='incidentTypeId']//input"))
+                    .sendKeys(icReportCreate, Keys.DOWN, Keys.ENTER)
+            } else {
+                inputRandomNew("incidentTypeId-textfield", false, waitTime)
+            }
             Thread.sleep(200)
             //запоминаем тип происшествия
             val icType = element(byXpath("//input[@name='incidentTypeId-textfield']")).getAttribute("value").toString()
-//            while (elements(byXpath("//body/div[@role='presentation']//*[text()]")).size == 0){
-//                element(byXpath("//input[@name='incidentTypeId-textfield']")).click()
-//                Thread.sleep(500)
-//            }
-//            if (elements(byXpath("//body//div[@role='presentation']//li[1]//*[@name='arrowRight']")).size > 0) {
-//                element(byXpath("//div[@role='presentation']/div/ul/li[1]/div")).click()
-//                Thread.sleep(500)
-//            }
-//            val incTypes = mutableListOf<String>()
-//            val count = elements(byXpath("//div[@role='presentation']/div/ul/li")).size
-//            for (i in 1..count ){
-//                if (elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[text()]")).size == 1){
-//                    if (
-//                        (elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[contains(@name,'arrow')]")).size == 0)
-//                        &&
-//                        elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[@name='checkboxFocus']")).size == 0){
-//                        incTypes.add(element(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[text()]")).ownText)
-//                    }
-//                }
-//            }
-//            val incTypesRandom = incTypes.random()
-//            element(byXpath("//div[@role='presentation']/div/ul//*[text()='$incTypesRandom']/ancestor::li"))
-//                .should(exist, ofSeconds(waitTime))
-//                .shouldBe(visible, ofSeconds(waitTime))
             //Угроза людям - случано
             val isThreatPeople = Random.nextBoolean()
             val victimsCount = (0..100).random()
@@ -1252,25 +1317,25 @@ class Reports : BaseTest(){
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
+                Thread.sleep(100)
                 element(byXpath(" //div[@id='simple-tabpanel-hotlines']//*[text()='Выбрать ДДС']/ancestor::button"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
+                Thread.sleep(100)
                 element(byXpath("//*[text()='ДДС ЭОС']/ancestor::div[@id='panel1a-header']"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
-                //*[text()='ДДС ЭОС']/ancestor::div[@id='panel1a-header']/following-sibling::div//div[@id='panel1a-content']
-                //*[text()='ДДС ЭОС']/ancestor::div[@id='panel1a-header']/following-sibling::div//div[@id='panel1a-content']//*[contains(text(),'02')]
-                //*[text()='ДДС ЭОС']/ancestor::div[@id='panel1a-header']/following-sibling::div//*[contains(text(),'02')]
-                ddsTypeList.forEach { ddsT ->
+                Thread.sleep(250)
+                ddsTypeList.forEach { ddsType ->
                     ddsNameList.add(
-                        elements(byXpath("//*[text()='ДДС ЭОС']/ancestor::div[@id='panel1a-header']/following-sibling::div//*[contains(text(),'$ddsT')]"))
+                        elements(byXpath("//*[text()='ДДС ЭОС']/ancestor::div[@id='panel1a-header']/following-sibling::div//*[contains(text(),'$ddsType')]"))
                             .random().ownText
                     )
                 }
-                ddsNameList.forEach { ddsN ->
-                    element(byXpath("//*[text()='$ddsN']/ancestor::div[2]//input"))
+                ddsNameList.forEach { ddsName ->
+                    element(byXpath("//*[text()='$ddsName']/ancestor::div[2]//input"))
                         .should(exist, ofSeconds(waitTime))
                         .click()
                     Thread.sleep(250)
@@ -1280,8 +1345,8 @@ class Reports : BaseTest(){
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
                 Thread.sleep(250)
-                ddsNameList.forEach { ddsN ->
-                    element(byXpath("//form//*[text()='$ddsN']"))
+                ddsNameList.forEach { ddsName ->
+                    element(byXpath("//form//*[text()='$ddsName']"))
                         .should(exist, ofSeconds(waitTime))
                 }
             }
@@ -1289,12 +1354,45 @@ class Reports : BaseTest(){
             var  updateICStatus = (1..5).random()
             val statusList: MutableList<String> = mutableListOf()
             if (ddsTypeList.isNotEmpty()){
-                for (i in 1..ddsTypeList.size){
-                    //(//form//button[contains(@style,'border-radius')])[2]
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                //этот блок оставим до момента определения с тем как должны сортироваться дочерние КП в их списке
+                //и починки соответствующего бага
+//                for (i in 1..ddsTypeList.size){
+//                    //(//form//button[contains(@style,'border-radius')])[2]
+//                    var ddsICStatus = ""
+//                    updateICStatus = (1..5).random()
+//                    if (updateICStatus != 1) {
+//                        element(byXpath("(//form)[$i]//button[@style]"))
+//                            .should(exist, ofSeconds(waitTime))
+//                            .click()
+//                        element(byXpath("//div[@role='presentation']"))
+//                            .should(exist, ofSeconds(waitTime))
+//                        ddsICStatus = elements(byXpath("//div[@role='presentation']//*[not(text()='Новая')]/ancestor::button[not (@disabled)]//text()/.."))
+//                            .random()
+//                            .ownText
+//                        element(byXpath("//div[@role='presentation']//*[text()='$ddsICStatus']/ancestor::button[not (@disabled)]"))
+//                            .should(exist, ofSeconds(waitTime))
+//                            .click()
+//                        element(byXpath("//div[@role='presentation']"))
+//                            .shouldNot(exist, ofSeconds(waitTime))
+//                        element(byXpath("(//form)[$i]//button[@style]//*[text()='$ddsICStatus']"))
+//                            .should(exist, ofSeconds(waitTime))
+//                        if (ddsICStatus.last() == 'а'){
+//                            ddsICStatus = ddsICStatus.replaceFirst(".$".toRegex(), "ы")
+//                        }
+//                    } else {
+//                        ddsICStatus = element(byXpath("(//form)[$i]//button[@style]//text()/..")).ownText
+//                    }
+//                    statusList.add(ddsICStatus)
+//                    Thread.sleep(100)
+//                }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                //альтернатива блоку выше, ориентируется не по порядковому номеру, а по именам назначенных служб
+                ddsNameList.forEach { ddsName ->
                     var ddsICStatus = ""
                     updateICStatus = (1..5).random()
                     if (updateICStatus != 1) {
-                        element(byXpath("(//form)[$i]//button[@style]"))
+                        element(byXpath("//*[text()='$ddsName']/ancestor::form//*[text()='Новая']/ancestor::button"))
                             .should(exist, ofSeconds(waitTime))
                             .click()
                         element(byXpath("//div[@role='presentation']"))
@@ -1307,13 +1405,13 @@ class Reports : BaseTest(){
                             .click()
                         element(byXpath("//div[@role='presentation']"))
                             .shouldNot(exist, ofSeconds(waitTime))
-                        element(byXpath("(//form)[$i]//button[@style]//*[text()='$ddsICStatus']"))
+                        element(byXpath("//*[text()='$ddsName']/ancestor::form//button[@style]//*[text()='$ddsICStatus']"))
                             .should(exist, ofSeconds(waitTime))
                         if (ddsICStatus.last() == 'а'){
                             ddsICStatus = ddsICStatus.replaceFirst(".$".toRegex(), "ы")
                         }
                     } else {
-                        ddsICStatus = element(byXpath("(//form)[$i]//button[@style]//text()/..")).ownText
+                        ddsICStatus = "Новые"
                     }
                     statusList.add(ddsICStatus)
                     Thread.sleep(100)
@@ -1330,65 +1428,88 @@ class Reports : BaseTest(){
                 iCStatus = iCStatus.replaceFirst(".$".toRegex(), "ы")
             }
             statusList.add(iCStatus)
+            //Наполняем список отчетов в которые попадает созданная КП
+            icReportsList.add("без адреса")
+            if (i != rndIC) {
+                icReportsList.add("адресный")
+                if (isThreatPeople) {
+                    when (lookingForVictims) {
+                        1 -> {
+                            if (victimsCount > nVictims) {
+                                icReportsList.add("$victimsName N = $nVictims")
+                            }
+                        }
+                        2 -> {
+                            if (victimsChildren > nVictims) {
+                                icReportsList.add("$victimsName N = $nVictims")
+                            }
+                        }
+                        3 -> {
+                            if (deathToll > nVictims) {
+                                icReportsList.add("$victimsName N = $nVictims")
+                            }
+                        }
+                        4 -> {
+                            if (deathChildren > nVictims) {
+                                icReportsList.add("$victimsName N = $nVictims")
+                            }
+                        }
+                    }
+                }
+                if (icType == icReportCreate) {
+                    icReportsList.add("Тип происшествия")
+                }
+            }
             //наполняем карты изменениями
-            reportsAddressList.forEach { address ->
-                //исключаем КП с иным адресом из адресного отчета
-//                if ((i != rndIC)||(address != "адресный")) {
-                if (!((i == rndIC)&&(address == "адресный"))) {
+//            reportsAddressList.forEach { address ->
+            icReportsList.forEach { report ->
                     //сначала дополним значение "Всего"
-                    oldValuesMap.get(address)?.put(
+                    oldValuesMap.get(report)?.put(
                         "Всего",
-                        listOf(oldValuesMap.get(address)?.get("Всего")?.get(0)!! + 1 + ddsTypeList.size) as MutableList<Int>
+                        listOf(oldValuesMap.get(report)?.get("Всего")?.get(0)!! + 1 + ddsTypeList.size) as MutableList<Int>
                     )
                     //дополним значение в легенде, согласно имеющемся статусам
                     statusList.forEach { status ->
-                        oldValuesMap.get(address)?.put(status,
-                            listOf(oldValuesMap.get(address)?.get(status)?.get(0)!! + 1) as MutableList<Int>
+                        oldValuesMap.get(report)?.put(status,
+                            listOf(oldValuesMap.get(report)?.get(status)?.get(0)!! + 1) as MutableList<Int>
                         )
                     }
-//                    oldValuesMap.get(address)?.put(iCStatus,
-//                        listOf(oldValuesMap.get(address)?.get(iCStatus)?.get(0)!! + 1) as MutableList<Int>
-//                    )
                     //дополним значение по типу происшествия созданной КП, с учетом созданных пострадавших
-                    if (oldValuesMap.get(address)?.keys?.contains(icType) == true){
+                    if (oldValuesMap.get(report)?.keys?.contains(icType) == true){
                         val newList:MutableList<Int> = mutableListOf()
-                        oldValuesMap.get(address)?.get(icType)?.forEachIndexed { index, value ->
+                        oldValuesMap.get(report)?.get(icType)?.forEachIndexed { index, value ->
                             newList.add(value + deathList[index])
                         }
-                        oldValuesMap.get(address)?.put(icType, newList.toMutableList())
+                        oldValuesMap.get(report)?.put(icType, newList.toMutableList())
                         newList.clear()
                     } else {
-                        oldValuesMap.get(address)?.put(icType, deathList.toMutableList())
+                        oldValuesMap.get(report)?.put(icType, deathList.toMutableList())
                     }
                     //дополним третью табличку, по типам назначения ДДС
                     if (ddsTypeList.isNotEmpty()){
-                        ddsTypeList.forEach { ddsT ->
-                            if (oldValuesMap.get(address)?.keys?.contains(ddsT) == true){
-                                oldValuesMap.get(address)?.put(
-                                    ddsT,
-                                    listOf(oldValuesMap.get(address)?.get(ddsT)?.get(0)!! + 1) as MutableList<Int>
+                        ddsTypeList.forEach { ddsType ->
+                            if (oldValuesMap.get(report)?.keys?.contains(ddsType) == true){
+                                oldValuesMap.get(report)?.put(
+                                    ddsType,
+                                    listOf(oldValuesMap.get(report)?.get(ddsType)?.get(0)!! + 1) as MutableList<Int>
                                 )
                             } else {
-                                oldValuesMap.get(address)?.put(
-                                    ddsT,
+                                oldValuesMap.get(report)?.put(
+                                    ddsType,
                                     listOf(1) as MutableList<Int>
                                 )
                             }
                         }
-                        //дополним значение "Новые"
-                        oldValuesMap.get(address)?.put(
-                            "Новые",
-                            listOf(oldValuesMap.get(address)?.get("Новые")?.get(0)!! + ddsTypeList.size) as MutableList<Int>
-                        )
                     } else {
                         //дополним значение "Без назначения служб"
-                        oldValuesMap.get(address)?.put(
+                        oldValuesMap.get(report)?.put(
                             "Без назначения служб",
-                            listOf(oldValuesMap.get(address)?.get("Без назначения служб")?.get(0)!! + 1) as MutableList<Int>
+                            listOf(oldValuesMap.get(report)?.get("Без назначения служб")?.get(0)!! + 1) as MutableList<Int>
                         )
                     }
-                }
+//                }
             }
+            icReportsList.clear()
         }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         menuNavigation("Отчеты", "По происшествиям", waitTime)
@@ -1405,26 +1526,39 @@ class Reports : BaseTest(){
             .sendKeys("${today[2]}.${today[1]}.${today[0]}")
         element(byCssSelector("form[novalidate] input#periodEnd"))
             .sendKeys("${today[2]}.${today[1]}.${today[0]}")
-        //создаем пару отчетов
+        //создаем новые отчеты
         reportsAddressList.forEach { address ->
-            element(byCssSelector("form[novalidate] input#title")).let { el ->
-                el.sendKeys("Reports 0032 Проверка формирования отчетов по обращениям $dateTime сверка $address")
-                if (address == "адресный") {
+//            element(byCssSelector("form[novalidate] input#title")).let { el ->
+            element(byCssSelector("form[novalidate] input#title"))
+                .sendKeys("Reports 0032 Проверка формирования отчетов по обращениям $dateTime сверка $address")
+            when (address){
+                "адресный" -> {
                     addressInput("address", "Карачаево-Черкесская Респ, г Карачаевск", waitTime)
                 }
-                //создаем отчет
-                element(byXpath("//span[text()='Создать']/ancestor::button")).click()
-                //ждем созданный отчет
-                element(byText("Reports 0032 Проверка формирования отчетов по обращениям $dateTime сверка $address"))
-                    .should(exist, ofSeconds(waitTime))
-                //очищаем поле названия если нам еще делать отчеты
-                if (address != reportsAddressList.last()) {
-                    el.click()
-                    el.sendKeys(Keys.END)
-                    repeat(el.getAttribute("value")!!.length) {
-                        el.sendKeys(Keys.BACK_SPACE)
-                    }
+                "$victimsName N = $nVictims" -> {
+                    element(byXpath("//form[@novalidate]//label[text()='$victimsName']/..//input"))
+                        .click()
+                    element(byXpath("//form[@novalidate]//label[text()='$victimsName']/..//input"))
+                        .sendKeys(nVictims.toString())
                 }
+                "Тип происшествия" -> {
+                    clearInput("//form[@novalidate]//label[text()='$victimsName']/..//input", waitTime)
+                    element(byXpath("//label[text()='Тип происшествия']/..//input"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                        .click()
+                    element(byXpath("//label[text()='Тип происшествия']/..//input"))
+                        .sendKeys(icReportCreate, Keys.DOWN, Keys.ENTER)
+                }
+            }
+            //создаем отчет
+            element(byXpath("//span[text()='Создать']/ancestor::button")).click()
+            //ждем созданный отчет
+            element(byText("Reports 0032 Проверка формирования отчетов по обращениям $dateTime сверка $address"))
+                .should(exist, ofSeconds(waitTime))
+            //очищаем поле названия если нам еще делать отчеты
+            if (address != reportsAddressList.last()) {
+                clearInput("//form[@novalidate]//input[@id='title']", waitTime)
             }
         }
         //скрываем форму создания отчета
@@ -1483,6 +1617,8 @@ class Reports : BaseTest(){
         reportsAddressList.forEach { address ->
             Assertions.assertTrue(newValuesMap[address]?.keys!!.sorted() == oldValuesMap[address]?.keys!!.sorted())
             newValuesMap[address]?.keys?.forEach { key ->
+//                println("address = $address key = $key oldValues = ${oldValuesMap[address]?.get(key)} newValuesMap = ${newValuesMap[address]?.get(key)}")
+                //тут пока вылазит баг про не копирование угроз и пострадавших
                 Assertions.assertTrue(oldValuesMap[address]?.get(key) == newValuesMap[address]?.get(key))
 //                if (oldValuesMap[address]?.get(key) != newValuesMap[address]?.get(key)){
 //                    println("address = $address, key = $key, oldValuesMap = ${oldValuesMap[address]?.get(key)}, newValuesMap = ${newValuesMap[address]?.get(key)}")
@@ -1498,1041 +1634,8 @@ class Reports : BaseTest(){
 
     }
 
-//    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
-    fun `Reports 0031 черновик`() {
-        dateTime = LocalDateTime.now()
-        date = LocalDate.now()
-        val reportsSubMenuList = listOf("По происшествиям", "По обращениям", "По сотрудникам")
-        val reportsAddressList = listOf("без адреса", "адресный")
-        val tableRowList: MutableList<String> = mutableListOf()
-        val oneReportMap: LinkedHashMap<String, MutableList<String>> = linkedMapOf()
-        val oldValuesMap: LinkedHashMap<String, MutableMap<String, MutableList<String>>> = linkedMapOf()
-        val newValuesMap: LinkedHashMap<String, MutableMap<String, MutableList<String>>> = linkedMapOf()
-        logonTool()
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        reportsSubMenuList.forEach { reportSubMenu ->
-            menuNavigation("Отчеты", reportSubMenu, waitTime)
-            //кликаем по "Создать отчет"
-            element(byXpath("//span[text()='Создать отчет']/ancestor::button"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
-            element(byCssSelector("form[novalidate]"))
-                .should(exist, ofSeconds(waitTime))
-            //впердоливаем говнокод по преобразование даты
-            val today = date.toString().split("-")
-            //заполняем дату начала и конца периода отчета сегодняшним числом
-            element(byCssSelector("form[novalidate] input#periodStart"))
-                .sendKeys("${today[2]}.${today[1]}.${today[0]}")
-            element(byCssSelector("form[novalidate] input#periodEnd")).sendKeys("${today[2]}.${today[1]}.${today[0]}")
-            reportsAddressList.forEach { address ->
-                element(byCssSelector("form[novalidate] input#title")).let { el ->
-                    el.sendKeys("Reports XXX Проверка формирования отчетов по обращениям $dateTime отсчет $address")
-                    if (address == "адресный") {
-                        addressInput("address", "Карачаево-Черкесская Респ, г Карачаевск", waitTime)
-                    }
-                    //создаем отчет
-                    element(byXpath("//span[text()='Создать']/ancestor::button")).click()
-                    //ждем созданный отчет
-                    element(byText("Reports XXX Проверка формирования отчетов по обращениям $dateTime отсчет $address"))
-                        .should(exist, ofSeconds(waitTime))
-                    //очищаем поле названия если нам еще делать отчеты
-                    if (address != reportsAddressList.last()) {
-                        el.click()
-                        el.sendKeys(Keys.END)
-                        repeat(el.getAttribute("value")!!.length) {
-                            el.sendKeys(Keys.BACK_SPACE)
-                        }
-                    }
-                }
-            }
-            element(byXpath("//form[@novalidate]//*[text()='Очистить']/ancestor::button"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
-            element(byXpath("//*[text()='Скрыть форму']/ancestor::button"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
-            reportsAddressList.forEach {address ->
-                //table[@id='incidents-reports']/tbody//*[text()]
-                element(byXpath("//table[contains(@id,'-reports')]/tbody//*[text()='Reports XXX Проверка формирования отчетов по обращениям $dateTime отсчет $address']/ancestor::tr"))
-                    .click()
-                //ждем
-                element(byXpath("//table/tbody"))
-                    .should(exist, ofSeconds(waitTime))
-                for (table in 1..elements(byXpath("//table")).size){
-                    if (elements(byXpath("(//table)[$table]/tbody/tr[1]//*[text()='Нет данных']")).size == 0) {
-                        for (row in 1..elements(byXpath("(//table)[$table]/tbody/tr")).size) {
-                            for (column in 2..elements(byXpath("(//table)[$table]/tbody/tr[$row]/td")).size) {
-                                if(elements(byXpath("(//table)[$table]/tbody/tr[$row]/td[$column]//text()/..")).size == 1){
-                                    tableRowList.add(element(byXpath("(//table)[$table]/tbody/tr[$row]/td[$column]//text()/..")).ownText)
-                                } else tableRowList.add("")
-                            }
-                            oneReportMap.put(element(byXpath("(//table)[$table]/tbody/tr[$row]/td[1]//text()/..")).ownText,
-                                tableRowList.toMutableList())
-                            tableRowList.clear()
-                        }
-                    }
-                }
-                oldValuesMap.put("$reportSubMenu $address", oneReportMap.clone() as MutableMap<String, MutableList<String>>)
-                oneReportMap.clear()
-                back()
-            }
-        } //тут закончили создавать отчеты
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    Thread.sleep(5000)
-    }
-
-//    @Test(retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
-    fun `Reports 0040 Расширенная проверка формирования отчетов по обращениям`() {
-        //A.3.23 Проверка формирования отчетов по обращениям
-        dateTime = LocalDateTime.now()
-        date = LocalDate.now()
-        val  callTypeList = mutableListOf<String>("Всего")
-        val reportList = listOf("Зеленчукский район КЧР", "ГО Черкесский", "Оператор", "ЕДДС")
-        val oldValuesMap: LinkedHashMap<String, MutableMap<String, Int>> = linkedMapOf()
-        val tableMap: LinkedHashMap<String, Int> = linkedMapOf()
-        val newValuesMap: LinkedHashMap<String, MutableMap<String, Int>> = linkedMapOf()
-        logonTool()
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //заполним список источников событий, какие вообще бывают
-        menuNavigation("Настройки","Классификаторы", waitTime)
-        element(byXpath("//main//header//*[text()='Источники событий']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        element(byXpath("//main//header//*[text()='Источники событий']/ancestor::a[@aria-selected='true']"))
-            .should(exist, ofSeconds(waitTime))
-        checkbox("Наименование записи", true, waitTime)
-        element(byXpath("//table/thead/tr/th//*[text()='Наименование записи']"))
-            .should(exist, ofSeconds(waitTime))
-        for (i in 1..elements(byXpath("//table/tbody/tr")).size){
-            callTypeList
-                .add(element(byXpath("//table/tbody/tr[$i]/td[${numberOfColumn("Наименование записи", waitTime)}]")).ownText)
-        }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //Переходим в "отчет по обращениям"
-        menuNavigation("Отчеты","По обращениям", waitTime)
-        //кликаем по "Создать отчет"
-        element(byXpath("//span[text()='Создать отчет']/.."))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-
-        //впердоливаем говнокод по преобразование даты
-        val today = date.toString().split("-")
-        //заполняем дату начала и конца периода отчета сегоднешним числом
-        element(byCssSelector("input#periodStart"))
-            .sendKeys("${today[2]}.${today[1]}.${today[0]}")
-        element(byCssSelector("input#periodEnd")).sendKeys("${today[2]}.${today[1]}.${today[0]}")
-        reportList.forEach{report ->
-            //Заполняем поля отчета - название
-            element(byCssSelector("input#title"))
-                .sendKeys("Reports 0040 Проверка формирования отчетов по обращениям $dateTime отсчет $report")
-            //задаем МО
-            when(report){
-                "Зеленчукский район КЧР" -> {
-                    while (elements(byXpath("//label[text()='Муниципальное образование']/following-sibling::div/div[@role='button']//*[name()='svg']")).size >0){
-                        element(byXpath("//label[text()='Муниципальное образование']/following-sibling::div/div[@role='button']//*[name()='svg']")).hover()
-                        element(byXpath("//label[text()='Муниципальное образование']/following-sibling::div/div[@role='button']//*[name()='svg']")).click()
-                    }
-                    element(byXpath("//label[text()='Муниципальное образование']/following-sibling::div"))
-                        .click()
-                    element(byXpath("//div[@role='presentation']/div/ul//*[text()='$report']/ancestor::li"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()}
-                "ГО Черкесский" -> {
-                    while (elements(byXpath("//label[text()='Муниципальное образование']/following-sibling::div/div[@role='button']//*[name()='svg']")).size >0){
-                        element(byXpath("//label[text()='Муниципальное образование']/following-sibling::div/div[@role='button']//*[name()='svg']")).hover()
-                        element(byXpath("//label[text()='Муниципальное образование']/following-sibling::div/div[@role='button']//*[name()='svg']")).click()
-                    }
-                    element(byXpath("//label[text()='Муниципальное образование']/following-sibling::div"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//div[@role='presentation']/div/ul//*[text()='$report']/ancestor::li"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                }
-                "Оператор" -> {
-                    element(byXpath("//label[text()='Оператор']/following-sibling::div"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//label[text()='Оператор']/following-sibling::div/input"))
-                        .sendKeys("Сизов AutoTest EDDS 2-2")
-                    element(byXpath("//div[@role='presentation']//*[text()='Сизов AutoTest EDDS 2-2']"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                }
-                "ЕДДС" -> {
-                    element(byXpath("//label[text()='Оператор']/following-sibling::div//button[@aria-label='Clear']"))
-                        .hover()
-                    element(byXpath("//label[text()='Оператор']/following-sibling::div//button[@aria-label='Clear']"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//label[text()='Служба ЕДДС']/following-sibling::div"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//label[text()='Служба ЕДДС']/following-sibling::div/input"))
-                        .sendKeys("AutoTest EDDS 2")
-                    element(byXpath("//div[@role='presentation']//*[text()='AutoTest EDDS 2']"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                }
-            }
-            //создаем отчет
-            element(byXpath("//span[text()='Создать']/..")).click()
-            //ждем созданный отчет
-            element(byText("Reports 0040 Проверка формирования отчетов по обращениям $dateTime отсчет $report"))
-                .should(exist, ofSeconds(waitTime))
-            if (report != reportList.last()){
-                element(byCssSelector("input#title"))
-                    .click()
-                element(byCssSelector("input#title"))
-                    .sendKeys(Keys.END)
-                repeat(element(byCssSelector("input#title")).getAttribute("value")!!.length){
-                    element(byCssSelector("input#title")).sendKeys(Keys.BACK_SPACE)
-                }
-            }
-        }
-        reportList.forEach{ mo ->
-            //переходим в созданный отчет
-            element(byXpath("//tbody/tr//*[text()='Reports 0040 Проверка формирования отчетов по обращениям $dateTime отсчет $mo']"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
-            //ждем
-            elements(byXpath("//main//table"))
-                .shouldHave(CollectionCondition.size(3), ofSeconds(waitTime))
-            for (i in 1..elements(byXpath("//main//table/tbody/tr")).size){
-                if (elements(byXpath("(//main//table/tbody/tr)[$i]//*[text()='Нет данных']")).size == 0
-                    && elements(byXpath("(//main//table/tbody/tr)[$i]//*[text()='из них:']")).size == 0) {
-                    tableMap.put(
-                        element(byXpath("(//main//table/tbody/tr)[$i]/td[1]")).ownText,
-                        element(byXpath("(//main//table/tbody/tr)[$i]/td[2]")).ownText.toInt()
-                    )
-                }
-            }
-            callTypeList.forEach { callType ->
-                if (elements(byXpath("//table/tbody/tr/td[1][text()='$callType']")).size == 0){
-                    tableMap.put(callType, 0)
-                }
-            }
-            oldValuesMap.put(mo, tableMap.clone() as MutableMap<String, Int>)
-            back()
-        }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //Поехали создавать карточки по происшествиям
-        var login:String = ""
-        var password:String = ""
-        var reportListKeyList: List<String> = listOf()
-        var createdCallType:String = ""
-        for (i in 1..4){
-            when(i){
-                1 -> {login = "a.sizov.edds.1.1"; password = "a.sizov.edds.1.1"; reportListKeyList = listOf("ГО Черкесский")}
-                2 -> {login = "a.sizov.edds.2.1"; password = "a.sizov.edds.2.1"; reportListKeyList = listOf("ГО Черкесский", "ЕДДС")}
-                3 -> {login = "a.sizov.edds.2.2"; password = "a.sizov.edds.2.2"; reportListKeyList = listOf("ГО Черкесский", "Оператор", "ЕДДС")}
-                4 -> {login = "test-edds-zel"; password = "test-edds-zel"; reportListKeyList = listOf("Зеленчукский район КЧР")}
-            }
-            anyLogonTool(login, password)
-            menuNavigation("Происшествия", "Создать карточку", waitTime)
-            //Источник события - выбираем случайно
-            element(byXpath("//label[text()='Источник события']/following-sibling::div"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
-            element(byXpath("//div[@role='presentation']//ul/li"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-            elements(byXpath("//div[@role='presentation']//ul/li")).random().click()
-            //заполняем соответствующие карты соответствующими значениями
-            createdCallType = element(byXpath("//label[text()='Источник события']/following-sibling::div/div")).ownText
-            //меняем значение соответствующее выбраному источнику
-            reportListKeyList.forEach{reportListKey ->
-                var valueCreatedCallType = oldValuesMap.get(reportListKey)?.get(createdCallType)?.toInt()
-                valueCreatedCallType = valueCreatedCallType?.plus(1)
-                oldValuesMap.get(reportListKey)?.put(createdCallType, valueCreatedCallType!!)
-                //меняем значение всего
-                var valueTotalCall = oldValuesMap.get(reportListKey)?.get("Общее количество вызовов (обращений):")?.toInt()
-                valueTotalCall = valueTotalCall?.plus(1)
-                oldValuesMap.get(reportListKey)?.put("Общее количество вызовов (обращений):", valueTotalCall!!)
-                //создавать будем консультации, поэтому меняем их значение
-                var valueConsultationsCall = oldValuesMap.get(reportListKey)?.get("Консультаций")?.toInt()
-                valueConsultationsCall = valueConsultationsCall?.plus(1)
-                oldValuesMap.get(reportListKey)?.put("Консультаций", valueConsultationsCall!!)
-                //еще одно всего
-                var valueAllCall = oldValuesMap.get(reportListKey)?.get("Всего")?.toInt()
-                valueAllCall = valueAllCall?.plus(1)
-                oldValuesMap.get(reportListKey)?.put("Всего", valueAllCall!!)
-            }
-            //Номер телефона
-            if (elements(byCssSelector("#phone")).size > 0){
-                val tel = (100000000..999999999).random()
-                element(byCssSelector("#phone")).sendKeys("+79$tel")
-            }
-            //ФИО
-            if (elements(byCssSelector("input[id='fio.lastname']")).size > 0
-                && elements(byCssSelector("input[id='fio.firstname']")).size > 0){
-                element(byCssSelector("input[id='fio.lastname']")).sendKeys("$date AutoTestLastname")
-                element(byCssSelector("input[id='fio.firstname']")).sendKeys("AutoTestFirstname")
-            }
-            //Вводим случайный адрес
-//            val randomNumber = (1..100).random()
-            element(byCssSelector("#callAddress")).sendKeys("$i Reports 0040 $reportListKeyList")
-            //заполняем дополнительную информацию
-            element(byCssSelector("div[role='textbox']>p")).click()
-            element(byCssSelector("div[role='textbox']"))
-                .sendKeys("Reports 0040, i=$i $dateTime $reportListKeyList")
-            //создаем консультацию
-            element(byXpath("//span[text()='Консультация']/parent::button"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
-            element(byXpath("//table/tbody/tr"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-            logoffTool()
-        }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        logonTool()
-        //Переходим в "отчет по обращениям"
-        menuNavigation("Отчеты","По обращениям", waitTime)
-        //кликаем по "Создать отчет"
-        element(byXpath("//span[text()='Создать отчет']/.."))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-
-        //впердоливаем говнокод по преобразование даты
-        //заполняем дату начала и конца периода отчета сегоднешним числом
-        element(byCssSelector("input#periodStart"))
-            .sendKeys("${today[2]}.${today[1]}.${today[0]}")
-        element(byCssSelector("input#periodEnd")).sendKeys("${today[2]}.${today[1]}.${today[0]}")
-        reportList.forEach{report ->
-            //Заполняем поля отчета - название
-            element(byCssSelector("input#title"))
-                .sendKeys("Reports 0040 Проверка формирования отчетов по обращениям $dateTime сверка $report")
-            //задаем МО
-            when(report){
-                "Зеленчукский район КЧР" -> {
-                    while (elements(byXpath("//label[text()='Муниципальное образование']/following-sibling::div/div[@role='button']//*[name()='svg']")).size >0){
-                        element(byXpath("//label[text()='Муниципальное образование']/following-sibling::div/div[@role='button']//*[name()='svg']")).hover()
-                        element(byXpath("//label[text()='Муниципальное образование']/following-sibling::div/div[@role='button']//*[name()='svg']")).click()
-                    }
-                    element(byXpath("//label[text()='Муниципальное образование']/following-sibling::div"))
-                        .click()
-                    element(byXpath("//div[@role='presentation']/div/ul//*[text()='$report']/ancestor::li"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()}
-                "ГО Черкесский" -> {
-                    while (elements(byXpath("//label[text()='Муниципальное образование']/following-sibling::div/div[@role='button']//*[name()='svg']")).size >0){
-                        element(byXpath("//label[text()='Муниципальное образование']/following-sibling::div/div[@role='button']//*[name()='svg']")).hover()
-                        element(byXpath("//label[text()='Муниципальное образование']/following-sibling::div/div[@role='button']//*[name()='svg']")).click()
-                    }
-                    element(byXpath("//label[text()='Муниципальное образование']/following-sibling::div"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//div[@role='presentation']/div/ul//*[text()='$report']/ancestor::li"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                }
-                "Оператор" -> {
-                    element(byXpath("//label[text()='Оператор']/following-sibling::div"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//label[text()='Оператор']/following-sibling::div/input"))
-                        .sendKeys("Сизов AutoTest EDDS 2-2")
-                    element(byXpath("//div[@role='presentation']//*[text()='Сизов AutoTest EDDS 2-2']"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                }
-                "ЕДДС" -> {
-                    element(byXpath("//label[text()='Оператор']/following-sibling::div//button[@aria-label='Clear']"))
-                        .hover()
-                    element(byXpath("//label[text()='Оператор']/following-sibling::div//button[@aria-label='Clear']"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//label[text()='Служба ЕДДС']/following-sibling::div"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//label[text()='Служба ЕДДС']/following-sibling::div/input"))
-                        .sendKeys("AutoTest EDDS 2")
-                    element(byXpath("//div[@role='presentation']//*[text()='AutoTest EDDS 2']"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                }
-            }
-            //создаем отчет
-            element(byXpath("//span[text()='Создать']/..")).click()
-            //ждем созданный отчет
-            element(byText("Reports 0040 Проверка формирования отчетов по обращениям $dateTime сверка $report"))
-                .should(exist, ofSeconds(waitTime))
-            if (report != reportList.last()){
-                element(byCssSelector("input#title"))
-                    .click()
-                element(byCssSelector("input#title"))
-                    .sendKeys(Keys.END)
-                repeat(element(byCssSelector("input#title")).getAttribute("value")!!.length){
-                    element(byCssSelector("input#title")).sendKeys(Keys.BACK_SPACE)
-                }
-            }
-        }
-        reportList.forEach{ report ->
-            //переходим в созданный отчет
-            element(byXpath("//tbody/tr//*[text()='Reports 0040 Проверка формирования отчетов по обращениям $dateTime сверка $report']"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
-            //ждем
-            elements(byXpath("//main//table"))
-                .shouldHave(CollectionCondition.size(3), ofSeconds(waitTime))
-            for (i in 1..elements(byXpath("//main//table/tbody/tr")).size){
-                if (elements(byXpath("(//main//table/tbody/tr)[$i]//*[text()='Нет данных']")).size == 0
-                    && elements(byXpath("(//main//table/tbody/tr)[$i]//*[text()='из них:']")).size == 0) {
-                    tableMap.put(
-                        element(byXpath("(//main//table/tbody/tr)[$i]/td[1]")).ownText,
-                        element(byXpath("(//main//table/tbody/tr)[$i]/td[2]")).ownText.toInt()
-                    )
-                }
-            }
-            callTypeList.forEach { callType ->
-                if (elements(byXpath("//table/tbody/tr/td[1][text()='$callType']")).size == 0){
-                    tableMap.put(callType, 0)
-                }
-            }
-            newValuesMap.put(report, tableMap.clone() as MutableMap<String, Int>)
-            back()
-        }
-        Assertions.assertTrue(newValuesMap == oldValuesMap)
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        logoffTool()
-    }
 
 
-//    @Test(retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
-    fun `Reports 0050 Расширенная проверка формирования отчетов по происшествиям`() {
-        dateTime = LocalDateTime.now()
-        date = LocalDate.now()
-        val reportList = listOf("Зеленчукский район КЧР", "ГО Черкесский", "Оператор", "ЕДДС", "Уровень происшествия")
-        val oldReportsMap : LinkedHashMap<String, MutableMap<String, Int>> = linkedMapOf()
-        val oneReportMap : LinkedHashMap<String, Int> = linkedMapOf()
-        val newReportsMap : LinkedHashMap<String, MutableMap<String, Int>> = linkedMapOf()
-        logonTool()
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //Переходим в "отчет По происшествиям"
-        menuNavigation("Отчеты","По происшествиям", waitTime)
-        //кликаем по "Создать отчет"
-        element(byXpath("//span[text()='Создать отчет']/.."))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        //впердоливаем говнокод по преобразование даты
-        val today = date.toString().split("-")
-        //заполняем дату начала и конца периода отчета сегоднешним числом
-        element(byCssSelector("input#periodStart"))
-            .sendKeys("${today[2]}.${today[1]}.${today[0]}")
-        element(byCssSelector("input#periodEnd")).sendKeys("${today[2]}.${today[1]}.${today[0]}")
-        reportList.forEach{report ->
-            //Заполняем поля отчета - название
-            element(byCssSelector("input#title"))
-                .sendKeys("Reports 0050 Проверка формирования отчетов по происшествиям $dateTime отсчет $report")
-            //задаем МО
-            when(report){
-                "Зеленчукский район КЧР" -> {
-                    while (elements(byXpath("//label[text()='Муниципальное образование']/following-sibling::div/div[@role='button']//*[name()='svg']")).size >0){
-                        element(byXpath("//label[text()='Муниципальное образование']/following-sibling::div/div[@role='button']//*[name()='svg']")).hover()
-                        element(byXpath("//label[text()='Муниципальное образование']/following-sibling::div/div[@role='button']//*[name()='svg']")).click()
-                    }
-                    element(byXpath("//label[text()='Муниципальное образование']/following-sibling::div"))
-                        .click()
-                    element(byXpath("//div[@role='presentation']/div/ul//*[text()='$report']/ancestor::li"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()}
-                "ГО Черкесский" -> {
-                    while (elements(byXpath("//label[text()='Муниципальное образование']/following-sibling::div/div[@role='button']//*[name()='svg']")).size >0){
-                        element(byXpath("//label[text()='Муниципальное образование']/following-sibling::div/div[@role='button']//*[name()='svg']")).hover()
-                        element(byXpath("//label[text()='Муниципальное образование']/following-sibling::div/div[@role='button']//*[name()='svg']")).click()
-                    }
-                    element(byXpath("//label[text()='Муниципальное образование']/following-sibling::div"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//div[@role='presentation']/div/ul//*[text()='$report']/ancestor::li"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                }
-                "Оператор" -> {
-                    element(byXpath("//label[text()='Оператор']/following-sibling::div"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//label[text()='Оператор']/following-sibling::div/input"))
-                        .sendKeys("Сизов AutoTest EDDS 2-2")
-                    element(byXpath("//div[@role='presentation']//*[text()='Сизов AutoTest EDDS 2-2']"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                }
-                "ЕДДС" -> {
-                    element(byXpath("//label[text()='Оператор']/following-sibling::div//button[@aria-label='Clear']"))
-                        .hover()
-                    element(byXpath("//label[text()='Оператор']/following-sibling::div//button[@aria-label='Clear']"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//label[text()='Служба ЕДДС']/following-sibling::div"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//label[text()='Служба ЕДДС']/following-sibling::div/input"))
-                        .sendKeys("AutoTest EDDS 2")
-                    element(byXpath("//div[@role='presentation']//*[text()='AutoTest EDDS 2']"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                }
-                "Уровень происшествия" -> {
-                    element(byXpath("//label[text()='Служба ЕДДС']/following-sibling::div//button[@aria-label='Clear']"))
-                        .hover()
-                    element(byXpath("//label[text()='Служба ЕДДС']/following-sibling::div//button[@aria-label='Clear']"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//label[text()='Уровень происшествия']/following-sibling::div"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//label[text()='Уровень происшествия']/following-sibling::div/input"))
-                        .sendKeys("ЧС")
-                    element(byXpath("//div[@role='presentation']//*[text()='ЧС']"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//span[text()='ЧС']/parent::div[@role='button']"))
-                        .should(exist, ofSeconds(waitTime))
-                }
-            }
-            //создаем отчет
-            element(byXpath("//span[text()='Создать']/..")).click()
-            //ждем созданный отчет
-            element(byText("Reports 0050 Проверка формирования отчетов по происшествиям $dateTime отсчет $report"))
-                .should(exist, ofSeconds(waitTime))
-            if (report != reportList.last()){
-                element(byCssSelector("input#title"))
-                    .click()
-                element(byCssSelector("input#title"))
-                    .sendKeys(Keys.END)
-                repeat(element(byCssSelector("input#title")).getAttribute("value")!!.length){
-                    element(byCssSelector("input#title")).sendKeys(Keys.BACK_SPACE)
-                }
-            }
-        }
-//        element(byXpath("//*[text()='Очистить']/ancestor::button"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//            .click()
-//        element(byXpath("//*[text()='Скрыть форму']/ancestor::button"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//            .click()
-        reportList.forEach{ report ->
-            //переходим в созданный отчет
-            for (i in 1 until elements(byXpath("//tbody/tr")).size){
-                element(byXpath("//tbody/tr[${i+1}]")).scrollIntoView(false)
-                if (elements(byXpath("//tbody/tr[${i}]//*[text()='Reports 0050 Проверка формирования отчетов по происшествиям $dateTime отсчет $report']")).size == 1){
-                    element(byXpath("//tbody/tr[${i}]//*[text()='Reports 0050 Проверка формирования отчетов по происшествиям $dateTime отсчет $report']"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    break
-                }
-            }
-//            element(byXpath("//tbody/tr//*[text()='Reports 0050 Проверка формирования отчетов по происшествиям $dateTime отсчет $report']"))
-//                .should(exist, ofSeconds(waitTime))
-//                .shouldBe(visible, ofSeconds(waitTime))
-//                .click()
-            //ждем
-            elements(byXpath("//main//table"))
-                .shouldHave(CollectionCondition.size(2), ofSeconds(waitTime))
-            for (i in 1..elements(byXpath("//main//table/tbody/tr")).size){
-                if (elements(byXpath("(//main//table/tbody/tr)[$i]//*[text()='Нет данных']")).size == 0){
-                    oneReportMap.put(
-                        element(byXpath("(//main//table/tbody/tr)[$i]/td[1]")).ownText,
-                        element(byXpath("(//main//table/tbody/tr)[$i]/td[2]")).ownText.toInt()
-                    )
-                }
-            }
-//            callTypeList.forEach { callType ->
-//                if (elements(byXpath("//table/tbody/tr/td[1][text()='$callType']")).size == 0){
-//                    TableMap.put(callType, 0)
-//                }
-//            }
-            oldReportsMap.put(report, oneReportMap.clone() as MutableMap<String, Int>)
-            oneReportMap.clear()
-            back()
-        }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //Поехали создавать карточки по происшествиям
-        var login:String = ""
-        var password:String = ""
-        var reportsMapKeysList: List<String> = listOf()
-        val createdIncidentsType: MutableList<String> = mutableListOf<String>()
-//        reportList = listOf("Зеленчукский район КЧР", "ГО Черкесский", "Оператор", "ЕДДС", "Уровень происшествия")
-        for (i in 1..5) {
-            when (i) {
-                1 -> {login = "a.sizov.edds.1.1"; password = "a.sizov.edds.1.1"; reportsMapKeysList = listOf("ГО Черкесский") }
-                2 -> {login = "a.sizov.edds.2.1"; password = "a.sizov.edds.2.1"; reportsMapKeysList = listOf("ГО Черкесский", "ЕДДС") }
-                3 -> {login = "a.sizov.edds.2.2"; password = "a.sizov.edds.2.2"; reportsMapKeysList = listOf("ГО Черкесский", "Оператор", "ЕДДС") }
-                4 -> {login = "test-edds-zel"; password = "test-edds-zel"; reportsMapKeysList = listOf("Зеленчукский район КЧР") }
-                5 -> {login = "a.sizov.edds.2.2"; password = "a.sizov.edds.2.2"; reportsMapKeysList = listOf("ГО Черкесский", "Оператор", "ЕДДС", "Уровень происшествия") }
-            }
-            anyLogonTool(login, password)
-            menuNavigation("Происшествия", "Создать карточку", waitTime)
-            //Источник события - выбираем случайно
-            element(byXpath("//label[text()='Источник события']/following-sibling::div"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
-            element(byXpath("//div[@role='presentation']//ul/li"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-            elements(byXpath("//div[@role='presentation']//ul/li")).random().click()
-            //Номер телефона
-            if (elements(byCssSelector("#phone")).size > 0){
-                val tel = (100000000..999999999).random()
-                element(byCssSelector("#phone")).sendKeys("+79$tel")
-            }
-            //ФИО
-            if (elements(byCssSelector("input[id='fio.lastname']")).size > 0
-                && elements(byCssSelector("input[id='fio.firstname']")).size > 0){
-                element(byCssSelector("input[id='fio.lastname']")).sendKeys("$date AutoTestLastname")
-                element(byCssSelector("input[id='fio.firstname']")).sendKeys("AutoTestFirstname")
-            }
-            //Вводим случайный адрес
-//            val randomNumber = (1..100).random()
-            element(byCssSelector("#callAddress")).sendKeys("$i Reports 0050 $reportsMapKeysList", Keys.ENTER)
-            //заполняем дополнительную информацию
-            element(byCssSelector("div[role='textbox']>p")).click()
-            element(byCssSelector("div[role='textbox']"))
-                .sendKeys("Reports 0040, i=$i $dateTime $reportsMapKeysList")
-            //создаем КП
-            element(byXpath("//*[text()='Создать карточку']/ancestor::button"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
-            //Случайно выбираем и запоминаем тип происшествия
-            if (i == 5){
-                element(byXpath("//label[text()='Уровень происшествия']/following-sibling::div"))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
-                    .click()
-                element(byXpath("//div[@role='presentation']//li[text()='ЧС']"))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
-                    .click()
-                element(byXpath("//label[text()='Уровень происшествия']/following-sibling::div//*[text()='ЧС']"))
-                    .should(exist, ofSeconds(waitTime))
-                Thread.sleep(500)
-            }
-            inputRandomNew("incidentTypeId-textfield", false, waitTime)
-            element(byCssSelector("input#incidentTypeId-autocomplete[value*='.']"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-            val longSelectedIncidentType = element(byCssSelector("input#incidentTypeId-autocomplete")).getAttribute("value").toString()
-            val shortSelectedIncidentType = longSelectedIncidentType.substring(longSelectedIncidentType.indexOf(' ') + 1)
-            //дополняем значения карт
-            reportsMapKeysList.forEach{reportKey ->
-//                oldReportsMap.get(reportKey)
-                if (oldReportsMap.get(reportKey)!!.contains(shortSelectedIncidentType)){
-                    var valueCreatedIncidentType = oldReportsMap.get(reportKey)?.get(shortSelectedIncidentType)?.toInt()
-                    valueCreatedIncidentType = valueCreatedIncidentType?.plus(1)
-                    oldReportsMap.get(reportKey)?.put(shortSelectedIncidentType, valueCreatedIncidentType!!)
-                } else {
-                    oldReportsMap.get(reportKey)?.put(shortSelectedIncidentType, 1)
-                }
-                var valueAllIncident = oldReportsMap.get(reportKey)?.get("Всего")?.toInt()
-                valueAllIncident = valueAllIncident?.plus(1)
-                oldReportsMap.get(reportKey)?.put("Всего", valueAllIncident!!)
-                var valueInProcessingCall = oldReportsMap.get(reportKey)?.get("В обработке")?.toInt()
-                valueInProcessingCall = valueInProcessingCall?.plus(1)
-                oldReportsMap.get(reportKey)?.put("В обработке", valueInProcessingCall!!)
-            }
-            createdIncidentsType.add(shortSelectedIncidentType)
-            if (elements(byXpath("//*[text()='Место происшествия']/../..//label[text()='Уточните адрес происшествия']/following-sibling::div[contains(@class,'error')]"))
-                    .size > 0){
-                element(byXpath("(//*[text()='Место происшествия']/../..//span[@aria-label='add'])[1]/button"))
-                    .click()
-            }
-            element(byXpath("//*[text()='Сохранить карточку']/ancestor::button"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
-            //Убеждаемся, что нам загрузило созданную карточку
-            //проверяя что нам в принципе загрузило какую-то карточку
-            element(byCssSelector("#simple-tabpanel-card"))
-                .should(exist, ofSeconds(waitTime))
-            //что она в нужном статусе
-            checkICToolIsStatus("В обработке", waitTime)
-            element(byXpath("//*[text()='Reports 0040, i=$i $dateTime $reportsMapKeysList']"))
-                .should(exist, ofSeconds(waitTime))
-            logoffTool()
-        }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        logonTool()
-        //Переходим в "отчет По происшествиям"
-        menuNavigation("Отчеты","По происшествиям", waitTime)
-        //кликаем по "Создать отчет"
-        element(byXpath("//span[text()='Создать отчет']/.."))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        //впердоливаем говнокод по преобразование даты
-        //заполняем дату начала и конца периода отчета сегоднешним числом
-        element(byCssSelector("input#periodStart"))
-            .sendKeys("${today[2]}.${today[1]}.${today[0]}")
-        element(byCssSelector("input#periodEnd")).sendKeys("${today[2]}.${today[1]}.${today[0]}")
-        reportList.forEach{report ->
-            //Заполняем поля отчета - название
-            element(byCssSelector("input#title"))
-                .sendKeys("Reports 0050 Проверка формирования отчетов по происшествиям $dateTime сверка $report")
-            //задаем МО
-            when(report){
-                "Зеленчукский район КЧР" -> {
-                    while (elements(byXpath("//label[text()='Муниципальное образование']/following-sibling::div/div[@role='button']//*[name()='svg']")).size >0){
-                        element(byXpath("//label[text()='Муниципальное образование']/following-sibling::div/div[@role='button']//*[name()='svg']")).hover()
-                        element(byXpath("//label[text()='Муниципальное образование']/following-sibling::div/div[@role='button']//*[name()='svg']")).click()
-                    }
-                    element(byXpath("//label[text()='Муниципальное образование']/following-sibling::div"))
-                        .click()
-                    element(byXpath("//div[@role='presentation']/div/ul//*[text()='$report']/ancestor::li"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()}
-                "ГО Черкесский" -> {
-                    while (elements(byXpath("//label[text()='Муниципальное образование']/following-sibling::div/div[@role='button']//*[name()='svg']")).size >0){
-                        element(byXpath("//label[text()='Муниципальное образование']/following-sibling::div/div[@role='button']//*[name()='svg']")).hover()
-                        element(byXpath("//label[text()='Муниципальное образование']/following-sibling::div/div[@role='button']//*[name()='svg']")).click()
-                    }
-                    element(byXpath("//label[text()='Муниципальное образование']/following-sibling::div"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//div[@role='presentation']/div/ul//*[text()='$report']/ancestor::li"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                }
-                "Оператор" -> {
-                    element(byXpath("//label[text()='Оператор']/following-sibling::div"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//label[text()='Оператор']/following-sibling::div/input"))
-                        .sendKeys("Сизов AutoTest EDDS 2-2")
-                    element(byXpath("//div[@role='presentation']//*[text()='Сизов AutoTest EDDS 2-2']"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                }
-                "ЕДДС" -> {
-                    element(byXpath("//label[text()='Оператор']/following-sibling::div//button[@aria-label='Clear']"))
-                        .hover()
-                    element(byXpath("//label[text()='Оператор']/following-sibling::div//button[@aria-label='Clear']"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//label[text()='Служба ЕДДС']/following-sibling::div"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//label[text()='Служба ЕДДС']/following-sibling::div/input"))
-                        .sendKeys("AutoTest EDDS 2")
-                    element(byXpath("//div[@role='presentation']//*[text()='AutoTest EDDS 2']"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                }
-                "Уровень происшествия" -> {
-                    element(byXpath("//label[text()='Служба ЕДДС']/following-sibling::div//button[@aria-label='Clear']"))
-                        .hover()
-                    element(byXpath("//label[text()='Служба ЕДДС']/following-sibling::div//button[@aria-label='Clear']"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//label[text()='Уровень происшествия']/following-sibling::div"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//label[text()='Уровень происшествия']/following-sibling::div/input"))
-                        .sendKeys("ЧС")
-                    element(byXpath("//div[@role='presentation']//*[text()='ЧС']"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//span[text()='ЧС']/parent::div[@role='button']"))
-                        .should(exist, ofSeconds(waitTime))
-                }
-            }
-            //создаем отчет
-            element(byXpath("//span[text()='Создать']/..")).click()
-            //ждем созданный отчет
-            element(byText("Reports 0050 Проверка формирования отчетов по происшествиям $dateTime сверка $report"))
-                .should(exist, ofSeconds(waitTime))
-            if (report != reportList.last()){
-                element(byCssSelector("input#title"))
-                    .click()
-                element(byCssSelector("input#title"))
-                    .sendKeys(Keys.END)
-                repeat(element(byCssSelector("input#title")).getAttribute("value")!!.length){
-                    element(byCssSelector("input#title")).sendKeys(Keys.BACK_SPACE)
-                }
-            }
-        }
-//        element(byXpath("//*[text()='Очистить']/ancestor::button"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//            .click()
-//        element(byXpath("//*[text()='Скрыть форму']/ancestor::button"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//            .click()
-        reportList.forEach{ report ->
-            //переходим в созданный отчет
-            for (i in 1 until elements(byXpath("//tbody/tr")).size){
-                element(byXpath("//tbody/tr[${i+1}]")).scrollIntoView(false)
-                if (elements(byXpath("//tbody/tr[${i}]//*[text()='Reports 0050 Проверка формирования отчетов по происшествиям $dateTime сверка $report']")).size == 1){
-                    element(byXpath("//tbody/tr[${i}]//*[text()='Reports 0050 Проверка формирования отчетов по происшествиям $dateTime сверка $report']"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    break
-                }
-            }
-//            element(byXpath("//tbody/tr//*[text()='Reports 0050 Проверка формирования отчетов по происшествиям $dateTime отсчет $report']"))
-//                .should(exist, ofSeconds(waitTime))
-//                .shouldBe(visible, ofSeconds(waitTime))
-//                .click()
-            //ждем
-            elements(byXpath("//main//table"))
-                .shouldHave(CollectionCondition.size(2), ofSeconds(waitTime))
-            for (i in 1..elements(byXpath("//main//table/tbody/tr")).size){
-                if (elements(byXpath("(//main//table/tbody/tr)[$i]//*[text()='Нет данных']")).size == 0){
-                    oneReportMap.put(
-                        element(byXpath("(//main//table/tbody/tr)[$i]/td[1]")).ownText,
-                        element(byXpath("(//main//table/tbody/tr)[$i]/td[2]")).ownText.toInt()
-                    )
-                }
-            }
-            newReportsMap.put(report, oneReportMap.clone() as MutableMap<String, Int>)
-            oneReportMap.clear()
-            back()
-        }
-        //т.к. сравниваем карты только по конкретным значениям созданных происшествий, то кладем в список значений "всего" и "в обработке", что бы сравнить и их
-        createdIncidentsType.add("Всего")
-        createdIncidentsType.add("В обработке")
-        reportList.forEach{report ->
-            createdIncidentsType.forEach{createdIncident ->
-                if (newReportsMap.get(report)!!.containsKey(createdIncident)){
-                    Assertions.assertTrue(newReportsMap.get(report)!!.get(createdIncident)
-                        ==
-                        oldReportsMap.get(report)!!.get(createdIncident))
-                }
-            }
-        }
-        logoffTool()
-    }
-
-
-//    @Test(retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
-    fun `Reports 0060 Расширенная проверка формирования отчетов По сотрудникам черновик`() {
-        dateTime = LocalDateTime.now()
-        date = LocalDate.now()
-        val reportList = listOf("Зеленчукский район КЧР", "ГО Черкесский", "Оператор", "ЕДДС", "Уровень происшествия")
-        val oldReportsMap : LinkedHashMap<String, MutableMap<String, Int>> = linkedMapOf()
-        val oneReportMap : LinkedHashMap<String, Int> = linkedMapOf()
-        val newReportsMap : LinkedHashMap<String, MutableMap<String, Int>> = linkedMapOf()
-        logonTool()
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //Переходим в "отчет По сотрудникам"
-        menuNavigation("Отчеты","По сотрудникам", waitTime)
-        //кликаем по "Создать отчет"
-        element(byXpath("//span[text()='Создать отчет']/.."))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        //впердоливаем говнокод по преобразование даты
-        val today = date.toString().split("-")
-        //заполняем дату начала и конца периода отчета сегоднешним числом
-        element(byCssSelector("input#periodStart"))
-            .sendKeys("${today[2]}.${today[1]}.${today[0]}")
-        element(byCssSelector("input#periodEnd")).sendKeys("${today[2]}.${today[1]}.${today[0]}")
-        reportList.forEach{report ->
-            //Заполняем поля отчета - название
-            element(byCssSelector("input#title"))
-                .sendKeys("Reports 0050 Проверка формирования отчетов по сотрудникам $dateTime отсчет $report")
-            //задаем МО
-            when(report){
-                "Зеленчукский район КЧР" -> {
-                    while (elements(byXpath("//label[text()='Муниципальное образование']/following-sibling::div/div[@role='button']//*[name()='svg']")).size >0){
-                        element(byXpath("//label[text()='Муниципальное образование']/following-sibling::div/div[@role='button']//*[name()='svg']")).hover()
-                        element(byXpath("//label[text()='Муниципальное образование']/following-sibling::div/div[@role='button']//*[name()='svg']")).click()
-                    }
-                    element(byXpath("//label[text()='Муниципальное образование']/following-sibling::div"))
-                        .click()
-                    element(byXpath("//div[@role='presentation']/div/ul//*[text()='$report']/ancestor::li"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()}
-                "ГО Черкесский" -> {
-                    while (elements(byXpath("//label[text()='Муниципальное образование']/following-sibling::div/div[@role='button']//*[name()='svg']")).size >0){
-                        element(byXpath("//label[text()='Муниципальное образование']/following-sibling::div/div[@role='button']//*[name()='svg']")).hover()
-                        element(byXpath("//label[text()='Муниципальное образование']/following-sibling::div/div[@role='button']//*[name()='svg']")).click()
-                    }
-                    element(byXpath("//label[text()='Муниципальное образование']/following-sibling::div"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//div[@role='presentation']/div/ul//*[text()='$report']/ancestor::li"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                }
-                "Оператор" -> {
-                    element(byXpath("//label[text()='Оператор']/following-sibling::div"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//label[text()='Оператор']/following-sibling::div/input"))
-                        .sendKeys("Сизов AutoTest EDDS 2-2")
-                    element(byXpath("//div[@role='presentation']//*[text()='Сизов AutoTest EDDS 2-2']"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                }
-                "ЕДДС" -> {
-                    element(byXpath("//label[text()='Оператор']/following-sibling::div//button[@aria-label='Clear']"))
-                        .hover()
-                    element(byXpath("//label[text()='Оператор']/following-sibling::div//button[@aria-label='Clear']"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//label[text()='Служба ЕДДС']/following-sibling::div"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//label[text()='Служба ЕДДС']/following-sibling::div/input"))
-                        .sendKeys("AutoTest EDDS 2")
-                    element(byXpath("//div[@role='presentation']//*[text()='AutoTest EDDS 2']"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                }
-                "Уровень происшествия" -> {
-                    element(byXpath("//label[text()='Служба ЕДДС']/following-sibling::div//button[@aria-label='Clear']"))
-                        .hover()
-                    element(byXpath("//label[text()='Служба ЕДДС']/following-sibling::div//button[@aria-label='Clear']"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//label[text()='Уровень происшествия']/following-sibling::div"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//label[text()='Уровень происшествия']/following-sibling::div/input"))
-                        .sendKeys("ЧС")
-                    element(byXpath("//div[@role='presentation']//*[text()='ЧС']"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//span[text()='ЧС']/parent::div[@role='button']"))
-                        .should(exist, ofSeconds(waitTime))
-                }
-            }
-            //создаем отчет
-            element(byXpath("//span[text()='Создать']/..")).click()
-            //ждем созданный отчет
-            element(byText("Reports 0050 Проверка формирования отчетов по сотрудникам $dateTime отсчет $report"))
-                .should(exist, ofSeconds(waitTime))
-            if (report != reportList.last()){
-                element(byCssSelector("input#title"))
-                    .click()
-                element(byCssSelector("input#title"))
-                    .sendKeys(Keys.END)
-                repeat(element(byCssSelector("input#title")).getAttribute("value")!!.length){
-                    element(byCssSelector("input#title")).sendKeys(Keys.BACK_SPACE)
-                }
-            }
-        }
-//        element(byXpath("//*[text()='Очистить']/ancestor::button"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//            .click()
-//        element(byXpath("//*[text()='Скрыть форму']/ancestor::button"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//            .click()
-        reportList.forEach{ report ->
-            //переходим в созданный отчет
-            for (i in 1 until elements(byXpath("//tbody/tr")).size){
-                element(byXpath("//tbody/tr[${i+1}]")).scrollIntoView(false)
-                if (elements(byXpath("//tbody/tr[${i}]//*[text()='Reports 0050 Проверка формирования отчетов по сотрудникам $dateTime отсчет $report']")).size == 1){
-                    element(byXpath("//tbody/tr[${i}]//*[text()='Reports 0050 Проверка формирования отчетов по сотрудникам $dateTime отсчет $report']"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    break
-                }
-            }
-//            element(byXpath("//tbody/tr//*[text()='Reports 0050 Проверка формирования отчетов по происшествиям $dateTime отсчет $report']"))
-//                .should(exist, ofSeconds(waitTime))
-//                .shouldBe(visible, ofSeconds(waitTime))
-//                .click()
-            //ждем
-            elements(byXpath("//main//table"))
-                .shouldHave(CollectionCondition.size(2), ofSeconds(waitTime))
-            for (i in 1..elements(byXpath("//main//table/tbody/tr")).size){
-                if (elements(byXpath("(//main//table/tbody/tr)[$i]//*[text()='Нет данных']")).size == 0){
-                    oneReportMap.put(
-                        element(byXpath("(//main//table/tbody/tr)[$i]/td[1]")).ownText,
-                        element(byXpath("(//main//table/tbody/tr)[$i]/td[2]")).ownText.toInt()
-                    )
-                }
-            }
-//            callTypeList.forEach { callType ->
-//                if (elements(byXpath("//table/tbody/tr/td[1][text()='$callType']")).size == 0){
-//                    TableMap.put(callType, 0)
-//                }
-//            }
-            oldReportsMap.put(report, oneReportMap.clone() as MutableMap<String, Int>)
-            oneReportMap.clear()
-            back()
-        }
-        logonTool()
-
-
-
-
-
-        logoffTool()
-    }
 
     @DataProvider(name = "Расширенная проверка формирования отчетов")
     open fun Statuses(): Any {

@@ -924,16 +924,17 @@ class PimTests : BaseTest(){
         //Находим созданную КП в КИАП ДДС
         element(byText("AutoTest PMI 0150 $dateTime")).should(exist, ofSeconds(waitTime)).click()
         //устанавливаем статус "Реагирование"
-        element(byXpath("//span[text()='В обработке']/parent::button"))
-            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-        element(byXpath("//span[text()='В обработке']/parent::button")).click()
-        element(byXpath("//span[contains(@class,'MuiButton-label')][text()='Реагирование']/parent::button"))
-            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-        element(byXpath("//span[contains(@class,'MuiButton-label')][text()='Реагирование']/parent::button")).click()
-        element(byXpath("//span[text()='В обработке']/parent::button"))
-            .shouldNot(exist, ofSeconds(waitTime))
-        element(byXpath("//span[contains(@class,'MuiButton-label')][text()='Реагирование']/parent::button"))
-            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
+        updateICToolStatus("Реагирование", waitTime)
+//        element(byXpath("//span[text()='В обработке']/parent::button"))
+//            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
+//        element(byXpath("//span[text()='В обработке']/parent::button")).click()
+//        element(byXpath("//span[contains(@class,'MuiButton-label')][text()='Реагирование']/parent::button"))
+//            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
+//        element(byXpath("//span[contains(@class,'MuiButton-label')][text()='Реагирование']/parent::button")).click()
+//        element(byXpath("//span[text()='В обработке']/parent::button"))
+//            .shouldNot(exist, ofSeconds(waitTime))
+//        element(byXpath("//span[contains(@class,'MuiButton-label')][text()='Реагирование']/parent::button"))
+//            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
         //Thread.sleep(500)
 
         logoffTool()
@@ -1440,6 +1441,10 @@ class PimTests : BaseTest(){
                                     .ownText
                                 fullSearchValue = searchValue
                             }
+                            //обрежем поисковое значение если оно слишком длинное
+                            if (searchValue.length > 100){
+                                searchValue = searchValue.take(100)
+                            }
                             //открываем строку поиска, если закрылась (бывает с иерархическими справочниками)
                             if (elements(byCssSelector("input[placeholder]")).size == 0) {
                                 element(byXpath("//*[@name='search']/ancestor::button")).click()
@@ -1490,96 +1495,6 @@ class PimTests : BaseTest(){
     }
 
 
-//    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `PMI 0231`() {
-        logonTool()
-        //для каждого справочника выполнить
-        for (dict in 1..9){
-            //кликаем по иконке справочников
-            element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul")).click()
-            //переходим в каждый справочник
-            element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul//div/ul[$dict]")).click()
-            //ждем загрузки таблицы
-            element(byCssSelector("main table>tbody"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-            //добавляем все доступные колонки в таблицу
-            checkbox("", true, waitTime)
-            //получаем счетчик строк в левом нижнем углу страницы, в виде числа
-            val allRecordCountString = element(byXpath("//table/tfoot//p[contains(text(),'Всего ')]")).ownText.toString().split("\n")
-            val allRecordCountNotUse = allRecordCountString[1].split(" ")
-            val allRecordCountUse = allRecordCountNotUse[0].toInt()
-            //ситаем количество слолбцов, при том что последний нам не пригодится
-            //создаем список заголовков столбцов, обрезая последний элемент - заголовок трех точек
-            val columnsElementList = elements(byXpath("//table/thead/tr/th//*[text()]"))
-            val columnsList = mutableListOf<String>()
-            columnsElementList.forEach {
-                columnsList.add(it.ownText.trim())
-            }
-            columnsList.remove(columnsList.last())
-            //отркрываем поисковую строку
-            element(byXpath("//*[@name='search']/ancestor::button"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
-            element(byCssSelector("input[placeholder]"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-            //читаем что есть в подсказке
-            val searchHintString = element(byCssSelector("input[placeholder]")).getAttribute("placeholder")
-            val searchHintList = searchHintString?.split(", ")
-            //каждый столбец сверяем с каждым елементом подсказки (так сложно потому что нам еще на странице надо ориентироваться)
-            //каждый столбец проверяем на наличие в списке подсказок
-            columnsList.forEachIndexed { colInd, colVal ->
-                if (searchHintList!!.contains(colVal)){
-                    //если столбец есть в списке подсказок, то для каждой строки достаем его текстовое значение и кладем в список
-                    val stringElement = elements(byXpath("//table/tbody/tr"))
-                    val inColumnsValueList = mutableListOf<String>()
-                    stringElement.forEachIndexed { elind, el ->
-                        val colNum = numberOfColumn(colVal, waitTime)
-                        if (
-                            (elements(byXpath("//table/tbody/tr[$elind]/td[$colNum][text()]")).size == 1)
-                            && element(byXpath("//table/tbody/tr[$elind]/td[${colInd + 1}][text()]")).ownText != "  "
-                            )
-                        {
-                            inColumnsValueList.add(element(byXpath("//table/tbody/tr[$elind]/td[$colNum][text()]")).ownText.trim())
-                        } else if (
-                            (elements(byXpath("//table/tbody/tr[$elind]/td[$colNum]//*[text()]")).size == 1)
-                            && element(byXpath("//table/tbody/tr[$elind]/td[${colInd + 1}]//*[text()]")).ownText != "  "
-                        )
-                        {
-                            inColumnsValueList.add(element(byXpath("//table/tbody/tr[$elind]/td[$colNum]//*[text()]")).ownText.trim())
-                        }
-                    }
-                    //получили список значений столбца на странице теперь преобразуем его в пригодный для поиска вид, если это ФИО или телефонный номер
-                    val  rnd = (0 until inColumnsValueList.size).random()
-                    var rndSearchValue = inColumnsValueList[rnd]
-                    val fioRegex = Regex("[a-zA-Zа-яА-Я]{1}[.]\\s{1}[a-zA-Zа-яА-Я]{1}[.]{1}")
-                    val telRegex = Regex("[+]{1}[7]{1}[(]{1}[0-9]{3}[)]{1}[0-9]{3}[-]{1}[0-9]{2}[-]{1}[0-9]{2}")
-                    if (telRegex.containsMatchIn(rndSearchValue)) {
-                        val newSearchValue = rndSearchValue.filter { it.isDigit() }
-                        rndSearchValue = newSearchValue
-                        } else if (fioRegex.containsMatchIn(rndSearchValue)) {
-                        val searchValueList = rndSearchValue.split(" ")
-                        rndSearchValue = searchValueList[0]
-                        }
-                    element(byCssSelector("input[placeholder]")).click()
-                    element(byCssSelector("input[placeholder]")).sendKeys(rndSearchValue)
-                    element(byCssSelector("input[placeholder]")).sendKeys(Keys.ENTER)
-                    Thread.sleep(1000)
-                    val newRecordCountString = element(byXpath("//table/tfoot//p[contains(text(),'Всего ')]")).ownText.toString().split("\n")
-                    val newRecordCountNotUse = newRecordCountString[1].split(" ")
-                    val newRecordCountUse = newRecordCountNotUse[0].toInt()
-                    Assertions.assertTrue(allRecordCountUse > newRecordCountUse)
-                    element(byXpath("//input[@placeholder]/following-sibling::div//button"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                }
-            }
-        }
-
-    }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `PMI 0241 Проверка наличия справочников с иерархической системой классификации`(){
