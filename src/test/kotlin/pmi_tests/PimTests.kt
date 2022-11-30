@@ -1806,32 +1806,8 @@ class PimTests : BaseTest(){
         element(byCssSelector("input[placeholder^='ФИО']")).sendKeys("N 0270 AutoTest", Keys.ENTER)
         //ждем результатов
         Thread.sleep(1000)
+        //удалим потуги неудачных тестов с учетом того, что некоторые ДЛ могли стать пользователями
         val userColumn = numberOfColumn("Пользователь", waitTime)
-//        while ((elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size == 0)
-//            ||(elements(byXpath("//table/tbody/tr/td[$userColumn]//*[@name='user']")).size
-//                ==elements(byXpath("//table/tbody/tr")).size )
-//        ){
-//            //запоминаем ФИО что бы проконтролировать удаление
-//            val removedPersonFIO = element(byXpath("//table/tbody/tr[1]/td[$fioColumnNubber]")).ownText
-//            //открываем три точки
-//            element(byXpath("//table/tbody/tr[1]/td[$menuColumnNubber]//button"))
-//                .should(exist, ofSeconds(waitTime))
-//                .shouldBe(visible, ofSeconds(waitTime))
-//                .click()
-//            //удаляем
-//            element(byXpath("//span[text()='Удалить']/parent::button"))
-//                .should(exist, ofSeconds(waitTime))
-//                .shouldBe(visible, ofSeconds(waitTime))
-//                .click()
-//            //подтверждаем удаление
-//            element(byXpath("//div[@role='dialog']//span[text()='Удалить']/parent::button"))
-//                .should(exist, ofSeconds(waitTime))
-//                .shouldBe(visible, ofSeconds(waitTime))
-//                .click()
-//            element(byXpath("//table/tbody/tr[1]/td[$fioColumnNubber][text()='$removedPersonFIO']"))
-//                .shouldNot(exist, ofSeconds(waitTime))
-//            Thread.sleep(500)
-//        }
         if (elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size == 0) {
             for (i in 1..elements(byXpath("//table/tbody/tr")).size) {
                 if (elements(byXpath("//table/tbody/tr[$i]/td[$userColumn]//*[@name='user']")).size == 0) {
@@ -1875,17 +1851,8 @@ class PimTests : BaseTest(){
         element(byXpath("//table/thead/tr/th//*[text()='Организация']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        //определяем порядковые номера столбцов, которые положим в хэш
-//        var hotLineANDOrganization: MutableMap<String, String> = mutableMapOf("in" to "in")
-//        hotLineANDOrganization.remove("in")
-//        hotLineANDOrganization.clear()
-//        var hotLineList: MutableListOf<String>
-        val hotLineList = mutableListOf("init")
-        hotLineList.remove("init")
-        val organizationList = mutableListOf("init")
-        organizationList.remove("init")
-
-//        var organizationList: MutableList<String>
+        val hotLineList = mutableListOf<String>()
+        val organizationList = mutableListOf<String>()
         val columnCount = elements(byXpath("//thead//*[text()]")).size
         var hotlineColumnNumber: Int = 2
         var organizationColumnNumber: Int = 4
@@ -1903,11 +1870,6 @@ class PimTests : BaseTest(){
 
             hotLineList.add(element(byXpath("//tbody/tr[$u]/td[$hotlineColumnNumber][text()]")).ownText)
             organizationList.add(element(byXpath("//tbody/tr[$u]/td[$organizationColumnNumber][text()]")).ownText)
-
-//            hotLineANDOrganization
-//                .put(element(byXpath("//tbody/tr[$u]/td[$hotlineColumnNumber]//*[text()]")).ownText,
-//                element(byXpath("//tbody/tr[$u]/td[$organizationColumnNumber]//*[text()]")).ownText
-//                )
         }
         Assertions.assertTrue(hotLineList.size == organizationList.size)
         menuNavigation("Справочники","Должностные лица",waitTime)
@@ -1916,35 +1878,6 @@ class PimTests : BaseTest(){
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         menuColumnNubber = numberOfColumn(" ", waitTime)
-        //удалим потуги неудачных тестов
-        //воспользуемся поиском
-//        element(byXpath("//*[@name='search']/ancestor::button"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//            .click()
-//        element(byCssSelector("input[placeholder^='ФИО']"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//            .click()
-//        element(byCssSelector("input[placeholder^='ФИО']"))
-//            .sendKeys("N 0270 AutoTest", Keys.ENTER)
-//        Thread.sleep(1000)
-//        while (elements(byXpath("//table/tbody/tr//*[text()='Нет информации']")).size == 0){
-//            //открываем трехточечное меню
-//            element(byXpath("//table/tbody/tr[1]/td[$menuColumnNubber]//button"))
-//                .click()
-//            //удаляем
-//            element(byXpath("//span[text()='Удалить']/parent::button"))
-//                .should(exist, ofSeconds(waitTime))
-//                .shouldBe(visible, ofSeconds(waitTime))
-//                .click()
-//            //подтверждаем удаление
-//            element(byXpath("//div[@role='dialog']//span[text()='Удалить']/parent::button"))
-//                .should(exist, ofSeconds(waitTime))
-//                .shouldBe(visible, ofSeconds(waitTime))
-//                .click()
-//            Thread.sleep(500)
-//        }
         element(byXpath("//span[text()='Добавить новое']/parent::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -1968,43 +1901,17 @@ class PimTests : BaseTest(){
         val randomAtridute = (0 until hotLineList.size).random()
         element(byXpath("//input[@name='companyId']")).sendKeys(organizationList[randomAtridute])
         element(byXpath("//input[@name='companyId']")).sendKeys(Keys.DOWN, Keys.ENTER)
-//        var countPotentialOrganization = 0
-//        do {
-//            element(byXpath("//input[@name='companyId']")).sendKeys(Keys.DOWN)
-//            countPotentialOrganization += 1
-//        } while (elements(byCssSelector("input[name='companyId'][aria-activedescendant^='companyId-option']")).size > 0)
-//        //выбираем случайную организацию из доступных
-//        val rndCompany = (1 until countPotentialOrganization).random()
-//        repeat(rndCompany){
-//            element(byXpath("//input[@name='companyId']")).sendKeys(Keys.DOWN)
-//        }
-//        element(byXpath("//input[@name='companyId']")).sendKeys(Keys.ENTER)
         val companyId = element(byXpath("//input[@name='companyId']")).getAttribute("value")
+        Assertions.assertTrue(organizationList[randomAtridute] == companyId)
         //Выбираем службу
-        //т.к. служба зависима от организации, придется убедится в отсутствии элемента noOption
         element(byXpath("//input[@name='hotlineId']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
         element(byXpath("//input[@name='hotlineId']")).sendKeys(hotLineList[randomAtridute])
         element(byXpath("//input[@name='hotlineId']")).sendKeys(Keys.DOWN, Keys.ENTER)
-//        var noOption = true
-//        Thread.sleep(500)
-//        if (elements(byXpath("//body/div[@role='presentation']//*[text()='Отсутствуют записи в справочнике!']")).size == 0) {
-//            var countPotentialHotline = 0
-//            do {
-//                element(byXpath("//input[@name='hotlineId']")).sendKeys(Keys.DOWN)
-//                countPotentialHotline += 1
-//            } while (elements(byCssSelector("input[name='hotlineId'][aria-activedescendant^='hotlineId-option']")).size > 0)
-//            //выбираем случайную службу из доступных
-//            val rndHotline = (1 until countPotentialHotline).random()
-//            repeat(rndCompany){
-//                element(byXpath("//input[@name='hotlineId']")).sendKeys(Keys.DOWN)
-//            }
-//        element(byXpath("//input[@name='hotlineId']")).sendKeys(Keys.ENTER)
-//        noOption = false
-//        }
         val hotlineId = element(byXpath("//input[@name='hotlineId']")).getAttribute("value")
+        Assertions.assertTrue(hotLineList[randomAtridute] == hotlineId)
         //сохраняем
         element(byXpath("//span[text()='Добавить']/parent::button")).click()
         element(byCssSelector("form"))
@@ -2039,7 +1946,6 @@ class PimTests : BaseTest(){
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
-//        val atributeSelector = "//label[text()='%s']/following-sibling::span[text()='%s']"
         val atributeSelector = "//table/tbody//li/label[text()='%s']/following-sibling::*[text()='%s']"
         //проверяем что в истории
         element(byXpath(atributeSelector.format("Дежурная служба", hotlineId)))
@@ -2053,24 +1959,16 @@ class PimTests : BaseTest(){
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
-//        element(byXpath("//label[text()='ФИО']/parent::li/div/div"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//            .click()
         //проверяем то что развернули
-//        element(byXpath("//label[text()='Фамилия']/following-sibling::span[text()='$dateTime']"))
         element(byXpath(atributeSelector.format("Фамилия", dateTime)))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-//        element(byXpath("//label[text()='Имя']/following-sibling::span[text()='N 0270']"))
         element(byXpath(atributeSelector.format("Имя", "N 0270")))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-//        element(byXpath("//label[text()='Отчество']/following-sibling::span[text()='AutoTest']"))
         element(byXpath(atributeSelector.format("Отчество", "AutoTest")))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-//        element(byXpath("//label[text()='Отчество']/following-sibling::span[text()='AutoTest']"))
         element(byXpath(atributeSelector.format("Электронная почта", "test@test.com")))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -2083,7 +1981,6 @@ class PimTests : BaseTest(){
         element(byXpath(atributeSelector.format("Рабочий телефон", "+7918$telR")))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-
         logoffTool()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //а теперь удалим его
@@ -2129,12 +2026,9 @@ class PimTests : BaseTest(){
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
-//        element(byXpath("//table/tbody/tr"))
-//            .shouldNot(exist, ofSeconds(waitTime))
         element(byXpath("//tbody/tr//*[text()='Нет данных']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-//        Thread.sleep(5000)
         logoffTool()
     }
 
