@@ -19,6 +19,7 @@ import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.LinkedHashMap
+import java.util.Random
 
 class PlayGround : BaseTest(){
     var date = LocalDate.now()
@@ -210,78 +211,14 @@ class PlayGround : BaseTest(){
         Thread.sleep(20000)
     }
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
+    @Test (retryAnalyzer = Retry::class)
     fun `Черновик2`() {
-        logonTool()
-        menuNavigation("Отчеты", "По происшествиям", waitTime)
-        element(byXpath("//*[text()='Создать отчет']/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        addressInput("address", "Карачаево-Черкесская Респ, г Карачаевск", waitTime)
-        element(byXpath("//*[text()='Определить адрес']"))
-            .should(exist, ofSeconds(waitTime))
-        Thread.sleep(10000)
-        println("width = ")
-        println(element(byXpath("//*[text()='Определить адрес']")).getCssValue("width"))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        element(byXpath("//form[@novalidate]"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        element(byXpath("//*[text()='Создать карточку']/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        element(byXpath("//div[@data-testid='incidentTypeId']//input[@id='incidentTypeId-autocomplete']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        element(byXpath("//div[@role='presentation']"))
-            .should(exist, ofSeconds(waitTime))
-        element(byXpath("//div[@role='presentation']/div/ul/li[1]/div"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        Thread.sleep(1000)
-        element(byXpath("//div[@role='presentation']/div/ul//*[text()='П.1.1.1 Авиационное происшествие']/ancestor::li"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        Thread.sleep(1000)
-        element(byXpath("//div[@data-testid='incidentTypeId']//input[@id='incidentTypeId-autocomplete']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        Thread.sleep(1000)
-        println(elements(byXpath("//div[@role='presentation']/div/ul/li[1]/div/*")))
-        println(elements(byXpath("//div[@role='presentation']/div/ul/li[2]/div[1]/*")))
-        println(elements(byXpath("//div[@role='presentation']/div/ul/li[2]/div[2]/*")))
-        println(elements(byXpath("//div[@role='presentation']/div/ul/li[2]/div[3]/*")))
-        println(elements(byXpath("//div[@role='presentation']/div/ul/li[3]/div[1]/*")))
-        println(elements(byXpath("//div[@role='presentation']/div/ul/li[3]/div[2]/*")))
-        println(elements(byXpath("//div[@role='presentation']/div/ul/li[3]/div[3]/*")))
-        println(elements(byXpath("//div[@role='presentation']/div/ul/li[4]/div[1]/*")))
-        println(elements(byXpath("//div[@role='presentation']/div/ul/li[4]/div[1]/div/*")))
-        println(elements(byXpath("//div[@role='presentation']/div/ul/li[4]/div[2]/*")))
-        println(elements(byXpath("//div[@role='presentation']/div/ul/li[4]/div[3]/*")))
-        println(elements(byXpath("//div[@role='presentation']/div/ul/li[5]/div[1]/*")))
-        println(elements(byXpath("//div[@role='presentation']/div/ul/li[5]/div[2]/*")))
-        println(elements(byXpath("//div[@role='presentation']/div/ul/li[5]/div[3]/*")))
-//        println(elements(byXpath("//div[@role='presentation']//*")))
-
+        val lat = (10..70).random() + kotlin.random.Random.nextFloat()
+        val lon = (10..100).random() + kotlin.random.Random.nextFloat()
+        val latFloat = kotlin.random.Random.nextFloat()
+        println(lat)
+        println(lon)
+        println(latFloat)
     }
 
 //    elements(byXpath("//table/tbody/tr[$str]/td[$col][text()]")).let { path1 ->

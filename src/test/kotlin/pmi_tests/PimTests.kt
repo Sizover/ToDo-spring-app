@@ -1986,15 +1986,7 @@ class PimTests : BaseTest(){
         //а теперь удалим его
         logonTool()
         //кликаем по иконке справочников
-        element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
         //переходим в нужный справочник
-        element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul//div[@data-testid='app-menu-Должностные лица']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
         menuNavigation("Справочники", "Должностные лица", waitTime)
         menuColumnNubber = numberOfColumn(" ", waitTime)
         //ждем загрузки таблицы

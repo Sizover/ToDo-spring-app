@@ -10,6 +10,7 @@ import com.codeborne.selenide.Selenide.*
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import java.time.Duration.ofSeconds
+import kotlin.math.abs
 
 
 class MapTest  : BaseTest(){
@@ -95,73 +96,68 @@ class MapTest  : BaseTest(){
     //убеждаемся, что он выключился
         element(byXpath(checkboxStatus.format("Все статусы")))
         .shouldNot(exist, ofSeconds(waitTime))
-//        //включаем дежурные службы
-//        element(byXpath(checkboxSelector.format("Дежурные службы")))
-//            .should(exist, ofSeconds(waitTime))
-//            .click()
-//        element(byXpath(checkboxStatus.format("Дежурные службы")))
-//            .should(exist, ofSeconds(waitTime))
-//        //считаем маркеры
-//        numericMarker = elements(byXpath("//div[contains(@class,'markerBlue10')]/*[text()]")).size
-//        val hotlineMarker = elements(byCssSelector("img.markerBlue10[src*='kiap_hotline']")).size
-//        summaryMarker = numericMarker + hotlineMarker
-//        Assertions.assertTrue(summaryMarker > 0)
-//        //выключаем дежурные службы
-//        element(byXpath(checkboxSelector.format("Дежурные службы")))
-//            .should(exist, ofSeconds(waitTime))
-//            .click()
-//        element(byXpath(checkboxStatus.format("Дежурные службы")))
-//            .shouldNot(exist, ofSeconds(waitTime))
-//        //включаем Камеры
-//        element(byXpath(checkboxSelector.format("Камеры")))
-//            .should(exist, ofSeconds(waitTime))
-//            .click()
-//        element(byXpath(checkboxStatus.format("Камеры")))
-//            .should(exist, ofSeconds(waitTime))
-//        numericMarker = elements(byXpath("//div[contains(@class,'markerBlue10')]/*[text()]")).size
-//        val cameraMarker = elements(byCssSelector("img.markerBlue10[src*='kiap_camera']")).size
-//        summaryMarker = numericMarker + cameraMarker
-//        Assertions.assertTrue(summaryMarker > 0)
-//        //выключаем Камеры
-//        element(byXpath(checkboxSelector.format("Камеры")))
-//            .should(exist, ofSeconds(waitTime))
-//            .click()
-//        element(byXpath(checkboxStatus.format("Камеры")))
-//            .shouldNot(exist, ofSeconds(waitTime))
-//        //включаем Датчики
-//        element(byXpath(checkboxSelector.format("Датчики")))
-//            .should(exist, ofSeconds(waitTime))
-//            .click()
-//        element(byXpath(checkboxStatus.format("Датчики")))
-//            .should(exist, ofSeconds(waitTime))
-//        numericMarker = elements(byXpath("//div[contains(@class,'markerBlue10')]/*[text()]")).size
-//        val sensorMarker = elements(byCssSelector("img.markerBlue10[src*='kiap_sensor']")).size
-//        summaryMarker = numericMarker + sensorMarker
-//        Assertions.assertTrue(summaryMarker > 0)
-//        //выключаем Датчики
-//        element(byXpath(checkboxSelector.format("Датчики")))
-//            .should(exist, ofSeconds(waitTime))
-//            .click()
-//        element(byXpath(checkboxStatus.format("Датчики")))
-//            .shouldNot(exist, ofSeconds(waitTime))
         MTtool_001("Дежурные службы")
         MTtool_001("Камеры")
         MTtool_001("Датчики")
         MTtool_001("Организации")
-
         logoffTool()
+    }
 
-
-
-        //"div.leaflet-pane.leaflet-marker-pane>img.markerIncidentInProcess"
-        //"div.leaflet-pane.leaflet-marker-pane>img.markerIncidentFinished"
-        //"div.leaflet-pane.leaflet-marker-pane>img.markerIncidentNew"
-        //"div.leaflet-pane.leaflet-marker-pane>img.markerIncidentResponse"
-        ////div[contains(@class,'markerIcon')]/*[text()]
-
-
-        //main/div[2]//*[name()='path'][@d]/../../input
-
-
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
+    fun `MT_002 Проверка перехода по координатам места происшествия`() {
+        //Создаем КП, указывая координаты вручную (случайные из диапазона), затем переходим на карту
+        //считываем ссылку в свойствах центрующей иконки, достаем оттуда координаты и сравниваем с заданными с учетом некоторой погрешности
+        //убеждаемся что на карте присутствуют 5 кусочков из openStreetMap соответствующих координатам, возвращаемся в КП и убеждаемся что вернулись в КП
+        logonTool()
+        menuNavigation("Происшествия", "Создать карточку", waitTime)
+        createIcToolCalltype("", waitTime)
+        createICToolPhone("", waitTime)
+        createICToolFIO("Map", "Test", "002", waitTime)
+        val lat = (10..70).random() + kotlin.random.Random.nextFloat()
+        val lon = (10..100).random() + kotlin.random.Random.nextFloat()
+        element(byXpath("//form//label[text()='Широта']/..//input[@name='lat']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byXpath("//form//label[text()='Широта']/..//input[@name='lat']"))
+            .sendKeys(lat.toString())
+        element(byXpath("//form//label[text()='Долгота']/..//input[@name='lon']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byXpath("//form//label[text()='Долгота']/..//input[@name='lon']"))
+            .sendKeys(lon.toString())
+        createICToolsDopInfo("Autotest MT_002, Широта = $lat, Долгота = $lon", waitTime)
+        element(byXpath("//*[text()='Создать карточку']/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        inputRandomNew("incidentTypeId-textfield", false, waitTime)
+        element(byXpath("//*[text()='Сохранить карточку']/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        checkICToolIsStatus("В обработке", waitTime)
+        checkICToolsDopInfo("Autotest MT_002, Широта = $lat, Долгота = $lon", waitTime)
+        //переходим в карту
+        element(byCssSelector("div#place div[style*='cursor']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+//        element(byXpath("//div[@id='skeleton']//main//img[@alt='center']"))
+        element(byCssSelector("div#skeleton main img[alt='center']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        val coordinates = element(byCssSelector("div#skeleton main img[alt='center']"))
+            .getAttribute("baseURI")?.substringAfterLast('/')!!.split(",")
+        Assertions.assertTrue(coordinates[2].toInt() == 16)
+        Assertions.assertTrue(abs(coordinates[0].toFloat() - lat) < 0.00001)
+        Assertions.assertTrue(abs(coordinates[1].toFloat() - lon) < 0.00001)
+        //тут еще хорошо бы вставить проверку картинок карты по ссылкам приблизительно коррелирующими с координатами
+        back()
+        checkICToolIsStatus("В обработке", waitTime)
+        checkICToolsDopInfo("Autotest MT_002, Широта = $lat, Долгота = $lon", waitTime)
+        Thread.sleep(50000)
+        logoffTool()
     }
 }
