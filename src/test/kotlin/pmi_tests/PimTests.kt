@@ -1781,7 +1781,7 @@ class PimTests : BaseTest(){
         logoffTool()
     }
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
+//    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `PMI 0270 Проверка возможности создания, удаления записей, просмотра детальной истории в справочнике должностных лиц`(){
         //A.3.33 Проверка возможности создания записей в справочниках
         //A.3.34 Проверка возможности удаления записей в справочниках

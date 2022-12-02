@@ -10,7 +10,11 @@ import com.codeborne.selenide.Selenide.*
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import java.time.Duration.ofSeconds
+import kotlin.math.PI
 import kotlin.math.abs
+import kotlin.math.asinh
+import kotlin.math.floor
+import kotlin.math.tan
 
 
 class MapTest  : BaseTest(){
@@ -153,11 +157,29 @@ class MapTest  : BaseTest(){
         Assertions.assertTrue(coordinates[2].toInt() == 16)
         Assertions.assertTrue(abs(coordinates[0].toFloat() - lat) < 0.00001)
         Assertions.assertTrue(abs(coordinates[1].toFloat() - lon) < 0.00001)
-        //тут еще хорошо бы вставить проверку картинок карты по ссылкам приблизительно коррелирующими с координатами
+        //проверка картинок карты по ссылкам коррелирующими с координатами
+        //честно сPIзжено с https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
+        val latRad = Math.toRadians(lat.toDouble())
+        var xtile = floor( (lon + 180) / 360 * (1 shl coordinates[2].toInt()) ).toInt()
+        var ytile = floor( (1.0 - asinh(tan(latRad)) / PI) / 2 * (1 shl coordinates[2].toInt()) ).toInt()
+        if (xtile < 0) {
+            xtile = 0
+        }
+        if (xtile >= (1 shl coordinates[2].toInt())) {
+            xtile= (1 shl coordinates[2].toInt()) - 1
+        }
+        if (ytile < 0) {
+            ytile = 0
+        }
+        if (ytile >= (1 shl coordinates[2].toInt())) {
+            ytile = (1 shl coordinates[2].toInt()) - 1
+        }
+        element(byXpath("//div[@id='skeleton']//main//img[@alt and @role='presentation' and contains(@src,'16/$xtile/$ytile.png')]"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
         back()
         checkICToolIsStatus("В обработке", waitTime)
         checkICToolsDopInfo("Autotest MT_002, Широта = $lat, Долгота = $lon", waitTime)
-        Thread.sleep(50000)
         logoffTool()
     }
 }
