@@ -41,7 +41,7 @@ open class BaseTest {
 //        Configuration.browser = CHROME
         WebDriverRunner.isChrome()
         Configuration.browserSize = "1920x1080"
-        Configuration.holdBrowserOpen = false
+        Configuration.holdBrowserOpen = true
         //Открываем КИАП
         //Selenide.open("http://test.kiap.local:8000")
         val opt = ChromeOptions()
@@ -51,7 +51,7 @@ open class BaseTest {
         //Костыль для обхода проблем с тестами которые не завершились и упали
         clearBrowserCookies()
         clearBrowserLocalStorage()
-        closeWindow()
+//        closeWindow()
         //Thread.sleep(1000)
         open("https://test.kiap.local/")
         //логинимся

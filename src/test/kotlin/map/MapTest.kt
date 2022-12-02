@@ -112,7 +112,12 @@ class MapTest  : BaseTest(){
         //Создаем КП, указывая координаты вручную (случайные из диапазона), затем переходим на карту
         //считываем ссылку в свойствах центрующей иконки, достаем оттуда координаты и сравниваем с заданными с учетом некоторой погрешности
         //убеждаемся что на карте присутствуют 5 кусочков из openStreetMap соответствующих координатам, возвращаемся в КП и убеждаемся что вернулись в КП
-        logonTool()
+        try {
+            logonTool()
+        } catch (_:  Throwable) {
+            element(byCssSelector("header button svg[name='user']"))
+                .should(exist, ofSeconds(waitTime))
+        }
         menuNavigation("Происшествия", "Создать карточку", waitTime)
         createIcToolCalltype("", waitTime)
         createICToolPhone("", waitTime)
