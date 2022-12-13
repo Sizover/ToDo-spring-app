@@ -119,7 +119,7 @@ class MapTest  : BaseTest(){
                 .should(exist, ofSeconds(waitTime))
         }
         menuNavigation("Происшествия", "Создать карточку", waitTime)
-        createIcToolCalltype("", waitTime)
+        createICToolCalltype("", waitTime)
         createICToolPhone("", waitTime)
         createICToolFIO("Map", "Test", "002", waitTime)
         val lat = (10..70).random() + kotlin.random.Random.nextFloat()

@@ -1,7 +1,6 @@
 //import kotlin.collections.EmptyMap.keys
 import com.codeborne.selenide.Browsers.CHROME
 import com.codeborne.selenide.CollectionCondition
-import com.codeborne.selenide.Condition
 import com.codeborne.selenide.Condition.attribute
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.visible
@@ -20,8 +19,6 @@ import com.codeborne.selenide.WebDriverRunner
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import org.openqa.selenium.chrome.ChromeOptions
-import org.testng.asserts.Assertion
-import java.time.Duration
 import java.time.Duration.ofSeconds
 
 
@@ -41,7 +38,9 @@ open class BaseTest {
 //        Configuration.browser = CHROME
         WebDriverRunner.isChrome()
         Configuration.browserSize = "1920x1080"
-        Configuration.holdBrowserOpen = true
+        Configuration.holdBrowserOpen = false
+        Configuration.webdriverLogsEnabled = false
+        Configuration.headless = false
         //Открываем КИАП
         //Selenide.open("http://test.kiap.local:8000")
         val opt = ChromeOptions()
@@ -51,7 +50,7 @@ open class BaseTest {
         //Костыль для обхода проблем с тестами которые не завершились и упали
         clearBrowserCookies()
         clearBrowserLocalStorage()
-//        closeWindow()
+        closeWindow()
         //Thread.sleep(1000)
         open("https://test.kiap.local/")
         //логинимся
@@ -490,7 +489,7 @@ open class BaseTest {
     }
 
     //Что бы не править каждый тест, перевевожу создание и проверку полей КП на абстрактные методы для каждого поля
-    fun createIcToolCalltype(calltype: String, waitTime: Long){
+    fun createICToolCalltype(calltype: String, waitTime: Long){
         element(byCssSelector("div#calltype"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -619,6 +618,12 @@ open class BaseTest {
 //            .click()
 //        if (){}
 //    }
+    fun createICToolLabels(Labels: String, waitTime: Long){
+        element(byXpath("//label[text()='Метки']/..//input[@id='labelsId-autocomplete']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+}
 
     fun checkICToolIsStatus(status: String, waitTime: Long) {
         elements(byXpath("//div[@id='incidentButtons']//button"))

@@ -25,7 +25,7 @@ open class StatusTests : BaseTest(){
 
 //    @DataProvider(name = "Provider S 0010")
 //    fun Object[][]
-    @DataProvider(name = "Статусы детей и родителей", parallel = true)
+    @DataProvider(name = "Статусы детей и родителей", parallel = false)
     open fun Statuses(): Any {
         return arrayOf<Array<Any>>(
             arrayOf("Завершена", "Завершена", "Завершена"),

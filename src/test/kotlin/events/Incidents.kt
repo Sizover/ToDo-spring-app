@@ -31,7 +31,7 @@ class Incidents :BaseTest() {
     val longWait: Long = 10
 
 
-    @Test (retryAnalyzer = Retry::class, groups = ["ALL"])
+//    @Test (retryAnalyzer = Retry::class, groups = ["ALL"])
     fun `Event INC 5010 Проверка наличия информирования о ложном вызове`() {
         dateTime = LocalDateTime.now()
         date = LocalDate.now()
@@ -124,15 +124,18 @@ class Incidents :BaseTest() {
         element(byXpath("//div[@role='textbox']/p[last()]"))
             .sendKeys(Keys.ENTER)
         element(byXpath("//div[@role='textbox']/p[last()]"))
-            .sendKeys("Event INC 5020 Test")
+            .sendKeys("Event INC 5020 Test $date")
         element(byXpath("//*[text()='Сохранить']/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
-        element(byXpath("//h2[text()='Муниципальные образования']/parent::div"))
+        element(byXpath("//*[text()='Просмотр']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        element(byXpath("//*[text()='Добавить новое']/ancestor::button"))
+        element(byXpath("//form[@novalidate]"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//*[text()='Редактировать']/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         logoffTool()
@@ -254,8 +257,8 @@ class Incidents :BaseTest() {
                     .click()
                 callTypeNeed = false
             }
-            if (elements(byXpath("//form[@novalidate]//*[text()='Регистрация']/ancestor::button")).size == 1) {
-                element(byXpath("//form[@novalidate]//*[text()='Регистрация']/ancestor::button"))
+            if (elements(byXpath("//form[@novalidate]//*[text()='Дата регистрации']/ancestor::button")).size == 1) {
+                element(byXpath("//form[@novalidate]//*[text()='Дата регистрации']/ancestor::button"))
                     .click()
 //                element(byXpath("//label[text()='Дата регистрации']/ancestor::fieldset//input[@placeholder='с']"))
 //                    .should(exist, ofSeconds(waitTime))
@@ -417,7 +420,7 @@ class Incidents :BaseTest() {
         element(byXpath("//label[text()='Источник события']/following-sibling::div/div[@id='calltype' and text()='Телефон (ССОП)']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        element(byCssSelector("#phone")).sendKeys(falseСallsNumbersList.random())
+        element(byCssSelector("#phone")).sendKeys("+${falseСallsNumbersList.random()}")
         element(byXpath("//*[@name='noteError']/ancestor::div[@role='alert']//*[text()='Номер данного абонента был зафиксирован ранее как ложный']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))

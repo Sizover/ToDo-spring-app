@@ -1093,7 +1093,7 @@ class Reports : BaseTest(){
         reportsAddressList.forEach { address ->
 //            element(byCssSelector("form[novalidate] input#title")).let { el ->
             element(byCssSelector("form[novalidate] input#title"))
-                .sendKeys("Reports 0032 Проверка формирования отчетов по обращениям $dateTime отсчет $address")
+                .sendKeys("Reports 0032 Проверка формирования отчетов по происшествиям $dateTime отсчет $address")
             when (address){
                 "адресный" -> {
                     addressInput("address", "Карачаево-Черкесская Респ, г Карачаевск", waitTime)
@@ -1159,7 +1159,7 @@ class Reports : BaseTest(){
                 //создаем отчет
                 element(byXpath("//span[text()='Создать']/ancestor::button")).click()
                 //ждем созданный отчет
-                element(byText("Reports 0032 Проверка формирования отчетов по обращениям $dateTime отсчет $address"))
+                element(byText("Reports 0032 Проверка формирования отчетов по происшествиям $dateTime отсчет $address"))
                     .should(exist, ofSeconds(waitTime))
                 //очищаем поле названия если нам еще делать отчеты
                 if (address != reportsAddressList.last()) {
@@ -1186,11 +1186,11 @@ class Reports : BaseTest(){
             .click()
         //открываем созданные отчеты и запоминаем значения
         reportsAddressList.forEach {address ->
-            element(byXpath("//table[contains(@id,'-reports')]/tbody//*[text()='Reports 0032 Проверка формирования отчетов по обращениям $dateTime отсчет $address']/ancestor::tr"))
+            element(byXpath("//table[contains(@id,'-reports')]/tbody//*[text()='Reports 0032 Проверка формирования отчетов по происшествиям $dateTime отсчет $address']/ancestor::tr"))
                 .should(exist, ofSeconds(waitTime))
                 .click()
             //дожидаемся заголовка
-            element(byXpath("//*[text()='Reports 0032 Проверка формирования отчетов по обращениям $dateTime отсчет $address']/parent::div//*[text()=' за период с ${today[2]}.${today[1]}.${(today[0])[2]}${(today[0])[3]} по ${today[2]}.${today[1]}.${(today[0])[2]}${(today[0])[3]}']"))
+            element(byXpath("//*[text()='Reports 0032 Проверка формирования отчетов по происшествиям $dateTime отсчет $address']/parent::div//*[text()=' за период с ${today[2]}.${today[1]}.${(today[0])[2]}${(today[0])[3]} по ${today[2]}.${today[1]}.${(today[0])[2]}${(today[0])[3]}']"))
                 .should(exist, ofSeconds(waitTime))
             //для каждой таблицы
             for (table in 1..elements(byXpath("//table")).size){
@@ -1241,7 +1241,7 @@ class Reports : BaseTest(){
 //                .click()
             menuNavigation("Происшествия", "Создать карточку", waitTime)
             //источник - случайный
-            createIcToolCalltype("random", waitTime)
+            createICToolCalltype("random", waitTime)
             Thread.sleep(100)
             //телефон - случайный
             createICToolPhone("", waitTime)
@@ -1255,7 +1255,7 @@ class Reports : BaseTest(){
                 addressInput("callAddress", "г Черкесск $random", waitTime)
             }
             //доп. инфо.
-            createICToolsDopInfo("i = $i, rndIC = $rndIC Reports 0032 Проверка формирования отчетов по обращениям $dateTime", waitTime)
+            createICToolsDopInfo("i = $i, rndIC = $rndIC Reports 0032 Проверка формирования отчетов по происшествиям $dateTime", waitTime)
             //сохраняем обращение
             element(byXpath("//*[text()='Создать карточку']/ancestor::button"))
                 .should(exist, ofSeconds(waitTime))
@@ -1292,10 +1292,10 @@ class Reports : BaseTest(){
                 deathList =
                     mutableListOf(
                         1 + ddsTypeList.size,
-                        victimsCount,
-                        victimsChildren,
-                        deathToll,
-                        deathChildren
+                        (victimsCount * (1 + ddsTypeList.size)),
+                        (victimsChildren * (1 + ddsTypeList.size)),
+                        (deathToll * (1 + ddsTypeList.size)),
+                        (deathChildren * (1 + ddsTypeList.size))
                     )
                 createICToolIsThreatPeople(isThreatPeople, victimsCount.toString(), victimsChildren.toString(), deathToll.toString(), deathChildren.toString(), waitTime)
             } else {
@@ -1530,7 +1530,7 @@ class Reports : BaseTest(){
         reportsAddressList.forEach { address ->
 //            element(byCssSelector("form[novalidate] input#title")).let { el ->
             element(byCssSelector("form[novalidate] input#title"))
-                .sendKeys("Reports 0032 Проверка формирования отчетов по обращениям $dateTime сверка $address")
+                .sendKeys("Reports 0032 Проверка формирования отчетов по происшествиям $dateTime сверка $address")
             when (address){
                 "адресный" -> {
                     addressInput("address", "Карачаево-Черкесская Респ, г Карачаевск", waitTime)
@@ -1554,7 +1554,7 @@ class Reports : BaseTest(){
             //создаем отчет
             element(byXpath("//span[text()='Создать']/ancestor::button")).click()
             //ждем созданный отчет
-            element(byText("Reports 0032 Проверка формирования отчетов по обращениям $dateTime сверка $address"))
+            element(byText("Reports 0032 Проверка формирования отчетов по происшествиям $dateTime сверка $address"))
                 .should(exist, ofSeconds(waitTime))
             //очищаем поле названия если нам еще делать отчеты
             if (address != reportsAddressList.last()) {
@@ -1572,11 +1572,11 @@ class Reports : BaseTest(){
             .click()
         //открываем созданные отчеты и запоминаем значения
         reportsAddressList.forEach {address ->
-            element(byXpath("//table[contains(@id,'-reports')]/tbody//*[text()='Reports 0032 Проверка формирования отчетов по обращениям $dateTime сверка $address']/ancestor::tr"))
+            element(byXpath("//table[contains(@id,'-reports')]/tbody//*[text()='Reports 0032 Проверка формирования отчетов по происшествиям $dateTime сверка $address']/ancestor::tr"))
                 .should(exist, ofSeconds(waitTime))
                 .click()
             //дожидаемся заголовка
-            element(byXpath("//*[text()='Reports 0032 Проверка формирования отчетов по обращениям $dateTime сверка $address']/parent::div//*[text()=' за период с ${today[2]}.${today[1]}.${(today[0])[2]}${(today[0])[3]} по ${today[2]}.${today[1]}.${(today[0])[2]}${(today[0])[3]}']"))
+            element(byXpath("//*[text()='Reports 0032 Проверка формирования отчетов по происшествиям $dateTime сверка $address']/parent::div//*[text()=' за период с ${today[2]}.${today[1]}.${(today[0])[2]}${(today[0])[3]} по ${today[2]}.${today[1]}.${(today[0])[2]}${(today[0])[3]}']"))
                 .should(exist, ofSeconds(waitTime))
             //для каждой таблицы
             for (table in 1..elements(byXpath("//table")).size){
@@ -1615,9 +1615,10 @@ class Reports : BaseTest(){
             back()
         }
         reportsAddressList.forEach { address ->
+            println("keys: $address newValuesMap[address]?.keys!!.sorted() = ${newValuesMap[address]?.keys!!.sorted()} vs oldValuesMap[address]?.keys!!.sorted() = ${oldValuesMap[address]?.keys!!.sorted()}")
             Assertions.assertTrue(newValuesMap[address]?.keys!!.sorted() == oldValuesMap[address]?.keys!!.sorted())
             newValuesMap[address]?.keys?.forEach { key ->
-//                println("address = $address key = $key oldValues = ${oldValuesMap[address]?.get(key)} newValuesMap = ${newValuesMap[address]?.get(key)}")
+                println("address = $address key = $key oldValues = ${oldValuesMap[address]?.get(key)} newValuesMap = ${newValuesMap[address]?.get(key)}")
                 //тут пока вылазит баг про не копирование угроз и пострадавших
                 Assertions.assertTrue(oldValuesMap[address]?.get(key) == newValuesMap[address]?.get(key))
 //                if (oldValuesMap[address]?.get(key) != newValuesMap[address]?.get(key)){
