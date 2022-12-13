@@ -1,24 +1,19 @@
 
 
 
-import com.codeborne.selenide.CollectionCondition
-import com.codeborne.selenide.Condition
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Selectors.byCssSelector
 import com.codeborne.selenide.Selectors.byText
 import com.codeborne.selenide.Selectors.byXpath
-import com.codeborne.selenide.Selenide.back
 import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
-import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
-import org.testng.annotations.Test
-import java.time.Duration
+import java.io.File
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.LinkedHashMap
+import kotlin.random.Random
 
 class PlayGround : BaseTest(){
     var date = LocalDate.now()
@@ -210,116 +205,109 @@ class PlayGround : BaseTest(){
         Thread.sleep(20000)
     }
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `Черновик2`() {
-        logonTool()
-        menuNavigation("Отчеты", "По происшествиям", waitTime)
-        element(byXpath("//*[text()='Создать отчет']/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        addressInput("address", "Карачаево-Черкесская Респ, г Карачаевск", waitTime)
-        element(byXpath("//*[text()='Определить адрес']"))
-            .should(exist, ofSeconds(waitTime))
-        Thread.sleep(10000)
-        println("width = ")
-        println(element(byXpath("//*[text()='Определить адрес']")).getCssValue("width"))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        element(byXpath("//form[@novalidate]"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
+    fun `MT_003 Черновик`() {
+        //Создаем КП, указывая координаты вручную (случайные из диапазона), затем переходим на карту
+        //считываем ссылку в свойствах центрующей иконки, достаем оттуда координаты и сравниваем с заданными с учетом некоторой погрешности
+        //убеждаемся что на карте присутствуют 5 кусочков из openStreetMap соответствующих координатам, возвращаемся в КП и убеждаемся что вернулись в КП
+        try {
+            logonTool()
+        } catch (_: Throwable) {
+            element(byCssSelector("header button svg[name='user']"))
+                .should(exist, ofSeconds(waitTime))
+        }
+        menuNavigation("Происшествия", "Создать карточку", waitTime)
         element(byXpath("//*[text()='Создать карточку']/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
-        element(byXpath("//div[@data-testid='incidentTypeId']//input[@id='incidentTypeId-autocomplete']"))
+        element(byXpath("//label[text()='Метки']/..//input[@id='labelsId-autocomplete']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
         element(byXpath("//div[@role='presentation']"))
             .should(exist, ofSeconds(waitTime))
-        element(byXpath("//div[@role='presentation']/div/ul/li[1]/div"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        Thread.sleep(1000)
-        element(byXpath("//div[@role='presentation']/div/ul//*[text()='П.1.1.1 Авиационное происшествие']/ancestor::li"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        Thread.sleep(1000)
-        element(byXpath("//div[@data-testid='incidentTypeId']//input[@id='incidentTypeId-autocomplete']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        Thread.sleep(1000)
-        println(elements(byXpath("//div[@role='presentation']/div/ul/li[1]/div/*")))
-        println(elements(byXpath("//div[@role='presentation']/div/ul/li[2]/div[1]/*")))
-        println(elements(byXpath("//div[@role='presentation']/div/ul/li[2]/div[2]/*")))
-        println(elements(byXpath("//div[@role='presentation']/div/ul/li[2]/div[3]/*")))
-        println(elements(byXpath("//div[@role='presentation']/div/ul/li[3]/div[1]/*")))
-        println(elements(byXpath("//div[@role='presentation']/div/ul/li[3]/div[2]/*")))
-        println(elements(byXpath("//div[@role='presentation']/div/ul/li[3]/div[3]/*")))
-        println(elements(byXpath("//div[@role='presentation']/div/ul/li[4]/div[1]/*")))
-        println(elements(byXpath("//div[@role='presentation']/div/ul/li[4]/div[1]/div/*")))
-        println(elements(byXpath("//div[@role='presentation']/div/ul/li[4]/div[2]/*")))
-        println(elements(byXpath("//div[@role='presentation']/div/ul/li[4]/div[3]/*")))
-        println(elements(byXpath("//div[@role='presentation']/div/ul/li[5]/div[1]/*")))
-        println(elements(byXpath("//div[@role='presentation']/div/ul/li[5]/div[2]/*")))
-        println(elements(byXpath("//div[@role='presentation']/div/ul/li[5]/div[3]/*")))
-//        println(elements(byXpath("//div[@role='presentation']//*")))
-
+        println(elements(byXpath("//div[@role='presentation']/div/ul/*")))
     }
 
-//    elements(byXpath("//table/tbody/tr[$str]/td[$col][text()]")).let { path1 ->
-//        if (path1.size == 1 && path1.get(0).ownText.trim().isNotEmpty()) {
-//            path1[0].ownText.trim()
-//        }
-//    }                                    }
-//
-//}
-//
-//val path1 = byXpath("//table/tbody/tr[$str]/td[$col]//*[text()]")
-//val path2 = byXpath("//table/tbody/tr[$str]/td[$col]//*[text(sdfasdf)]")
-//
-//if ((elements(path1)).size == 1)
-//&& (element(path1).ownText.trim()
-//.isNotEmpty())) {
-//    trueValueList.add(element(path1).ownText.trim())
-//
-//                                    if ((elements(byXpath("//table/tbody/tr[$str]/td[$col][text()]")).size == 1)
-//                                        && (element(byXpath("//table/tbody/tr[$str]/td[$col][text()]")).ownText.trim()
-//                                            .isNotEmpty())) {
-//                                            trueValueList.add(element(byXpath("//table/tbody/tr[$str]/td[$col][text()]")).ownText.trim())
-//                                    } else if ((elements(byXpath("//table/tbody/tr[$str]/td[$col]//*[text()]")).size == 1)
-//                                        &&(element(byXpath("//table/tbody/tr[$str]/td[$col]//*[text()]")).ownText.trim()
-//                                            .isNotEmpty())) {
-//                                            trueValueList.add(element(byXpath("//table/tbody/tr[$str]/td[$col]//*[text()]")).ownText.trim())
-//                                    }
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
+    fun `PMI 0150 черновик`() {
+        //A311 Регистрация вызова (формирование карточки происшествия)
+        //A.3.17 Назначение карточки происшествия на службу ДДС/ЕДДС (только службы, которые подключены к Системе)
+        //Проверка изменения статуса родительской карточки при изменении статуса карточки назначения
+        //логинимся
+        dateTime = LocalDateTime.now()
+        date = LocalDate.now()
+        anyLogonTool("a.sizov.edds.1.1", "a.sizov.edds.1.1")
+        //кликаем по иконке происшествий в боковом меню
+        //Переходим в "Список происшетвий"
+        //кликаем по "создать обращение"
+        menuNavigation("Происшествия", "Список происшествий", waitTime)
+        element(byXpath("//span[text()='Создать обращение']/parent::button")).click()
+//        element(byCssSelector("div span[aria-label='add'] button[type='button']")).shouldHave(exactText("Создать обращение"))
+//            .click()
+        //заполняем карточку
+        //Источник события - выбираем случайно
+        createICToolCalltype("", waitTime)
+        //Номер телефона
+        createICToolPhone("", waitTime)
+        //ФИО
+        createICToolFIO("$date AutoTestLastname", "AutoTestFirstname", "", waitTime)
+        //адрес с тестированием транслитерации и клик по dadata
+        addressInput("callAddress","vbhf5",waitTime)
+        //заполняем дополнительную информацию
+        //element(byCssSelector("textarea[name='comment']")).value = "AutoTest N 0150 $dateTime"
+        createICToolsDopInfo("AutoTest PMI 0150 $dateTime", waitTime)
+        //регистрируем обращение
+        element(byXpath("//span[text()='Создать карточку']/parent::button")).click()
+        //выбираем тип происшествия
+        element(byCssSelector("input#incidentTypeId-autocomplete")).sendKeys("П.5.1.5 Auto-Test", Keys.DOWN, Keys.ENTER)
+        val isThreatPeople = true
+        val victimsCount = (0..100).random()
+        val victimsChildren = (0..victimsCount).random()
+        val deathToll = (0..50).random()
+        val deathChildren = (0..deathToll).random()
+        //Создаем карточку
+        createICToolIsThreatPeople(isThreatPeople, victimsCount.toString(), victimsChildren.toString(), deathToll.toString(), deathChildren.toString(), waitTime)
+        element(byXpath("//span[text()='Сохранить карточку']/parent::button")).click()
 
-//}
 
+        //Убеждаемся, что нам загрузило созданную карточку
+        //проверяя что нам в принципе загрузило какую-то карточку
+        element(byCssSelector("#simple-tabpanel-card")).should(exist, ofSeconds(waitTime))
+        //что она в статусе "В обработке"
+        checkICToolIsStatus("В обработке", waitTime)
+        //и что это именно так карточка которую мы только что создали
+        checkICToolsDopInfo("AutoTest PMI 0150 $dateTime", waitTime)
+        element(byCssSelector("input#upload-file")).uploadFile(File("/home/isizov/IdeaProjects/testing-e2e/src/test/resources/fixtures/test.pdf"))
+        element(byXpath("//div[@role='alert']//*[text()='Файл загружен']"))
+            .should(exist, ofSeconds(waitTime))
+        element(byXpath("//div[@role='alert']//*[@name='snackbarClose']/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byXpath("//div[@id='files']//*[text()='test.pdf']"))
+            .should(exist, ofSeconds(waitTime))
+        //кликаем по иконке происшествий в боковом меню
+        //Переходим в "Список происшетвий"
+        //Переходим во вкладку "Работа с ДДС"
+        element(byXpath("//span[text()='Работа с ДДС']/ancestor::button")).click()
+        //жмем "добавить"
+        //element(byCssSelector("div#simple-tabpanel-hotlines button")).click()
+        element(byXpath("//span[text()='Выбрать ДДС']/ancestor::button")).click()
+        Thread.sleep(150)
+        //выбираем ДДС-02 г.Черкесск
+        element(byXpath("//*[text()='ДДС ЭОС']/ancestor::div[@id='panel1a-header']")).click()
+        Thread.sleep(150)
+        element(byXpath("//*[text()='AutoTest dds-01 1']/ancestor::div/div/label//input")).click()
+        Thread.sleep(150)
+        element(byXpath("//span[text()='Назначить']/ancestor::button")).click()
+        Thread.sleep(150)
+        element(byText("AutoTest dds-01 1")).should(exist, ofSeconds(waitTime))
+        element(byText("AutoTest PMI 0150 $dateTime")).should(exist, ofSeconds(waitTime))
 
-//    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-//    fun main() {
-//        val length = "test4321".with() {
-//            println(this)
-//            this.length
-//        }
-//        println(length)
-//    }
+        logoffTool()
+
+    }
 
 }

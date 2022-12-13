@@ -367,26 +367,35 @@ class PimTests : BaseTest(){
         //кликаем по "создать обращение"
         element(byXpath("//span[text()='Создать обращение']/parent::button")).click()
         //Проверяем форму подсказки по положению стрелки и части текста
-        element(byCssSelector("button.MuiIconButton-sizeSmall > span > svg > path[d='M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z']"))
+        element(byXpath("//*[text()='Опросник']/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
-        element(byCssSelector("button.MuiIconButton-sizeSmall > span > svg > path[d='M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z']"))
-            .shouldNot(exist, ofSeconds(waitTime))
-        element(byCssSelector("div.MuiPaper-root.MuiPaper-elevation1.MuiPaper-rounded:nth-child(2)"))
-            .should(visible, ofSeconds(waitTime))
-        element(byCssSelector("div.MuiPaper-root.MuiPaper-elevation1.MuiPaper-rounded:nth-child(2)"))
-            .shouldHave(text("Здравствуйте, оперативный дежурный (имя и фамилия), представьтесь, пожалуйста")
-                , ofSeconds(waitTime))
-        element(byText("Опросник")).click()
-        element(byCssSelector("div.MuiPaper-root.MuiPaper-elevation1.MuiPaper-rounded:nth-child(2)"))
-            .shouldNot(visible, ofSeconds(waitTime))
-        element(byCssSelector("button.MuiIconButton-sizeSmall > span > svg > path[d='M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z']"))
-            .shouldNot(exist, ofSeconds(waitTime))
-        element(byCssSelector("button.MuiIconButton-sizeSmall > span > svg > path[d='M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z']"))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//*[text()='Опросник']/ancestor::button//*[@d='M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z']"))
             .should(exist, ofSeconds(waitTime))
-        element(byText("Опросник")).click()
-
+        element(byXpath("//*[text()='Опросник']/ancestor::button//*[@d='M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z']"))
+            .shouldNot(exist, ofSeconds(waitTime))
+        element(byXpath("//*[text()='\"Здравствуйте, оператор дежурной службы (имя и фамилия), представьтесь, пожалуйста\"']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//*[text()='Опросник']/ancestor::button"))
+            .click()
+        element(byXpath("//*[text()='Опросник']/ancestor::button//*[@d='M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z']"))
+            .should(exist, ofSeconds(waitTime))
+        element(byXpath("//*[text()='Опросник']/ancestor::button//*[@d='M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z']"))
+            .shouldNot(exist, ofSeconds(waitTime))
+        element(byXpath("//*[text()='\"Здравствуйте, оператор дежурной службы (имя и фамилия), представьтесь, пожалуйста\"']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldNotBe(visible, ofSeconds(waitTime))
+        element(byXpath("//*[text()='Опросник']/ancestor::button"))
+            .click()
+        element(byXpath("//*[text()='Опросник']/ancestor::button//*[@d='M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z']"))
+            .should(exist, ofSeconds(waitTime))
+        element(byXpath("//*[text()='Опросник']/ancestor::button//*[@d='M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z']"))
+            .shouldNot(exist, ofSeconds(waitTime))
+        element(byXpath("//*[text()='\"Здравствуйте, оператор дежурной службы (имя и фамилия), представьтесь, пожалуйста\"']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
         logoffTool()
-
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
@@ -575,6 +584,8 @@ class PimTests : BaseTest(){
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
+                //Проверяем и закрываем зеленую "всплывашку"
+                checkGreenAlert("Пункт выполнен", true, waitTime)
                 //Проверяем позеленение кружочка
                 element(byCssSelector(circleSelector.format("Не выполнен", "#BA3113")))
                     .shouldNot(exist, ofSeconds(waitTime))
@@ -587,8 +598,6 @@ class PimTests : BaseTest(){
                 element(byCssSelector(colorItemSelector.format("232, 255, 224", "122, 249, 102")))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
-                //Проверяем и закрываем зеленую "всплывашку"
-                checkGreenAlert("Пункт выполнен", true, waitTime)
                 //Thread.sleep(50000)
             }
         }
@@ -838,32 +847,20 @@ class PimTests : BaseTest(){
 //            .click()
         //заполняем карточку
         //Источник события - выбираем случайно
-        element(byCssSelector("div#calltype")).click()
-        val calltypeRandom = (1..10).random()
-        element(byCssSelector("div#menu->div>ul[role='listbox']>li:nth-child($calltypeRandom)")).click()
-        //Источник события - факс
-        //element(byCssSelector("#calltype")).click()
-        //element(byCssSelector("li[role='option'][data-value='cd73ccc0-e740-4c5d-98ec-28bbe9a13be0']")).click()
+        createICToolCalltype("", waitTime)
         //Номер телефона
-        if (elements(byCssSelector("#phone")).size > 0){
-            element(byCssSelector("#phone")).sendKeys("9189999999")
-        }
+        createICToolPhone("", waitTime)
         //ФИО
-        if (elements(byCssSelector("input[id='fio.lastname']")).size > 0
-            && elements(byCssSelector("input[id='fio.firstname']")).size > 0){
-            element(byCssSelector("input[id='fio.lastname']")).sendKeys("$date AutoTestLastname")
-            element(byCssSelector("input[id='fio.firstname']")).sendKeys("AutoTestFirstname")
-        }
+        createICToolFIO("$date AutoTestLastname", "AutoTestFirstname", "", waitTime)
         //адрес с тестированием транслитерации и клик по dadata
         addressInput("callAddress","vbhf5",waitTime)
         //заполняем дополнительную информацию
         //element(byCssSelector("textarea[name='comment']")).value = "AutoTest N 0150 $dateTime"
-        element(byCssSelector("div[role='textbox']>p")).click()
-        element(byCssSelector("div[role='textbox']")).sendKeys("AutoTest PMI 0150 $dateTime")
+        createICToolsDopInfo("AutoTest PMI 0150 $dateTime", waitTime)
         //регистрируем обращение
         element(byXpath("//span[text()='Создать карточку']/parent::button")).click()
         //выбираем тип происшествия
-        element(byCssSelector("input#incidentTypeId-autocomplete")).setValue("П.5.1.5 Auto-Test").sendKeys(Keys.DOWN, Keys.ENTER)
+        element(byCssSelector("input#incidentTypeId-autocomplete")).sendKeys("П.5.1.5 Auto-Test", Keys.DOWN, Keys.ENTER)
         //Создаем карточку
         element(byXpath("//span[text()='Сохранить карточку']/parent::button")).click()
         //Убеждаемся, что нам загрузило созданную карточку
@@ -886,17 +883,14 @@ class PimTests : BaseTest(){
         //жмем "добавить"
         //element(byCssSelector("div#simple-tabpanel-hotlines button")).click()
         element(byXpath("//span[text()='Выбрать ДДС']/ancestor::button")).click()
+        Thread.sleep(150)
         //выбираем ДДС-02 г.Черкесск
-        //element(byCssSelector("p#alert-dialog-description>div>div>div>div:nth-child(1)")).click()
-//        element(byXpath("//p[text()='ДДС ЭОС']/../../../..")).click()
         element(byXpath("//*[text()='ДДС ЭОС']/ancestor::div[@id='panel1a-header']")).click()
-        //p[text()='ДДС ЭОС']/../../../..
-        //Thread.sleep(10000)
+        Thread.sleep(150)
         element(byXpath("//*[text()='ДДС-02 г.Черкесск']/ancestor::div/div/label//input")).click()
-        //element(byCssSelector("p#alert-dialog-description>div>div>div>div:nth-child(1) div[style='width: 100%;']>div:nth-child(2) input")).click()
-        //////div[text()='ДДС-02 г.Черкесск']/../div/label/span/span/input
-        //element(byCssSelector("form>div:nth-child(3) button:nth-child(1)")).click()
+        Thread.sleep(150)
         element(byXpath("//span[text()='Назначить']/ancestor::button")).click()
+        Thread.sleep(150)
         element(byText("ДДС-02 г.Черкесск")).should(exist, ofSeconds(waitTime))
         element(byText("AutoTest PMI 0150 $dateTime")).should(exist, ofSeconds(waitTime))
 
@@ -908,37 +902,13 @@ class PimTests : BaseTest(){
         menuNavigation("Происшествия", "Список происшествий", waitTime)
         //добавляем в таблицу происшествий столбец "Описание"
         checkbox("Описание", true, waitTime)
-//        //Открываем выпадающий список
-//        element(byCssSelector("button[data-testid='Колонки-iconButton']"))
-//            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-//            .click()
-//        //Дожидаемся, что список появился
-//        element(byCssSelector("fieldset[aria-label='Показать/скрыть колонки']>div>label"))
-//            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-//        element(byCssSelector("input[value='description']"))
-//            .should(exist, ofSeconds(waitTime))
-//        element(byCssSelector("input[value='description']")).click()
-//        element(byXpath("//span[text()='Описание']/../span/span/*[name()='svg']/*[name()='path']"))
-//            .shouldHave(attribute("d", checkboxTrue), ofSeconds(waitTime))
-//        element(byCssSelector("button[aria-label='Close']")).click()
         //Находим созданную КП в КИАП ДДС
         element(byText("AutoTest PMI 0150 $dateTime")).should(exist, ofSeconds(waitTime)).click()
         //устанавливаем статус "Реагирование"
+        checkICToolIsStatus("В обработке", waitTime)
         updateICToolStatus("Реагирование", waitTime)
-//        element(byXpath("//span[text()='В обработке']/parent::button"))
-//            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-//        element(byXpath("//span[text()='В обработке']/parent::button")).click()
-//        element(byXpath("//span[contains(@class,'MuiButton-label')][text()='Реагирование']/parent::button"))
-//            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-//        element(byXpath("//span[contains(@class,'MuiButton-label')][text()='Реагирование']/parent::button")).click()
-//        element(byXpath("//span[text()='В обработке']/parent::button"))
-//            .shouldNot(exist, ofSeconds(waitTime))
-//        element(byXpath("//span[contains(@class,'MuiButton-label')][text()='Реагирование']/parent::button"))
-//            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-        //Thread.sleep(500)
-
+        checkICToolIsStatus("Реагирование", waitTime)
         logoffTool()
-
         //Возвращаемся в КИАП и проверяем статус родительской карточки
         logonTool()
         //кликаем по иконке происшествий в боковом меню
@@ -946,24 +916,10 @@ class PimTests : BaseTest(){
         menuNavigation("Происшествия", "Список происшествий", waitTime)
         //добавляем в таблицу происшествий столбец "Описание"
         checkbox("Описание", true, waitTime)
-//        //Открываем выпадающий список
-//        element(byCssSelector("button[data-testid='Колонки-iconButton']"))
-//            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-//            .click()
-//        //Дожидаемся, что список появился
-//        element(byCssSelector("fieldset[aria-label='Показать/скрыть колонки']>div>label"))
-//            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-//        element(byCssSelector("input[value='description']")).should(exist, ofSeconds(waitTime))
-//        element(byCssSelector("input[value='description']")).click()
-//        //ждем пока выделится чекбокс
-//        element(byXpath("//span[text()='Описание']/../span/span/*[name()='svg']/*[name()='path']"))
-//            .shouldHave(attribute("d", checkboxTrue), ofSeconds(waitTime))
-//        element(byCssSelector("button[aria-label='Close']")).click()
         //Находим созданную КП
         element(byText("AutoTest PMI 0150 $dateTime")).should(exist, ofSeconds(waitTime)).click()
         //проверяем статус родительской карточки
         checkICToolIsStatus("Реагирование", waitTime)
-
         logoffTool()
     }
 
@@ -1286,7 +1242,7 @@ class PimTests : BaseTest(){
 //                stringsList.shuffle()
 //                stringsList[0].click()
                 // отказался от изящной конструкции выше, т.к. придется встаялять победу над тем что подвал таблицы перекрывает таблицу, оставил как есть
-                element(byXpath("//table/tbody/tr[1]"))
+                element(byXpath("//table/tbody/tr[1]/td[1]"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
@@ -1421,7 +1377,15 @@ class PimTests : BaseTest(){
                         ) {
                             //искомое значение определяем случайно, среди имеющихся но с типами происшествий и откидыванием пустых значений других справочников придется возится
                             if (subMenu != "Типы происшествий") {
-                                searchValue = elements(byXpath("//table/tbody/tr/td[$col]//text()/parent::*[not(text()='  ')]")).random().ownText
+                                if (elements(byXpath("//table/tbody/tr/td[$col]//text()/parent::*[not(text()='  ')]")).isNotEmpty()) {
+                                    searchValue = elements(byXpath("//table/tbody/tr/td[$col]//text()/parent::*[not(text()='  ')]"))
+                                        .random().ownText
+                                } else {
+                                    stringsOnPage(500, waitTime)
+                                    searchValue = elements(byXpath("//table/tbody/tr/td[$col]//text()/parent::*[not(text()='  ')]"))
+                                        .random().ownText
+                                    stringsOnPage(20, waitTime)
+                                }
                                 fullSearchValue = searchValue
                                 //проверяем не номер ли это телефона и видоизменяем запись , к.т. в формате +Х(ХХХ)ХХХ-ХХ-ХХ в поисковой строке не вернет результатов, только +ХХХХХХХХХХ
                                 //аналогично с ФИО
@@ -1554,14 +1518,16 @@ class PimTests : BaseTest(){
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //запомнинаем какую организацию редактируем
-        val organizationName = element(byCssSelector("input[name='title']")).getAttribute("value")
+        val organizationName = element(byXpath("//form//*[text()='Краткое наименование']/following-sibling::*[text()]"))
+            .ownText
         //считаем существующие метки на случай когда они есть и когда их нет
-        var amountLabel = elements(byXpath("//label[text()='Метки']/..//span[@style='line-height: 1;']//span[text()]")).size
+        //p[text()='Метки']/..//span[@style='line-height: 1;']//span[text()]
+        var amountLabel = elements(byXpath("//p[text()='Метки']/..//span[@title]//span[text()]")).size
         val oldLabelsList = mutableListOf<String>()
         val newLabelsList = mutableListOf<String>()
         if (amountLabel > 0){
             for (i in 1..amountLabel){
-                oldLabelsList.add(element(byXpath("//label[text()='Метки']/..//span[@style='line-height: 1;'][$i]//span[text()]")).ownText)
+                oldLabelsList.add(element(byXpath("//p[text()='Метки']/..//span[@title][$i]//span[text()]")).ownText)
             }
         }
         //жмем Редактировать
@@ -1614,12 +1580,12 @@ class PimTests : BaseTest(){
         element(byCssSelector("form"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        //убеждаемся, что не затерли ни одной метки, а именно добавили одну.
+        //убеждаемся, что не затерли ни одной метки, а именно добавили.
         Assertions.assertTrue(newLabelsList.containsAll(oldLabelsList))
         Assertions.assertTrue(newLabelsList.size > oldLabelsList.size)
         //убеждаемся что все метки есть на карточке
         newLabelsList.forEach {label ->
-            element(byXpath("//label[text()='Метки']/..//span[@style='line-height: 1;']//span[text()='$label']"))
+            element(byXpath("//p[text()='Метки']/..//span[@title]//span[text()='$label']"))
                 .should(exist, ofSeconds(waitTime))
         }
         logoffTool()
@@ -1650,13 +1616,11 @@ class PimTests : BaseTest(){
             .shouldBe(visible, ofSeconds(waitTime))
         val newLabelList = newLabelsList.minus(oldLabelsList.toSet())
         val newLabelNum = newLabelsList.size
-        newLabelList.forEach {
-            element(byXpath("//label[text()='Метки']/..//span[@style='line-height: 1;']//span[text()='$it']"))
+        newLabelsList.forEach {
+            element(byXpath("//p[text()='Метки']/..//span[@title]//span[text()='$it']"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
         }
-//        println("newLabel $newLabel")
-        //убеждаемся, что поставленная метка на месте
         //жмем Редактировать
         element(byXpath("//span[text()='Редактировать']/parent::button"))
             .should(exist, ofSeconds(waitTime))
@@ -1686,16 +1650,16 @@ class PimTests : BaseTest(){
             .shouldBe(visible, ofSeconds(waitTime))
         //убеждаемся, что нашей метки нет
         newLabelList.forEach {
-            element(byXpath("//label[text()='Метки']/..//span[@style='line-height: 1;']//span[text()='$it']"))
+            element(byXpath("//p[text()='Метки']/..//span[@title]//span[text()='$it']"))
                 .shouldNot(exist, ofSeconds(waitTime))
                 .shouldNotBe(visible, ofSeconds(waitTime))
         }
+        oldLabelsList.forEach {
+            element(byXpath("//p[text()='Метки']/..//span[@title]//span[text()='$it']"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+        }
         logoffTool()
-//        println("newLabel $newLabel")
-//        println("oldLabelsList $oldLabelsList")
-//        println("newLabelsList $newLabelsList")
-//        Thread.sleep(10000)
-
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
@@ -1729,7 +1693,7 @@ class PimTests : BaseTest(){
             .scrollIntoView(false)
         }
         //переходим в дежурную службу
-        element(byXpath("//table/tbody/tr[$rndOrganization]")).click()
+        element(byXpath("//table/tbody/tr[$rndOrganization]/td[1]")).click()
         element(byCssSelector("form"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -1738,7 +1702,8 @@ class PimTests : BaseTest(){
         element(byXpath("//label[text()='Руководитель']/..//input"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        val officialFIO = element(byXpath("//label[text()='Руководитель']/..//input")).getAttribute("value")
+        val officialFIO = element(byXpath("//form//p[text()='Руководитель']/following-sibling::p[text()]"))
+            .ownText
 //        val companyName = element(byXpath("//label[text()='Организация']/..//input")).getAttribute("value")
         val officialFIOList = officialFIO?.split(" ")
 //        println("officialFIO $officialFIO")
@@ -1781,7 +1746,7 @@ class PimTests : BaseTest(){
         logoffTool()
     }
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
+//    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `PMI 0270 Проверка возможности создания, удаления записей, просмотра детальной истории в справочнике должностных лиц`(){
         //A.3.33 Проверка возможности создания записей в справочниках
         //A.3.34 Проверка возможности удаления записей в справочниках
@@ -1806,32 +1771,8 @@ class PimTests : BaseTest(){
         element(byCssSelector("input[placeholder^='ФИО']")).sendKeys("N 0270 AutoTest", Keys.ENTER)
         //ждем результатов
         Thread.sleep(1000)
+        //удалим потуги неудачных тестов с учетом того, что некоторые ДЛ могли стать пользователями
         val userColumn = numberOfColumn("Пользователь", waitTime)
-//        while ((elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size == 0)
-//            ||(elements(byXpath("//table/tbody/tr/td[$userColumn]//*[@name='user']")).size
-//                ==elements(byXpath("//table/tbody/tr")).size )
-//        ){
-//            //запоминаем ФИО что бы проконтролировать удаление
-//            val removedPersonFIO = element(byXpath("//table/tbody/tr[1]/td[$fioColumnNubber]")).ownText
-//            //открываем три точки
-//            element(byXpath("//table/tbody/tr[1]/td[$menuColumnNubber]//button"))
-//                .should(exist, ofSeconds(waitTime))
-//                .shouldBe(visible, ofSeconds(waitTime))
-//                .click()
-//            //удаляем
-//            element(byXpath("//span[text()='Удалить']/parent::button"))
-//                .should(exist, ofSeconds(waitTime))
-//                .shouldBe(visible, ofSeconds(waitTime))
-//                .click()
-//            //подтверждаем удаление
-//            element(byXpath("//div[@role='dialog']//span[text()='Удалить']/parent::button"))
-//                .should(exist, ofSeconds(waitTime))
-//                .shouldBe(visible, ofSeconds(waitTime))
-//                .click()
-//            element(byXpath("//table/tbody/tr[1]/td[$fioColumnNubber][text()='$removedPersonFIO']"))
-//                .shouldNot(exist, ofSeconds(waitTime))
-//            Thread.sleep(500)
-//        }
         if (elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size == 0) {
             for (i in 1..elements(byXpath("//table/tbody/tr")).size) {
                 if (elements(byXpath("//table/tbody/tr[$i]/td[$userColumn]//*[@name='user']")).size == 0) {
@@ -1875,17 +1816,8 @@ class PimTests : BaseTest(){
         element(byXpath("//table/thead/tr/th//*[text()='Организация']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        //определяем порядковые номера столбцов, которые положим в хэш
-//        var hotLineANDOrganization: MutableMap<String, String> = mutableMapOf("in" to "in")
-//        hotLineANDOrganization.remove("in")
-//        hotLineANDOrganization.clear()
-//        var hotLineList: MutableListOf<String>
-        val hotLineList = mutableListOf("init")
-        hotLineList.remove("init")
-        val organizationList = mutableListOf("init")
-        organizationList.remove("init")
-
-//        var organizationList: MutableList<String>
+        val hotLineList = mutableListOf<String>()
+        val organizationList = mutableListOf<String>()
         val columnCount = elements(byXpath("//thead//*[text()]")).size
         var hotlineColumnNumber: Int = 2
         var organizationColumnNumber: Int = 4
@@ -1903,11 +1835,6 @@ class PimTests : BaseTest(){
 
             hotLineList.add(element(byXpath("//tbody/tr[$u]/td[$hotlineColumnNumber][text()]")).ownText)
             organizationList.add(element(byXpath("//tbody/tr[$u]/td[$organizationColumnNumber][text()]")).ownText)
-
-//            hotLineANDOrganization
-//                .put(element(byXpath("//tbody/tr[$u]/td[$hotlineColumnNumber]//*[text()]")).ownText,
-//                element(byXpath("//tbody/tr[$u]/td[$organizationColumnNumber]//*[text()]")).ownText
-//                )
         }
         Assertions.assertTrue(hotLineList.size == organizationList.size)
         menuNavigation("Справочники","Должностные лица",waitTime)
@@ -1916,35 +1843,6 @@ class PimTests : BaseTest(){
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         menuColumnNubber = numberOfColumn(" ", waitTime)
-        //удалим потуги неудачных тестов
-        //воспользуемся поиском
-//        element(byXpath("//*[@name='search']/ancestor::button"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//            .click()
-//        element(byCssSelector("input[placeholder^='ФИО']"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//            .click()
-//        element(byCssSelector("input[placeholder^='ФИО']"))
-//            .sendKeys("N 0270 AutoTest", Keys.ENTER)
-//        Thread.sleep(1000)
-//        while (elements(byXpath("//table/tbody/tr//*[text()='Нет информации']")).size == 0){
-//            //открываем трехточечное меню
-//            element(byXpath("//table/tbody/tr[1]/td[$menuColumnNubber]//button"))
-//                .click()
-//            //удаляем
-//            element(byXpath("//span[text()='Удалить']/parent::button"))
-//                .should(exist, ofSeconds(waitTime))
-//                .shouldBe(visible, ofSeconds(waitTime))
-//                .click()
-//            //подтверждаем удаление
-//            element(byXpath("//div[@role='dialog']//span[text()='Удалить']/parent::button"))
-//                .should(exist, ofSeconds(waitTime))
-//                .shouldBe(visible, ofSeconds(waitTime))
-//                .click()
-//            Thread.sleep(500)
-//        }
         element(byXpath("//span[text()='Добавить новое']/parent::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -1968,43 +1866,17 @@ class PimTests : BaseTest(){
         val randomAtridute = (0 until hotLineList.size).random()
         element(byXpath("//input[@name='companyId']")).sendKeys(organizationList[randomAtridute])
         element(byXpath("//input[@name='companyId']")).sendKeys(Keys.DOWN, Keys.ENTER)
-//        var countPotentialOrganization = 0
-//        do {
-//            element(byXpath("//input[@name='companyId']")).sendKeys(Keys.DOWN)
-//            countPotentialOrganization += 1
-//        } while (elements(byCssSelector("input[name='companyId'][aria-activedescendant^='companyId-option']")).size > 0)
-//        //выбираем случайную организацию из доступных
-//        val rndCompany = (1 until countPotentialOrganization).random()
-//        repeat(rndCompany){
-//            element(byXpath("//input[@name='companyId']")).sendKeys(Keys.DOWN)
-//        }
-//        element(byXpath("//input[@name='companyId']")).sendKeys(Keys.ENTER)
         val companyId = element(byXpath("//input[@name='companyId']")).getAttribute("value")
+        Assertions.assertTrue(organizationList[randomAtridute] == companyId)
         //Выбираем службу
-        //т.к. служба зависима от организации, придется убедится в отсутствии элемента noOption
         element(byXpath("//input[@name='hotlineId']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
         element(byXpath("//input[@name='hotlineId']")).sendKeys(hotLineList[randomAtridute])
         element(byXpath("//input[@name='hotlineId']")).sendKeys(Keys.DOWN, Keys.ENTER)
-//        var noOption = true
-//        Thread.sleep(500)
-//        if (elements(byXpath("//body/div[@role='presentation']//*[text()='Отсутствуют записи в справочнике!']")).size == 0) {
-//            var countPotentialHotline = 0
-//            do {
-//                element(byXpath("//input[@name='hotlineId']")).sendKeys(Keys.DOWN)
-//                countPotentialHotline += 1
-//            } while (elements(byCssSelector("input[name='hotlineId'][aria-activedescendant^='hotlineId-option']")).size > 0)
-//            //выбираем случайную службу из доступных
-//            val rndHotline = (1 until countPotentialHotline).random()
-//            repeat(rndCompany){
-//                element(byXpath("//input[@name='hotlineId']")).sendKeys(Keys.DOWN)
-//            }
-//        element(byXpath("//input[@name='hotlineId']")).sendKeys(Keys.ENTER)
-//        noOption = false
-//        }
         val hotlineId = element(byXpath("//input[@name='hotlineId']")).getAttribute("value")
+        Assertions.assertTrue(hotLineList[randomAtridute] == hotlineId)
         //сохраняем
         element(byXpath("//span[text()='Добавить']/parent::button")).click()
         element(byCssSelector("form"))
@@ -2039,7 +1911,6 @@ class PimTests : BaseTest(){
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
-//        val atributeSelector = "//label[text()='%s']/following-sibling::span[text()='%s']"
         val atributeSelector = "//table/tbody//li/label[text()='%s']/following-sibling::*[text()='%s']"
         //проверяем что в истории
         element(byXpath(atributeSelector.format("Дежурная служба", hotlineId)))
@@ -2053,24 +1924,16 @@ class PimTests : BaseTest(){
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
-//        element(byXpath("//label[text()='ФИО']/parent::li/div/div"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//            .click()
         //проверяем то что развернули
-//        element(byXpath("//label[text()='Фамилия']/following-sibling::span[text()='$dateTime']"))
         element(byXpath(atributeSelector.format("Фамилия", dateTime)))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-//        element(byXpath("//label[text()='Имя']/following-sibling::span[text()='N 0270']"))
         element(byXpath(atributeSelector.format("Имя", "N 0270")))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-//        element(byXpath("//label[text()='Отчество']/following-sibling::span[text()='AutoTest']"))
         element(byXpath(atributeSelector.format("Отчество", "AutoTest")))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-//        element(byXpath("//label[text()='Отчество']/following-sibling::span[text()='AutoTest']"))
         element(byXpath(atributeSelector.format("Электронная почта", "test@test.com")))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -2083,21 +1946,12 @@ class PimTests : BaseTest(){
         element(byXpath(atributeSelector.format("Рабочий телефон", "+7918$telR")))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-
         logoffTool()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //а теперь удалим его
         logonTool()
         //кликаем по иконке справочников
-        element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
         //переходим в нужный справочник
-        element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul//div[@data-testid='app-menu-Должностные лица']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
         menuNavigation("Справочники", "Должностные лица", waitTime)
         menuColumnNubber = numberOfColumn(" ", waitTime)
         //ждем загрузки таблицы
@@ -2129,12 +1983,9 @@ class PimTests : BaseTest(){
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
-//        element(byXpath("//table/tbody/tr"))
-//            .shouldNot(exist, ofSeconds(waitTime))
         element(byXpath("//tbody/tr//*[text()='Нет данных']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-//        Thread.sleep(5000)
         logoffTool()
     }
 
