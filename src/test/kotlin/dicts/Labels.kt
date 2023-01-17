@@ -16,17 +16,13 @@ import org.testng.annotations.Test
 
 class Labels : BaseTest(){
 
-    var date = ""
-    var dateTime = ""
-    //Время ожидания элементов при выполнении теста
-    val waitTime: Long = 5
-    val longWait: Long = 10
+
 
     @Test (retryAnalyzer = Retry::class, groups = ["ALL"])
     fun `Labels 0010 Проверка создания, прикрепления к КП и удаления метки`() {
         //проверим создание метки и прикрепление метки к происшествию, возможно с удалением метки из КИАП
-        date = LocalDate.now().toString()
-        dateTime = LocalDateTime.now().toString()
+        date = LocalDate.now()
+        dateTime = LocalDateTime.now()
         logonTool()
         menuNavigation("Справочники", "Метки", waitTime)
         //воспользуемся поиском, что бы найти созданную метку не удаленную в упавший проход
@@ -127,7 +123,7 @@ class Labels : BaseTest(){
         //Регистрируем КП
         logonTool()
         menuNavigation("Происшествия","Создать карточку", waitTime)
-        firstHalfIC("T 0010", date, dateTime, waitTime)
+        firstHalfIC("T 0010", date.toString(), dateTime.toString(), waitTime)
         element(byXpath("//span[text()='Создать карточку']/parent::button")).click()
         inputRandomNew("incidentTypeId-textfield", false, waitTime)
         //добавляем метку при создании КП

@@ -20,9 +20,18 @@ import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import org.openqa.selenium.chrome.ChromeOptions
 import java.time.Duration.ofSeconds
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.util.LinkedHashMap
 
 
 open class BaseTest {
+
+    public var date = LocalDate.now()
+    public var dateTime = LocalDateTime.now()
+    public val waitTime: Long = 15
+    public val longWait: Long = 15
+
     fun logonTool(){
 
         //https://overcoder.net/q/1369284/%D0%BA%D0%B0%D0%BA-%D1%80%D0%B0%D0%B7%D1%80%D0%B5%D1%88%D0%B8%D1%82%D1%8C-%D0%B8%D0%BB%D0%B8-%D0%B7%D0%B0%D0%BF%D1%80%D0%B5%D1%82%D0%B8%D1%82%D1%8C-%D1%83%D0%B2%D0%B5%D0%B4%D0%BE%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BE-%D0%B2%D1%81%D0%BF%D0%BB%D1%8B%D0%B2%D0%B0%D1%8E%D1%89%D0%B5%D0%B9-%D0%BA%D0%B0%D0%BC%D0%B5%D1%80%D0%B5-%D0%BC%D0%B8%D0%BA%D1%80%D0%BE%D1%84%D0%BE%D0%BD%D0%B0
@@ -46,16 +55,20 @@ open class BaseTest {
         val opt = ChromeOptions()
         opt.addArguments("use-fake-device-for-media-stream")
         opt.addArguments("use-fake-ui-for-media-stream")
-        Selenide.open("https://test.kiap.local/")
+        open("https://test.kiap.local/")
+        //open("https://stage.kiap.local/")
         //Костыль для обхода проблем с тестами которые не завершились и упали
         clearBrowserCookies()
         clearBrowserLocalStorage()
         closeWindow()
         //Thread.sleep(1000)
         open("https://test.kiap.local/")
+        //open("https://stage.kiap.local/")
         //логинимся
         element(byName("username")).sendKeys("a.sizov")
         element(byName("password")).sendKeys("a.sizov")
+        //element(byName("username")).sendKeys("test")
+        //element(byName("password")).sendKeys("test!1+1")
 //        element(byName("username")).sendKeys("test")
 //        element(byName("password")).sendKeys("test!1+1")
         element(byName("login")).click()
@@ -470,7 +483,7 @@ open class BaseTest {
 
 
 
-    fun checkGreenAlert(text: String, clickButton: Boolean, waitTime: Long){
+    fun checkGreenAlert(text: String, clickButtonClose: Boolean, waitTime: Long){
         //Проверяем зеленую всплывашку
         element(byXpath("//div[@role='alert']//*[@name='snackbarSuccess']"))
             .should(exist, ofSeconds(waitTime))
@@ -478,7 +491,7 @@ open class BaseTest {
         element(byXpath("//div[@role='alert']//*[text()='$text']"))
             .should(exist, ofSeconds(waitTime))
 //            .shouldBe(visible, ofSeconds(waitTime))
-        if (clickButton){
+        if (clickButtonClose){
             Thread.sleep(300)
             element(byXpath("//div[@role='alert']//*[@name='snackbarClose']/ancestor::button"))
                 .should(exist, ofSeconds(waitTime))
@@ -633,8 +646,8 @@ open class BaseTest {
             .shouldBe(visible, ofSeconds(waitTime))
     }
 
-    fun checkICToolsDopInfo(dopInfo: String, waitTime: Long) {
-        element(byXpath("//strong[text()='Дополнительная информация:']/parent::div[text()='$dopInfo']"))
+    fun checkICToolDopInfo(dopInfo: String, waitTime: Long) {
+        element(byXpath("//form//*[text()='Дополнительная информация:']/..//div[@role='textbox']/*[text()='$dopInfo']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
 
@@ -738,7 +751,8 @@ open class BaseTest {
 
     }
 
-    fun updateICToolStatus(iCStatus: String, waitTime: Long){
+    fun updateICToolStatusOld(iCStatus: String, waitTime: Long){
+        val statusList = listOf("Новая", "В обработке", "Реагирование", "Завершена", "Отменена","Закрыта")
         if (element(byXpath("//div[@id='incidentButtons']//button[1]//text()/..")).ownText != iCStatus) {
             element(byXpath("//div[@id='incidentButtons']//button[1]"))
                 .should(exist, ofSeconds(waitTime))
@@ -746,10 +760,11 @@ open class BaseTest {
                 .click()
             element(byXpath("//div[@role='presentation']"))
                 .should(exist, ofSeconds(waitTime))
-            elements(byXpath("//div[@role='presentation']//button[not (@disabled)]"))
+/*            elements(byXpath("//div[@role='presentation']//button[not (@disabled)]"))
                 .shouldHave(CollectionCondition.size(5), ofSeconds(waitTime))
             elements(byXpath("//div[@role='presentation']//button[@disabled]"))
                 .shouldHave(CollectionCondition.size(1), ofSeconds(waitTime))
+                пока не понятно как поступать с этими проверками в новой статусной модели*/
             if (iCStatus.isNotEmpty()) {
                 element(byXpath("//div[@role='presentation']//*[text()='$iCStatus']/ancestor::button[not (@disabled)]"))
                     .should(exist, ofSeconds(waitTime))
@@ -774,6 +789,59 @@ open class BaseTest {
         }
     }
 
+    fun updateICToolStatus(iCStatus: String, waitTime: Long) {
+        //просто линейный список статусов задающий направление переходов
+        val statusList = listOf("Новая", "В обработке", "Реагирование", "Завершена", "Отменена", "Закрыта")
+        //Доступные статусы для каждого статуса
+        val possibleStatusesMap: LinkedHashMap<String, List<String>> = linkedMapOf(
+            "Новая" to listOf("В обработке", "Реагирование", "Завершена", "Отменена", "Закрыта"),
+            "В обработке" to listOf("Реагирование", "Завершена", "Отменена", "Закрыта"),
+            "Реагирование" to listOf("Завершена", "Отменена", "Закрыта"),
+            "Завершена" to listOf("Закрыта"),
+            "Отменена" to listOf("Закрыта")
+        )
+        val targetedStatus: String
+        var nextStatus: String
+        //определяем текущий статус
+        var statusNow = element(byXpath("//div[@id='incidentButtons']//button[1]//text()/..")).ownText
+        //определяем целевой статус
+        targetedStatus =
+            if (iCStatus.isEmpty()) {
+            possibleStatusesMap[statusNow]!!.random()
+        } else {
+            iCStatus
+        }
+        //пока не достигнем целового статуса выполняем последовательные переходы
+        do {
+            nextStatus = statusList[statusList.indexOf(statusNow) + 1]
+            element(byXpath("//div[@id='incidentButtons']//*[text()='$statusNow']/ancestor::button"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+            element(byXpath("//div[@role='presentation']"))
+                .should(exist, ofSeconds(waitTime))
+            Thread.sleep(200)
+            elements(byXpath("//div[@role='presentation']//*[text()]/ancestor::button[not (@disabled)]"))
+                .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(1))
+            if (elements(byXpath("//div[@role='presentation']//*[text()='$targetedStatus']/ancestor::button[not (@disabled)]")).size ==1){
+                nextStatus = targetedStatus
+            }
+            element(byXpath("//div[@role='presentation']//*[text()='$nextStatus']/ancestor::button[not (@disabled)]"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+            element(byXpath("//div[@role='presentation']"))
+                .shouldNot(exist, ofSeconds(waitTime))
+            element(byXpath("//div[@id='incidentButtons']//button[1]//*[text()='$nextStatus']"))
+                .should(exist, ofSeconds(waitTime))
+            //statusNow = element(byXpath("//div[@id='incidentButtons']//button[1]//text()/..")).ownText
+            statusNow = nextStatus
+            Thread.sleep(200)
+        } while (statusNow != targetedStatus)
+    }
+
+
+
 
     fun clearInput(xPathLocator: String, waitTime: Long){
         if (element(byXpath(xPathLocator)).getAttribute("value")!!.isNotEmpty()){
@@ -782,6 +850,71 @@ open class BaseTest {
             repeat(element(byXpath(xPathLocator)).getAttribute("value")!!.length){
                 element(byXpath(xPathLocator)).sendKeys(Keys.BACK_SPACE)
             }
+        }
+    }
+
+
+    fun `Черновик подсчета длины МД контента`(locatorXpath: String){
+        //*[text()='Описание']/ancestor::div[2]//div[@role='textbox']//h1//*[text() and not(text()='#')]
+//      (//*[text()='Описание']/ancestor::div[2]//div[@role='textbox']//strong)[1]//text()/parent::*[text() and not(text()='#')]
+        var lengthMD: Int = 0
+        val typeMD = listOf<String>("strong", "del", "mark", "code", "h1", "h2")
+        typeMD.forEach { type ->
+            if (elements(byXpath("$locatorXpath//$type")).size > 0){
+                var numberOfCharacters =0
+                when(type){
+                    "strong", "del", "mark" -> {numberOfCharacters = 4}
+                    "code", "h1" -> {numberOfCharacters = 2}
+                    "h2" -> {numberOfCharacters = 3}
+                }
+//                lengthMD += (elements(byXpath("$locatorXpath//$type")).size) * numberOfCharacters
+                for (i in 1..elements(byXpath("$locatorXpath//$type")).size){
+                    lengthMD += element(byXpath("($locatorXpath//$type)[$i]//text()/parent::*[text() and not(text()='#')]")).ownText.length
+                    lengthMD += numberOfCharacters
+                }
+            }
+        }
+    }
+
+    fun tableSearch(searchValue: String){
+        element(byXpath("//table/tbody"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        while (elements(byXpath("//*[@name='search']/following-sibling::input[@placeholder]")).size == 0){
+            element(byXpath("//*[@name='search']/ancestor::button"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+        }
+        element(byXpath("//*[@name='search']/following-sibling::input[@placeholder]"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byXpath("//*[@name='search']/following-sibling::input[@placeholder]"))
+            .sendKeys(searchValue, Keys.ENTER)
+        Thread.sleep(1000)
+    }
+
+    fun pushButtonCreateIC(dopInfo: String, waitTime: Long){
+        element(byXpath("//*[text()='Сохранить карточку']/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        try {
+            element(byXpath("//div[@role='tabpanel' and @id='simple-tabpanel-card']/form"))
+                .should(exist, ofSeconds(waitTime))
+            checkICToolIsStatus("В обработке", waitTime)
+        } catch (_:  Throwable) {
+            element(byCssSelector("table#incidents"))
+                .should(exist, ofSeconds(waitTime))
+            checkbox("Описание", true, waitTime)
+            element(byXpath("//*[text()='$dopInfo']/text()/ancestor::td"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+            element(byXpath("//div[@role='tabpanel' and @id='simple-tabpanel-card']/form"))
+                .should(exist, ofSeconds(waitTime))
+            checkICToolIsStatus("В обработке", waitTime)
         }
     }
 

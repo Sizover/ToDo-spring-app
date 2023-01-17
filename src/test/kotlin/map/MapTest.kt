@@ -18,7 +18,6 @@ import kotlin.math.tan
 
 
 class MapTest  : BaseTest(){
-    var waitTime: Long = 5
 
     fun `MTtool_001`(checkboxName: String){
         val checkboxSelector = "//h6[text()='%s']/../parent::span/parent::label/span[@style]//input"
@@ -147,7 +146,7 @@ class MapTest  : BaseTest(){
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
         checkICToolIsStatus("В обработке", waitTime)
-        checkICToolsDopInfo("Autotest MT_002, Широта = $lat, Долгота = $lon", waitTime)
+        checkICToolDopInfo("Autotest MT_002, Широта = $lat, Долгота = $lon", waitTime)
         //переходим в карту
         element(byCssSelector("div#place div[style*='cursor']"))
             .should(exist, ofSeconds(waitTime))
@@ -184,7 +183,7 @@ class MapTest  : BaseTest(){
             .shouldBe(visible, ofSeconds(waitTime))
         back()
         checkICToolIsStatus("В обработке", waitTime)
-        checkICToolsDopInfo("Autotest MT_002, Широта = $lat, Долгота = $lon", waitTime)
+        checkICToolDopInfo("Autotest MT_002, Широта = $lat, Долгота = $lon", waitTime)
         logoffTool()
     }
 }

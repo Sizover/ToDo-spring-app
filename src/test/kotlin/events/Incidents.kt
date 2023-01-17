@@ -2,33 +2,20 @@ package events
 
 import Retry
 import BaseTest
-import com.codeborne.selenide.CollectionCondition
-import com.codeborne.selenide.Condition.exactText
 import com.codeborne.selenide.Condition.exist
-import com.codeborne.selenide.Condition.text
 import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Selectors.byCssSelector
-import com.codeborne.selenide.Selectors.byName
-import com.codeborne.selenide.Selectors.byText
 import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.*
-import org.apache.commons.io.FileUtils
-import org.junit.jupiter.api.Assertions
+import com.codeborne.selenide.WebDriverRunner.url
 import org.openqa.selenium.Keys
-import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import java.io.File
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 class Incidents :BaseTest() {
 
-    var date = LocalDate.now()
-    var dateTime = LocalDateTime.now()
-    //Время ожидания элементов при выполнении теста
-    val waitTime: Long = 5
-    val longWait: Long = 10
 
 
 //    @Test (retryAnalyzer = Retry::class, groups = ["ALL"])
@@ -95,8 +82,48 @@ class Incidents :BaseTest() {
     @Test (retryAnalyzer = Retry::class, groups = ["ALL"])
     fun `Event INC 5020 Nicholas`() {
         //Проверяем баг который нашел Коля, но который не удается воспроизвести. Т.о. положительный проход подтвердит невоспроизведение
+        val dateStartList = LocalDate.now().minusMonths(2).toString().split("-")
+        val dateEndList = LocalDate.now().minusMonths(1).toString().split("-")
         logonTool()
-        open("https://test.kiap.local/audit/dicts?page=0&perPage=20&das=2021-12-31T21%3A00%3A00.000Z&dae=2022-04-01T20%3A59%3A59.999Z")
+        menuNavigation("Настройки", "Аудит", waitTime)
+        element(byXpath("//table/tbody//*[text()='Аудит справочников']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        //применим фильтр по дате
+        element(byXpath("//form//*[text()='Дата/время']/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byXpath("//div[@role='presentation']//fieldset//input[@placeholder='с']"))
+            .sendKeys("${dateStartList[2]}.${dateStartList[1]}.${dateStartList[0]}0000")
+        element(byXpath("//div[@role='presentation']//fieldset//input[@placeholder='по']"))
+            .sendKeys("${dateEndList[2]}.${dateEndList[1]}.${dateEndList[0]}0000")
+        element(byXpath("//div[@role='presentation']//*[text()='Применить']/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        Thread.sleep(5000)
+        element(byXpath("//table/tbody"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        val url = url()
+        //узнаем свой МО
+        element(byXpath("//header//*[@name='user']/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byXpath("//div[@role='presentation']//*[text()='Профиль пользователя']/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byXpath("//*[text()='Муниципальное образование:']/following-sibling::*[text()]"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        val operatorsMunicipalities = element(byXpath("//*[text()='Муниципальное образование:']/following-sibling::*[text()]")).ownText
+        logoffTool()
+        logonTool()
+        open(url)
         element(byXpath("//table/tbody"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -105,8 +132,10 @@ class Incidents :BaseTest() {
         element(byXpath("//table/tbody"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
+        //воспользуемся поиском
+        tableSearch(operatorsMunicipalities)
         val buttonsColumn = numberOfColumn(" ", waitTime)
-        element(byXpath("//table/tbody/tr/td[$buttonsColumn]//button"))
+        element(byXpath("//table/tbody//*[text()='$operatorsMunicipalities']/ancestor::tr/td[$buttonsColumn]//button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
@@ -117,6 +146,19 @@ class Incidents :BaseTest() {
         element(byXpath("//main/div"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//*[text()='Сохранить']/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        if (elements(byXpath("//div[@role='textbox']/p[contains(text(),'Event INC 5020 Test')]")).size > 0){
+            element(byXpath("//div[@role='textbox']/p[contains(text(),'Event INC 5020 Test')][last()]"))
+                .click()
+            element(byXpath("//div[@role='textbox']/p[contains(text(),'Event INC 5020 Test')][last()]"))
+                .sendKeys(Keys.END)
+            repeat(element(byXpath("//div[@role='textbox']/p[contains(text(),'Event INC 5020 Test')][last()]")).ownText.length +1){
+                element(byXpath("//div[@role='textbox']/p"))
+                    .sendKeys(Keys.BACK_SPACE)
+            }
+        }
         element(byXpath("//div[@role='textbox']/p[last()]"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -124,18 +166,16 @@ class Incidents :BaseTest() {
         element(byXpath("//div[@role='textbox']/p[last()]"))
             .sendKeys(Keys.ENTER)
         element(byXpath("//div[@role='textbox']/p[last()]"))
-            .sendKeys("Event INC 5020 Test $date")
+            .sendKeys("Event INC 5020 Test $dateTime")
+        Thread.sleep(100)
         element(byXpath("//*[text()='Сохранить']/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
-        element(byXpath("//*[text()='Просмотр']"))
+        element(byXpath("//h1[text()='$operatorsMunicipalities']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        element(byXpath("//form[@novalidate]"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        element(byXpath("//*[text()='Редактировать']/ancestor::button"))
+        element(byXpath("//*[text()='Изменить']/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         logoffTool()
@@ -146,14 +186,16 @@ class Incidents :BaseTest() {
         val callTypeId = listOf("Портал населения", "Система-112", "СМС", "Телефон (ССОП)", "Факс", "ЭРА Глонасс")
         val dateStartList = dateStart.split("-")
         val dateEndList = dateEnd.split("-")
-        while (elements(byXpath("//form[@novalidate]//button//button")).size >0){
-            val cleanFilterName = element(byXpath("(//form[@novalidate]//button//button)[1]/ancestor::button//*[text()]"))
+        for (i in 1..elements(byXpath("//form[@novalidate]//button//button")).size){
+            val cleanFilterName = element(byXpath("(//form[@novalidate]//button//button)[$i]/ancestor::button//*[text()]"))
                 .ownText
-            element(byXpath("(//form[@novalidate]//button//button)[1]"))
-                .click()
-            element(byXpath("//form[@novalidate]//*[text()='$cleanFilterName']/ancestor::button//button"))
-                .shouldNot(exist, ofSeconds(waitTime))
-            Thread.sleep(200)
+            if (cleanFilterName != "Статусы") {
+                element(byXpath("(//form[@novalidate]//button//button)[$i]"))
+                    .click()
+                element(byXpath("//form[@novalidate]//*[text()='$cleanFilterName']/ancestor::button//button"))
+                    .shouldNot(exist, ofSeconds(waitTime))
+                Thread.sleep(200)
+            }
         }
         if (elements(byXpath("//form[@novalidate]//*[contains(text(),'Еще фильтры')]/ancestor::button")).size == 1){
             element(byXpath("//form[@novalidate]//*[contains(text(),'Еще фильтры')]/ancestor::button"))
@@ -331,88 +373,123 @@ class Incidents :BaseTest() {
         }
 
     }
+
+
     @Test (retryAnalyzer = Retry::class, groups = ["ALL"])
     fun `Event INC 5030 Предупреждение о ложном вызове актуально месяц`() {
         //сначала соберем номера за последний месяц
         date = LocalDate.now()
         dateTime = LocalDateTime.now()
-//        val dateStartList = LocalDate.now().minusMonths(1).toString().split("-")
-//        val dateEndList = LocalDate.now().toString().split("-")
-        logonTool()
-        menuNavigation("Происшествия","Список происшествий", waitTime)
-        element(byXpath("//form[@novalidate]"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        //Отчищаем фильтры
-        setIncidentFilters(LocalDate.now().minusMonths(1).toString(), LocalDate.now().toString())
-        //устанавливаем фильры
-        //заполнили фильтры
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Thread.sleep(1000)
-        //открываем все КП, проходясь и по пагинации и складываем контактный номер в список, не занося в него дубликаты
+        val menuList = listOf<String>("Список происшествий", "Архив происшествий")
         val falseСallsNumbersList = mutableListOf<String>()
-        var anotherRound: Boolean
-        do {
-            Thread.sleep(500)
-            for (i in 1..elements(byXpath("//table/tbody/tr")).size){
-                element(byXpath("//table/tbody/tr[$i]"))
-                    .click()
-                element(byXpath("//strong[text()='Контактный номер:']"))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
-                if (!falseСallsNumbersList.contains(element(byXpath("//strong[text()='Контактный номер:']/following-sibling::span//*[text()]"))
-                        .ownText
-                        .filter { it.isLetterOrDigit() })){
-                    falseСallsNumbersList.add(element(byXpath("//strong[text()='Контактный номер:']/following-sibling::span//*[text()]"))
-                        .ownText
-                        .filter { it.isLetterOrDigit() })
-                }
-                back()
-                Thread.sleep(200)
-            }
-            if (element(byXpath("(//tfoot//nav//span[contains(@title,'На страницу номер')])[last()]/parent::div"))
-                    .getAttribute("style")!!
-                    .contains("color: black;")){
-                anotherRound = true
-                element(byXpath("//tfoot//nav//span[contains(@title,'На следующую страницу')]/p[text()='Вперед']"))
-                    .click()
-            } else {anotherRound = false}
-        } while (anotherRound)
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //меняем фильтры и заполняем список ложных, но более месяца, не более чем 10 записями
-        setIncidentFilters("", LocalDate.now().minusMonths(1).minusDays(1).toString())
-        Thread.sleep(1000)
         val moreMonthFalseСallsNumbersList = mutableListOf<String>()
-        do {
-            Thread.sleep(500)
-            for (i in 1..elements(byXpath("//table/tbody/tr")).size){
-                element(byXpath("//table/tbody/tr[$i]"))
-                    .click()
-                element(byXpath("//strong[text()='Контактный номер:']"))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
-                element(byXpath("//button/span[text()='Ложное']"))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
-                if (!moreMonthFalseСallsNumbersList.contains(element(byXpath("//strong[text()='Контактный номер:']/following-sibling::span//*[text()]"))
-                        .ownText
-                        .filter { it.isLetterOrDigit() })){
-                    moreMonthFalseСallsNumbersList.add(element(byXpath("//strong[text()='Контактный номер:']/following-sibling::span//*[text()]"))
-                        .ownText
-                        .filter { it.isLetterOrDigit() })
-                }
-                back()
-                Thread.sleep(200)
+        var anotherRound: Boolean
+        logonTool()
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        menuList.forEach { menu ->
+            menuNavigation("Происшествия",menu, waitTime)
+            element(byXpath("//form[@novalidate]"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+            //Отчищаем фильтры
+            //устанавливаем фильры
+            //заполнили фильтры
+            setIncidentFilters(LocalDate.now().minusMonths(1).toString(), LocalDate.now().toString())
+            Thread.sleep(1000)
+            //открываем все КП, проходясь и по пагинации и складываем контактный номер в список, не занося в него дубликаты
+            if (elements(byXpath("//table/tbody/tr/td//*[text()='Нет данных']")).size == 0) {
+                do {
+                    Thread.sleep(500)
+                    for (i in 1..elements(byXpath("//table/tbody/tr")).size) {
+                        element(byXpath("//table/tbody/tr[$i]"))
+                            .click()
+                        element(byXpath("//strong[text()='Контактный номер:']"))
+                            .should(exist, ofSeconds(waitTime))
+                            .shouldBe(visible, ofSeconds(waitTime))
+                        if (
+                            (!falseСallsNumbersList.contains(element(byXpath("//strong[text()='Контактный номер:']/following-sibling::span//*[text()]"))
+                                .ownText
+                                .filter { it.isDigit() }))
+                            &&
+                            ((element(byXpath("//strong[text()='Контактный номер:']/following-sibling::span//*[text()]"))
+                                .ownText
+                                .filter { it.isDigit() }).length > 8)
+                            )
+                        {
+                            falseСallsNumbersList.add(element(byXpath("//strong[text()='Контактный номер:']/following-sibling::span//*[text()]"))
+                                .ownText
+                                .filter { it.isDigit() })
+                        }
+                        back()
+                        Thread.sleep(200)
+                    }
+                    if (element(byXpath("(//tfoot//nav//span[contains(@title,'На страницу номер')])[last()]/parent::div"))
+                            .getAttribute("style")!!
+                            .contains("color: black;")) {
+                        anotherRound = true
+                        element(byXpath("//tfoot//nav//span[contains(@title,'На следующую страницу')]/p[text()='Вперед']"))
+                            .click()
+                    } else {
+                        anotherRound = false
+                    }
+                } while (anotherRound)
             }
-            if ((element(byXpath("(//tfoot//nav//span[contains(@title,'На страницу номер')])[last()]/parent::div"))
-                    .getAttribute("style")!!
-                    .contains("color: black;"))
-                &&(moreMonthFalseСallsNumbersList.size <= 10)){
-                anotherRound = true
-                element(byXpath("//tfoot//nav//span[contains(@title,'На следующую страницу')]/p[text()='Вперед']"))
-                    .click()
-            } else {anotherRound = false}
-        } while (anotherRound)
+        }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        menuList.forEach { menu ->
+            menuNavigation("Происшествия",menu, waitTime)
+            element(byXpath("//form[@novalidate]"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+            if (moreMonthFalseСallsNumbersList.size <= 10) {
+                setIncidentFilters("", LocalDate.now().minusMonths(1).minusDays(1).toString())
+                Thread.sleep(1000)
+                if (elements(byXpath("//table/tbody/tr/td//*[text()='Нет данных']")).size == 0) {
+                    do {
+                        Thread.sleep(500)
+                        val stringCount = elements(byXpath("//table/tbody/tr")).size
+                        for (i in 1..stringCount) {
+                            element(byXpath("//table/tbody/tr[$i]"))
+                                .click()
+                            element(byXpath("//strong[text()='Контактный номер:']"))
+                                .should(exist, ofSeconds(waitTime))
+                                .shouldBe(visible, ofSeconds(waitTime))
+                            element(byXpath("//button/span[text()='Ложное']"))
+                                .should(exist, ofSeconds(waitTime))
+                                .shouldBe(visible, ofSeconds(waitTime))
+                            if (
+                                (!moreMonthFalseСallsNumbersList.contains(element(byXpath("//strong[text()='Контактный номер:']/following-sibling::span//*[text()]"))
+                                    .ownText
+                                    .filter { it.isDigit() }))
+                                &&
+                                ((element(byXpath("//strong[text()='Контактный номер:']/following-sibling::span//*[text()]"))
+                                    .ownText
+                                    .filter { it.isDigit() }).length > 8)
+                            )
+                            {
+                                moreMonthFalseСallsNumbersList.add(element(byXpath("//strong[text()='Контактный номер:']/following-sibling::span//*[text()]"))
+                                    .ownText
+                                    .filter { it.isDigit() })
+                            }
+                            back()
+                            Thread.sleep(200)
+                        }
+                        if ((element(byXpath("(//tfoot//nav//span[contains(@title,'На страницу номер')])[last()]/parent::div"))
+                                .getAttribute("style")!!
+                                .contains("color: black;"))
+                            && (moreMonthFalseСallsNumbersList.size <= 10)
+                        ) {
+                            anotherRound = true
+                            element(byXpath("//tfoot//nav//span[contains(@title,'На следующую страницу')]/p[text()='Вперед']"))
+                                .click()
+                        } else {
+                            anotherRound = false
+                        }
+                    } while (anotherRound)
+                }
+            }
+        }
+        //меняем фильтры и заполняем список ложных, но более месяца, не более чем 10 записями
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //переходим в форму обращения, вставляем номер ложный моложе месяца, ждем банер,
         // очищаем вставляем ложный более месяца, банера быть не должно
@@ -420,28 +497,23 @@ class Incidents :BaseTest() {
         element(byXpath("//label[text()='Источник события']/following-sibling::div/div[@id='calltype' and text()='Телефон (ССОП)']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        element(byCssSelector("#phone")).sendKeys("+${falseСallsNumbersList.random()}")
+        element(byCssSelector("#phone")).sendKeys(falseСallsNumbersList.random())
         element(byXpath("//*[@name='noteError']/ancestor::div[@role='alert']//*[text()='Номер данного абонента был зафиксирован ранее как ложный']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        element(byCssSelector("#phone"))
-            .click()
-        element(byCssSelector("#phone")).sendKeys(Keys.END)
-        repeat(element(byCssSelector("#phone")).getAttribute("value")!!.length) {
-            element(byCssSelector("#phone")).sendKeys(Keys.BACK_SPACE)
-        }
+        clearInput("//input[@id='phone']", waitTime)
         element(byCssSelector("#phone")).sendKeys(moreMonthFalseСallsNumbersList.random())
-        Thread.sleep(1000)
+        Thread.sleep(5000)
         element(byXpath("//*[@name='noteError']/ancestor::div[@role='alert']//*[text()='Номер данного абонента был зафиксирован ранее как ложный']"))
             .shouldNot(exist, ofSeconds(waitTime))
-        element(byXpath("//span[text()='Отменить']/ancestor::button"))
+/*        element(byXpath("//span[text()='Отменить']/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
         element(byXpath("//div[@role='dialog']//span[text()='Да, выйти без сохранения']/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-            .click()
+            .click()*/
         logoffTool()
     }
 

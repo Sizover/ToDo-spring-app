@@ -2,33 +2,20 @@ package dicts
 
 import Retry
 import BaseTest
-import com.codeborne.selenide.CollectionCondition
-import com.codeborne.selenide.Condition.exactText
 import com.codeborne.selenide.Condition.exist
-import com.codeborne.selenide.Condition.text
 import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Selectors.byCssSelector
-import com.codeborne.selenide.Selectors.byName
-import com.codeborne.selenide.Selectors.byText
 import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.*
-import org.apache.commons.io.FileUtils
 import org.junit.jupiter.api.Assertions
-import org.openqa.selenium.Keys
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import java.io.File
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 class Incidents :BaseTest() {
 
-    var date = LocalDate.now()
-    var dateTime = LocalDateTime.now()
-    //Время ожидания элементов при выполнении теста
-    val waitTime: Long = 5
-    val longWait: Long = 10
 
     @DataProvider(name = "Языки")
     open fun Statuses(): Any {
@@ -50,12 +37,7 @@ class Incidents :BaseTest() {
         element(byXpath("//span[text()='Создать обращение']/parent::button")).click()
         //заполняем карточку
         //Источник события - выбираем случайно
-        element(byCssSelector("div#calltype"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        var iI = (1..10).random()
-        element(byCssSelector("div#menu->div>ul[role='listbox']>li:nth-child($iI)")).click()
+        createICToolCalltype("", waitTime)
         Thread.sleep(200)
         //язык обращения
         element(byXpath("//label[@id='language-label' and text()='Язык общения']/following-sibling::div/div[@id='language']"))
@@ -68,16 +50,9 @@ class Incidents :BaseTest() {
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
         //Номер телефона
-        if (elements(byCssSelector("#phone")).size > 0){
-            val tel = (9000000000..9999999999).random()
-            element(byCssSelector("#phone")).sendKeys("+7$tel")
-        }
+        createICToolPhone("", waitTime)
         //ФИО
-        if (elements(byCssSelector("input[id='fio.lastname']")).size > 0
-            && elements(byCssSelector("input[id='fio.firstname']")).size > 0){
-            element(byCssSelector("input[id='fio.lastname']")).sendKeys("$date AutoTestLastname inc")
-            element(byCssSelector("input[id='fio.firstname']")).sendKeys("INC 0010 Firstname")
-        }
+        createICToolFIO("$date AutoTestLastname inc", "INC 0010 Firstname", language1, waitTime)
         //адрес
         element(byXpath("//input[@id='callAddress']"))
             .click()
@@ -85,8 +60,7 @@ class Incidents :BaseTest() {
             .sendKeys("INC 0010 adr $dateTime")
         Thread.sleep(500)
         //заполняем дополнительную информацию
-        element(byCssSelector("div[role='textbox']>p")).click()
-        element(byCssSelector("div[role='textbox']")).sendKeys("AutoTest INC 0010 inc $dateTime")
+        createICToolsDopInfo("AutoTest INC 0010 inc $dateTime $language1", waitTime)
         //запоминаем источник обращения
         var callType = element(byXpath("//label[text()='Источник события']/following-sibling::div/div[@id='calltype']"))
             .ownText
@@ -95,16 +69,16 @@ class Incidents :BaseTest() {
         //выбираем тип происшествия
         inputRandomNew("incidentTypeId-textfield", false, waitTime)
         //Создаем карточку
-        element(byXpath("//span[text()='Сохранить карточку']/..")).click()
+        element(byXpath("//span[text()='Сохранить карточку']/.."))
+            .click()
         //Убеждаемся, что нам загрузило созданную карточку
         //проверяя что нам в принципе загрузило какую-то карточку
-        element(byCssSelector("#simple-tabpanel-card")).should(exist, ofSeconds(waitTime))
+        element(byCssSelector("#simple-tabpanel-card"))
+            .should(exist, ofSeconds(waitTime))
         //что она в статусе "В обработке"
         checkICToolIsStatus("В обработке", waitTime)
         //и что это именно так карточка которую мы только что создали
-        element(byXpath("//div[text()='AutoTest INC 0010 inc $dateTime']/strong[text()='Дополнительная информация:']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
+        checkICToolDopInfo("AutoTest INC 0010 inc $dateTime $language1", waitTime)
         Assertions.assertTrue(
             elements(byXpath("//*[text()='1']/ancestor::div[@id='panel1a-header']//*[text()='$callType']"))
                 .size
@@ -130,12 +104,7 @@ class Incidents :BaseTest() {
         menuNavigation("Происшествия", "Создать карточку", waitTime)
         //заполняем карточку
         //Источник события - выбираем случайно
-        element(byCssSelector("div#calltype"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        iI = (1..10).random()
-        element(byCssSelector("div#menu->div>ul[role='listbox']>li:nth-child($iI)")).click()
+        createICToolCalltype("", waitTime)
         //язык обращения
         element(byXpath("//label[text()='Язык общения']/following-sibling::div/div[@id='language']"))
             .should(exist, ofSeconds(waitTime))
@@ -147,16 +116,9 @@ class Incidents :BaseTest() {
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
         //Номер телефона
-        if (elements(byCssSelector("#phone")).size > 0){
-            val tel = (9180000000..9189999999).random()
-            element(byCssSelector("#phone")).sendKeys("+7$tel")
-        }
+        createICToolPhone("", waitTime)
         //ФИО
-        if (elements(byCssSelector("input[id='fio.lastname']")).size > 0
-            && elements(byCssSelector("input[id='fio.firstname']")).size > 0){
-            element(byCssSelector("input[id='fio.lastname']")).sendKeys("$date AutoTestLastname call")
-            element(byCssSelector("input[id='fio.firstname']")).sendKeys("INC 0010 Firstname")
-        }
+        createICToolFIO("$date AutoTestLastname call","INC 0010 Firstname", language2, waitTime)
         //адрес
 //        addressInput("callAddress","INC 0010 adr $dateTime", waitTime)
         element(byXpath("//input[@id='callAddress']"))
@@ -165,8 +127,7 @@ class Incidents :BaseTest() {
             .sendKeys("INC 0010 adr2 $dateTime")
         Thread.sleep(500)
         //заполняем дополнительную информацию
-        element(byCssSelector("div[role='textbox']>p")).click()
-        element(byCssSelector("div[role='textbox']")).sendKeys("AutoTest call INC 0010 $dateTime")
+        createICToolsDopInfo("AutoTest call INC 0010 $dateTime $language2", waitTime)
         //запоминаем источник обращения
         callType = element(byXpath("//label[text()='Источник события']/following-sibling::div/div[@id='calltype']"))
             .ownText
@@ -184,10 +145,13 @@ class Incidents :BaseTest() {
         element(byCssSelector("#simple-tabpanel-card")).should(exist, ofSeconds(waitTime))
         //что она в статусе "В обработке"
         checkICToolIsStatus("В обработке", waitTime)
-        //и что это именно так карточка которую мы только что создали
-        element(byXpath("//div[text()='AutoTest INC 0010 inc $dateTime']/strong[text()='Дополнительная информация:']"))
+        //развернём второе обращение
+        element(byXpath("//*[text()='2']/ancestor::div[@id='panel1a-header']//*[name()='svg']/ancestor::div[1]"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        //и что это именно так карточка которую мы только что создали
+        checkICToolDopInfo("AutoTest call INC 0010 $dateTime $language2", waitTime)
         Assertions.assertTrue(
             elements(byXpath("//*[text()='2']/ancestor::div[@id='panel1a-header']//*[text()='$callType']"))
                 .size

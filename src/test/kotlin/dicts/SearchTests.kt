@@ -20,11 +20,6 @@ class SearchTests : BaseTest(){
 // с последующим удалением записи
 //набор поисковых полей определяется как считыванием из тултипа подсказки, так и хардкодом, в случае несоответствия подсказки названиям полей.
 
-    var date = ""
-    var dateTime = ""
-    //Время ожидания элементов при выполнении теста
-    val waitTime: Long = 5
-    val longWait: Long = 10
 
     @DataProvider(name = "Справочники единого алгоритма полной проверки поиска")
     open fun `Справочники полной проверки поиска`(): Any {
@@ -86,8 +81,8 @@ class SearchTests : BaseTest(){
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //определяем переменные, дату как уникальный идентификатор, длинный селектор, список того что будем вбивать в поиск, список обязательных полей карточки
-        dateTime = LocalDateTime.now().toString()
-        val uniqueName = dateTime.filter { it.isDigit() }
+        dateTime = LocalDateTime.now()
+        val uniqueName = dateTime.toString().filter { it.isDigit() }
         val mkdwnLabelSel= "//p[contains(text(),'%s')]/parent::div/following-sibling::div//p[@data-empty-text='Нажмите здесь, чтобы вводить текст']"
         var count = true
         val searchUnitsList = mutableListOf<String>()
@@ -105,9 +100,6 @@ class SearchTests : BaseTest(){
                 if ((unitPlaceohlder == "Источник") && (subMenu == "Датчики")){
                     element(byXpath("//label[contains(text(),'$unitPlaceohlder')]/following-sibling::div/input"))
                         .sendKeys("https://AT/source/${uniqueName}.com")
-//                } else if ((unitPlaceohlder == "Код") && (subMenu == "Типы происшествий")){
-//                    element(byXpath("//label[contains(text(),'$unitPlaceohlder')]/following-sibling::div/input"))
-//                        .sendKeys("АТ")
                 } else {
                     element(byXpath("//label[contains(text(),'$unitPlaceohlder')]/following-sibling::div/input"))
                         .sendKeys("AT_${unitPlaceohlder}_$uniqueName")
@@ -126,26 +118,6 @@ class SearchTests : BaseTest(){
                 element(byXpath(mkdwnLabelSel.format(unitPlaceohlder)))
                     .sendKeys("AT_${unitPlaceohlder}_$uniqueName")
                 searchUnitsList.add("AT_${unitPlaceohlder}_$uniqueName")
-//            } else if ((unitPlaceohlder == "Наименование") && (subMenu == "Организации")){
-//                element(byXpath("//label[contains(text(),'Краткое наименование')]/following-sibling::div/input"))
-//                    .should(exist, ofSeconds(waitTime))
-//                    .shouldBe(visible, ofSeconds(waitTime))
-//                    .click()
-//                element(byXpath("//label[contains(text(),'Краткое наименование')]/following-sibling::div/input"))
-//                    .sendKeys("AT_Краткое наименование_$uniqueName")
-//                searchUnitsList
-//                    .add(element(byXpath("//label[contains(text(),'Краткое наименование')]/following-sibling::div/input"))
-//                        .getAttribute("value").toString())
-//                element(byXpath("//label[contains(text(),'Полное наименование')]/following-sibling::div/input"))
-//                    .should(exist, ofSeconds(waitTime))
-//                    .shouldBe(visible, ofSeconds(waitTime))
-//                    .click()
-//                element(byXpath("//label[contains(text(),'Полное наименование')]/following-sibling::div/input"))
-//                    .sendKeys("AT_Полное наименование_$uniqueName")
-//                searchUnitsList
-//                    .add(element(byXpath("//label[contains(text(),'Полное наименование')]/following-sibling::div/input"))
-//                        .getAttribute("value").toString())
-//                Thread.sleep(10000)
             } else {
                 //а если нет, то укладываем тест, т.к. либо тест кривой, либо что-то не так с наименованиями подсказок и полей
                 count = false
@@ -234,16 +206,6 @@ class SearchTests : BaseTest(){
             }
             // и на последнем круге, удаляем созданную запись
             if (searchUnit == searchUnitsList.last()){
-//                val buttonColumn = tools.numberOfColumn(" ", waitTime)
-//                element(byXpath("//table/tbody/tr/td[$nameColumn][text()='AT_${nameOfName}_$uniqueName']/following-sibling::td[${buttonColumn - nameColumn}]//button"))
-//                    .click()
-//                if (subMenu == "Метки"){
-//                    element(byXpath("//table/tbody/tr/td[$nameColumn]//*[text()='AT $nameOfName $uniqueName']/ancestor::td/following-sibling::td[${buttonColumn - nameColumn}]//button"))
-//                        .click()
-//                } else {
-//                    element(byXpath("//table/tbody/tr/td[$nameColumn][text()='AT_${nameOfName}_$uniqueName']/following-sibling::td[${buttonColumn - nameColumn}]//button"))
-//                        .click()
-//                }
                 element(byXpath("//table/tbody/tr/td[last()]//button"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))

@@ -6,6 +6,8 @@ import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Selectors.byCssSelector
 import com.codeborne.selenide.Selectors.byText
 import com.codeborne.selenide.Selectors.byXpath
+import com.codeborne.selenide.Selenide.`$`
+import com.codeborne.selenide.Selenide.`$$`
 import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
 import org.openqa.selenium.Keys
@@ -13,12 +15,11 @@ import java.io.File
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
-import kotlin.random.Random
+
 
 class PlayGround : BaseTest(){
-    var date = LocalDate.now()
-    var dateTime = LocalDateTime.now()
-    var waitTime: Long = 5
+
+
 
 
 
@@ -87,21 +88,6 @@ class PlayGround : BaseTest(){
             val moParentNameColumn = numberOfColumn("Субъект", waitTime)
 
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         //если они есть, то составляем их список, не удаляем из него "AutoTest Основное МО" (что бы еще раз не искать его потом)
         // и поштучно удаляем все МО из списка
         if (elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size == 0) {
@@ -197,117 +183,28 @@ class PlayGround : BaseTest(){
     fun `Черновик`() {
         logonTool()
         menuNavigation("Происшествия", "Создать карточку", waitTime)
-        element(byXpath("//*[text()='Создать карточку']/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        createICToolIsThreatPeople(true, "", "", "15", "", waitTime)
-        Thread.sleep(20000)
-    }
-
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
-    fun `MT_003 Черновик`() {
-        //Создаем КП, указывая координаты вручную (случайные из диапазона), затем переходим на карту
-        //считываем ссылку в свойствах центрующей иконки, достаем оттуда координаты и сравниваем с заданными с учетом некоторой погрешности
-        //убеждаемся что на карте присутствуют 5 кусочков из openStreetMap соответствующих координатам, возвращаемся в КП и убеждаемся что вернулись в КП
-        try {
-            logonTool()
-        } catch (_: Throwable) {
-            element(byCssSelector("header button svg[name='user']"))
-                .should(exist, ofSeconds(waitTime))
-        }
-        menuNavigation("Происшествия", "Создать карточку", waitTime)
-        element(byXpath("//*[text()='Создать карточку']/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        element(byXpath("//label[text()='Метки']/..//input[@id='labelsId-autocomplete']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        element(byXpath("//div[@role='presentation']"))
-            .should(exist, ofSeconds(waitTime))
-        println(elements(byXpath("//div[@role='presentation']/div/ul/*")))
-    }
-
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
-    fun `PMI 0150 черновик`() {
-        //A311 Регистрация вызова (формирование карточки происшествия)
-        //A.3.17 Назначение карточки происшествия на службу ДДС/ЕДДС (только службы, которые подключены к Системе)
-        //Проверка изменения статуса родительской карточки при изменении статуса карточки назначения
-        //логинимся
-        dateTime = LocalDateTime.now()
-        date = LocalDate.now()
-        anyLogonTool("a.sizov.edds.1.1", "a.sizov.edds.1.1")
-        //кликаем по иконке происшествий в боковом меню
-        //Переходим в "Список происшетвий"
-        //кликаем по "создать обращение"
-        menuNavigation("Происшествия", "Список происшествий", waitTime)
-        element(byXpath("//span[text()='Создать обращение']/parent::button")).click()
-//        element(byCssSelector("div span[aria-label='add'] button[type='button']")).shouldHave(exactText("Создать обращение"))
-//            .click()
-        //заполняем карточку
-        //Источник события - выбираем случайно
         createICToolCalltype("", waitTime)
-        //Номер телефона
         createICToolPhone("", waitTime)
-        //ФИО
-        createICToolFIO("$date AutoTestLastname", "AutoTestFirstname", "", waitTime)
-        //адрес с тестированием транслитерации и клик по dadata
-        addressInput("callAddress","vbhf5",waitTime)
-        //заполняем дополнительную информацию
-        //element(byCssSelector("textarea[name='comment']")).value = "AutoTest N 0150 $dateTime"
-        createICToolsDopInfo("AutoTest PMI 0150 $dateTime", waitTime)
-        //регистрируем обращение
-        element(byXpath("//span[text()='Создать карточку']/parent::button")).click()
-        //выбираем тип происшествия
-        element(byCssSelector("input#incidentTypeId-autocomplete")).sendKeys("П.5.1.5 Auto-Test", Keys.DOWN, Keys.ENTER)
-        val isThreatPeople = true
-        val victimsCount = (0..100).random()
-        val victimsChildren = (0..victimsCount).random()
-        val deathToll = (0..50).random()
-        val deathChildren = (0..deathToll).random()
-        //Создаем карточку
-        createICToolIsThreatPeople(isThreatPeople, victimsCount.toString(), victimsChildren.toString(), deathToll.toString(), deathChildren.toString(), waitTime)
-        element(byXpath("//span[text()='Сохранить карточку']/parent::button")).click()
-
-
-        //Убеждаемся, что нам загрузило созданную карточку
-        //проверяя что нам в принципе загрузило какую-то карточку
-        element(byCssSelector("#simple-tabpanel-card")).should(exist, ofSeconds(waitTime))
-        //что она в статусе "В обработке"
-        checkICToolIsStatus("В обработке", waitTime)
-        //и что это именно так карточка которую мы только что создали
-        checkICToolsDopInfo("AutoTest PMI 0150 $dateTime", waitTime)
-        element(byCssSelector("input#upload-file")).uploadFile(File("/home/isizov/IdeaProjects/testing-e2e/src/test/resources/fixtures/test.pdf"))
-        element(byXpath("//div[@role='alert']//*[text()='Файл загружен']"))
-            .should(exist, ofSeconds(waitTime))
-        element(byXpath("//div[@role='alert']//*[@name='snackbarClose']/ancestor::button"))
+        createICToolFIO("1", "2", "3", waitTime)
+        val bB = (1..100).random()
+        addressInput("callAddress", "Карачаево-Черкесская Респ, г Карачаевск $bB", waitTime)
+        createICToolsDopInfo("test", waitTime)
+        element(byXpath("//*[text()='Создать карточку']/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
-        element(byXpath("//div[@id='files']//*[text()='test.pdf']"))
+        inputRandomNew("incidentTypeId-textfield", false, waitTime)
+        element(byXpath("//*[text()='Сохранить карточку']/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
-        //кликаем по иконке происшествий в боковом меню
-        //Переходим в "Список происшетвий"
-        //Переходим во вкладку "Работа с ДДС"
-        element(byXpath("//span[text()='Работа с ДДС']/ancestor::button")).click()
-        //жмем "добавить"
-        //element(byCssSelector("div#simple-tabpanel-hotlines button")).click()
-        element(byXpath("//span[text()='Выбрать ДДС']/ancestor::button")).click()
-        Thread.sleep(150)
-        //выбираем ДДС-02 г.Черкесск
-        element(byXpath("//*[text()='ДДС ЭОС']/ancestor::div[@id='panel1a-header']")).click()
-        Thread.sleep(150)
-        element(byXpath("//*[text()='AutoTest dds-01 1']/ancestor::div/div/label//input")).click()
-        Thread.sleep(150)
-        element(byXpath("//span[text()='Назначить']/ancestor::button")).click()
-        Thread.sleep(150)
-        element(byText("AutoTest dds-01 1")).should(exist, ofSeconds(waitTime))
-        element(byText("AutoTest PMI 0150 $dateTime")).should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        checkICToolIsStatus("В обработке", longWait)
+        updateICToolStatus("", waitTime)
 
-        logoffTool()
 
     }
+
+
+
 
 }
