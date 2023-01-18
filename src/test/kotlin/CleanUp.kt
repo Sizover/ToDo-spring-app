@@ -13,9 +13,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 class CleanUp : BaseTest(){
-    var date = LocalDate.now()
-    var dateTime = LocalDateTime.now()
-    var waitTime: Long = 5
 
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["CleanUp"])
@@ -41,7 +38,6 @@ class CleanUp : BaseTest(){
             val menuColumn = elements(byXpath("//thead/tr/th")).size
 //            println(menuColumn)
             //входим в большой цикл без защитного счетчика
-            var control = 1 //хотя вот он готовый счетчик
             checkbox("Наименование отчета", true, waitTime)
             //"Проверка формирования отчетов" это часть названия отчета присваемого всем отчетам создаваемыми автотестами
             while (elements(byXpath("//tbody/tr//*[contains(text(),'Проверка формирования отчетов')]")).size > 0 ){
@@ -85,8 +81,6 @@ class CleanUp : BaseTest(){
                         break
                     }
                 }
-                //            control += 1
-                //            println(control)
             }
         }
         logoffTool()
@@ -96,15 +90,12 @@ class CleanUp : BaseTest(){
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["CleanUp"])
     fun `CleanUp 9999 Закрытие КП созданных под логином работы автотестов` (){
         //Закроем все происшествия созданные автотестом , например за неделю
-//        date = LocalDate.now().toString()
         date = LocalDate.now()
-//        val date2 = date.minusDays(7).toString()
         val dateStart = LocalDate.now().minusDays(50).toString()
         val dateEnd = LocalDate.now().toString()
         logonTool()
         //убедимся что мы за оператор:
         //кликаем по иконке оператора сверху справа
-        //element(byCssSelector("header>div>div>div>span>button")).click()
         element(byXpath("//header//button//*[text()]/ancestor::button")).click()
         //пероеходим в профиль пользователя
         element(byCssSelector("a[href='/profile']>button"))
@@ -113,12 +104,11 @@ class CleanUp : BaseTest(){
         //Извлекаем имя оператора
         element(byXpath("//p[text()='Должностное лицо:']/following-sibling::p"))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-        //val operator = element(byCssSelector("main>div:nth-child(3)>div:nth-child(3)>p")).ownText
         val operator = element(byXpath("//p[text()='Должностное лицо:']/following-sibling::p")).ownText
         val operatorFIO = operator.trim()
-//        println("ФИО $operator")
-//        println("operatorFIO $operatorFIO")
+        logoffTool()
         //переходим к списку происшествий и ждем загрузки
+        anyLogonTool("autotest_admin", "autotest_admin")
         menuNavigation("Происшествия","Список происшествий",waitTime)
         element(byCssSelector("table>tbody>tr"))
             .should(exist, ofSeconds(waitTime))
@@ -179,43 +169,19 @@ class CleanUp : BaseTest(){
         while (noData == 0){//переходим в каждую первую карточку и меняем статус, на "Закрыта"
             //карточки в статусе новая, вызывают проблемы из-за того что меняют статус автоматически, даже когда по нему клацаешь
             //поэтому для них дождемся перехода в статус "в обработке"
-            if (element(byXpath("//table/tbody/tr[1]/td[$statusColumn]//*[text()]")).ownText == "Новая" ){
-                element(byXpath("//table/tbody/tr[1]"))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
-                    .click()
+            val statusIC = element(byXpath("//table/tbody/tr[1]/td[$statusColumn]//*[text()]")).ownText
+            element(byXpath("//table/tbody/tr[1]"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+            if (statusIC == "Новая"){
                 try {
                     checkICToolIsStatus("В обработке", waitTime)
                 } catch (_:  Throwable) {
                 }
-//                checkICToolIsStatus("В обработке", waitTime)
-//                element(byCssSelector("button[style='min-width: 140px; white-space: nowrap; border-radius: 20px;']"))
-//                    .shouldHave(Condition.text("В обработке"), ofSeconds(waitTime))
-//                    .shouldBe(visible, ofSeconds(waitTime))
-            } else {
-                element(byXpath("//table/tbody/tr[1]"))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
-                    .click()
             }
             Thread.sleep(500)
-            element(byXpath("//div[contains(@class,'MuiBox-root')]/div/div/div[contains(@class,'MuiGrid-root')]//button[1]"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-            val statusIC = element(byXpath("//div[contains(@class,'MuiBox-root')]/div/div/div[contains(@class,'MuiGrid-root')]//button[1]//*[text()]"))
-                .ownText
-            element(byXpath("//div[contains(@class,'MuiBox-root')]/div/div/div[contains(@class,'MuiGrid-root')]//button[1]"))
-                .click()
-            Thread.sleep(500)
-            element(byXpath("//span[text()='Закрыта']/parent::button"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
-            Thread.sleep(500)
-            element(byXpath("(//span[text()='$statusIC']/parent::button)[@style]"))
-                .shouldNot(exist, ofSeconds(waitTime))
-            element(byXpath("(//span[text()='Закрыта']/parent::button)[@style]"))
-                .should(exist, ofSeconds(waitTime))
+            updateICToolStatus("Закрыта", waitTime)
             back()
             element(byXpath("//table/tbody/tr[1]"))
                 .should(exist, ofSeconds(waitTime))
