@@ -10,6 +10,7 @@ import com.codeborne.selenide.Selectors.byCssSelector
 import com.codeborne.selenide.Selectors.byText
 import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.*
+import com.codeborne.selenide.SelenideElement.*
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import org.testng.annotations.DataProvider
@@ -17,6 +18,7 @@ import org.testng.annotations.Test
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.LinkedHashMap
 import kotlin.random.Random
 
@@ -598,9 +600,9 @@ class Reports : BaseTest(){
         val today = date.toString().split("-")
         //заполняем дату начала и конца периода отчета сегодняшним числом
         element(byCssSelector("form[novalidate] input#periodStart"))
-            .sendKeys("${today[2]}.${today[1]}.${today[0]}")
+            .sendKeys(date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")))
         element(byCssSelector("form[novalidate] input#periodEnd"))
-            .sendKeys("${today[2]}.${today[1]}.${today[0]}")
+            .sendKeys(date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")))
         //Определим имя импута по потерям
         val victimsName = element(byXpath("(//form[@novalidate]//label[contains(text(),'Число')])[$lookingForVictims]")).ownText
         //добавим новый отчет в список
@@ -853,7 +855,7 @@ class Reports : BaseTest(){
                 Thread.sleep(250)
                 ddsNameList.forEach { ddsName ->
                     element(byXpath("//form//*[text()='$ddsName']"))
-                        .should(exist, ofSeconds(waitTime))
+                        .should(exist, ofSeconds(longWait))
                 }
             }
             Thread.sleep(250)
@@ -914,7 +916,7 @@ class Reports : BaseTest(){
                             .shouldNot(exist, ofSeconds(waitTime))
                         Thread.sleep(100)
                         element(byXpath("//*[text()='$ddsName']/ancestor::form//*[text()='Новая']/ancestor::button"))
-                            .shouldNot(exist, ofSeconds(waitTime))
+                            .shouldNot(exist, ofSeconds(longWait))
                         element(byXpath("//*[text()='$ddsName']/ancestor::form//button[@style]//*[text()='В обработке']"))
                             .should(exist, ofSeconds(waitTime))
                         Thread.sleep(100)
