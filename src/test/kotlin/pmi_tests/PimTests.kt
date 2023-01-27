@@ -201,14 +201,14 @@ class PimTests : BaseTest(){
     fun `PMI 0100 Проверка процедуры авторизации в системе`() {
         //A310 Проверка процедуры авторизации в системе 1
         //val tools = Tools()
-        aThreeHundredAndTenOne()
+        authorizationTest()
         element(byName("login")).click()
         element(byCssSelector("#input-error")).shouldHave(exactText("Неправильное имя пользователя или пароль."))
-        aThreeHundredAndTenOne()
+        authorizationTest()
         element(byName("username")).sendKeys("test")
         element(byName("login")).click()
         element(byCssSelector("#input-error")).shouldHave(exactText("Неправильное имя пользователя или пароль."))
-        aThreeHundredAndTenOne()
+        authorizationTest()
         element(byName("username")).sendKeys("test")
         element(byName("password")).sendKeys("test")
         element(byName("login")).click()
@@ -510,7 +510,7 @@ class PimTests : BaseTest(){
         elements(byXpath("//table/tbody/tr")).shouldHave(
             CollectionCondition.sizeGreaterThanOrEqual(1))
         //применяем фильтр "Типы происшествий"
-        setIncidentTypesFilter("К Консультации;Л Ложные", waitTime)
+        setFilterByName("Типы происшествий", "К Консультации;Л Ложные", waitTime)
         //Дожидаемся применения фильтра
         Thread.sleep(500)
         element(byXpath("//span[text()='Типы происшествий']/button"))
@@ -572,7 +572,7 @@ class PimTests : BaseTest(){
         element(byXpath("//span[text()='Статусы']/button")).click()
         /////////////////////////////////////////////////////////////////////////////////////////
         //применяем фильтр "Уровни"
-        setButtonFilter("Уровни", "Угроза ЧС;ЧС", waitTime)
+        setFilterByName("Уровни", "Угроза ЧС;ЧС", waitTime)
         //Дожидаемся применения фильтра
         Thread.sleep(2000)
         if (filterLevels){
@@ -608,7 +608,7 @@ class PimTests : BaseTest(){
         //Открываем фильтр "Источники"
         checkbox("Источник", true, waitTime)
         //Устанавливаем значения фильтров
-        setButtonFilter("Источники", "Видеоаналитика;СМС", waitTime)
+        setFilterByName("Источники", "Видеоаналитика;СМС", waitTime)
         targetColumn = numberOfColumn("Источник", waitTime)
         element(byXpath("//span[text()='Источники']/..")).click()
         element(byCssSelector("div[tabindex='-1'] div[role='combobox']"))

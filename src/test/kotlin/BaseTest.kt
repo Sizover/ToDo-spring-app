@@ -22,15 +22,18 @@ import org.openqa.selenium.chrome.ChromeOptions
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.LinkedHashMap
 
 
 open class BaseTest {
-
+    //просто переменные с текущей датой, для различных целей
     public var date = LocalDate.now()
     public var dateTime = LocalDateTime.now()
     public val waitTime: Long = 15
     public val longWait: Long = 15
+    // отладочная переменная для выведения (или нет) отладочной информации, в консоль
+    public val print = true
 
     fun logonTool(){
 
@@ -47,7 +50,7 @@ open class BaseTest {
 //        Configuration.browser = CHROME
         WebDriverRunner.isChrome()
         Configuration.browserSize = "1920x1080"
-        Configuration.holdBrowserOpen = false
+        Configuration.holdBrowserOpen = true
         Configuration.webdriverLogsEnabled = false
         Configuration.headless = false
         //Открываем КИАП
@@ -161,9 +164,7 @@ open class BaseTest {
         closeWindow()
 
     }
-    fun aThreeHundredAndTenOne(){
-        //на случай невыполнения шага, ждем что бы можно было успеть глазками посмотреть и руками потыкать
-        Configuration.timeout = 10000
+    fun authorizationTest(){
         //выбираем браузер
         //Configuration.browser = FIREFOX
         Configuration.browser = CHROME
@@ -624,13 +625,6 @@ open class BaseTest {
             .sendKeys(dopInfo)
     }
 
-//    fun createICToolIsLabels(label: String, waitTime: Long){
-//        element(byXpath("//div[@data-testid='labelsId']//button[@title='Open']"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//            .click()
-//        if (){}
-//    }
     fun createICToolLabels(Labels: String, waitTime: Long){
         element(byXpath("//label[text()='Метки']/..//input[@id='labelsId-autocomplete']"))
             .should(exist, ofSeconds(waitTime))
@@ -650,7 +644,6 @@ open class BaseTest {
         element(byXpath("//form//*[text()='Дополнительная информация:']/..//div[@role='textbox']/*[text()='$dopInfo']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-
     }
 
     fun updateICToolLabels(labelsList: List<String>, waitTime: Long){
@@ -891,6 +884,7 @@ open class BaseTest {
                 .should(exist, ofSeconds(waitTime))
             checkICToolIsStatus("В обработке", waitTime)
         } catch (_:  Throwable) {
+            println("pushButtonCreateIC said \"БЛЭТ!\"")
             element(byCssSelector("table#incidents"))
                 .should(exist, ofSeconds(waitTime))
             checkbox("Описание", true, waitTime)
@@ -904,137 +898,40 @@ open class BaseTest {
         }
     }
 
-    //абстракция применения фильтра по типам происшествий
-    fun setIncidentTypesFilter(incidentTypes: String, waitTime: Long){
-        //список значений фильтра для унификации последующего кода
-        val incidentTypesList: MutableList<String> = mutableListOf()
-        //для контроля изменения цвета кнопки фильтра запомним текущий класс, т.к. цвет зашифрован в стиль, который зашифрован в класс
-        var filterButtonClass: String = ""
-        //флаг полезли ли мы в "Еще фильтры" или "Все фильтры"
-        val checkButtonClass: Boolean
-        //количество действующих фильтров в "Еще фильтры" или "Все фильтры"
-        var amountFilters = 0
-        //ждем
-        element(byXpath("//form[@novalidate]"))
-            .should(exist, ofSeconds(waitTime))
-        if (element(byXpath("//form[@novalidate]//*[text()='Типы происшествий']/ancestor::button")).exists()) {
-            checkButtonClass = true
-            //для контроля изменения цвета кнопки фильтра запомним текущий класс, т.к. цвет зашифрован в стиль, который зашифрован в класс
-            filterButtonClass =
-                element(byXpath("//form[@novalidate]//*[text()='Типы происшествий']/ancestor::button"))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
-                    .getAttribute("class")
-                    .toString()
-            //открываем фильтр
-            element(byXpath("//form[@novalidate]//*[text()='Типы происшествий']/ancestor::button"))
-                .click()
-        } else {
-            checkButtonClass = false
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            with(
-                element(byXpath("//form[@novalidate]//*[contains(text(),' фильтры')]/ancestor::button//*[text()]"))
-                    .ownText
-                    .substringAfterLast('(')
-                    .substringBeforeLast(')')){
-                amountFilters = if(this.isNotEmpty()){
-                    this.toInt()
-                } else {
-                    0
-                }
-            }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            element(byXpath("//form[@novalidate]//*[contains(text(),' фильтры')]/ancestor::button"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
-        }
-        //ждем
-        element(byXpath("//div[@role='presentation']//label[text()='Типы происшествий']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        //открываем весь список
-        element(byXpath("//*[text()='Типы происшествий']/ancestor::div[@role='combobox']//input"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        element(byXpath("(//div[@role='presentation']//*[@name='arrowRight'])[1]"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        //формируем применяемый список значений, если на вход передана пустая строка, то выбираем одно случайное значение
-        if (incidentTypes.isNotEmpty()) {
-            if (incidentTypes.contains(';')) {
-                incidentTypes.split(';').forEach { incidentType ->
-                    incidentTypesList.add(incidentType.trim())
-                }
-            } else {
-                incidentTypesList.add(incidentTypes.trim())
-            }
-        } else {
-            incidentTypesList
-                .add(
-                    elements(byXpath("//div[@role='presentation']//li[.//*[@name='checkboxNormal'] and not(.//*[contains(@name,'arrow')])]//*[text()]"))
-                        .random()
-                        .ownText
-                )
-        }
-        //для сформированного списка значений выполняем их выбор
-        incidentTypesList.forEach { incidentType ->
-            //чтобы обойти машинный глюк с несработавшим кликом, кликаем в цикле
-            while (!element(byXpath("//div[@role='presentation']//*[text()='$incidentType']/ancestor::li//*[@name='checkboxFocus']")).exists()){
-                element(byXpath("//div[@role='presentation']//*[text()='$incidentType']/ancestor::li//*[@name='checkboxNormal']"))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
-                    .click()
-                Thread.sleep(100)
-            }
-        }
-        //закрываем весь список
-        element(byXpath("//*[text()='Типы происшествий']/ancestor::div[@role='combobox']//input"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        //применяем фильтр
-        element(byXpath("//div[@role='presentation']//*[text()='Применить']/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        //ждем
-        element(byXpath("//div[@role='presentation']//*[text()='Применить']/ancestor::button"))
-            .shouldNot(exist, ofSeconds(waitTime))
-        if (checkButtonClass) {
-            element(byXpath("//*[text()='Типы происшествий']/ancestor::button//button//*[@name='close']"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-            //проверяем изменение "цвета" кнопки фильтра
-            Assertions.assertTrue(
-                element(byXpath("//form[@novalidate]//*[text()='Типы происшествий']/ancestor::button"))
-                    .getAttribute("class")
-                    .toString()
-                    != filterButtonClass
-            )
-        } else {
-            Assertions.assertTrue(
-                element(byXpath("//form[@novalidate]//*[contains(text(),' фильтры')]/ancestor::button//*[text()]"))
-                    .ownText
-                    .substringAfterLast('(')
-                    .substringBeforeLast(')')
-                    .toInt()
-                == amountFilters +1
-            )
-        }
-    }
-
-
-    fun setButtonFilter(buttonFilterName: String,filterValues: String, waitTime: Long){
-        //словарь соответствия фильтров как отдельных кнопок и как полей внутри "Еще фильтры"
+    //абстракция применения фильтра по имени фильтра и переданным значениям,
+    //в случае если значение не передано, "но логика работы фильтра это допускает", по метод подставляет произвольное случайное значение
+    fun setFilterByName(filterName: String,filterValues: String, waitTime: Long){
+        //хардкодный словарь соответствия фильтров как отдельных кнопок и как полей внутри "Еще фильтры"
+        //возможно стоит передалать на карту строка->пара
         val filterNamesDictionary = mapOf(
+            "Типы происшествий" to "Типы происшествий",
+            "Адрес" to "Адрес происшествия",
             "Статусы" to "Статусы карточки",
+            "Дата регистрации" to "Дата регистрации",
+            "Дата принятия" to "Дата принятия в обработку",
             "Уровни" to "Уровень происшествия",
             "Источники" to "Источники событий",
+            "МО" to "Муниципальные образования",
+            "Угрозы людям" to "Угроза людям",
+            "Метки" to "Метки",
+            "Службы" to "Службы",
             "Охват" to "Территориальный охват",
+            "Оператор" to "Оператор",
+            "Файлы" to "Есть файлы",
+            "Идентификаторы" to "Идентификаторы"
         )
+        //Список фильтров по дате
+        val dateFilterNameList = listOf<String>("Дата регистрации", "Дата принятия")
+        //Список кнопочных фильтров
+        val buttonsFilterNameList = listOf<String>("Статусы", "Уровни", "Источники", "Охват")
+        //список фильтров с плоским списком
+        val flatСatalogFilterNameList = listOf<String>("Адрес", "Службы", "Оператор")
+        //список фильтров с иерархическим списком
+        val hierarchicСatalogFilterNameList = listOf<String>("Типы происшествий", "МО", "Метки")
+        //список фильтров с радиокнопкой
+        val radioButtonСatalogFilterNameList = listOf<String>("Угрозы людям", "Файлы", "Идентификаторы")
+        //список фильтров с не справочным строчным значением
+//        val justStringСatalogFilterNameList = listOf<String>("Идентификаторы")
         //список значений фильтра для унификации последующего кода
         val listOfTargetValues: MutableList<String> = mutableListOf()
         //для контроля изменения цвета кнопки фильтра запомним текущий класс, т.к. цвет зашифрован в стиль, который зашифрован в класс
@@ -1043,24 +940,26 @@ open class BaseTest {
         val checkButtonClass: Boolean
         //количество действующих фильтров в "Еще фильтры" или "Все фильтры"
         var amountFilters = 0
-        Assertions.assertTrue(filterNamesDictionary.keys.contains(buttonFilterName))
+        Assertions.assertTrue(filterNamesDictionary.keys.contains(filterName))
         //ждем
         element(byXpath("//form[@novalidate]"))
             .should(exist, ofSeconds(waitTime))
-        if (element(byXpath("//form[@novalidate]//*[text()='$buttonFilterName']/ancestor::button")).exists()){
+        //если не надо лезть в "Еще фильтры", то
+        if (element(byXpath("//form[@novalidate]//*[text()='$filterName']/ancestor::button")).exists()){
             checkButtonClass = true
             //для контроля изменения цвета основной кнопки фильтра запомним текущий класс, т.к. цвет зашифрован в стиль, который зашифрован в класс
-            filterMainButtonClass = element(byXpath("//form[@novalidate]//*[text()='$buttonFilterName']/ancestor::button"))
+            filterMainButtonClass = element(byXpath("//form[@novalidate]//*[text()='$filterName']/ancestor::button"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
                 .getAttribute("class")
                 .toString()
             //жмем кнопку фильтра
-            element(byXpath("//form[@novalidate]//*[text()='$buttonFilterName']/ancestor::button"))
+            element(byXpath("//form[@novalidate]//*[text()='$filterName']/ancestor::button"))
                 .click()
         } else {
+            //если полезли в "Еще фильтры"
             checkButtonClass = false
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            //фиксируем число текущих фильтров в "Еще фильтры", с учетом того что цифры может и не быть (0 фильтров не указывается)
             with(
                 element(byXpath("//form[@novalidate]//*[contains(text(),' фильтры')]/ancestor::button//*[text()]"))
                     .ownText
@@ -1072,14 +971,20 @@ open class BaseTest {
                     0
                 }
             }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            if (amountFilters == 0){
+                filterMainButtonClass = element(byXpath("//form[@novalidate]//*[contains(text(),' фильтры')]/ancestor::button"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .getAttribute("class")
+                    .toString()
+            }
             element(byXpath("//form[@novalidate]//*[contains(text(),' фильтры')]/ancestor::button"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
                 .click()
         }
         //ждем
-        element(byXpath("//div[@role='presentation']//*[text()='${filterNamesDictionary[buttonFilterName]}']"))
+        element(byXpath("//div[@role='presentation']//*[text()='${filterNamesDictionary[filterName]}']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //формируем применяемый список значений, если на вход передана пустая строка, то выбираем одно случайное значение
@@ -1092,48 +997,127 @@ open class BaseTest {
                 listOfTargetValues.add(filterValues.trim())
             }
         } else {
-            listOfTargetValues
-                .add(elements(byXpath("//div[@role='presentation']//*[text()='${filterNamesDictionary[buttonFilterName]}']/following-sibling::*//button//*[text()]"))
-                    .random()
-                    .ownText)
+            //формируем применяемый список значений, если на вход передана пустая строка, то выбираем одно случайное значение
+            if (buttonsFilterNameList.contains(filterName) || radioButtonСatalogFilterNameList.contains(filterName)){
+                val classButtonLocator = if (radioButtonСatalogFilterNameList.contains(filterName)){
+                    "//*[text()='${filterNamesDictionary[filterName]}']/ancestor::fieldset//label//*[text() and not (contains(text(),'Все'))]"
+                } else {
+                    "//div[@role='presentation']//*[text()='${filterNamesDictionary[filterName]}']/following-sibling::*//button//*[text()]"
+                }
+                listOfTargetValues.add(elements(byXpath(classButtonLocator)).random().ownText)
+            } else if (hierarchicСatalogFilterNameList.contains(filterName)){
+                //открываем весь список
+                element(byXpath("//*[text()='${filterNamesDictionary[filterName]}']/ancestor::div[@role='combobox']//input"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .click()
+                element(byXpath("(//div[@role='presentation']//*[@name='arrowRight'])[1]"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .click()
+                listOfTargetValues
+                    .add(elements(byXpath("//div[@role='presentation']//li[.//*[@name='checkboxNormal'] and not(.//*[contains(@name,'arrow')])]//*[text()]"))
+                        .random()
+                        .ownText)
+            } else if (dateFilterNameList.contains(filterName)){
+                val rndStart = (1..365).random()
+                val rndEnd = (1..rndStart).random()
+                listOfTargetValues.add(LocalDate.now().minusDays(rndStart.toLong()).format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString())
+                listOfTargetValues.add(LocalDate.now().minusDays(rndEnd.toLong()).format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString())
+            } else {
+                if (print){println("переданное значение фильтра не содержится в хардкодном справочнике")}
+                Assertions.assertTrue(false)}
         }
-        //для сформированного списка значений выполняем их выбор
-        listOfTargetValues.forEach { oneValue ->
-            with(element(byXpath("//div[@role='presentation']//*[text()='${filterNamesDictionary[buttonFilterName]}']/following-sibling::*//*[text()='$oneValue']/ancestor::button[@type='button']"))) {
+        //теперь добавляем в фильтр значения по сформированному списку
+        listOfTargetValues.forEachIndexed {indexOfFilterValue, oneFilterValue ->
+            if (buttonsFilterNameList.contains(filterName) || radioButtonСatalogFilterNameList.contains(filterName)){
+                val clickButtonLocator = if (radioButtonСatalogFilterNameList.contains(filterName)){
+                    "//div[@role='presentation']//*[text()='$oneFilterValue']/ancestor::label//span[@aria-disabled]"
+                } else {
+                    "//div[@role='presentation']//*[text()='${filterNamesDictionary[filterName]}']/following-sibling::*//*[text()='$oneFilterValue']/ancestor::button[@type='button']"
+                }
                 //для каждой кнопки единичного значения отслеживаем изменение цвета
-                val filterButtonClass = this
+                val filterButtonClass = element(byXpath(clickButtonLocator))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .getAttribute("class")
                     .toString()
                 //чтобы обойти машинный глюк с несработавшим кликом, кликаем в цикле
-                while (this.getAttribute("class").toString() == filterButtonClass) {
-                    this.click()
+                while (element(byXpath(clickButtonLocator)).getAttribute("class").toString() == filterButtonClass) {
+                    element(byXpath(clickButtonLocator)).click()
                     Thread.sleep(100)
                 }
+            } else if (hierarchicСatalogFilterNameList.contains(filterName)){
+                //чтобы обойти машинный глюк с несработавшим кликом, кликаем в цикле
+                while (!element(byXpath("//div[@role='presentation']//*[text()='$oneFilterValue']/ancestor::li//*[@name='checkboxFocus']")).exists()){
+                    element(byXpath("//div[@role='presentation']//*[text()='$oneFilterValue']/ancestor::li//*[@name='checkboxNormal']"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                        .click()
+                    Thread.sleep(100)
+                }
+            } else if (dateFilterNameList.contains(filterName)){
+                val inputDateLocator = "//div[@role='presentation']//*[text()='${filterNamesDictionary[filterName]}']/..//input[@placeholder='%s']"
+                if (indexOfFilterValue == 0){
+                    if (oneFilterValue.isNotEmpty()){
+                        element(byXpath(inputDateLocator.format("с")))
+                            .should(exist, ofSeconds(waitTime))
+                            .shouldBe(visible, ofSeconds(waitTime))
+                            .sendKeys(oneFilterValue +"0000")
+                    }
+                } else if ((indexOfFilterValue == 1)) {
+                    if (oneFilterValue.isNotEmpty()){
+                        element(byXpath(inputDateLocator.format("по")))
+                            .should(exist, ofSeconds(waitTime))
+                            .shouldBe(visible, ofSeconds(waitTime))
+                            .sendKeys(oneFilterValue +"2359")
+                    }
+                } else {
+                    if (print){println("в списке значений более двух, что не соответствует функционалу фильтра по датам") }
+                    Assertions.assertTrue(false)}//в списке значений более двух, что не соответствует функционалу фильтра по датам
+            } else if (flatСatalogFilterNameList.contains(filterName)){
+                with(element(byXpath("//div[@role='presentation']//*[text()='${filterNamesDictionary[filterName]}']/..//input"))){
+                    this
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                        .click()
+                    this.sendKeys(oneFilterValue.trim())
+                    Thread.sleep(1000)
+                    this.sendKeys(Keys.DOWN, Keys.ENTER)
+                }
+            } else {
+                if (print){println("приведенный фильтр не указан ни в одном из подсправочников")}
+                Assertions.assertTrue(false)
             }
         }
         //применяем фильтр
-        element(byXpath("//div[@role='presentation']//*[text()='Применить']//ancestor::button"))
+        element(byXpath("//div[@role='presentation']//*[text()='Применить']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
         //ждем
-        element(byXpath("//div[@role='presentation']//*[text()='Применить']//ancestor::button"))
+        element(byXpath("//div[@role='presentation']//*[text()='${filterNamesDictionary[filterName]}']"))
             .shouldNot(exist, ofSeconds(waitTime))
-        //проверяем изменение "цвета"
+        //проверяем изменение "цвета" или цифры в "Еще фильтры"
         if (checkButtonClass) {
-            element(byXpath("//form[@novalidate]//*[text()='$buttonFilterName']/ancestor::button//button//*[@name='close']"))
+            element(byXpath("//form[@novalidate]//*[text()='$filterName']/ancestor::button//button//*[@name='close']"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
             //проверяем изменение "цвета" кнопки фильтра
             Assertions.assertTrue(
-                element(byXpath("//form[@novalidate]//*[text()='$buttonFilterName']/ancestor::button"))
+                element(byXpath("//form[@novalidate]//*[text()='$filterName']/ancestor::button"))
                     .getAttribute("class")
                     .toString()
                     != filterMainButtonClass
             )
         } else {
+            if (amountFilters == 0){
+                Assertions.assertTrue(element(byXpath("//form[@novalidate]//*[contains(text(),' фильтры')]/ancestor::button"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .getAttribute("class")
+                    .toString() != filterMainButtonClass)
+            }
             Assertions.assertTrue(
                 element(byXpath("//form[@novalidate]//*[contains(text(),' фильтры')]/ancestor::button//*[text()]"))
                     .ownText
@@ -1146,8 +1130,9 @@ open class BaseTest {
     }
 
 
+
     //абстракция очистки фильтра по подписи в кнопке
-    fun cleanFilter(filterBanner: String, waitTime: Long){
+    fun cleanFilter(filterName: String, waitTime: Long){
         //словарь соответствия фильтров как отдельных кнопок и как полей внутри "Еще фильтры"
         val filterNamesDictionary = mapOf(
             "Типы происшествий" to "Типы происшествий",
@@ -1166,86 +1151,140 @@ open class BaseTest {
             "Файлы" to "Есть файлы",
             "Идентификаторы" to "Идентификаторы"
         )
+        //для контроля изменения цвета кнопки фильтра запомним текущий класс, т.к. цвет зашифрован в стиль, который зашифрован в класс
+        var filterButtonClass = ""
+        //флаг необходимости жмакнуть "Очистить все" в "Еще фильтры" или "Все фильтры"
+        var cleanALL: Boolean
         //количество действующих фильтров в "Еще фильтры" или "Все фильтры"
         var amountFilters = 0
-        //если есть отдельная кнопка фильтра, то
-        if (element(byXpath("//form[@novalidate]//*[text()='$filterBanner']/ancestor::button//button//*[@name='close']")).exists()) {
-            //для контроля изменения цвета кнопки фильтра запомним текущий класс, т.к. цвет зашифрован в стиль, который зашифрован в класс
-            val filterButtonClass =
-                element(byXpath("//form[@novalidate]//*[text()='$filterBanner']/ancestor::button"))
+        //список фильтров к очистке
+        val listOfTargetFilters: MutableList<String> = mutableListOf()
+        //список фильтров не имевших отдельной кнопки
+        val listOfNoButtonTargetFilters: MutableList<String> = mutableListOf()
+        val locatorList: List<String> = listOf("button[@title='Очистить']", "*[@name='close']", "button[@title='Clear']")
+        val closeLocator = "//div[@role='presentation']//*[text()='%s']/following-sibling::*//%s"
+        //если передано пустое имя фильтра, то очищаем все фильтры
+        if (filterName.isEmpty()){
+            cleanALL = true
+            elements(byXpath("//form[@novalidate]//button//button//*[@name='close']/ancestor::button[2]//*[text()]")).forEach {
+                listOfTargetFilters.add(it.ownText)
+                filterNamesDictionary.keys.forEach {
+                    listOfTargetFilters.add(it)
+                }
+            }
+        } else {
+            cleanALL = false
+            if (filterName.contains(';')) {
+                filterName.split(';').forEach {
+                    listOfTargetFilters.add(it)
+                }
+            } else {
+                listOfTargetFilters.add(filterName)
+            }
+        }
+        listOfTargetFilters.forEach { oneTargetFilterName ->
+            //если есть отдельная кнопка фильтра, то
+            if (element(byXpath("//form[@novalidate]//*[text()='$oneTargetFilterName']/ancestor::button//button//*[@name='close']")).exists()) {
+                //для контроля изменения цвета кнопки фильтра запомним текущий класс, т.к. цвет зашифрован в стиль, который зашифрован в класс
+                filterButtonClass =
+                    element(byXpath("//form[@novalidate]//*[text()='$oneTargetFilterName']/ancestor::button"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                        .getAttribute("class")
+                        .toString()
+                //очищаем фильтр по кнопке крестика в кнопке фильтра
+                element(byXpath("//*[text()='$oneTargetFilterName']//ancestor::button//*[@name='close']//ancestor::button[1]"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                while (element(byXpath("//*[text()='$oneTargetFilterName']//ancestor::button//*[@name='close']//ancestor::button[1]")).exists()) {
+                    element(byXpath("//*[text()='$oneTargetFilterName']//ancestor::button//*[@name='close']//ancestor::button[1]"))
+                        .click()
+                    Thread.sleep(100)
+                }
+                //ждем
+                element(byXpath("//*[text()='$oneTargetFilterName']/ancestor::button//button//*[@name='close']"))
+                    .shouldNot(exist, ofSeconds(waitTime))
+                //убеждаемся в изменениии "цвета"
+                Assertions.assertTrue(
+                    element(byXpath("//form[@novalidate]//*[text()='$oneTargetFilterName']/ancestor::button"))
+                        .getAttribute("class")
+                        .toString()
+                        != filterButtonClass
+                )
+            } else {
+                listOfNoButtonTargetFilters.add(oneTargetFilterName)
+            }
+        }
+        //если нет отдельной кнопки фильтра
+        if (listOfNoButtonTargetFilters.isNotEmpty()
+            && element(byXpath("//form[@novalidate]//*[contains(text(),' фильтры (')]/ancestor::button")).exists()){
+            amountFilters = element(byXpath("//form[@novalidate]//*[contains(text(),' фильтры')]/ancestor::button//*[text()]"))
+                .ownText
+                .substringAfterLast('(')
+                .substringBeforeLast(')')
+                .toInt()
+            filterButtonClass =
+                element(byXpath("//form[@novalidate]//*[contains(text(),' фильтры')]/ancestor::button"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .getAttribute("class")
                     .toString()
-            //очищаем фильтр по кнопке крестика в кнопке фильтра
-            element(byXpath("//*[text()='$filterBanner']//ancestor::button//*[@name='close']//ancestor::button[1]"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-            while (element(byXpath("//*[text()='$filterBanner']//ancestor::button//*[@name='close']//ancestor::button[1]")).exists()){
-                element(byXpath("//*[text()='$filterBanner']//ancestor::button//*[@name='close']//ancestor::button[1]"))
-                    .click()
-                Thread.sleep(100)
             }
-            //ждем
-            element(byXpath("//*[text()='$filterBanner']/ancestor::button//button//*[@name='close']"))
-                .shouldNot(exist, ofSeconds(waitTime))
-            //убеждаемся в изменениии "цвета"
-            Assertions.assertTrue(
-                element(byXpath("//form[@novalidate]//*[text()='$filterBanner']/ancestor::button"))
-                    .getAttribute("class")
-                    .toString()
-                    != filterButtonClass
-            )
-        } else {
-            //если нет отдельной кнопки фильтра
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            with(
-                element(byXpath("//form[@novalidate]//*[contains(text(),' фильтры')]/ancestor::button//*[text()]"))
-                    .ownText
-                    .substringAfterLast('(')
-                    .substringBeforeLast(')')){
-                amountFilters = if(this.isNotEmpty()){
-                    this.toInt()
-                } else {
-                    0
-                }
-            }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            element(byXpath("//form[@novalidate]//*[contains(text(),' фильтры')]/ancestor::button//*[text()]"))
+            element(byXpath("//form[@novalidate]//*[contains(text(),' фильтры')]/ancestor::button"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
                 .click()
             //ждем
-            element(byXpath("//div[@role='presentation']//*[text()='Применить']/ancestor::button"))
+            element(byXpath("//div[@role='presentation']//*[text()='Применить']/text()/ancestor::button"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
-            //div[@role='presentation']//*[text()='Уровень происшествия']/following-sibling::*//*[@name='close' and contains(@style,'cursor: pointer')]
-            with(
-                element(byXpath("//div[@role='presentation']//*[text()='${filterNamesDictionary[filterBanner]}']/following-sibling::*//*[@name='close' and contains(@style,'cursor: pointer')]"))){
-                this.should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
-                while (this.exists()){
-                    this.click()
-                    Thread.sleep(100)
+
+        listOfNoButtonTargetFilters.forEach { oneFilterName ->
+            locatorList.forEach { locator ->
+                if (element(byXpath(closeLocator.format(filterNamesDictionary[oneFilterName], locator))).exists()){
+                    while (element(byXpath(closeLocator.format("button[@title='Очистить']"))).exists()){
+                        element(byXpath(closeLocator.format("button[@title='Очистить']")))
+                            .hover()
+                            .click()
+                        Thread.sleep(100)
+                    }
+                    amountFilters -=1
                 }
-                this.shouldNot(exist, ofSeconds(waitTime))
             }
-            element(byXpath("//div[@role='presentation']//*[text()='Применить']/ancestor::button"))
-                .click()
-            element(byXpath("//form[@novalidate]//button"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-            with(
-                element(byXpath("//form[@novalidate]//*[contains(text(),' фильтры')]/ancestor::button//*[text()]"))
-                .ownText
-                .substringAfterLast('(')
-                .substringBeforeLast(')')){
-                if (amountFilters == 1){
-                    Assertions.assertTrue(this.isEmpty())
-                } else {
-                    Assertions.assertTrue(this.toInt() == amountFilters - 1)
+            with(element(byXpath("//div[@role='presentation']//*[text()='${filterNamesDictionary[oneFilterName]}']/ancestor::fieldset//*[text()='Все']/ancestor::label//input"))){
+                if (this.exists()) {
+                    while (this.exists()) {
+                        this.click()
+                        Thread.sleep(100)
+                    }
+                    amountFilters -=1
                 }
             }
         }
-    }
+        while (element(byXpath("//div[@role='presentation']//*[text()='Применить']/text()/ancestor::button")).exists()) {
+            element(byXpath("//div[@role='presentation']//*[text()='Применить']/text()/ancestor::button"))
+                .click()
+            Thread.sleep(100)
+        }
+        with(
+            element(byXpath("//form[@novalidate]//*[contains(text(),' фильтры')]/ancestor::button//*[text()]"))
+                .ownText
+                .substringAfterLast('(')
+                .substringBeforeLast(')')
+        ) {
+            if (amountFilters == 0) {
+                Assertions.assertTrue(this.isEmpty())
+                Assertions.assertTrue(
+                    element(byXpath("//form[@novalidate]//*[contains(text(),' фильтры')]/ancestor::button"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                        .getAttribute("class")
+                        .toString()
+                        != filterButtonClass
+                )
+            } else {
+                Assertions.assertTrue(this.toInt() == amountFilters)
+            }
+        }
+}
 }

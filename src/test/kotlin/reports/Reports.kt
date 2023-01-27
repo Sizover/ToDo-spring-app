@@ -740,8 +740,8 @@ class Reports : BaseTest(){
         }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //Создаем КП
-        val rndIC = (2..5).random()
-        for (i in 1..5){
+        val rndIC = (2..6).random()
+        for (i in 1..6){
             menuNavigation("Происшествия", "Создать карточку", waitTime)
 //            menuNavigation("Происшествия", "Список происшествий", waitTime)
 //            element(byCssSelector("table#incidents"))
@@ -814,10 +814,11 @@ class Reports : BaseTest(){
             } else {
                 deathList = mutableListOf(1, 0, 0, 0, 0)
             }
-            element(byXpath("//*[text()='Сохранить карточку']/ancestor::button"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
+            pushButtonCreateIC("i = $i, rndIC = $rndIC Reports 0030 Проверка формирования отчетов по происшествиям $dateTime", waitTime)
+//            element(byXpath("//*[text()='Сохранить карточку']/ancestor::button"))
+//                .should(exist, ofSeconds(waitTime))
+//                .shouldBe(visible, ofSeconds(waitTime))
+//                .click()
             checkICToolIsStatus("В обработке", waitTime)
             //выполним назначение ДДС
             if (ddsTypeList.isNotEmpty()){
@@ -935,7 +936,7 @@ class Reports : BaseTest(){
                             .shouldNot(exist, ofSeconds(waitTime))
                         Thread.sleep(100)
                         element(byXpath("//*[text()='$ddsName']/ancestor::form//*[text()='В обработке']/ancestor::button"))
-                            .shouldNot(exist, ofSeconds(waitTime))
+                            .shouldNot(exist, ofSeconds(longWait))
                         element(byXpath("//*[text()='$ddsName']/ancestor::form//button[@style]//*[text()='Реагирование']"))
                             .should(exist, ofSeconds(waitTime))
                         Thread.sleep(100)
@@ -957,7 +958,7 @@ class Reports : BaseTest(){
                             .shouldNot(exist, ofSeconds(waitTime))
                         Thread.sleep(100)
                         element(byXpath("//*[text()='$ddsName']/ancestor::form//*[text()='В обработке']/ancestor::button"))
-                            .shouldNot(exist, ofSeconds(waitTime))
+                            .shouldNot(exist, ofSeconds(longWait))
                         element(byXpath("//*[text()='$ddsName']/ancestor::form//button[@style]//*[text()='$ddsICStatus']"))
                             .should(exist, ofSeconds(waitTime))
                         Thread.sleep(100)
@@ -976,7 +977,7 @@ class Reports : BaseTest(){
                             .shouldNot(exist, ofSeconds(waitTime))
                         Thread.sleep(100)
                         element(byXpath("//*[text()='$ddsName']/ancestor::form//*[text()='$ddsICStatus']/ancestor::button"))
-                            .shouldNot(exist, ofSeconds(waitTime))
+                            .shouldNot(exist, ofSeconds(longWait))
                         element(byXpath("//*[text()='$ddsName']/ancestor::form//button[@style]//*[text()='Закрыта']"))
                             .should(exist, ofSeconds(waitTime))
                     }
@@ -1215,18 +1216,18 @@ class Reports : BaseTest(){
             back()
         }
         reportsAddressList.forEach { address ->
-            println("keys: $address newValuesMap[address]?.keys!!.sorted() = ${newValuesMap[address]?.keys!!.sorted()} vs oldValuesMap[address]?.keys!!.sorted() = ${oldValuesMap[address]?.keys!!.sorted()}")
+            if (print) {
+                println("keys: $address; newValuesMap[address]?.keys!!.sorted() = ${newValuesMap[address]?.keys!!.sorted()}")
+                println("keys: $address; oldValuesMap[address]?.keys!!.sorted() = ${oldValuesMap[address]?.keys!!.sorted()}")
+            }
             Assertions.assertTrue(newValuesMap[address]?.keys!!.sorted() == oldValuesMap[address]?.keys!!.sorted())
             newValuesMap[address]?.keys?.forEach { key ->
-                println("address = $address key = $key oldValues = ${oldValuesMap[address]?.get(key)} newValuesMap = ${newValuesMap[address]?.get(key)}")
-                //тут пока вылазит баг про не копирование угроз и пострадавших
+                if (print) {
+                    println("address = $address key = $key oldValues = ${oldValuesMap[address]?.get(key)} newValuesMap = ${newValuesMap[address]?.get(key)}")
+                }
                 Assertions.assertTrue(oldValuesMap[address]?.get(key) == newValuesMap[address]?.get(key))
-//                if (oldValuesMap[address]?.get(key) != newValuesMap[address]?.get(key)){
-//                    println("address = $address, key = $key, oldValuesMap = ${oldValuesMap[address]?.get(key)}, newValuesMap = ${newValuesMap[address]?.get(key)}")
-//                }
             }
         }
-//        Assertions.assertTrue(oldValuesMap == newValuesMap)
     }
 
 
@@ -1679,20 +1680,6 @@ class Reports : BaseTest(){
             .click()
         reportList.forEach{ report ->
             //переходим в созданный отчет
-//            for (i in 1 until elements(byXpath("//tbody/tr")).size){
-//                if (elements(byXpath("//tbody/tr[$i]//*[text()='Reports 0070 Проверка формирования отчетов $reportType $dateTime сверка $report']")).size == 1){
-//                    if (elements(byXpath("//tbody/tr[${i+2}]//*[text()]")).size == 1){
-//                        element(byXpath("//tbody/tr[${i+2}]")).scrollIntoView(false)
-//                    } else {
-//                        element(byXpath("//tbody/tr[$i]")).sendKeys(Keys.END)
-//                    }
-//                    element(byXpath("//tbody/tr[$i]//*[text()='Reports 0070 Проверка формирования отчетов $reportType $dateTime сверка $report']"))
-//                        .should(exist, ofSeconds(waitTime))
-//                        .shouldBe(visible, ofSeconds(waitTime))
-//                        .click()
-//                    break
-//                }
-//            }
             element(byXpath("//tbody/tr//*[text()='Reports 0070 Проверка формирования отчетов $reportType $dateTime сверка $report']"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))

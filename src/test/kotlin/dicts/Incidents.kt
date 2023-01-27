@@ -69,8 +69,9 @@ class Incidents :BaseTest() {
         //выбираем тип происшествия
         inputRandomNew("incidentTypeId-textfield", false, waitTime)
         //Создаем карточку
-        element(byXpath("//span[text()='Сохранить карточку']/.."))
-            .click()
+//        element(byXpath("//span[text()='Сохранить карточку']/.."))
+//            .click()
+        pushButtonCreateIC("AutoTest INC 0010 inc $dateTime $language1", waitTime)
         //Убеждаемся, что нам загрузило созданную карточку
         //проверяя что нам в принципе загрузило какую-то карточку
         element(byCssSelector("#simple-tabpanel-card"))
