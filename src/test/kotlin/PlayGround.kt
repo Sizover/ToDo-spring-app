@@ -4,17 +4,16 @@
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Selectors.byCssSelector
-import com.codeborne.selenide.Selectors.byText
 import com.codeborne.selenide.Selectors.byXpath
-import com.codeborne.selenide.Selenide.`$`
-import com.codeborne.selenide.Selenide.`$$`
 import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
+import com.codeborne.selenide.Selenide.open
 import org.openqa.selenium.Keys
-import java.io.File
+import java.text.SimpleDateFormat
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
-import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Date
 
 
 class PlayGround : BaseTest(){

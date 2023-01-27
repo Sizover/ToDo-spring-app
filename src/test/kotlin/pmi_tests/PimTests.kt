@@ -201,14 +201,14 @@ class PimTests : BaseTest(){
     fun `PMI 0100 Проверка процедуры авторизации в системе`() {
         //A310 Проверка процедуры авторизации в системе 1
         //val tools = Tools()
-        aThreeHundredAndTenOne()
+        authorizationTest()
         element(byName("login")).click()
         element(byCssSelector("#input-error")).shouldHave(exactText("Неправильное имя пользователя или пароль."))
-        aThreeHundredAndTenOne()
+        authorizationTest()
         element(byName("username")).sendKeys("test")
         element(byName("login")).click()
         element(byCssSelector("#input-error")).shouldHave(exactText("Неправильное имя пользователя или пароль."))
-        aThreeHundredAndTenOne()
+        authorizationTest()
         element(byName("username")).sendKeys("test")
         element(byName("password")).sendKeys("test")
         element(byName("login")).click()
@@ -509,36 +509,8 @@ class PimTests : BaseTest(){
         menuNavigation("Происшествия", "Список происшествий", waitTime)
         elements(byXpath("//table/tbody/tr")).shouldHave(
             CollectionCondition.sizeGreaterThanOrEqual(1))
-        //открываем фильтр "Типы происшествий"
-        element(byXpath("//*[text()='Типы происшествий']/ancestor::button")).click()
-        element(byXpath("//label[text()='Типы происшествий']/..//input[@id='incidentTypeId-autocomplete']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        //Выбираем "Консультации"
-        element(byXpath("//label[text()='Типы происшествий']/..//input[@id='incidentTypeId-autocomplete']"))
-            .sendKeys("К.1.1.1 Консультации")
-        element(byXpath("//label[text()='Типы происшествий']/..//input[@id='incidentTypeId-autocomplete']"))
-            .sendKeys(Keys.DOWN, Keys.ENTER)
-        repeat(20){
-            element(byXpath("//label[text()='Типы происшествий']/..//input[@id='incidentTypeId-autocomplete']"))
-                .sendKeys(Keys.BACK_SPACE)
-        }
-//        element(byCssSelector("ol label[title='К Консультации'] span[role='checkbox']")).click()
-        //Выбираем "Ложные"
-        element(byXpath("//label[text()='Типы происшествий']/..//input[@id='incidentTypeId-autocomplete']"))
-            .sendKeys("Л.1.1 Ложные")
-        element(byXpath("//label[text()='Типы происшествий']/..//input[@id='incidentTypeId-autocomplete']"))
-            .sendKeys(Keys.DOWN, Keys.ENTER)
-        repeat(12){
-            element(byXpath("//label[text()='Типы происшествий']/..//input[@id='incidentTypeId-autocomplete']"))
-                .sendKeys(Keys.BACK_SPACE)
-        }
-//        element(byCssSelector("ol label[title='Л Ложные'] span[role='checkbox']")).click()
-        //Кликаем "В пустоту"
-//        element(byCssSelector("body > div:nth-child(9) > div:nth-child(1)")).click()
-        //Применить
-        element(byXpath("//*[text()='Применить']/ancestor::button")).click()
+        //применяем фильтр "Типы происшествий"
+        setFilterByName("Типы происшествий", "К Консультации;Л Ложные", waitTime)
         //Дожидаемся применения фильтра
         Thread.sleep(500)
         element(byXpath("//span[text()='Типы происшествий']/button"))
@@ -563,7 +535,7 @@ class PimTests : BaseTest(){
         //Очищаем фильтр "Тип происшествия"
         element(byXpath("//span[text()='Типы происшествий']/button")).click()
         /////////////////////////////////////////////////////////////////////////////////////////
-        //Открываем фильтр "Статусы"
+        //применяем фильтр "Статусы"
         checkbox("Статус", true, waitTime)
         element(byXpath("//span[text()='Статусы']/..")).click()
         element(byCssSelector("div[tabindex='-1'] div[role='combobox']")).should(exist, ofSeconds(waitTime))
@@ -599,35 +571,8 @@ class PimTests : BaseTest(){
         //Очищаем фильтр "Статусы"
         element(byXpath("//span[text()='Статусы']/button")).click()
         /////////////////////////////////////////////////////////////////////////////////////////
-        //Открываем фильтр "Уровни"
-        var filterLevels = true
-        if (elements(byXpath("//span[text()='Уровни']/..")).size != 1){
-            element(byXpath("//span[contains(text(),'Еще фильтры')]/.."))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
-            element(byXpath("//*[contains(text(),'Уровень происшествия')]/..//input"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
-            filterLevels = false
-        }
-        else {
-            element(byXpath("//span[text()='Уровни']/..")).click()
-        }
-        element(byCssSelector("div[tabindex='-1'] div[role='combobox']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        //Выбираем "ЧС" и "Угроза ЧС"
-//        element(byCssSelector("input#operationModeId")).setValue("Угроза ЧС").sendKeys(Keys.DOWN, Keys.ENTER)
-//        element(byCssSelector("input#operationModeId")).setValue("ЧС").sendKeys(Keys.DOWN)
-//        element(byCssSelector("input#operationModeId")).setValue("ЧС").sendKeys(Keys.ENTER)
-        element(byCssSelector("input#operationModeId")).sendKeys("Угроза ЧС", Keys.DOWN, Keys.ENTER)
-        element(byCssSelector("input#operationModeId")).sendKeys("ЧС",Keys.DOWN, Keys.ENTER)
-        element(byCssSelector("input#operationModeId")).click()
-        //Применить
-        element(byXpath("//span[text()='Применить']/..")).click()
+        //применяем фильтр "Уровни"
+        setFilterByName("Уровни", "Угроза ЧС;ЧС", waitTime)
         //Дожидаемся применения фильтра
         Thread.sleep(2000)
         if (filterLevels){
@@ -662,6 +607,8 @@ class PimTests : BaseTest(){
         /////////////////////////////////////////////////////////////////////////////////////////
         //Открываем фильтр "Источники"
         checkbox("Источник", true, waitTime)
+        //Устанавливаем значения фильтров
+        setFilterByName("Источники", "Видеоаналитика;СМС", waitTime)
         targetColumn = numberOfColumn("Источник", waitTime)
         element(byXpath("//span[text()='Источники']/..")).click()
         element(byCssSelector("div[tabindex='-1'] div[role='combobox']"))

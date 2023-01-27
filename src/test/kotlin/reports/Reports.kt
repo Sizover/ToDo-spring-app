@@ -10,6 +10,7 @@ import com.codeborne.selenide.Selectors.byCssSelector
 import com.codeborne.selenide.Selectors.byText
 import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.*
+import com.codeborne.selenide.SelenideElement.*
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import org.testng.annotations.DataProvider
@@ -17,6 +18,7 @@ import org.testng.annotations.Test
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.LinkedHashMap
 import kotlin.random.Random
 
@@ -598,9 +600,9 @@ class Reports : BaseTest(){
         val today = date.toString().split("-")
         //заполняем дату начала и конца периода отчета сегодняшним числом
         element(byCssSelector("form[novalidate] input#periodStart"))
-            .sendKeys("${today[2]}.${today[1]}.${today[0]}")
+            .sendKeys(date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")))
         element(byCssSelector("form[novalidate] input#periodEnd"))
-            .sendKeys("${today[2]}.${today[1]}.${today[0]}")
+            .sendKeys(date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")))
         //Определим имя импута по потерям
         val victimsName = element(byXpath("(//form[@novalidate]//label[contains(text(),'Число')])[$lookingForVictims]")).ownText
         //добавим новый отчет в список
@@ -738,8 +740,8 @@ class Reports : BaseTest(){
         }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //Создаем КП
-        val rndIC = (2..5).random()
-        for (i in 1..5){
+        val rndIC = (2..6).random()
+        for (i in 1..6){
             menuNavigation("Происшествия", "Создать карточку", waitTime)
 //            menuNavigation("Происшествия", "Список происшествий", waitTime)
 //            element(byCssSelector("table#incidents"))
@@ -812,10 +814,11 @@ class Reports : BaseTest(){
             } else {
                 deathList = mutableListOf(1, 0, 0, 0, 0)
             }
-            element(byXpath("//*[text()='Сохранить карточку']/ancestor::button"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
+            pushButtonCreateIC("i = $i, rndIC = $rndIC Reports 0030 Проверка формирования отчетов по происшествиям $dateTime", waitTime)
+//            element(byXpath("//*[text()='Сохранить карточку']/ancestor::button"))
+//                .should(exist, ofSeconds(waitTime))
+//                .shouldBe(visible, ofSeconds(waitTime))
+//                .click()
             checkICToolIsStatus("В обработке", waitTime)
             //выполним назначение ДДС
             if (ddsTypeList.isNotEmpty()){
@@ -853,7 +856,7 @@ class Reports : BaseTest(){
                 Thread.sleep(250)
                 ddsNameList.forEach { ddsName ->
                     element(byXpath("//form//*[text()='$ddsName']"))
-                        .should(exist, ofSeconds(waitTime))
+                        .should(exist, ofSeconds(longWait))
                 }
             }
             Thread.sleep(250)
@@ -914,7 +917,7 @@ class Reports : BaseTest(){
                             .shouldNot(exist, ofSeconds(waitTime))
                         Thread.sleep(100)
                         element(byXpath("//*[text()='$ddsName']/ancestor::form//*[text()='Новая']/ancestor::button"))
-                            .shouldNot(exist, ofSeconds(waitTime))
+                            .shouldNot(exist, ofSeconds(longWait))
                         element(byXpath("//*[text()='$ddsName']/ancestor::form//button[@style]//*[text()='В обработке']"))
                             .should(exist, ofSeconds(waitTime))
                         Thread.sleep(100)
@@ -933,7 +936,7 @@ class Reports : BaseTest(){
                             .shouldNot(exist, ofSeconds(waitTime))
                         Thread.sleep(100)
                         element(byXpath("//*[text()='$ddsName']/ancestor::form//*[text()='В обработке']/ancestor::button"))
-                            .shouldNot(exist, ofSeconds(waitTime))
+                            .shouldNot(exist, ofSeconds(longWait))
                         element(byXpath("//*[text()='$ddsName']/ancestor::form//button[@style]//*[text()='Реагирование']"))
                             .should(exist, ofSeconds(waitTime))
                         Thread.sleep(100)
@@ -955,7 +958,7 @@ class Reports : BaseTest(){
                             .shouldNot(exist, ofSeconds(waitTime))
                         Thread.sleep(100)
                         element(byXpath("//*[text()='$ddsName']/ancestor::form//*[text()='В обработке']/ancestor::button"))
-                            .shouldNot(exist, ofSeconds(waitTime))
+                            .shouldNot(exist, ofSeconds(longWait))
                         element(byXpath("//*[text()='$ddsName']/ancestor::form//button[@style]//*[text()='$ddsICStatus']"))
                             .should(exist, ofSeconds(waitTime))
                         Thread.sleep(100)
@@ -974,7 +977,7 @@ class Reports : BaseTest(){
                             .shouldNot(exist, ofSeconds(waitTime))
                         Thread.sleep(100)
                         element(byXpath("//*[text()='$ddsName']/ancestor::form//*[text()='$ddsICStatus']/ancestor::button"))
-                            .shouldNot(exist, ofSeconds(waitTime))
+                            .shouldNot(exist, ofSeconds(longWait))
                         element(byXpath("//*[text()='$ddsName']/ancestor::form//button[@style]//*[text()='Закрыта']"))
                             .should(exist, ofSeconds(waitTime))
                     }
@@ -1213,18 +1216,18 @@ class Reports : BaseTest(){
             back()
         }
         reportsAddressList.forEach { address ->
-            println("keys: $address newValuesMap[address]?.keys!!.sorted() = ${newValuesMap[address]?.keys!!.sorted()} vs oldValuesMap[address]?.keys!!.sorted() = ${oldValuesMap[address]?.keys!!.sorted()}")
+            if (print) {
+                println("keys: $address; newValuesMap[address]?.keys!!.sorted() = ${newValuesMap[address]?.keys!!.sorted()}")
+                println("keys: $address; oldValuesMap[address]?.keys!!.sorted() = ${oldValuesMap[address]?.keys!!.sorted()}")
+            }
             Assertions.assertTrue(newValuesMap[address]?.keys!!.sorted() == oldValuesMap[address]?.keys!!.sorted())
             newValuesMap[address]?.keys?.forEach { key ->
-                println("address = $address key = $key oldValues = ${oldValuesMap[address]?.get(key)} newValuesMap = ${newValuesMap[address]?.get(key)}")
-                //тут пока вылазит баг про не копирование угроз и пострадавших
+                if (print) {
+                    println("address = $address key = $key oldValues = ${oldValuesMap[address]?.get(key)} newValuesMap = ${newValuesMap[address]?.get(key)}")
+                }
                 Assertions.assertTrue(oldValuesMap[address]?.get(key) == newValuesMap[address]?.get(key))
-//                if (oldValuesMap[address]?.get(key) != newValuesMap[address]?.get(key)){
-//                    println("address = $address, key = $key, oldValuesMap = ${oldValuesMap[address]?.get(key)}, newValuesMap = ${newValuesMap[address]?.get(key)}")
-//                }
             }
         }
-//        Assertions.assertTrue(oldValuesMap == newValuesMap)
     }
 
 
@@ -1677,20 +1680,6 @@ class Reports : BaseTest(){
             .click()
         reportList.forEach{ report ->
             //переходим в созданный отчет
-//            for (i in 1 until elements(byXpath("//tbody/tr")).size){
-//                if (elements(byXpath("//tbody/tr[$i]//*[text()='Reports 0070 Проверка формирования отчетов $reportType $dateTime сверка $report']")).size == 1){
-//                    if (elements(byXpath("//tbody/tr[${i+2}]//*[text()]")).size == 1){
-//                        element(byXpath("//tbody/tr[${i+2}]")).scrollIntoView(false)
-//                    } else {
-//                        element(byXpath("//tbody/tr[$i]")).sendKeys(Keys.END)
-//                    }
-//                    element(byXpath("//tbody/tr[$i]//*[text()='Reports 0070 Проверка формирования отчетов $reportType $dateTime сверка $report']"))
-//                        .should(exist, ofSeconds(waitTime))
-//                        .shouldBe(visible, ofSeconds(waitTime))
-//                        .click()
-//                    break
-//                }
-//            }
             element(byXpath("//tbody/tr//*[text()='Reports 0070 Проверка формирования отчетов $reportType $dateTime сверка $report']"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
