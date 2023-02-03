@@ -1,5 +1,4 @@
 
-import com.codeborne.selenide.Condition
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Selectors.byCssSelector
@@ -10,7 +9,6 @@ import com.codeborne.selenide.Selenide.elements
 import org.openqa.selenium.Keys
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 class CleanUp : BaseTest(){
 
@@ -29,7 +27,7 @@ class CleanUp : BaseTest(){
             }
 //        tools.menuNavigation("Отчеты", "По обращениям", waitTime)
 //        tools.menuNavigation("Отчеты", "По сотрудникам", waitTime)
-            stringsOnPage(50, waitTime)
+            tableStringsOnPage(50, waitTime)
 //            var stringNumder = 1
             //считаем количество строк - понадобится для прерываемого цикла
             var countString = elements(byXpath("//tbody/tr")).size
@@ -38,7 +36,7 @@ class CleanUp : BaseTest(){
             val menuColumn = elements(byXpath("//thead/tr/th")).size
 //            println(menuColumn)
             //входим в большой цикл без защитного счетчика
-            checkbox("Наименование отчета", true, waitTime)
+            tableCheckbox("Наименование отчета", true, waitTime)
             //"Проверка формирования отчетов" это часть названия отчета присваемого всем отчетам создаваемыми автотестами
             while (elements(byXpath("//tbody/tr//*[contains(text(),'Проверка формирования отчетов')]")).size > 0 ){
                 countString = elements(byXpath("//tbody/tr")).size
@@ -113,8 +111,8 @@ class CleanUp : BaseTest(){
         element(byCssSelector("table>tbody>tr"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        checkbox("Статус", true, waitTime)
-        val statusColumn = numberOfColumn("Статус", waitTime)
+        tableCheckbox("Статус", true, waitTime)
+        val statusColumn = tableNumberOfColumn("Статус", waitTime)
         //отчищаем фильтры, что бы закрывать и дочерние карточки ДДС
         element(byXpath("//span[contains(text(),'Еще фильтры')]/.."))
             .should(exist, ofSeconds(waitTime))

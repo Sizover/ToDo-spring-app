@@ -14,7 +14,7 @@ import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-class Incidents :BaseTest() {
+class dicts_Incidents :BaseTest() {
 
 
     @DataProvider(name = "Языки")
@@ -34,7 +34,7 @@ class Incidents :BaseTest() {
         //Переходим в "Список происшетвий"
         menuNavigation("Происшествия", "Список происшествий", waitTime)
         //кликаем по "создать обращение"
-        element(byXpath("//span[text()='Создать обращение']/parent::button")).click()
+        element(byXpath("//*[text()='Создать обращение']/text()/ancestor::button")).click()
         //заполняем карточку
         //Источник события - выбираем случайно
         createICToolCalltype("", waitTime)
@@ -65,12 +65,10 @@ class Incidents :BaseTest() {
         var callType = element(byXpath("//label[text()='Источник события']/following-sibling::div/div[@id='calltype']"))
             .ownText
         //регистрируем обращение
-        element(byXpath("//span[text()='Создать карточку']/parent::button")).click()
+        element(byXpath("//*[text()='Создать карточку']/text()/ancestor::button")).click()
         //выбираем тип происшествия
         inputRandomNew("incidentTypeId-textfield", false, waitTime)
         //Создаем карточку
-//        element(byXpath("//span[text()='Сохранить карточку']/.."))
-//            .click()
         pushButtonCreateIC("AutoTest INC 0010 inc $dateTime $language1", waitTime)
         //Убеждаемся, что нам загрузило созданную карточку
         //проверяя что нам в принципе загрузило какую-то карточку
@@ -94,10 +92,10 @@ class Incidents :BaseTest() {
         element(byXpath("//table"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        checkbox("", true, waitTime)
-        var languageColumn = numberOfColumn("Язык", waitTime)
-        var fioColumn = numberOfColumn("ФИО", waitTime)
-        var callTypeColumm = numberOfColumn("Тип источника", waitTime)
+        tableCheckbox("", true, waitTime)
+        var languageColumn = tableNumberOfColumn("Язык", waitTime)
+        var fioColumn = tableNumberOfColumn("ФИО", waitTime)
+        var callTypeColumm = tableNumberOfColumn("Тип источника", waitTime)
         element(byXpath("//table/tbody//*[text()='INC 0010 adr $dateTime']/ancestor::tr/td[$languageColumn][text()='$language1']"))
             .should(exist, ofSeconds(waitTime))
         element(byXpath("//table/tbody//*[text()='INC 0010 adr $dateTime']/ancestor::tr/td[$callTypeColumm][text()='$callType']"))
@@ -137,7 +135,7 @@ class Incidents :BaseTest() {
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
-        element(byXpath("//*[text()='Привязать к происшествию']/ancestor::button"))
+        element(byXpath("//*[text()='Привязать к происшествию']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
@@ -165,10 +163,10 @@ class Incidents :BaseTest() {
         element(byXpath("//table"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        checkbox("", true, waitTime)
-        languageColumn = numberOfColumn("Язык", waitTime)
-        fioColumn = numberOfColumn("ФИО", waitTime)
-        callTypeColumm = numberOfColumn("Тип источника", waitTime)
+        tableCheckbox("", true, waitTime)
+        languageColumn = tableNumberOfColumn("Язык", waitTime)
+        fioColumn = tableNumberOfColumn("ФИО", waitTime)
+        callTypeColumm = tableNumberOfColumn("Тип источника", waitTime)
         element(byXpath("//table/tbody//*[text()='INC 0010 adr2 $dateTime']/ancestor::tr/td[$languageColumn][text()='$language2']"))
             .should(exist, ofSeconds(waitTime))
         element(byXpath("//table/tbody//*[text()='INC 0010 adr2 $dateTime']/ancestor::tr/td[$callTypeColumm][text()='$callType']"))

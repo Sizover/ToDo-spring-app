@@ -13,8 +13,9 @@ import org.testng.annotations.Test
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
-class Incidents :BaseTest() {
+class events_Incidents :BaseTest() {
 
 
 
@@ -91,18 +92,19 @@ class Incidents :BaseTest() {
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
         //применим фильтр по дате
-        element(byXpath("//form//*[text()='Дата/время']/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        element(byXpath("//div[@role='presentation']//fieldset//input[@placeholder='с']"))
-            .sendKeys("${dateStartList[2]}.${dateStartList[1]}.${dateStartList[0]}0000")
-        element(byXpath("//div[@role='presentation']//fieldset//input[@placeholder='по']"))
-            .sendKeys("${dateEndList[2]}.${dateEndList[1]}.${dateEndList[0]}0000")
-        element(byXpath("//div[@role='presentation']//*[text()='Применить']/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
+        setFilterByName("Дата/время", "${LocalDate.now().minusMonths(2).format(DateTimeFormatter.ofPattern("dd.MM.yy"))};${LocalDate.now().minusMonths(1).format(DateTimeFormatter.ofPattern("dd.MM.yy"))}", waitTime)
+//        element(byXpath("//form//*[text()='Дата/время']/ancestor::button"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+//            .click()
+//        element(byXpath("//div[@role='presentation']//fieldset//input[@placeholder='с']"))
+//            .sendKeys("${dateStartList[2]}.${dateStartList[1]}.${dateStartList[0]}0000")
+//        element(byXpath("//div[@role='presentation']//fieldset//input[@placeholder='по']"))
+//            .sendKeys("${dateEndList[2]}.${dateEndList[1]}.${dateEndList[0]}0000")
+//        element(byXpath("//div[@role='presentation']//*[text()='Применить']/ancestor::button"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+//            .click()
         Thread.sleep(5000)
         element(byXpath("//table/tbody"))
             .should(exist, ofSeconds(waitTime))
@@ -134,7 +136,7 @@ class Incidents :BaseTest() {
             .shouldBe(visible, ofSeconds(waitTime))
         //воспользуемся поиском
         tableSearch(operatorsMunicipalities)
-        val buttonsColumn = numberOfColumn(" ", waitTime)
+        val buttonsColumn = tableNumberOfColumn(" ", waitTime)
         element(byXpath("//table/tbody//*[text()='$operatorsMunicipalities']/ancestor::tr/td[$buttonsColumn]//button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))

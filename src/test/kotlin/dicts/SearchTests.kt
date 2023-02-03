@@ -52,20 +52,17 @@ class SearchTests : BaseTest(){
         element(byXpath("//*[@name='search']/following-sibling::input"))
             .sendKeys("AT_", Keys.ENTER)
         Thread.sleep(1000)
-        if (elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size != 0 ){
-
-        }
-        while (elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size == 0){
+        while (!element(byXpath("//table/tbody/tr//*[text()='Нет данных']")).exists()){
             val elName = element(byXpath("//table/tbody/tr[1]/td[1]//text()/..")).ownText
             element(byXpath("//table/tbody/tr[1]/td[last()]//button"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
                 .click()
-            element(byXpath("//div[@role='presentation']//*[text()='Удалить']/ancestor::button"))
+            element(byXpath("//div[@role='presentation']//*[text()='Удалить']/text()/ancestor::button"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
                 .click()
-            element(byXpath("//div[@role='presentation']//div[@role='dialog']//*[text()='Удалить']/ancestor::button"))
+            element(byXpath("//div[@role='presentation']//div[@role='dialog']//*[text()='Удалить']/text()/ancestor::button"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
                 .click()
@@ -73,7 +70,7 @@ class SearchTests : BaseTest(){
                 .shouldNot(exist, ofSeconds(waitTime))
         }
         //жмем добавить
-        element(byXpath("//*[contains(text(),'Добавить ')]/ancestor::button"))
+        element(byXpath("//*[contains(text(),'Добавить ')]/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
@@ -152,7 +149,7 @@ class SearchTests : BaseTest(){
         elements(byXpath("//div[contains(@class,'Mui-error')]/input"))
             .shouldHave(CollectionCondition.size(0), ofSeconds(waitTime))
         //сохраняем
-        element(byXpath("//*[text()='Добавить']/ancestor::button"))
+        element(byXpath("//*[text()='Добавить']/text()/ancestor::button"))
             .click()
         //ждем загрузки
         element(byXpath("//table"))
@@ -161,9 +158,9 @@ class SearchTests : BaseTest(){
         //проверяем что записей в таблице более одной
         elements(byXpath("//table/tbody/tr"))
             .shouldHave(CollectionCondition.sizeGreaterThan(1), ofSeconds(waitTime))
-        checkbox(nameColumnName, true, waitTime)
+        tableCheckbox(nameColumnName, true, waitTime)
         //проверяем открыт ли, и если нет открываем поиск
-        if (elements(byXpath("//*[@name='search']/following-sibling::input")).size != 1){
+        if (!element(byXpath("//*[@name='search']/following-sibling::input")).exists()){
             element(byXpath("//*[@name='search']/ancestor::button"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
@@ -188,7 +185,7 @@ class SearchTests : BaseTest(){
             Thread.sleep(500)
             elements(byXpath("//table/tbody/tr"))
                 .shouldHave(CollectionCondition.size(1), ofSeconds(waitTime))
-            val nameColumn = numberOfColumn(nameColumnName, waitTime)
+            val nameColumn = tableNumberOfColumn(nameColumnName, waitTime)
 //            elements(byXpath("//table/tbody/tr/td[$nameColumn][text()='AT_${nameOfName}_$uniqueName']"))
 //                .shouldHave(CollectionCondition.size(1), ofSeconds(waitTime))
             Assertions.assertTrue(
@@ -210,17 +207,17 @@ class SearchTests : BaseTest(){
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
-                element(byXpath("//*[text()='Удалить']/ancestor::button"))
+                element(byXpath("//*[text()='Удалить']/text()/ancestor::button"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
-                element(byXpath("//*[@role='dialog']//*[text()='Удалить']/ancestor::button"))
+                element(byXpath("//*[@role='dialog']//*[text()='Удалить']/text()/ancestor::button"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
                 Thread.sleep(500)
                 element(byXpath("//table/tbody/tr/td[$nameColumn][text()='AT_${nameOfName}_$uniqueName']"))
-                    .shouldNot(exist, ofSeconds(waitTime))
+                    .shouldNot(exist, ofSeconds(longWait))
                 element(byXpath("//table/tbody/tr[1]//*[text()='Нет данных']"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))

@@ -7,13 +7,10 @@ import com.codeborne.selenide.Selectors.byCssSelector
 import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
-import com.codeborne.selenide.Selenide.open
 import org.openqa.selenium.Keys
-import java.text.SimpleDateFormat
+import test_library.FilterEnum
+import java.io.File
 import java.time.Duration.ofSeconds
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Date
 
 
 class PlayGround : BaseTest(){
@@ -29,13 +26,13 @@ class PlayGround : BaseTest(){
         var moATCreated = mutableListOf<String>("AutoTest T 0020 МО")
         logonTool()
         menuNavigation("Справочники","Муниципальные образования", waitTime)
-        checkbox("", true, waitTime)
+        tableCheckbox("", true, waitTime)
         Thread.sleep(1000)
         //внесем существующие телефонные коды в отдельный список
 //        var telCodeElementsCollection = elements(byXpath(""))
         val telCodeList = mutableListOf<String>()
         //Выясняем в каком столбце хранятся телефонные коды
-        var telCodeColumnIndex = numberOfColumn("Телефонный код", waitTime)
+        var telCodeColumnIndex = tableNumberOfColumn("Телефонный код", waitTime)
         //Выясняем в каком столбце хранятся телефонные коды
 //        val telCodeElements = elements(byXpath("//thead/tr/th"))
 //        telCodeElements.forEachIndexed{index, element ->
@@ -83,8 +80,8 @@ class PlayGround : BaseTest(){
             .sendKeys("AutoTest", Keys.ENTER)
         Thread.sleep(1000)
         if (elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size == 0){
-            val moNameColumn = numberOfColumn("Наименование", waitTime)
-            val moParentNameColumn = numberOfColumn("Субъект", waitTime)
+            val moNameColumn = tableNumberOfColumn("Наименование", waitTime)
+            val moParentNameColumn = tableNumberOfColumn("Субъект", waitTime)
 
         }
         //если они есть, то составляем их список, не удаляем из него "AutoTest Основное МО" (что бы еще раз не искать его потом)
@@ -201,6 +198,60 @@ class PlayGround : BaseTest(){
         updateICToolStatus("", waitTime)
 
 
+    }
+
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
+    fun `Черновик2`() {
+
+        logonTool()
+        menuNavigation("Происшествия", "Список происшествий", waitTime)
+        Thread.sleep(1000)
+        setFilterByEnum(FilterEnum.Дата_принятия, "", waitTime)
+        setFilterByEnum(FilterEnum.Угрозы, "", waitTime)
+        Thread.sleep(1000)
+        cleanFilterByEnum(listOf(), waitTime)
+        Thread.sleep(1000)
+//        element(byXpath("html/body/div[@role='presentation']//*[text()='Пользователь системы']/ancestor::fieldset//*[text()='Да']/ancestor::label//input/..")).click()
+//        Thread.sleep(1000)
+//        println(element(byXpath("html/body/div[@role='presentation']//*[text()='Пользователь системы']/ancestor::fieldset//*[text()='Все']/ancestor::label//input/..")).getCssValue("background-color"))
+//        cleanFilter("", waitTime)
+        //div[@role='presentation']//*[contains(text(),'Источники событий')]/following-sibling::*//*[@name='close']
+
+//        element(byCssSelector("input#parent")).selectedOptionValue  background-color
+//        val innerHtml = element(byXpath("//div[@role='presentation']")).innerHtml()
+//        println(element(byXpath("//div[@role='presentation']")).innerHtml())
+
+
+
+    }
+
+    fun alignFile(inputName: String, lineLength: Int, outputName: String) {
+        val writer = File(outputName).bufferedWriter()
+        var currentLineLength = 0
+        for (line in File(inputName).readLines()) {
+            if (line.isEmpty()) {
+                writer.newLine()
+                if (currentLineLength > 0) {
+                    writer.newLine()
+                    currentLineLength = 0
+                }
+            }
+            for (word in line.split(Regex("\\s+"))) {
+                if (currentLineLength > 0) {
+                    if (word.length + currentLineLength >= lineLength) {
+                        writer.newLine()
+                        currentLineLength = 0
+                    }
+                    else {
+                        writer.write(" ")
+                        currentLineLength++
+                    }
+                }
+                writer.write(word)
+                currentLineLength += word.length
+            }
+        }
+        writer.close()
     }
 
 
