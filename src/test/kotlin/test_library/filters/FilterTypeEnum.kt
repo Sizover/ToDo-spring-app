@@ -1,4 +1,4 @@
-package test_library
+package test_library.filters
 
 
 enum class FilterTypeEnum(val filterType: FilterTypeObject) {
@@ -12,7 +12,8 @@ enum class FilterTypeEnum(val filterType: FilterTypeObject) {
             return "html/body/div[@role='presentation']//*[contains(text(),'$fullName')]/following-sibling::*//input[@placeholder='$from_until']"
         }
     )),
-    POOLBUTTONS(FilterTypeObject(
+    POOLBUTTONS(
+        FilterTypeObject(
         //cleanLocator
         fun(fullName: String): String {
             return "html/body/div[@role='presentation']//*[text()='$fullName']/following-sibling::*//*[@name='close']"
@@ -24,8 +25,10 @@ enum class FilterTypeEnum(val filterType: FilterTypeObject) {
         //clickLocator
         fun(fullName: String, value: String): String {
             return "html/body/div[@role='presentation']//*[text()='$fullName']/following-sibling::*//*[text()='$value']/text()/ancestor::button"
-        })),
-    FLATCATALOG(FilterTypeObject(
+        })
+    ),
+    FLATCATALOG(
+        FilterTypeObject(
         //cleanLocator
         fun(fullName: String): String {
             return "html/body/div[@role='presentation']//*[text()='$fullName']/following-sibling::*//*[@title='Clear']"
@@ -35,8 +38,10 @@ enum class FilterTypeEnum(val filterType: FilterTypeObject) {
         //clickLocator
         fun(fullName: String, value: String): String {
             return "html/body/div[@role='presentation']//*[text()='$fullName']/following-sibling::*//input"
-        })),
-    HIERARCHICATALOG(FilterTypeObject(
+        })
+    ),
+    HIERARCHICATALOG(
+        FilterTypeObject(
         //cleanLocator
         fun(fullName: String): String {
             return "html/body/div[@role='presentation']//*[text()='$fullName']/following-sibling::*//*[@title='Очистить']"
@@ -47,9 +52,11 @@ enum class FilterTypeEnum(val filterType: FilterTypeObject) {
         },
         //clickLocator
         fun(fullName: String, value: String): String {
-            return "//*[text()='$fullName']/ancestor::div[@role='presentation']/following-sibling::div[@role='presentation']//*[text()$value]/ancestor::li//*[@name='checkboxNormal']"
-        })),
-    RADIOBUTTON(FilterTypeObject(
+            return "//*[text()='$fullName']/ancestor::div[@role='presentation']/following-sibling::div[@role='presentation']//*[text()='$value']/ancestor::li//*[@name='checkboxNormal']"
+        })
+    ),
+    RADIOBUTTON(
+        FilterTypeObject(
         //cleanLocator
         fun(fullName: String): String {
             return "html/body/div[@role='presentation']//*[text()='$fullName']/ancestor::fieldset//*[text()='Все']/ancestor::label//input/.."
@@ -61,5 +68,6 @@ enum class FilterTypeEnum(val filterType: FilterTypeObject) {
         //clickLocator
         fun(fullName: String, value: String): String {
             return "html/body/div[@role='presentation']//*[text()='$fullName']/ancestor::fieldset//*[text()='$value']/ancestor::label//input/.."
-        })),
+        })
+    ),
 }

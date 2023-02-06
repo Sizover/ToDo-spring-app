@@ -12,6 +12,7 @@ import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
 import org.testng.annotations.Test
+import test_library.menu.MyMenu
 
 class Labels : BaseTest(){
 
@@ -23,7 +24,7 @@ class Labels : BaseTest(){
         date = LocalDate.now()
         dateTime = LocalDateTime.now()
         logonTool()
-        menuNavigation("Справочники", "Метки", waitTime)
+        menuNavigation(MyMenu.Dictionaries.Labels, waitTime)
         tableCheckbox("Метка;Описание", true, waitTime)
         //воспользуемся поиском, что бы найти созданную метку не удаленную в упавший проход
         element(byXpath("//*[@name='search']/ancestor::button"))
@@ -52,7 +53,7 @@ class Labels : BaseTest(){
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
                 element(byXpath("//tbody/tr/td//*[text()='$removedLadel']"))
-                    .shouldNot(exist, ofSeconds(waitTime))
+                    .shouldNot(exist, ofSeconds(longWait))
             }
             //убеждаемся что удалили
             element(byXpath("//tbody/tr//text()/parent::*[text()='Нет данных']"))
@@ -86,10 +87,7 @@ class Labels : BaseTest(){
             element(byCssSelector("input#title")).sendKeys(it)
             //запоминаем образец метки, что бы убеждаться в её создании
             val labelSample = element(byXpath("//label[text()='Предварительный просмотр']/..//*[@type='form']//*[text()]")).ownText
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//            labelListName.add(labelSample.replace(" ", "_"))
             labelListName.add(labelSample)
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////////
             //добавляем описание
             element(byCssSelector("textarea[name='description']")).click()
             element(byCssSelector("textarea[name='description']")).sendKeys("Метка \"$labelSample\" создана автотестом и должна быть удалена им же")
@@ -103,7 +101,7 @@ class Labels : BaseTest(){
             //проверяем наличие созданной метки
             element(byXpath("//table/thead/tr/th//*[contains(@name,'arrow')]/ancestor::button"))
                 .should(exist, ofSeconds(waitTime))
-            while (elements(byXpath("//table/tbody/tr/td//*[@name='arrowRight']/ancestor::button")).size>0){
+            while (element(byXpath("//table/tbody/tr/td//*[@name='arrowRight']/ancestor::button")).exists()){
                 element(byXpath("//table/thead/tr/th//*[contains(@name,'arrow')]/ancestor::button"))
                     .click()
                 Thread.sleep(100)
@@ -111,7 +109,7 @@ class Labels : BaseTest(){
             element(byXpath("//table/thead/tr/th//*[@name='arrowDown']/ancestor::button"))
                 .should(exist, ofSeconds(waitTime))
             element(byXpath("//tr/td//*[contains(text(),'$labelSample')]"))
-                .should(exist, ofSeconds(waitTime))
+                .should(exist, ofSeconds(longWait))
                 .shouldBe(visible, ofSeconds(waitTime))
             element(byXpath("//tr/td[text()='Метка \"$labelSample\" создана автотестом и должна быть удалена им же']"))
                 .should(exist, ofSeconds(waitTime))
@@ -122,8 +120,7 @@ class Labels : BaseTest(){
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //Регистрируем КП
         logonTool()
-        menuNavigation("Происшествия","Создать карточку", waitTime)
-//        firstHalfIC("T 0010", date.toString(), dateTime.toString(), waitTime)
+        menuNavigation(MyMenu.Incidents.CreateIncident, waitTime)
         createICToolCalltype("", waitTime)
         createICToolPhone("", waitTime)
         createICToolFIO("AutoTest", "Labels 0010", "", waitTime)
@@ -181,7 +178,10 @@ class Labels : BaseTest(){
                 .shouldBe(visible, ofSeconds(waitTime))
         }
         //добавляем метку
-        element(byXpath("//h3[text()='Метки']/following-sibling::span/button")).click()
+        element(byXpath("//h3[text()='Метки']/following-sibling::*//*[text()='Изменить']/text()/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
         element(byCssSelector("input[name='labelsId-textfield']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -233,16 +233,9 @@ class Labels : BaseTest(){
         //перезалогиниваемся, что бы исключить кеширование и расширить тест
         Thread.sleep(500)
         logonTool()
-        menuNavigation("Справочники", "Метки", waitTime)
+        menuNavigation(MyMenu.Dictionaries.Labels, waitTime)
         //воспользуемся поиском, что бы найти созданную метку
-        element(byXpath("//*[@name='search']/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        element(byCssSelector("input[placeholder]"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        element(byCssSelector("input[placeholder]")).sendKeys("AutoTest", Keys.ENTER)
+        tableSearch("AutoTest", waitTime)
         Thread.sleep(500)
         while (!element(byXpath("//tbody/tr//text()/parent::*[text()='Нет данных']")).exists()) {
             val removedLadel = element(byXpath("(//tbody/tr/td[1])[last()]")).innerText()
@@ -259,7 +252,7 @@ class Labels : BaseTest(){
                 .shouldBe(visible, ofSeconds(waitTime))
                 .click()
             element(byXpath("//tbody/tr/td//*[text()='$removedLadel']"))
-                .shouldNot(exist, ofSeconds(waitTime))
+                .shouldNot(exist, ofSeconds(longWait))
         }
         //убеждаемся что удалили
         element(byXpath("//tbody/tr//text()/parent::*[text()='Нет данных']"))

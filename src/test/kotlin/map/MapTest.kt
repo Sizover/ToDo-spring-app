@@ -9,6 +9,7 @@ import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.*
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
+import test_library.menu.MyMenu
 import java.time.Duration.ofSeconds
 import kotlin.math.PI
 import kotlin.math.abs
@@ -117,25 +118,13 @@ class MapTest  : BaseTest(){
             element(byCssSelector("header button svg[name='user']"))
                 .should(exist, ofSeconds(waitTime))
         }
-        menuNavigation("Происшествия", "Создать карточку", waitTime)
+        menuNavigation(MyMenu.Incidents.CreateIncident, waitTime)
         createICToolCalltype("", waitTime)
         createICToolPhone("", waitTime)
         createICToolFIO("Map", "Test", "002", waitTime)
         val lat = (10..70).random() + kotlin.random.Random.nextFloat()
         val lon = (10..100).random() + kotlin.random.Random.nextFloat()
         createICToolRandomCoordinates("$lat;$lon", waitTime)
-//        element(byXpath("//form//label[text()='Широта']/..//input[@name='lat']"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//            .click()
-//        element(byXpath("//form//label[text()='Широта']/..//input[@name='lat']"))
-//            .sendKeys(lat.toString())
-//        element(byXpath("//form//label[text()='Долгота']/..//input[@name='lon']"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//            .click()
-//        element(byXpath("//form//label[text()='Долгота']/..//input[@name='lon']"))
-//            .sendKeys(lon.toString())
         createICToolsDopInfo("Autotest MT_002, Широта = $lat, Долгота = $lon", waitTime)
         element(byXpath("//*[text()='Создать карточку']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))

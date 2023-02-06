@@ -2,6 +2,7 @@ package events
 
 import Retry
 import BaseTest
+import com.codeborne.selenide.CollectionCondition
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Selectors.byCssSelector
@@ -10,6 +11,8 @@ import com.codeborne.selenide.Selenide.*
 import com.codeborne.selenide.WebDriverRunner.url
 import org.openqa.selenium.Keys
 import org.testng.annotations.Test
+import test_library.filters.FilterEnum
+import test_library.menu.MyMenu
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -18,93 +21,21 @@ import java.time.format.DateTimeFormatter
 class events_Incidents :BaseTest() {
 
 
-
-//    @Test (retryAnalyzer = Retry::class, groups = ["ALL"])
-    fun `Event INC 5010 Проверка наличия информирования о ложном вызове`() {
-        dateTime = LocalDateTime.now()
-        date = LocalDate.now()
-        logonTool()
-        menuNavigation("Происшествия", "Создать карточку", waitTime)
-        //ждем
-        element(byXpath("//form[@novalidate]"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        //если вдруг источник обращения не телефон - исправляем это
-        //не будем исправлять источник, т.к. это заодно проверит дефолтный источник карточки
-//        if (element(byXpath("//label[text()='Источник события']/following-sibling::div/div[@id='calltype' and text()]")).ownText != "Телефон (ССОП)"){
-//            element(byXpath("//label[text()='Источник события']/following-sibling::div/div[@id='calltype' and text()]"))
-//                .click()
-//            element(byXpath("//div[@role='presentation']//ul/li[text()='Телефон (ССОП)']"))
-//                .should(exist, ofSeconds(waitTime))
-//                .shouldBe(visible, ofSeconds(waitTime))
-//                .click()
-//        }
-        element(byXpath("//label[text()='Источник события']/following-sibling::div/div[@id='calltype' and text()='Телефон (ССОП)']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        //телефон
-        val tel = (89000000000..89999999999).random()
-        element(byCssSelector("#phone")).sendKeys(tel.toString())
-        //ФИО
-        element(byCssSelector("input[id='fio.lastname']")).sendKeys("$date AutoTestLastname inc")
-        element(byCssSelector("input[id='fio.firstname']")).sendKeys("INC 5010 Firstname")
-        //адрес
-        element(byXpath("//input[@id='callAddress']"))
-            .click()
-        element(byXpath("//input[@id='callAddress']"))
-            .sendKeys("INC 5010 adr $dateTime")
-        Thread.sleep(500)
-        //заполняем дополнительную информацию
-        element(byCssSelector("div[role='textbox']>p")).click()
-        element(byCssSelector("div[role='textbox']")).sendKeys("AutoTest INC 5010 inc $dateTime")
-        //Создаем ложное обращение
-        element(byXpath("//*[text()='Ложное обращение']/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        element(byXpath("//table"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        logoffTool()
-        logonTool()
-        menuNavigation("Происшествия", "Создать карточку", waitTime)
-        element(byXpath("//label[text()='Источник события']/following-sibling::div/div[@id='calltype' and text()='Телефон (ССОП)']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        element(byCssSelector("#phone")).sendKeys(tel.toString())
-        element(byXpath("//*[@name='noteError']/ancestor::div[@role='alert']//*[text()='Номер данного абонента был зафиксирован ранее как ложный']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        logoffTool()
-    }
-
-
     @Test (retryAnalyzer = Retry::class, groups = ["ALL"])
     fun `Event INC 5020 Nicholas`() {
         //Проверяем баг который нашел Коля, но который не удается воспроизвести. Т.о. положительный проход подтвердит невоспроизведение
-        val dateStartList = LocalDate.now().minusMonths(2).toString().split("-")
-        val dateEndList = LocalDate.now().minusMonths(1).toString().split("-")
+        val dateStartList = LocalDate.now().minusMonths(2).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+        val dateEndList = LocalDate.now().minusMonths(1).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
         logonTool()
-        menuNavigation("Настройки", "Аудит", waitTime)
+        menuNavigation(MyMenu.System.Audit, waitTime)
         element(byXpath("//table/tbody//*[text()='Аудит справочников']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
         //применим фильтр по дате
-        setFilterByName("Дата/время", "${LocalDate.now().minusMonths(2).format(DateTimeFormatter.ofPattern("dd.MM.yy"))};${LocalDate.now().minusMonths(1).format(DateTimeFormatter.ofPattern("dd.MM.yy"))}", waitTime)
-//        element(byXpath("//form//*[text()='Дата/время']/ancestor::button"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//            .click()
-//        element(byXpath("//div[@role='presentation']//fieldset//input[@placeholder='с']"))
-//            .sendKeys("${dateStartList[2]}.${dateStartList[1]}.${dateStartList[0]}0000")
-//        element(byXpath("//div[@role='presentation']//fieldset//input[@placeholder='по']"))
-//            .sendKeys("${dateEndList[2]}.${dateEndList[1]}.${dateEndList[0]}0000")
-//        element(byXpath("//div[@role='presentation']//*[text()='Применить']/ancestor::button"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//            .click()
+        elements(byXpath("//table/tbody/tr"))
+            .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(2), ofSeconds(waitTime))
+        setFilterByEnum(FilterEnum.`Дата-время`, "$dateStartList;$dateEndList", waitTime)
         Thread.sleep(5000)
         element(byXpath("//table/tbody"))
             .should(exist, ofSeconds(waitTime))
@@ -115,7 +46,7 @@ class events_Incidents :BaseTest() {
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
-        element(byXpath("//div[@role='presentation']//*[text()='Профиль пользователя']/ancestor::button"))
+        element(byXpath("//div[@role='presentation']//*[text()='Профиль пользователя']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
@@ -130,25 +61,25 @@ class events_Incidents :BaseTest() {
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         Thread.sleep(5000)
-        menuNavigation("Справочники", "Муниципальные образования", waitTime)
+        menuNavigation(MyMenu.Dictionaries.Municipalities, waitTime)
         element(byXpath("//table/tbody"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //воспользуемся поиском
-        tableSearch(operatorsMunicipalities)
+        tableSearch(operatorsMunicipalities, waitTime)
         val buttonsColumn = tableNumberOfColumn(" ", waitTime)
         element(byXpath("//table/tbody//*[text()='$operatorsMunicipalities']/ancestor::tr/td[$buttonsColumn]//button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
-        element(byXpath("//div[@role='presentation']//*[text()='Редактировать']/ancestor::button"))
+        element(byXpath("//div[@role='presentation']//*[text()='Редактировать']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
         element(byXpath("//main/div"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        element(byXpath("//*[text()='Сохранить']/ancestor::button"))
+        element(byXpath("//*[text()='Сохранить']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         if (elements(byXpath("//div[@role='textbox']/p[contains(text(),'Event INC 5020 Test')]")).size > 0){
@@ -170,210 +101,17 @@ class events_Incidents :BaseTest() {
         element(byXpath("//div[@role='textbox']/p[last()]"))
             .sendKeys("Event INC 5020 Test $dateTime")
         Thread.sleep(100)
-        element(byXpath("//*[text()='Сохранить']/ancestor::button"))
+        element(byXpath("//*[text()='Сохранить']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
         element(byXpath("//h1[text()='$operatorsMunicipalities']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        element(byXpath("//*[text()='Изменить']/ancestor::button"))
+        element(byXpath("//*[text()='Изменить']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         logoffTool()
-    }
-
-    //160 строк надо выполнять дважды с маленькой разницей, поэтому вынесено в отдельный метод без абстракции
-    fun setIncidentFilters (dateStart: String, dateEnd: String){
-        val callTypeId = listOf("Портал населения", "Система-112", "СМС", "Телефон (ССОП)", "Факс", "ЭРА Глонасс")
-        val dateStartList = dateStart.split("-")
-        val dateEndList = dateEnd.split("-")
-        for (i in 1..elements(byXpath("//form[@novalidate]//button//button")).size){
-            val cleanFilterName = element(byXpath("(//form[@novalidate]//button//button)[$i]/ancestor::button//*[text()]"))
-                .ownText
-            if (cleanFilterName != "Статусы") {
-                element(byXpath("(//form[@novalidate]//button//button)[$i]"))
-                    .click()
-                element(byXpath("//form[@novalidate]//*[text()='$cleanFilterName']/ancestor::button//button"))
-                    .shouldNot(exist, ofSeconds(waitTime))
-                Thread.sleep(200)
-            }
-        }
-        if (elements(byXpath("//form[@novalidate]//*[contains(text(),'Еще фильтры')]/ancestor::button")).size == 1){
-            element(byXpath("//form[@novalidate]//*[contains(text(),'Еще фильтры')]/ancestor::button"))
-                .click()
-            element(byXpath("//div[@role='presentation']//*[text()='Очистить все']/ancestor::button"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
-        } else if (elements(byXpath("//form[@novalidate]//*[contains(text(),'Все фильтры')]/ancestor::button")).size == 1){
-            element(byXpath("//form[@novalidate]//*[contains(text(),'Все фильтры')]/ancestor::button"))
-                .click()
-            element(byXpath("//div[@role='presentation']//*[text()='Очистить все']/ancestor::button"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
-        }
-        //устанавливаем фильры
-        //если нет ни одной отдельной кнопки фильтра, то заполняем все фильтры в кнопке "Все фильтры"
-        //если "все фильтры" нет, то заполняем имеющиеся кнопки и запоминаем что еще нам надо заполнить
-        //если что-то не заполнили с отдельных кнопок, то идем в "Еще фильтры" и заполняем там то что не удалось заполнить отдельными кнопками
-        if (elements(byXpath("//form[@novalidate]//*[contains(text(),'Все фильтры')]/ancestor::button")).size == 1) {
-            element(byXpath("//form[@novalidate]//*[contains(text(),'Все фильтры')]/ancestor::button"))
-                .click()
-            element(byXpath("//div[@role='dialog']"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-            element(byXpath("//label[text()='Типы происшествий']/following-sibling::div"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
-            element(byXpath("//div[@role='presentation']//*[contains(text(),'Ложные')]/ancestor::li"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
-            element(byXpath("//label[text()='Источники событий']/following-sibling::div"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
-            callTypeId.forEach {
-                element(byXpath("//div[@role='presentation']//li[text()='$it']"))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
-                    .click()
-                element(byXpath("//label[text()='Источники событий']/..//div[@role='button']/span[text()='$it']"))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
-            }
-            if (dateStart.isNotEmpty()) {
-                element(byXpath("//label[text()='Дата регистрации']/ancestor::fieldset//input[@placeholder='с']"))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
-                    .doubleClick()
-                element(byXpath("//label[text()='Дата регистрации']/ancestor::fieldset//input[@placeholder='с']"))
-                    .sendKeys("${dateStartList[2]}.${dateStartList[1]}.${dateStartList[0]}0000")
-            }
-            element(byXpath("//label[text()='Дата регистрации']/ancestor::fieldset//input[@placeholder='по']"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .doubleClick()
-            element(byXpath("//label[text()='Дата регистрации']/ancestor::fieldset//input[@placeholder='по']"))
-                .sendKeys("${dateEndList[2]}.${dateEndList[1]}.${dateEndList[0]}2359")
-            element(byXpath("//div[@role='dialog']//*[text()='Применить']/ancestor::button"))
-                .click()
-        } else {
-            var incidentTypeNeed = true
-            var dataNeed = true
-            var callTypeNeed = true
-            if (elements(byXpath("//form[@novalidate]//*[text()='Типы происшествий']/ancestor::button")).size == 1) {
-                element(byXpath("//form[@novalidate]//*[text()='Типы происшествий']/ancestor::button"))
-                    .click()
-                element(byXpath("//div[@role='presentation']//label[text()='Типы происшествий']/following-sibling::div"))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
-                    .click()
-                element(byXpath("//div[@role='presentation']//*[contains(text(),'Ложные')]/ancestor::li"))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
-                    .click()
-                element(byXpath("//div[@role='presentation']//*[text()='Применить']/ancestor::button"))
-                    .click()
-                incidentTypeNeed = false
-            }
-            if (elements(byXpath("//form[@novalidate]//*[text()='Источники']/ancestor::button")).size == 1) {
-                element(byXpath("//form[@novalidate]//*[text()='Источники']/ancestor::button"))
-                    .click()
-                element(byXpath("//div[@role='presentation']//label[text()='Источники событий']/following-sibling::div"))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
-                    .click()
-                Thread.sleep(500)
-                callTypeId.forEach{
-                    element(byXpath("//div[@role='presentation']//li[text()='$it']"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//label[text()='Источники событий']/..//div[@role='button']/span[text()='$it']"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                }
-                element(byXpath("//div[@role='presentation']//*[text()='Применить']/ancestor::button"))
-                    .click()
-                callTypeNeed = false
-            }
-            if (elements(byXpath("//form[@novalidate]//*[text()='Дата регистрации']/ancestor::button")).size == 1) {
-                element(byXpath("//form[@novalidate]//*[text()='Дата регистрации']/ancestor::button"))
-                    .click()
-//                element(byXpath("//label[text()='Дата регистрации']/ancestor::fieldset//input[@placeholder='с']"))
-//                    .should(exist, ofSeconds(waitTime))
-//                    .shouldBe(visible, ofSeconds(waitTime))
-//                    .doubleClick()
-                if (dateStart.isNotEmpty()) {
-                    element(byXpath("//label[text()='Дата регистрации']/ancestor::fieldset//input[@placeholder='с']"))
-                        .sendKeys("${dateStartList[2]}.${dateStartList[1]}.${dateStartList[0]}0000")
-                }
-//                element(byXpath("//label[text()='Дата регистрации']/ancestor::fieldset//input[@placeholder='по']"))
-//                    .should(exist, ofSeconds(waitTime))
-//                    .shouldBe(visible, ofSeconds(waitTime))
-//                    .doubleClick()
-                element(byXpath("//label[text()='Дата регистрации']/ancestor::fieldset//input[@placeholder='по']"))
-                    .sendKeys("${dateEndList[2]}.${dateEndList[1]}.${dateEndList[0]}2359")
-                element(byXpath("//div[@role='presentation']//*[text()='Применить']/ancestor::button"))
-                    .click()
-                dataNeed = false
-            }
-            if (incidentTypeNeed || dataNeed || callTypeNeed){
-                element(byXpath("//form[@novalidate]//*[contains(text(),'Еще фильтры')]/ancestor::button"))
-                    .click()
-                element(byXpath("//div[@role='presentation']//div[@role='dialog']"))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
-                if (incidentTypeNeed) {
-                    element(byXpath("//label[text()='Типы происшествий']/following-sibling::div"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    element(byXpath("//div[@role='presentation']//*[contains(text(),'Ложные')]/ancestor::li"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                }
-                if (callTypeNeed){
-                    element(byXpath("//label[text()='Источники событий']/following-sibling::div"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .click()
-                    callTypeId.forEach {
-                        element(byXpath("//div[@role='presentation']//li[text()='$it']"))
-                            .should(exist, ofSeconds(waitTime))
-                            .shouldBe(visible, ofSeconds(waitTime))
-                            .click()
-                        element(byXpath("//label[text()='Источники событий']/..//div[@role='button']/span[text()='$it']"))
-                            .should(exist, ofSeconds(waitTime))
-                            .shouldBe(visible, ofSeconds(waitTime))
-                    }
-                }
-                if (dataNeed){
-                    if (dateStart.isNotEmpty()) {
-                        element(byXpath("//label[text()='Дата регистрации']/ancestor::fieldset//input[@placeholder='с']"))
-                            .should(exist, ofSeconds(waitTime))
-                            .shouldBe(visible, ofSeconds(waitTime))
-                            .doubleClick()
-                        element(byXpath("//label[text()='Дата регистрации']/ancestor::fieldset//input[@placeholder='с']"))
-                            .sendKeys("${dateStartList[2]}.${dateStartList[1]}.${dateStartList[0]}0000")
-                    }
-                    element(byXpath("//label[text()='Дата регистрации']/ancestor::fieldset//input[@placeholder='по']"))
-                        .should(exist, ofSeconds(waitTime))
-                        .shouldBe(visible, ofSeconds(waitTime))
-                        .doubleClick()
-                    element(byXpath("//label[text()='Дата регистрации']/ancestor::fieldset//input[@placeholder='по']"))
-                        .sendKeys("${dateEndList[2]}.${dateEndList[1]}.${dateEndList[0]}2359")
-                }
-                element(byXpath("//div[@role='dialog']//*[text()='Применить']/ancestor::button"))
-                    .click()
-            }
-        }
-
     }
 
 
@@ -382,21 +120,29 @@ class events_Incidents :BaseTest() {
         //сначала соберем номера за последний месяц
         date = LocalDate.now()
         dateTime = LocalDateTime.now()
-        val menuList = listOf<String>("Список происшествий", "Архив происшествий")
+        val menuList = listOf(MyMenu.Incidents.IncidentsList, MyMenu.Incidents.IncidentsArchive)
         val falseСallsNumbersList = mutableListOf<String>()
         val moreMonthFalseСallsNumbersList = mutableListOf<String>()
         var anotherRound: Boolean
         logonTool()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         menuList.forEach { menu ->
-            menuNavigation("Происшествия",menu, waitTime)
+            menuNavigation(menu, waitTime)
             element(byXpath("//form[@novalidate]"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
             //Отчищаем фильтры
-            //устанавливаем фильры
+            cleanFilterByEnum(listOf(), waitTime)
+            //устанавливаем фильры "Типы происшествий", "Дата регистрации", "Источники"
+            setFilterByEnum(FilterEnum.Типы_происшествий, "Л Ложные", waitTime)
+            setFilterByEnum(
+                FilterEnum.Дата_регистрации,
+                "${LocalDate.now().minusMonths(1).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))};",
+                waitTime)
+            setFilterByEnum(FilterEnum.Источники, "Портал населения;Система-112;СМС;Телефон (ССОП);Факс;ЭРА Глонасс", waitTime)
             //заполнили фильтры
-            setIncidentFilters(LocalDate.now().minusMonths(1).toString(), LocalDate.now().toString())
+//            setIncidentFilters(LocalDate.now().minusMonths(1).toString(), LocalDate.now().toString())
+
             Thread.sleep(1000)
             //открываем все КП, проходясь и по пагинации и складываем контактный номер в список, не занося в него дубликаты
             if (elements(byXpath("//table/tbody/tr/td//*[text()='Нет данных']")).size == 0) {
@@ -408,6 +154,19 @@ class events_Incidents :BaseTest() {
                         element(byXpath("//strong[text()='Контактный номер:']"))
                             .should(exist, ofSeconds(waitTime))
                             .shouldBe(visible, ofSeconds(waitTime))
+                        element(byXpath("//*[@id='incidentButtons']//*[text()='Ложное']/text()/ancestor::button"))
+                            .should(exist, ofSeconds(waitTime))
+                            .shouldBe(visible, ofSeconds(waitTime))
+                        with(element(byXpath("//strong[text()='Контактный номер:']/following-sibling::span//*[text()]")).ownText)
+                        {
+                            if (
+                                (!falseСallsNumbersList.contains(this.filter { it.isDigit() }))
+                                &&
+                                ((this.filter { it.isDigit() }).length > 8)
+                            ){
+                                falseСallsNumbersList.add(this.filter { it.isDigit() })
+                            }
+                        }
                         if (
                             (!falseСallsNumbersList.contains(element(byXpath("//strong[text()='Контактный номер:']/following-sibling::span//*[text()]"))
                                 .ownText
@@ -425,11 +184,11 @@ class events_Incidents :BaseTest() {
                         back()
                         Thread.sleep(200)
                     }
-                    if (element(byXpath("(//tfoot//nav//span[contains(@title,'На страницу номер')])[last()]/parent::div"))
+                    if (element(byXpath("(//tfoot//nav//span[contains(@aria-label,'На страницу номер')])[last()]/parent::div"))
                             .getAttribute("style")!!
                             .contains("color: black;")) {
                         anotherRound = true
-                        element(byXpath("//tfoot//nav//span[contains(@title,'На следующую страницу')]/p[text()='Вперед']"))
+                        element(byXpath("//tfoot//nav//span[contains(@aria-label,'На следующую страницу')]/p[text()='Вперед']"))
                             .click()
                     } else {
                         anotherRound = false
@@ -439,12 +198,21 @@ class events_Incidents :BaseTest() {
         }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         menuList.forEach { menu ->
-            menuNavigation("Происшествия",menu, waitTime)
+            menuNavigation(menu, waitTime)
             element(byXpath("//form[@novalidate]"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
             if (moreMonthFalseСallsNumbersList.size <= 10) {
-                setIncidentFilters("", LocalDate.now().minusMonths(1).minusDays(1).toString())
+                //Отчищаем фильтры
+                cleanFilterByEnum(listOf(), waitTime)
+                //устанавливаем фильры "Типы происшествий", "Дата регистрации", "Источники"
+                setFilterByEnum(FilterEnum.Типы_происшествий, "Л Ложные", waitTime)
+                setFilterByEnum(
+                    FilterEnum.Дата_регистрации,
+                    ";${LocalDate.now().minusMonths(1).minusDays(1).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))}",
+                    waitTime)
+                setFilterByEnum(FilterEnum.Источники, "Портал населения;Система-112;СМС;Телефон (ССОП);Факс;ЭРА Глонасс", waitTime)
+                //заполнили фильтры
                 Thread.sleep(1000)
                 if (elements(byXpath("//table/tbody/tr/td//*[text()='Нет данных']")).size == 0) {
                     do {
@@ -456,33 +224,28 @@ class events_Incidents :BaseTest() {
                             element(byXpath("//strong[text()='Контактный номер:']"))
                                 .should(exist, ofSeconds(waitTime))
                                 .shouldBe(visible, ofSeconds(waitTime))
-                            element(byXpath("//button/span[text()='Ложное']"))
+                            element(byXpath("//*[@id='incidentButtons']//*[text()='Ложное']/text()/ancestor::button"))
                                 .should(exist, ofSeconds(waitTime))
                                 .shouldBe(visible, ofSeconds(waitTime))
-                            if (
-                                (!moreMonthFalseСallsNumbersList.contains(element(byXpath("//strong[text()='Контактный номер:']/following-sibling::span//*[text()]"))
-                                    .ownText
-                                    .filter { it.isDigit() }))
-                                &&
-                                ((element(byXpath("//strong[text()='Контактный номер:']/following-sibling::span//*[text()]"))
-                                    .ownText
-                                    .filter { it.isDigit() }).length > 8)
-                            )
+                            with(element(byXpath("//strong[text()='Контактный номер:']/following-sibling::span//*[text()]")).ownText)
                             {
-                                moreMonthFalseСallsNumbersList.add(element(byXpath("//strong[text()='Контактный номер:']/following-sibling::span//*[text()]"))
-                                    .ownText
-                                    .filter { it.isDigit() })
+                                if ((!moreMonthFalseСallsNumbersList.contains(this.filter { it.isDigit() }))
+                                    &&
+                                    ((this.filter { it.isDigit() }).length > 8)
+                                ){
+                                    moreMonthFalseСallsNumbersList.add(this.filter { it.isDigit() })
+                                }
                             }
                             back()
                             Thread.sleep(200)
                         }
-                        if ((element(byXpath("(//tfoot//nav//span[contains(@title,'На страницу номер')])[last()]/parent::div"))
+                        if ((element(byXpath("(//tfoot//nav//span[contains(@aria-label,'На страницу номер')])[last()]/parent::div"))
                                 .getAttribute("style")!!
                                 .contains("color: black;"))
                             && (moreMonthFalseСallsNumbersList.size <= 10)
                         ) {
                             anotherRound = true
-                            element(byXpath("//tfoot//nav//span[contains(@title,'На следующую страницу')]/p[text()='Вперед']"))
+                            element(byXpath("//tfoot//nav//span[contains(@aria-label,'На следующую страницу')]/p[text()='Вперед']"))
                                 .click()
                         } else {
                             anotherRound = false
@@ -495,19 +258,37 @@ class events_Incidents :BaseTest() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //переходим в форму обращения, вставляем номер ложный моложе месяца, ждем банер,
         // очищаем вставляем ложный более месяца, банера быть не должно
-        menuNavigation("Происшествия", "Создать карточку", waitTime)
-        element(byXpath("//label[text()='Источник события']/following-sibling::div/div[@id='calltype' and text()='Телефон (ССОП)']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        element(byCssSelector("#phone")).sendKeys(falseСallsNumbersList.random())
+        menuNavigation(MyMenu.Incidents.CreateIncident, waitTime)
+        createICToolCalltype("Телефон (ССОП)", waitTime)
+        var rndTel = falseСallsNumbersList.random()
+        createICToolPhone(rndTel, waitTime)
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //маленький WA
+        try {
+            element(byXpath("//*[@name='noteError']/ancestor::div[@role='alert']//*[text()='Номер данного абонента был зафиксирован ранее как ложный']"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+        } catch (_:  Throwable) {
+            if (print) println("Autotest \"Event INC 5030 Предупреждение о ложном вызове актуально месяц\" said: \"ЪУЪ! Чините багу PM1729!\"")
+            clearInput("//input[@id='phone']", waitTime)
+            createICToolPhone("+$rndTel", waitTime)
+        }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         element(byXpath("//*[@name='noteError']/ancestor::div[@role='alert']//*[text()='Номер данного абонента был зафиксирован ранее как ложный']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
+        rndTel = moreMonthFalseСallsNumbersList.random()
         clearInput("//input[@id='phone']", waitTime)
-        element(byCssSelector("#phone")).sendKeys(moreMonthFalseСallsNumbersList.random())
+        createICToolPhone(rndTel, waitTime)
         Thread.sleep(5000)
         element(byXpath("//*[@name='noteError']/ancestor::div[@role='alert']//*[text()='Номер данного абонента был зафиксирован ранее как ложный']"))
             .shouldNot(exist, ofSeconds(waitTime))
+        clearInput("//input[@id='phone']", waitTime)
+        createICToolPhone("+$rndTel", waitTime)
+        Thread.sleep(5000)
+        element(byXpath("//*[@name='noteError']/ancestor::div[@role='alert']//*[text()='Номер данного абонента был зафиксирован ранее как ложный']"))
+            .shouldNot(exist, ofSeconds(waitTime))
+
 /*        element(byXpath("//span[text()='Отменить']/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))

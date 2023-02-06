@@ -11,6 +11,8 @@ import com.codeborne.selenide.Selenide.elements
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import org.testng.annotations.DataProvider
+import test_library.menu.MyMenu
+import test_library.menu.SubmenuInterface
 import java.time.Duration.ofSeconds
 import java.time.LocalDateTime
 
@@ -24,20 +26,20 @@ class SearchTests : BaseTest(){
     @DataProvider(name = "Справочники единого алгоритма полной проверки поиска")
     open fun `Справочники полной проверки поиска`(): Any {
         return arrayOf<Array<Any>>(
-            arrayOf("Видеокамеры", "Наименование", "Наименование"),
-            arrayOf("Датчики", "Наименование", "Наименование"),
-            arrayOf("Метки", "Имя метки", "Метка"),
-            arrayOf("Силы и средства", "Наименование", "Наименование")
+            arrayOf(MyMenu.Dictionaries.VideoCameras, "Наименование", "Наименование"),
+            arrayOf(MyMenu.Dictionaries.Sensors, "Наименование", "Наименование"),
+            arrayOf(MyMenu.Dictionaries.Labels, "Имя метки", "Метка"),
+            arrayOf(MyMenu.Dictionaries.HotlineAssets, "Наименование", "Наименование")
         )
     }
 
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, dataProvider = "Справочники единого алгоритма полной проверки поиска" , groups = ["ALL"])
     fun `Search 0010 Проверка создания, поиска и удаления справочных сущностей некоторых справочников`
-            (subMenu: String, nameOfName: String, nameColumnName: String) {
+            (menu: SubmenuInterface, nameOfName: String, nameColumnName: String) {
         //Видеокамеры
         logonTool()
-        menuNavigation("Справочники", subMenu, waitTime)
+        menuNavigation(menu, waitTime)
         //открываем поиск что бы прочитать подсказку
         element(byXpath("//*[@name='search']/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
@@ -94,7 +96,7 @@ class SearchTests : BaseTest(){
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
-                if ((unitPlaceohlder == "Источник") && (subMenu == "Датчики")){
+                if ((unitPlaceohlder == "Источник") && (menu == MyMenu.Dictionaries.Sensors)){
                     element(byXpath("//label[contains(text(),'$unitPlaceohlder')]/following-sibling::div/input"))
                         .sendKeys("https://AT/source/${uniqueName}.com")
                 } else {
@@ -194,7 +196,7 @@ class SearchTests : BaseTest(){
                     elements(byXpath("//table/tbody/tr/td[$nameColumn]//*[text()='AT $nameOfName $uniqueName']")).size
                     == 1
             )
-            if (subMenu == "Метки"){
+            if (menu == MyMenu.Dictionaries.Labels){
                 elements(byXpath("//table/tbody/tr/td[$nameColumn]//*[text()='AT $nameOfName $uniqueName']"))
                     .shouldHave(CollectionCondition.size(1), ofSeconds(waitTime))
             } else {

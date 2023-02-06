@@ -8,9 +8,13 @@ import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
 import org.openqa.selenium.Keys
-import test_library.FilterEnum
+import test_library.filters.FilterEnum
+import test_library.menu.MyMenu
+import test_library.menu.SubMenuEnum
 import java.io.File
 import java.time.Duration.ofSeconds
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 
 class PlayGround : BaseTest(){
@@ -22,17 +26,17 @@ class PlayGround : BaseTest(){
 //    @org.testng.annotations.Test (retryAnalyzer = Retry::class)
     fun `Черновик теста на создание МО`() {
         //создадим пару МО, один оставив навсегда, а второй создавая и удаляя каждый раз
-        val moATItWas = mutableListOf<String>()
-        var moATCreated = mutableListOf<String>("AutoTest T 0020 МО")
-        logonTool()
-        menuNavigation("Справочники","Муниципальные образования", waitTime)
-        tableCheckbox("", true, waitTime)
-        Thread.sleep(1000)
-        //внесем существующие телефонные коды в отдельный список
-//        var telCodeElementsCollection = elements(byXpath(""))
-        val telCodeList = mutableListOf<String>()
-        //Выясняем в каком столбце хранятся телефонные коды
-        var telCodeColumnIndex = tableNumberOfColumn("Телефонный код", waitTime)
+    val moATItWas = mutableListOf<String>()
+    val moATCreated = mutableListOf<String>("AutoTest T 0020 МО")
+    logonTool()
+    menuNavigation(MyMenu.Dictionaries.Municipalities, waitTime)
+    tableCheckbox("", true, waitTime)
+    Thread.sleep(1000)
+    //внесем существующие телефонные коды в отдельный список
+//       var telCodeElementsCollection = elements(byXpath(""))
+    val telCodeList = mutableListOf<String>()
+    //Выясняем в каком столбце хранятся телефонные коды
+    val telCodeColumnIndex = tableNumberOfColumn("Телефонный код", waitTime)
         //Выясняем в каком столбце хранятся телефонные коды
 //        val telCodeElements = elements(byXpath("//thead/tr/th"))
 //        telCodeElements.forEachIndexed{index, element ->
@@ -204,13 +208,16 @@ class PlayGround : BaseTest(){
     fun `Черновик2`() {
 
         logonTool()
-        menuNavigation("Происшествия", "Список происшествий", waitTime)
+        menuNavigation(MyMenu.Map.SubMenuMap, waitTime)
         Thread.sleep(1000)
-        setFilterByEnum(FilterEnum.Дата_принятия, "", waitTime)
-        setFilterByEnum(FilterEnum.Угрозы, "", waitTime)
+        setFilterByEnum(
+            FilterEnum.Дата_регистрации,
+            "${LocalDate.now().minusMonths(1).minusDays(1).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))};${LocalDate.now().minusMonths(2).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))}",
+            waitTime)
         Thread.sleep(1000)
         cleanFilterByEnum(listOf(), waitTime)
         Thread.sleep(1000)
+        SubMenuEnum.`Типы происшествий`.subMMMenu
 //        element(byXpath("html/body/div[@role='presentation']//*[text()='Пользователь системы']/ancestor::fieldset//*[text()='Да']/ancestor::label//input/..")).click()
 //        Thread.sleep(1000)
 //        println(element(byXpath("html/body/div[@role='presentation']//*[text()='Пользователь системы']/ancestor::fieldset//*[text()='Все']/ancestor::label//input/..")).getCssValue("background-color"))

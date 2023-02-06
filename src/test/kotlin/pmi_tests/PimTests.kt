@@ -18,6 +18,9 @@ import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
+import test_library.filters.FilterEnum
+import test_library.menu.MyMenu
+import test_library.menu.SubmenuInterface
 import java.io.File
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
@@ -49,16 +52,16 @@ class PimTests : BaseTest(){
         logonTool()
         //кликаем по иконке справочников в боковом меню
         //Переходим в "Муниципальные образования"
-        var subMenu = ""
+        var subMenu = MyMenu.Dictionaries.Municipalities
         for (i in 1..5){
             when(i){
-                1 -> {subMenu = "Муниципальные образования"}
-                2 -> {subMenu = "Должностные лица"}
-                3 -> {subMenu = "Дежурные службы"}
-                4 -> {subMenu = "Видеокамеры"}
-                5 -> {subMenu = "Датчики"}
+                1 -> {subMenu = MyMenu.Dictionaries.Municipalities}
+                2 -> {subMenu = MyMenu.Dictionaries.Officials}
+                3 -> {subMenu = MyMenu.Dictionaries.Hotlines}
+                4 -> {subMenu = MyMenu.Dictionaries.VideoCameras}
+                5 -> {subMenu = MyMenu.Dictionaries.Labels}
             }
-            menuNavigation("Справочники", subMenu, waitTime)
+            menuNavigation(subMenu, waitTime)
             //сравниваем количество записей в таблице, на больше или равно 5
             element(byXpath("//table/tbody/tr"))
                 .should(exist, ofSeconds(waitTime))
@@ -66,6 +69,7 @@ class PimTests : BaseTest(){
             while (elements(byXpath("//table/thead/tr/th//*[@name='arrowRight']/ancestor::button")).size > 0){
                 element(byXpath("//table/thead/tr/th//*[@name='arrowRight']/ancestor::button"))
                     .click()
+                Thread.sleep(200)
             }
             elements(byXpath("//table/tbody/tr"))
                 .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(5))
@@ -82,7 +86,7 @@ class PimTests : BaseTest(){
         logonTool()
         //кликаем по иконке справочников в боковом меню
         //Переходим в "Типы происшествий"
-        menuNavigation("Справочники", "Типы происшествий", waitTime)
+        menuNavigation(MyMenu.Dictionaries.IncidentTypes, waitTime)
         //сравниваем количество записей в таблице, на больше или равно 5
         element(byXpath("//table/tbody/tr"))
             .should(exist, ofSeconds(waitTime))
@@ -118,7 +122,7 @@ class PimTests : BaseTest(){
         logonTool()
         //кликаем по иконке справочников в боковом меню
         //Переходим в справочник "Организации"
-        menuNavigation("Справочники","Организации",waitTime)
+        menuNavigation(MyMenu.Dictionaries.Companies, waitTime)
         //сравниваем колличество строк организаций, по условию больше или равно с 5
         element(byCssSelector("tbody>tr"))
             .should(exist, ofSeconds(waitTime))
@@ -147,7 +151,7 @@ class PimTests : BaseTest(){
         logonTool()
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
-        menuNavigation("Происшествия","Список происшествий",waitTime)
+        menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
         //Подсчитываем всего карточек происшествий на странице и убеждаемся, что их больше чем необходимый минимум
         element(byXpath("//table/tbody/tr"))
             .should(exist, ofSeconds(waitTime))
@@ -185,7 +189,7 @@ class PimTests : BaseTest(){
         logonTool()
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Архив происшетвий"
-        menuNavigation("Происшествия","Архив происшествий",waitTime)
+        menuNavigation(MyMenu.Incidents.IncidentsArchive, waitTime)
         //сравниваем колличество карточек в архиве, по условию больше или равно с 2
         element(byXpath("//table/tbody/tr"))
             .should(exist, ofSeconds(waitTime))
@@ -226,7 +230,7 @@ class PimTests : BaseTest(){
         logonTool()
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
-        menuNavigation("Происшествия", "Список происшествий", waitTime)
+        menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
         //кликаем по "создать обращение"
         element(byXpath("//*[text()='Создать обращение']/text()/ancestor::button")).click()
         //заполняем карточку
@@ -272,7 +276,7 @@ class PimTests : BaseTest(){
         //кликаем по иконке происшествий в боковом меню
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий" )
-        menuNavigation("Происшествия", "Список происшествий", waitTime)
+        menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
         //добавляем в таблицу происшествий столбец "Описание"
         tableCheckbox("Описание", true, waitTime)
         //Переходим в созданное ранее происшествие
@@ -299,7 +303,7 @@ class PimTests : BaseTest(){
         logonTool()
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
-        menuNavigation("Происшествия", "Список происшествий", waitTime)
+        menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
         //кликаем по "создать обращение"
         element(byXpath("//span[text()='Создать обращение']/parent::button")).click()
         //Проверяем форму подсказки по положению стрелки и части текста
@@ -346,7 +350,7 @@ class PimTests : BaseTest(){
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
         //кликаем по "создать обращение"
-        menuNavigation("Происшествия", "Список происшествий", waitTime)
+        menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
         element(byXpath("//span[text()='Создать обращение']/parent::button")).click()
         //заполняем карточку
         //Источник события - выбираем случайно
@@ -423,7 +427,7 @@ class PimTests : BaseTest(){
         logonTool()
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
-        menuNavigation("Происшествия", "Список происшествий", waitTime)
+        menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
         //добавляем в таблицу происшествий столбец "Описание"
         tableCheckbox("Описание", true, waitTime)
         //Переходим в созданное ранее происшествие
@@ -511,19 +515,19 @@ class PimTests : BaseTest(){
         logonTool()
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
-        menuNavigation("Происшествия", "Список происшествий", waitTime)
+        menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
         elements(byXpath("//table/tbody/tr")).shouldHave(
             CollectionCondition.sizeGreaterThanOrEqual(1))
         //применяем фильтр "Типы происшествий"
-        setFilterByName("Типы происшествий", "К Консультации;Л Ложные", waitTime)
+        setFilterByEnum(FilterEnum.Типы_происшествий, "К Консультации;Л Ложные", waitTime)
         //Дожидаемся применения фильтра
         Thread.sleep(500)
         tableCheckbox("Подгруппа", true, waitTime)
         var targetColumn = tableNumberOfColumn("Подгруппа", waitTime)
         Thread.sleep(500)
         var intA: Int = elements(byXpath("//table/tbody/tr")).size
-        var intB: Int = elements(byXpath("//table/tbody/tr/td[$targetColumn][text()='Ложные']")).size
-        var intC: Int = elements(byXpath("//table/tbody/tr/td[$targetColumn][text()='Консультации']")).size
+        var intB: Int = elements(byXpath("//table/tbody/tr/td[$targetColumn]//text()/parent::*[text()='Ложные']")).size
+        var intC: Int = elements(byXpath("//table/tbody/tr/td[$targetColumn]//text()/parent::*[text()='Консультации']")).size
         var intS: Int = intB + intC
         //println("$intA" + " A")
         //println("$intB" + " B")
@@ -570,7 +574,7 @@ class PimTests : BaseTest(){
         element(byXpath("//span[text()='Статусы']/button")).click()
         /////////////////////////////////////////////////////////////////////////////////////////
         //применяем фильтр "Уровни"
-        setFilterByName("Уровни", "Угроза ЧС;ЧС", waitTime)
+        setFilterByEnum(FilterEnum.Уровни, "Угроза ЧС;ЧС", waitTime)
         //Дожидаемся применения фильтра
         Thread.sleep(2000)
         tableCheckbox("Уровень происшествия", true, waitTime)
@@ -602,20 +606,8 @@ class PimTests : BaseTest(){
         //Открываем фильтр "Источники"
         tableCheckbox("Источник", true, waitTime)
         //Устанавливаем значения фильтров
-        setFilterByName("Источники", "Видеоаналитика;СМС", waitTime)
-        targetColumn = numberOfColumn("Источник", waitTime)
-        element(byXpath("//span[text()='Источники']/..")).click()
-        element(byCssSelector("div[tabindex='-1'] div[role='combobox']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        //Устанавливаем значения фильтров
-        element(byCssSelector("input#callTypeId")).setValue("Видеоаналитика").sendKeys(Keys.DOWN, Keys.ENTER)
-        element(byCssSelector("input#callTypeId")).setValue("СМС").sendKeys(Keys.DOWN)
-        element(byCssSelector("input#callTypeId")).setValue("СМС").sendKeys(Keys.ENTER)
-        element(byCssSelector("input#callTypeId")).click()
-        //Применить
-        element(byXpath("//span[text()='Применить']/..")).click()
+        setFilterByEnum(FilterEnum.Источники, "Видеоаналитика;СМС", waitTime)
+        targetColumn = tableNumberOfColumn("Источник", waitTime)
         //ждем применения
         Thread.sleep(500)
         element(byXpath("//span[text()='Источники']/button"))
@@ -677,7 +669,7 @@ class PimTests : BaseTest(){
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
         //кликаем по "создать обращение"
-        menuNavigation("Происшествия", "Список происшествий", waitTime)
+        menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
         element(byXpath("//span[text()='Создать обращение']/parent::button")).click()
 //        element(byCssSelector("div span[aria-label='add'] button[type='button']")).shouldHave(exactText("Создать обращение"))
 //            .click()
@@ -708,7 +700,7 @@ class PimTests : BaseTest(){
         checkICToolDopInfo("AutoTest PMI 0150 $dateTime", waitTime)
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
-        menuNavigation("Происшествия", "Список происшествий", waitTime)
+        menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
         //добавляем в таблицу происшествий столбец "Описание"
         tableCheckbox("Описание", true, waitTime)
         //Переходим в созданное ранее происшествие
@@ -735,7 +727,7 @@ class PimTests : BaseTest(){
 
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
-        menuNavigation("Происшествия", "Список происшествий", waitTime)
+        menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
         //добавляем в таблицу происшествий столбец "Описание"
         tableCheckbox("Описание", true, waitTime)
         //Находим созданную КП в КИАП ДДС
@@ -749,7 +741,7 @@ class PimTests : BaseTest(){
         logonTool()
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
-        menuNavigation("Происшествия", "Список происшествий", waitTime)
+        menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
         //добавляем в таблицу происшествий столбец "Описание"
         tableCheckbox("Описание", true, waitTime)
         //Находим созданную КП
@@ -765,7 +757,7 @@ class PimTests : BaseTest(){
         logonTool()
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
-        menuNavigation("Происшествия", "Список происшествий", waitTime)
+        menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
         element(byCssSelector("table"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -887,9 +879,9 @@ class PimTests : BaseTest(){
 
         logonTool()
         //кликаем по иконке происшествий в боковом меню
-        menuNavigation("Происшествия", "Список происшествий", waitTime)
+        menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
         //Сбрасываем фильтры
-        cleanFilter("", waitTime)
+        cleanFilterByEnum(listOf(), waitTime)
 //        element(byXpath("//span[contains(text(),'Еще фильтры')]/.."))
 //            .should(exist, ofSeconds(waitTime))
 //            .shouldBe(visible, ofSeconds(waitTime))
@@ -911,7 +903,7 @@ class PimTests : BaseTest(){
     fun `PMI 0180 Просмотр паспортов опасных объектов`() {
         //A.3.21 Просмотр паспортов опасных объектов
         logonTool()
-        menuNavigation("Справочники", "Организации", waitTime)
+        menuNavigation(MyMenu.Dictionaries.Companies, waitTime)
         tableStringsOnPage(50, waitTime)
         //кликаем по иконке справочников в боковом меню
 //        element(byXpath("//span[@title='Справочники']/..")).click()
@@ -1022,17 +1014,16 @@ class PimTests : BaseTest(){
         //A.3.28 Проверка централизованного хранения и управления структурированной справочной информации
         logonTool()
 
-        for (i in 1..10){
+//        for (i in 1..10){
+        MyMenu.Dictionaries.values().forEach {     it ->
             //кликаем по иконке справочников
-            element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul")).click()
-            //переходим в каждый справочник
-            element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul//div/ul[$i]")).click()
+            menuNavigation(it , waitTime)
             //если в справочнике не пусто, то переходим в первую найденную строку и проверяем там наличие блока описания и заголовка "общие данные" в нем
             //ждем загрузки таблицы
             element(byCssSelector("main table>tbody"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
-            if (i!=10){
+            if (it != MyMenu.Dictionaries.IncidentTypes){
                 element(byXpath("//table/tbody/tr"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
@@ -1041,7 +1032,7 @@ class PimTests : BaseTest(){
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
-            } else if (i==10){
+            } else if (it == MyMenu.Dictionaries.IncidentTypes){
                 element(byXpath("//table/tbody/tr"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
@@ -1058,22 +1049,24 @@ class PimTests : BaseTest(){
 
     @DataProvider(name = "Справочники")
     open fun Справочники(): Any {
-        return arrayOf<Array<Any>>(
-            arrayOf("Алгоритмы реагирования"),
-            arrayOf("Видеокамеры"),
-            arrayOf("Датчики"),
-            arrayOf("Дежурные службы"),
-            arrayOf("Должностные лица"),
-            arrayOf("Метки"),
-            arrayOf("Муниципальные образования"),
-            arrayOf("Организации"),
-            arrayOf("Силы и средства"),
-            arrayOf("Типы происшествий")
+        return arrayOf<Any>(
+            MyMenu.Dictionaries.values()
+//            arrayOf(MyMenu.Dictionaries.values()),
+//            arrayOf(MyMenu.Dictionaries.CumulativePlans),
+//            arrayOf(MyMenu.Dictionaries.VideoCameras),
+//            arrayOf(MyMenu.Dictionaries.Sensors),
+//            arrayOf(MyMenu.Dictionaries.Hotlines),
+//            arrayOf(MyMenu.Dictionaries.Officials),
+//            arrayOf(MyMenu.Dictionaries.Labels),
+//            arrayOf(MyMenu.Dictionaries.Municipalities),
+//            arrayOf(MyMenu.Dictionaries.Companies),
+//            arrayOf(MyMenu.Dictionaries.HotlineAssets),
+//            arrayOf(MyMenu.Dictionaries.IncidentTypes)
         )
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, dataProvider = "Справочники", groups = ["ПМИ", "ALL"])
-    fun `PMI 0230 Проверка поиска справочных данных`(subMenu: String) {
+    fun `PMI 0230 Проверка поиска справочных данных`(subMenu: SubmenuInterface) {
         //A.3.29 Проверка поиска справочных данных
         //хорошо бы в таблицу включать все столбцы, но это потом доработаю //доработано
         logonTool()
@@ -1084,7 +1077,7 @@ class PimTests : BaseTest(){
 //            element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul")).click()
 //            //переходим в каждый справочник
 //            element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul//div/ul[$dicts]")).click()
-        menuNavigation("Справочники", subMenu, waitTime)
+        menuNavigation(subMenu, waitTime)
             //ждем загрузки таблицы
         element(byCssSelector("main table>tbody"))
             .should(exist, ofSeconds(waitTime))
@@ -1162,7 +1155,7 @@ class PimTests : BaseTest(){
                             || ((columnName == "№") && (searchHintList[hint] == "Номер пункта"))
                         ) {
                             //искомое значение определяем случайно, среди имеющихся но с типами происшествий и откидыванием пустых значений других справочников придется возится
-                            if (subMenu != "Типы происшествий") {
+                            if (subMenu != MyMenu.Dictionaries.IncidentTypes) {
                                 if (elements(byXpath("//table/tbody/tr/td[$col]//text()/parent::*[not(text()='  ')]")).isNotEmpty()) {
                                     searchValue = elements(byXpath("//table/tbody/tr/td[$col]//text()/parent::*[not(text()='  ')]"))
                                         .random().ownText
@@ -1185,7 +1178,7 @@ class PimTests : BaseTest(){
                                     } else if (ioRegex.containsMatchIn(searchValue)) {
                                         searchValue = searchValue.split(" ")[0]
                                     }
-                            } else if (subMenu == "Типы происшествий") { //Отдельно обрабатываем справочник типов происшествий
+                            } else if (subMenu == MyMenu.Dictionaries.IncidentTypes) { //Отдельно обрабатываем справочник типов происшествий
                                 searchValue = elements(byXpath("//table/tbody/tr/td[1][not(.//button)]/ancestor::tr/td[$col]//text()/.."))
                                     .random()
                                     .ownText
@@ -1282,7 +1275,7 @@ class PimTests : BaseTest(){
         logonTool()
         //кликаем по иконке справочников
         //переходим в нужный справочник
-        menuNavigation("Справочники", "Организации", waitTime)
+        menuNavigation(MyMenu.Dictionaries.Companies, waitTime)
         //ждем загрузки таблицы
         element(byCssSelector("main table>tbody"))
             .should(exist, ofSeconds(waitTime))
@@ -1360,7 +1353,7 @@ class PimTests : BaseTest(){
         logonTool()
         //кликаем по иконке справочников
         //переходим в нужный справочник
-        menuNavigation("Справочники", "Организации", waitTime)
+        menuNavigation(MyMenu.Dictionaries.Companies, waitTime)
         //ждем загрузки таблицы
         element(byCssSelector("main table>tbody"))
             .should(exist, ofSeconds(waitTime))
@@ -1427,7 +1420,7 @@ class PimTests : BaseTest(){
         logonTool()
         //кликаем по иконке справочников
         //переходим в нужный справочник
-        menuNavigation("Справочники", "Дежурные службы", waitTime)
+        menuNavigation(MyMenu.Dictionaries.Hotlines, waitTime)
         //ждем загрузки таблицы
         element(byCssSelector("main table>tbody"))
             .should(exist, ofSeconds(waitTime))
@@ -1508,7 +1501,7 @@ class PimTests : BaseTest(){
         date = LocalDate.now()
         logonTool()
         //сначала проверим остатки неудачных запусков и удалим их.
-        menuNavigation("Справочники", "Должностные лица", waitTime)
+    menuNavigation(MyMenu.Dictionaries.Officials, waitTime)
         tableCheckbox("", true, waitTime)
         //воспользуемся поиском
         var menuColumnNubber = tableNumberOfColumn(" ", waitTime)
@@ -1552,7 +1545,7 @@ class PimTests : BaseTest(){
             }
         }
         //идем в справочник ДС что бы достать оттуда ДС и их организации, что бы лицо создавать с этими параметрами
-        menuNavigation("Справочники", "Дежурные службы", waitTime)
+    menuNavigation(MyMenu.Dictionaries.Hotlines, waitTime)
         //ждем загрузки таблицы
         element(byCssSelector("main table>tbody"))
             .should(exist, ofSeconds(waitTime))
@@ -1589,157 +1582,157 @@ class PimTests : BaseTest(){
             hotLineList.add(element(byXpath("//tbody/tr[$u]/td[$hotlineColumnNumber][text()]")).ownText)
             organizationList.add(element(byXpath("//tbody/tr[$u]/td[$organizationColumnNumber][text()]")).ownText)
         }
-        Assertions.assertTrue(hotLineList.size == organizationList.size)
-        menuNavigation("Справочники","Должностные лица",waitTime)
-        //ждем загрузки таблицы
-        element(byCssSelector("main table>tbody"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        menuColumnNubber = tableNumberOfColumn(" ", waitTime)
-        element(byXpath("//span[text()='Добавить новое']/parent::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        element(byCssSelector("form"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        val addAtributeSelector = "//label[text()='%s']/following-sibling::div/input"
+    Assertions.assertTrue(hotLineList.size == organizationList.size)
+    menuNavigation(MyMenu.Dictionaries.Officials, waitTime)
+    //ждем загрузки таблицы
+    element(byCssSelector("main table>tbody"))
+        .should(exist, ofSeconds(waitTime))
+        .shouldBe(visible, ofSeconds(waitTime))
+    menuColumnNubber = tableNumberOfColumn(" ", waitTime)
+    element(byXpath("//span[text()='Добавить новое']/parent::button"))
+        .should(exist, ofSeconds(waitTime))
+        .shouldBe(visible, ofSeconds(waitTime))
+        .click()
+    element(byCssSelector("form"))
+        .should(exist, ofSeconds(waitTime))
+        .shouldBe(visible, ofSeconds(waitTime))
+    val addAtributeSelector = "//label[text()='%s']/following-sibling::div/input"
 //        element(byXpath("//label[text()='Фамилия']/following-sibling::div/input")).sendKeys(dateTime)
-        element(byXpath(addAtributeSelector.format("Фамилия"))).sendKeys(dateTime.toString())
-        element(byXpath(addAtributeSelector.format("Имя"))).sendKeys("N 0270")
-        element(byXpath(addAtributeSelector.format("Отчество"))).sendKeys("AutoTest")
-        val telR = (1000000..9999999).random()
-        element(byXpath(addAtributeSelector.format("Рабочий телефон"))).sendKeys("+7918$telR")
-        element(byXpath(addAtributeSelector.format("Должность"))).sendKeys("Robot")
-        element(byXpath(addAtributeSelector.format("E-mail"))).sendKeys("test@test.com")
-        val telM = (1000000..9999999).random()
-        element(byXpath(addAtributeSelector.format("Мобильный телефон"))).sendKeys("+7961$telM")
-        //Выбираем организацию
-        element(byXpath("//input[@name='companyId']")).click()
-        val randomAtridute = (0 until hotLineList.size).random()
-        element(byXpath("//input[@name='companyId']")).sendKeys(organizationList[randomAtridute])
-        element(byXpath("//input[@name='companyId']")).sendKeys(Keys.DOWN, Keys.ENTER)
-        val companyId = element(byXpath("//input[@name='companyId']")).getAttribute("value")
-        Assertions.assertTrue(organizationList[randomAtridute] == companyId)
-        //Выбираем службу
-        element(byXpath("//input[@name='hotlineId']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        element(byXpath("//input[@name='hotlineId']")).sendKeys(hotLineList[randomAtridute])
-        element(byXpath("//input[@name='hotlineId']")).sendKeys(Keys.DOWN, Keys.ENTER)
-        val hotlineId = element(byXpath("//input[@name='hotlineId']")).getAttribute("value")
-        Assertions.assertTrue(hotLineList[randomAtridute] == hotlineId)
-        //сохраняем
-        element(byXpath("//span[text()='Добавить']/parent::button")).click()
-        element(byCssSelector("form"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        //воспользуемся поиском
-        element(byXpath("//*[@name='search']/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        element(byCssSelector("input[placeholder^='ФИО']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        element(byCssSelector("input[placeholder^='ФИО']")).sendKeys(dateTime.toString(), Keys.ENTER)
-        //открываем три точки
-        element(byXpath("//td[contains(text(),'$dateTime')]/parent::tr/td[$menuColumnNubber]//button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        //открываем историю
-        element(byXpath("//span[text()='История']/parent::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        //ждем загрузки
-        element(byXpath("//p[text()='История должностного лица']/a[text()='$dateTime N 0270 AutoTest']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        //смотрим историю развернув всё
-        element(byXpath("//table/thead//*[@name='arrowRight']/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        val atributeSelector = "//table/tbody//li/label[text()='%s']/following-sibling::*[text()='%s']"
-        //проверяем что в истории
-        element(byXpath(atributeSelector.format("Дежурная служба", hotlineId)))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        element(byXpath(atributeSelector.format("Организация", companyId)))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        //разворачиваем ФИО и пр.
-        element(byXpath("//label[text()='ФИО']/preceding-sibling::div/div[text()='▶']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        //проверяем то что развернули
-        element(byXpath(atributeSelector.format("Фамилия", dateTime)))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        element(byXpath(atributeSelector.format("Имя", "N 0270")))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        element(byXpath(atributeSelector.format("Отчество", "AutoTest")))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        element(byXpath(atributeSelector.format("Электронная почта", "test@test.com")))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        element(byXpath(atributeSelector.format("Должность", "Robot")))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        element(byXpath(atributeSelector.format("Мобильный телефон", "+7961$telM")))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        element(byXpath(atributeSelector.format("Рабочий телефон", "+7918$telR")))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        logoffTool()
+    element(byXpath(addAtributeSelector.format("Фамилия"))).sendKeys(dateTime.toString())
+    element(byXpath(addAtributeSelector.format("Имя"))).sendKeys("N 0270")
+    element(byXpath(addAtributeSelector.format("Отчество"))).sendKeys("AutoTest")
+    val telR = (1000000..9999999).random()
+    element(byXpath(addAtributeSelector.format("Рабочий телефон"))).sendKeys("+7918$telR")
+    element(byXpath(addAtributeSelector.format("Должность"))).sendKeys("Robot")
+    element(byXpath(addAtributeSelector.format("E-mail"))).sendKeys("test@test.com")
+    val telM = (1000000..9999999).random()
+    element(byXpath(addAtributeSelector.format("Мобильный телефон"))).sendKeys("+7961$telM")
+    //Выбираем организацию
+    element(byXpath("//input[@name='companyId']")).click()
+    val randomAtridute = (0 until hotLineList.size).random()
+    element(byXpath("//input[@name='companyId']")).sendKeys(organizationList[randomAtridute])
+    element(byXpath("//input[@name='companyId']")).sendKeys(Keys.DOWN, Keys.ENTER)
+    val companyId = element(byXpath("//input[@name='companyId']")).getAttribute("value")
+    Assertions.assertTrue(organizationList[randomAtridute] == companyId)
+    //Выбираем службу
+    element(byXpath("//input[@name='hotlineId']"))
+        .should(exist, ofSeconds(waitTime))
+        .shouldBe(visible, ofSeconds(waitTime))
+        .click()
+    element(byXpath("//input[@name='hotlineId']")).sendKeys(hotLineList[randomAtridute])
+    element(byXpath("//input[@name='hotlineId']")).sendKeys(Keys.DOWN, Keys.ENTER)
+    val hotlineId = element(byXpath("//input[@name='hotlineId']")).getAttribute("value")
+    Assertions.assertTrue(hotLineList[randomAtridute] == hotlineId)
+    //сохраняем
+    element(byXpath("//span[text()='Добавить']/parent::button")).click()
+    element(byCssSelector("form"))
+        .should(exist, ofSeconds(waitTime))
+        .shouldBe(visible, ofSeconds(waitTime))
+    //воспользуемся поиском
+    element(byXpath("//*[@name='search']/ancestor::button"))
+        .should(exist, ofSeconds(waitTime))
+        .shouldBe(visible, ofSeconds(waitTime))
+        .click()
+    element(byCssSelector("input[placeholder^='ФИО']"))
+        .should(exist, ofSeconds(waitTime))
+        .shouldBe(visible, ofSeconds(waitTime))
+        .click()
+    element(byCssSelector("input[placeholder^='ФИО']")).sendKeys(dateTime.toString(), Keys.ENTER)
+    //открываем три точки
+    element(byXpath("//td[contains(text(),'$dateTime')]/parent::tr/td[$menuColumnNubber]//button"))
+        .should(exist, ofSeconds(waitTime))
+        .shouldBe(visible, ofSeconds(waitTime))
+        .click()
+    //открываем историю
+    element(byXpath("//span[text()='История']/parent::button"))
+        .should(exist, ofSeconds(waitTime))
+        .shouldBe(visible, ofSeconds(waitTime))
+        .click()
+    //ждем загрузки
+    element(byXpath("//p[text()='История должностного лица']/a[text()='$dateTime N 0270 AutoTest']"))
+        .should(exist, ofSeconds(waitTime))
+        .shouldBe(visible, ofSeconds(waitTime))
+    //смотрим историю развернув всё
+    element(byXpath("//table/thead//*[@name='arrowRight']/ancestor::button"))
+        .should(exist, ofSeconds(waitTime))
+        .shouldBe(visible, ofSeconds(waitTime))
+        .click()
+    val atributeSelector = "//table/tbody//li/label[text()='%s']/following-sibling::*[text()='%s']"
+    //проверяем что в истории
+    element(byXpath(atributeSelector.format("Дежурная служба", hotlineId)))
+        .should(exist, ofSeconds(waitTime))
+        .shouldBe(visible, ofSeconds(waitTime))
+    element(byXpath(atributeSelector.format("Организация", companyId)))
+        .should(exist, ofSeconds(waitTime))
+        .shouldBe(visible, ofSeconds(waitTime))
+    //разворачиваем ФИО и пр.
+    element(byXpath("//label[text()='ФИО']/preceding-sibling::div/div[text()='▶']"))
+        .should(exist, ofSeconds(waitTime))
+        .shouldBe(visible, ofSeconds(waitTime))
+        .click()
+    //проверяем то что развернули
+    element(byXpath(atributeSelector.format("Фамилия", dateTime)))
+        .should(exist, ofSeconds(waitTime))
+        .shouldBe(visible, ofSeconds(waitTime))
+    element(byXpath(atributeSelector.format("Имя", "N 0270")))
+        .should(exist, ofSeconds(waitTime))
+        .shouldBe(visible, ofSeconds(waitTime))
+    element(byXpath(atributeSelector.format("Отчество", "AutoTest")))
+        .should(exist, ofSeconds(waitTime))
+        .shouldBe(visible, ofSeconds(waitTime))
+    element(byXpath(atributeSelector.format("Электронная почта", "test@test.com")))
+        .should(exist, ofSeconds(waitTime))
+        .shouldBe(visible, ofSeconds(waitTime))
+    element(byXpath(atributeSelector.format("Должность", "Robot")))
+        .should(exist, ofSeconds(waitTime))
+        .shouldBe(visible, ofSeconds(waitTime))
+    element(byXpath(atributeSelector.format("Мобильный телефон", "+7961$telM")))
+        .should(exist, ofSeconds(waitTime))
+        .shouldBe(visible, ofSeconds(waitTime))
+    element(byXpath(atributeSelector.format("Рабочий телефон", "+7918$telR")))
+        .should(exist, ofSeconds(waitTime))
+        .shouldBe(visible, ofSeconds(waitTime))
+    logoffTool()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //а теперь удалим его
-        logonTool()
+    logonTool()
         //кликаем по иконке справочников
         //переходим в нужный справочник
-        menuNavigation("Справочники", "Должностные лица", waitTime)
-        menuColumnNubber = tableNumberOfColumn(" ", waitTime)
-        //ждем загрузки таблицы
-        element(byCssSelector("main table>tbody"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        //воспользуемся поиском
-        element(byXpath("//*[@name='search']/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        element(byCssSelector("input[placeholder^='ФИО']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        element(byCssSelector("input[placeholder^='ФИО']")).sendKeys(dateTime.toString(), Keys.ENTER)
-        //открываем три точки
-        element(byXpath("//td[contains(text(),'$dateTime')]/parent::tr/td[$menuColumnNubber]//button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        //удаляем
-        element(byXpath("//span[text()='Удалить']/parent::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        //подтверждаем удаление
-        element(byXpath("//div[@role='dialog']//span[text()='Удалить']/parent::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        element(byXpath("//tbody/tr//*[text()='Нет данных']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        logoffTool()
+    menuNavigation(MyMenu.Dictionaries.Officials, waitTime)
+    menuColumnNubber = tableNumberOfColumn(" ", waitTime)
+    //ждем загрузки таблицы
+    element(byCssSelector("main table>tbody"))
+        .should(exist, ofSeconds(waitTime))
+        .shouldBe(visible, ofSeconds(waitTime))
+    //воспользуемся поиском
+    element(byXpath("//*[@name='search']/ancestor::button"))
+        .should(exist, ofSeconds(waitTime))
+        .shouldBe(visible, ofSeconds(waitTime))
+        .click()
+    element(byCssSelector("input[placeholder^='ФИО']"))
+        .should(exist, ofSeconds(waitTime))
+        .shouldBe(visible, ofSeconds(waitTime))
+        .click()
+    element(byCssSelector("input[placeholder^='ФИО']")).sendKeys(dateTime.toString(), Keys.ENTER)
+    //открываем три точки
+    element(byXpath("//td[contains(text(),'$dateTime')]/parent::tr/td[$menuColumnNubber]//button"))
+        .should(exist, ofSeconds(waitTime))
+        .shouldBe(visible, ofSeconds(waitTime))
+        .click()
+    //удаляем
+    element(byXpath("//span[text()='Удалить']/parent::button"))
+        .should(exist, ofSeconds(waitTime))
+        .shouldBe(visible, ofSeconds(waitTime))
+        .click()
+    //подтверждаем удаление
+    element(byXpath("//div[@role='dialog']//span[text()='Удалить']/parent::button"))
+        .should(exist, ofSeconds(waitTime))
+        .shouldBe(visible, ofSeconds(waitTime))
+        .click()
+    element(byXpath("//tbody/tr//*[text()='Нет данных']"))
+        .should(exist, ofSeconds(waitTime))
+        .shouldBe(visible, ofSeconds(waitTime))
+    logoffTool()
     }
 
 }

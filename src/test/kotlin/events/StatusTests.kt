@@ -10,6 +10,7 @@ import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
 import org.testng.annotations.DataProvider
+import test_library.menu.MyMenu
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -38,7 +39,7 @@ open class StatusTests : BaseTest(){
         date = LocalDate.now()
         dateTime = LocalDateTime.now()
         logonTool()
-        menuNavigation("Происшествия", "Создать карточку", waitTime)
+        menuNavigation(MyMenu.Incidents.CreateIncident, waitTime)
         element(byXpath("//form[@novalidate]"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -65,7 +66,7 @@ open class StatusTests : BaseTest(){
             //добавляем метку при создании КП
         inputRandomNew("labelsId-textfield", true, waitTime)
             //Создаем карточку
-        pushButtonCreateIC("AutoTest S 0010 $Status1 $Status2 $StutusSum $dateTime", waitTime)
+        pushButtonCreateIC("AutoTest S 0010 $Status1 $Status2 $StutusSum $dateTime", longWait)
 //        element(byXpath("//*[text()='Сохранить карточку']/text()/ancestor::button"))
 //            .should(exist, ofSeconds(waitTime))
 //            .shouldBe(visible, ofSeconds(waitTime))
@@ -122,7 +123,7 @@ open class StatusTests : BaseTest(){
                     2 -> statusI = Status2
                 }
                 anyLogonTool(login, login)
-                menuNavigation("Происшествия", "Список происшествий", waitTime)
+                menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
                 tableCheckbox("Описание", true, waitTime)
                 //Находим созданную КП в КИАП ДДС
                 element(byText("AutoTest S 0010 $Status1 $Status2 $StutusSum $dateTime"))
@@ -135,7 +136,7 @@ open class StatusTests : BaseTest(){
                 logoffTool()
             }
         logonTool()
-        menuNavigation("Происшествия", "Список происшествий", waitTime)
+        menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
         tableCheckbox("Описание", true, waitTime)
         //Находим созданную родительскую КП
         element(byText("AutoTest S 0010 $Status1 $Status2 $StutusSum $dateTime"))

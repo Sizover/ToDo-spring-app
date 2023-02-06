@@ -1,4 +1,4 @@
-package test_library
+package test_library.filters
 
 enum class FilterEnum (val filter: FilterObject) {
     `Дата_принятия`(FilterObject("Дата принятия", "Дата принятия в обработку", FilterTypeEnum.DATE,)),
@@ -19,7 +19,7 @@ enum class FilterEnum (val filter: FilterObject) {
 
     `Файлы`(FilterObject("Файлы", "Есть файлы", FilterTypeEnum.RADIOBUTTON)),
 
-    `Типы происшествий`(FilterObject("Типы происшествий", "Типы происшествий", FilterTypeEnum.HIERARCHICATALOG)),
+    `Типы_происшествий`(FilterObject("Типы происшествий", "Типы происшествий", FilterTypeEnum.HIERARCHICATALOG)),
 
     `МО`(FilterObject("МО", "Муниципальные образования", FilterTypeEnum.HIERARCHICATALOG)),
 

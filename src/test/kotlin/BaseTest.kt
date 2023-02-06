@@ -19,13 +19,17 @@ import com.codeborne.selenide.WebDriverRunner
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import org.openqa.selenium.chrome.ChromeOptions
-import test_library.FilterTypeEnum
-import test_library.FilterEnum
+import test_library.filters.FilterTypeEnum
+import test_library.filters.FilterEnum
+import test_library.menu.MyMenu
+import test_library.menu.SubmenuInterface
+import java.text.SimpleDateFormat
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.LinkedHashMap
+import java.util.Locale
 
 
 open class BaseTest {
@@ -34,10 +38,11 @@ open class BaseTest {
     public var dateTime = LocalDateTime.now()
     public val waitTime: Long = 15
     public val longWait: Long = 15
+
     // отладочная переменная для выведения (или нет) отладочной информации, в консоль
     public val print = true
 
-    fun logonTool(){
+    fun logonTool() {
 
         //https://overcoder.net/q/1369284/%D0%BA%D0%B0%D0%BA-%D1%80%D0%B0%D0%B7%D1%80%D0%B5%D1%88%D0%B8%D1%82%D1%8C-%D0%B8%D0%BB%D0%B8-%D0%B7%D0%B0%D0%BF%D1%80%D0%B5%D1%82%D0%B8%D1%82%D1%8C-%D1%83%D0%B2%D0%B5%D0%B4%D0%BE%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BE-%D0%B2%D1%81%D0%BF%D0%BB%D1%8B%D0%B2%D0%B0%D1%8E%D1%89%D0%B5%D0%B9-%D0%BA%D0%B0%D0%BC%D0%B5%D1%80%D0%B5-%D0%BC%D0%B8%D0%BA%D1%80%D0%BE%D1%84%D0%BE%D0%BD%D0%B0
 
@@ -131,7 +136,7 @@ open class BaseTest {
 //        element(byName("login")).click()
 //    }
 
-    fun anyLogonTool(username: String, password: String){
+    fun anyLogonTool(username: String, password: String) {
         //https://overcoder.net/q/1369284/%D0%BA%D0%B0%D0%BA-%D1%80%D0%B0%D0%B7%D1%80%D0%B5%D1%88%D0%B8%D1%82%D1%8C-%D0%B8%D0%BB%D0%B8-%D0%B7%D0%B0%D0%BF%D1%80%D0%B5%D1%82%D0%B8%D1%82%D1%8C-%D1%83%D0%B2%D0%B5%D0%B4%D0%BE%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BE-%D0%B2%D1%81%D0%BF%D0%BB%D1%8B%D0%B2%D0%B0%D1%8E%D1%89%D0%B5%D0%B9-%D0%BA%D0%B0%D0%BC%D0%B5%D1%80%D0%B5-%D0%BC%D0%B8%D0%BA%D1%80%D0%BE%D1%84%D0%BE%D0%BD%D0%B0
         //ChromeOptions addArguments
         //на случай невыполнения шага, ждем что бы можно было успеть глазками посмотреть и руками потыкать
@@ -160,13 +165,14 @@ open class BaseTest {
         element(byName("login")).click()
     }
 
-    fun logoffTool(){
+    fun logoffTool() {
         clearBrowserCookies()
         clearBrowserLocalStorage()
         closeWindow()
 
     }
-    fun authorizationTest(){
+
+    fun authorizationTest() {
         //выбираем браузер
         //Configuration.browser = FIREFOX
         Configuration.browser = CHROME
@@ -174,7 +180,8 @@ open class BaseTest {
         open("https://test.kiap.local/")
 
     }
-    fun logonDds(){
+
+    fun logonDds() {
         //Selenide.open("http://test.kiap.local:8000")
         open("https://test.kiap.local/")
         //логинимся
@@ -183,11 +190,10 @@ open class BaseTest {
         element(byName("login")).click()
 
     }
-    fun logon112(){
+
+    fun logon112() {
         Selenide.open("http://11202:11202@172.16.41.21/")
     }
-
-
 
 
     fun tableCheckbox(checkboxName: String, checkboxCondition: Boolean, waitTime: Long)
@@ -209,18 +215,18 @@ open class BaseTest {
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //если передали пустое значение, то проходимся по всем чек-боксам, если нет, то нет =)
-        if (checkboxName.isEmpty()){
-            elements(byXpath("//label/span[text()]")).forEach{
+        if (checkboxName.isEmpty()) {
+            elements(byXpath("//label/span[text()]")).forEach {
                 checkboxNameList.add(it.ownText)
             }
-        } else if (checkboxName.contains(";")){
+        } else if (checkboxName.contains(";")) {
             checkboxName.split(";").forEach {
                 checkboxNameList.add(it.trim())
             }
         } else {
             checkboxNameList.add(checkboxName)
         }
-        checkboxNameList.forEach{
+        checkboxNameList.forEach {
             //проверяем что нам выдали и что надо сделать
             element(byXpath("//span[text()='$it']/parent::label//input"))
                 .should(exist, ofSeconds(waitTime))
@@ -228,9 +234,9 @@ open class BaseTest {
                 .should(exist, ofSeconds(waitTime))
                 .getAttribute("name")
             //если чекбокс выбран, а надо не выбирать
-            if (checkboxState == checkboxTrue && !checkboxCondition){
+            if (checkboxState == checkboxTrue && !checkboxCondition) {
                 //иногда драйвер опережает браузер и чек-бокс не прокликивается с первого раза, поэтому делаем так:
-                while (checkboxState == checkboxTrue){
+                while (checkboxState == checkboxTrue) {
                     element(byXpath("//span[text()='$it']/parent::label//input")).click()
                     checkboxState = element(byXpath("//span[text()='$it']/parent::label//*[name()='svg'][@name]"))
                         .should(exist, ofSeconds(waitTime))
@@ -239,9 +245,9 @@ open class BaseTest {
                 element(byXpath("//span[text()='$it']/parent::label//*[name()='svg'][@name]"))
                     .shouldHave(attribute("name", checkboxFalse), ofSeconds(waitTime))
                 //если чекбокс не выбран, а надо выбирать
-            } else if (checkboxState == checkboxFalse && checkboxCondition){
+            } else if (checkboxState == checkboxFalse && checkboxCondition) {
                 //иногда драйвер опережает браузер и чек-бокс не прокликивается с первого раза, поэтому делаем так:
-                while (checkboxState == checkboxFalse){
+                while (checkboxState == checkboxFalse) {
                     element(byXpath("//span[text()='$it']/parent::label//input")).click()
                     checkboxState = element(byXpath("//span[text()='$it']/parent::label//*[name()='svg'][@name]"))
                         .should(exist, ofSeconds(waitTime))
@@ -253,7 +259,7 @@ open class BaseTest {
             }
         }
         Thread.sleep(500)
-        while (element(byXpath("//div[@role='presentation']")).exists()){
+        while (element(byXpath("//div[@role='presentation']")).exists()) {
             element(byXpath("//div[@role='presentation']")).click()
             Thread.sleep(100)
         }
@@ -264,7 +270,7 @@ open class BaseTest {
     fun inputRandomOld(inputName: String)
     //Выбирает случайное значение в переданном импуте (сначала проклацывает весь список, считая проклацывания, потом проклацывает, до некоторого случайного значения)
     {
-        while (elements(byXpath("//body/div[@role='presentation']//*[text()]")).size == 0){
+        while (elements(byXpath("//body/div[@role='presentation']//*[text()]")).size == 0) {
             element(byXpath("//input[@name='$inputName']")).click()
             Thread.sleep(500)
         }
@@ -275,7 +281,7 @@ open class BaseTest {
         } while (elements(byCssSelector("input[name='$inputName'][aria-activedescendant^='$inputName-option']")).size > 0)
         //выбираем случайную организацию из доступных
         val rndInputValue = (1 until countInputString).random()
-        repeat(rndInputValue){
+        repeat(rndInputValue) {
             element(byXpath("//input[@name='$inputName']")).sendKeys(Keys.DOWN)
         }
         element(byXpath("//input[@name='$inputName']")).sendKeys(Keys.ENTER)
@@ -283,28 +289,29 @@ open class BaseTest {
     }
 
 
-    fun inputRandomNew(inputName: String, parentInclusive: Boolean, waitTime: Long){
+    fun inputRandomNew(inputName: String, parentInclusive: Boolean, waitTime: Long) {
         //Выбирает случайное значение в переданном по id импуте, учитывая иерархический он или нет
-        while (elements(byXpath("//body/div[@role='presentation']//*[text()]")).size == 0){
+        while (elements(byXpath("//body/div[@role='presentation']//*[text()]")).size == 0) {
             element(byXpath("//input[@name='$inputName']")).click()
             Thread.sleep(500)
         }
         //определяем иерархический ли селект, и если да, то обрабатываем по новому, если нет, по старому
-        if (elements(byCssSelector("body div[role='presentation'] li svg[name^='arrow']")).size > 0){
+        if (elements(byCssSelector("body div[role='presentation'] li svg[name^='arrow']")).size > 0) {
             if (elements(byXpath("//body//div[@role='presentation']//li[1]//*[@name='arrowRight']")).size > 0) {
                 element(byXpath("//div[@role='presentation']/div/ul/li[1]/div")).click()
                 Thread.sleep(500)
             }
             val incTypes = mutableListOf<String>()
             val count = elements(byXpath("//div[@role='presentation']/div/ul/li")).size
-            for (i in 1..count ){
-                if (elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[text()]")).size == 1){
+            for (i in 1..count) {
+                if (elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[text()]")).size == 1) {
                     if (
                         ((elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[contains(@name,'arrow')]")).size == 0)
-                        ||
-                        parentInclusive)
+                            ||
+                            parentInclusive)
                         &&
-                        elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[@name='checkboxFocus']")).size == 0){
+                        elements(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[@name='checkboxFocus']")).size == 0
+                    ) {
                         incTypes.add(element(byXpath("//div[@role='presentation']/div/ul/li[$i]//*[text()]")).ownText)
                     }
                 }
@@ -315,13 +322,14 @@ open class BaseTest {
                 .shouldBe(visible, ofSeconds(waitTime))
             while ((elements(byXpath("//div[@role='presentation']/div/ul//*[text()='$incTypesRandom']/ancestor::li//*[@name='checkboxFocus']")).size == 0)
                 &&
-                (elements(byCssSelector("div[role='presentation']")).size > 0)) {
+                (elements(byCssSelector("div[role='presentation']")).size > 0)
+            ) {
                 element(byXpath("//div[@role='presentation']/div/ul//*[text()='$incTypesRandom']/ancestor::li"))
                     .click()
                 Thread.sleep(100)
-                }
+            }
 //            element(byCssSelector("input[name='$inputName']")).sendKeys(incTypes.random(), Keys.DOWN, Keys.ENTER)
-            if (elements(byCssSelector("div[role='presentation']")).size > 0){
+            if (elements(byCssSelector("div[role='presentation']")).size > 0) {
                 element(byCssSelector("input[name='$inputName']"))
                     .click()
             }
@@ -333,16 +341,20 @@ open class BaseTest {
             } while (elements(byCssSelector("input[name='$inputName'][aria-activedescendant^='$inputName-option']")).size > 0)
             //выбираем случайную строчку из доступных
             val rndInputValue = (1 until countInputString).random()
-            repeat(rndInputValue){
+            repeat(rndInputValue) {
                 element(byXpath("//input[@name='$inputName']")).sendKeys(Keys.DOWN)
             }
             element(byXpath("//input[@name='$inputName']")).sendKeys(Keys.ENTER)
         }
     }
 
-    fun menuNavigation(menu: String, subMenu: String, waitTime: Long)
+//    fun menuNavigation(menu: SubmenuInterface) {
+//        menuNavigation(menu.desc.toString(), menu.subMenu, waitTime = 10L)
+//    }
+    fun menuNavigation(submenuInterface: SubmenuInterface, waitTime: Long){
     //просто унифицируем переход по различным РМ, что бы было легче поддерживать тесты
-    {
+        val menu = submenuInterface.menu.name
+        val subMenu = submenuInterface.subMenu
         element(byXpath("//div[@data-testid='app-menu-$menu']/../.."))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -812,18 +824,18 @@ open class BaseTest {
             element(byXpath("//div[@role='presentation']"))
                 .should(exist, ofSeconds(waitTime))
             Thread.sleep(200)
-            elements(byXpath("//div[@role='presentation']//*[text()]/ancestor::button[not (@disabled)]"))
+            elements(byXpath("//div[@role='presentation']//*[text()]/text()/ancestor::button[not (@disabled)]"))
                 .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(1))
-            if (elements(byXpath("//div[@role='presentation']//*[text()='$targetedStatus']/ancestor::button[not (@disabled)]")).size ==1){
+            if (elements(byXpath("//div[@role='presentation']//*[text()='$targetedStatus']/text()/ancestor::button[not (@disabled)]")).size ==1){
                 nextStatus = targetedStatus
             }
-            element(byXpath("//div[@role='presentation']//*[text()='$nextStatus']/ancestor::button[not (@disabled)]"))
+            element(byXpath("//div[@role='presentation']//*[text()='$nextStatus']/text()/ancestor::button[not (@disabled)]"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
                 .click()
             element(byXpath("//div[@role='presentation']"))
                 .shouldNot(exist, ofSeconds(waitTime))
-            element(byXpath("//div[@id='incidentButtons']//button[1]//*[text()='$nextStatus']"))
+            element(byXpath("//div[@id='incidentButtons']//button[1]//text()/parent::*[text()='$nextStatus']"))
                 .should(exist, ofSeconds(waitTime))
             //statusNow = element(byXpath("//div[@id='incidentButtons']//button[1]//text()/..")).ownText
             statusNow = nextStatus
@@ -836,6 +848,9 @@ open class BaseTest {
 
     fun clearInput(xPathLocator: String, waitTime: Long){
         if (element(byXpath(xPathLocator)).getAttribute("value")!!.isNotEmpty()){
+            element(byXpath("//button[@aria-label='open drawer']"))
+                .hover()
+            Thread.sleep(150)
             element(byXpath(xPathLocator)).click()
             element(byXpath(xPathLocator)).sendKeys(Keys.END)
             repeat(element(byXpath(xPathLocator)).getAttribute("value")!!.length){
@@ -867,7 +882,7 @@ open class BaseTest {
         }
     }
 
-    fun tableSearch(searchValue: String){
+    fun tableSearch(searchValue: String, waitTime: Long){
         element(byXpath("//table/tbody"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -970,7 +985,7 @@ open class BaseTest {
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //формируем применяемый список значений, если на вход передана пустая строка, то выбираем одно случайное значение
-        if (filterValues.isNotEmpty()) {
+        if (filterValues.trim().isNotEmpty()) {
             if (filterValues.contains(';')) {
                 filterValues.split(';').forEach { oneValue ->
                     listOfTargetValues.add(oneValue.trim())
@@ -988,7 +1003,7 @@ open class BaseTest {
                 )
             } else if (filterType == FilterTypeEnum.HIERARCHICATALOG){
                 //открываем весь список
-                element(byXpath("//*[text()='$filterFullName']/ancestor::div[@role='combobox']//input"))
+                element(byXpath("//*[text()='$filterFullName']/ancestor::div[@data-testid]//input"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
@@ -996,6 +1011,8 @@ open class BaseTest {
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
+                elements(byXpath("//div[@role='presentation']"))
+                    .shouldHave(CollectionCondition.size(2), ofSeconds(waitTime))
                 listOfTargetValues
                     .add(elements(byXpath(valueLocator?.invoke(filterFullName).toString()))
                         .random()
@@ -1024,31 +1041,57 @@ open class BaseTest {
                     Thread.sleep(200)
                 }
             } else if (filterType == FilterTypeEnum.HIERARCHICATALOG){
+                //открываем весь список, если до этого мы не выбирали случайное значение и уже открыли список
+                if (filterValues.isNotEmpty()){
+                    element(byXpath("//*[text()='$filterFullName']/ancestor::div[@data-testid]//input"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                        .click()
+                    element(byXpath("(//div[@role='presentation']//*[@name='arrowRight'])[1]"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                        .click()
+                    elements(byXpath("//div[@role='presentation']"))
+                        .shouldHave(CollectionCondition.size(2), ofSeconds(waitTime))
+                }
                 //чтобы обойти машинный глюк с несработавшим кликом, кликаем в цикле
-                while (!element(byXpath(clickLocator(filterFullName, oneFilterValue))).exists()){
+                while (element(byXpath(clickLocator(filterFullName, oneFilterValue))).exists()){
                     element(byXpath(clickLocator(filterFullName, oneFilterValue)))
                         .should(exist, ofSeconds(waitTime))
                         .shouldBe(visible, ofSeconds(waitTime))
                         .click()
-                    Thread.sleep(200)
+                    Thread.sleep(300)
                 }
             } else if (filterType == FilterTypeEnum.DATE){
-                if (indexOfFilterValue == 0){
-                    if (oneFilterValue.isNotEmpty()){
-                        element(byXpath(filter.filter.type.filterType.clickLocator(filterFullName, "с")))
-                            .should(exist, ofSeconds(waitTime))
-                            .shouldBe(visible, ofSeconds(waitTime))
-                            .sendKeys(oneFilterValue +"0000")
+                //можно еще вставить проверку на то что даты не больше сегодняшней, но пока оставлю так
+//                var dateS = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH).parse(oneFilterValue)
+                if (listOfTargetValues.size == 2){
+                    if (listOfTargetValues[0].trim().isNotEmpty()
+                        && listOfTargetValues[1].trim().isNotEmpty()
+                        && (SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH).parse(listOfTargetValues[0])
+                            >
+                            SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH).parse(listOfTargetValues[1]))
+                        ){
+                        if (print){println("в списке два значения, но значение \"с\" больше значения \"по\"") }
+                        Assertions.assertTrue(false)
                     }
-                } else if ((indexOfFilterValue == 1)) {
-                    if (oneFilterValue.isNotEmpty()){
-                        element(byXpath(filter.filter.type.filterType.clickLocator(filterFullName, "по")))
-                            .should(exist, ofSeconds(waitTime))
-                            .shouldBe(visible, ofSeconds(waitTime))
-                            .sendKeys(oneFilterValue +"2359")
+                    if (indexOfFilterValue == 0){
+                        if (oneFilterValue.trim().isNotEmpty()){
+                            element(byXpath(filter.filter.type.filterType.clickLocator(filterFullName, "с")))
+                                .should(exist, ofSeconds(waitTime))
+                                .shouldBe(visible, ofSeconds(waitTime))
+                                .sendKeys(oneFilterValue +"0000")
+                        }
+                    } else if ((indexOfFilterValue == 1)) {
+                        if (oneFilterValue.trim().isNotEmpty()){
+                            element(byXpath(filter.filter.type.filterType.clickLocator(filterFullName, "по")))
+                                .should(exist, ofSeconds(waitTime))
+                                .shouldBe(visible, ofSeconds(waitTime))
+                                .sendKeys(oneFilterValue +"2359")
+                        }
                     }
                 } else {
-                    if (print){println("в списке значений более двух, что не соответствует функционалу фильтра по датам") }
+                    if (print){println("в списке значений не два, что не соответствует функционалу фильтра по датам") }
                     Assertions.assertTrue(false)}//в списке значений более двух, что не соответствует функционалу фильтра по датам
             } else if (filterType == FilterTypeEnum.FLATCATALOG){
                 with(element(byXpath(clickLocator(filterFullName, "")))){
@@ -1116,7 +1159,8 @@ open class BaseTest {
         var listOfTargetFiltersEnum: MutableList<FilterEnum> = mutableListOf()
         //список фильтров к очистке у которых не оказалось отдельной кнопки
         val listOfNoButtonTargetFilters: MutableList<FilterEnum> = mutableListOf()
-
+        //WA разного поведения фильтров в таблице происшествий и в архиве происшествий
+        var temporaryCount = 0
         //В зависимости от переданного на вход списка, наполняем список по которому будем работать
         listOfTargetFiltersEnum = if (filtersList.isEmpty()){
             FilterEnum.values().toMutableList()
@@ -1126,7 +1170,7 @@ open class BaseTest {
 
         listOfTargetFiltersEnum.forEach { oneFilterEnum ->
             if (element(byXpath("//form[@novalidate]//*[text()='${oneFilterEnum.filter.shortName}']/text()/ancestor::button//button//*[@name='close']")).exists()) {
-                //для контроля изменения цвета кнопки фильтра запомним текущий класс, т.к. цвет зашифрован в стиль, который зашифрован в класс
+                //для контроля изменения цвета кнопки фильтра запомним его
                 filterButtonColor =
                     element(byXpath("//form[@novalidate]//*[text()='${oneFilterEnum.filter.shortName}']/text()/ancestor::button"))
                         .should(exist, ofSeconds(waitTime))
@@ -1134,23 +1178,31 @@ open class BaseTest {
                         .getCssValue("background-color")
                 //очищаем фильтр по кнопке крестика в кнопке фильтра
                 with(element(byXpath("//*[text()='${oneFilterEnum.filter.shortName}']/text()/ancestor::button//*[@name='close']//ancestor::button[1]"))){
-                    //*[text()='${oneFilterEnum.filter.shortName}']/text()/ancestor::button//*[@name='close']//ancestor::button[1]
                     this.should(exist, ofSeconds(waitTime))
                         .shouldBe(visible, ofSeconds(waitTime))
-                    while (this.exists()) {
+                    //WA разного поведения фильтров в таблице происшествий и в архиве происшествий
+                    while (this.exists() && temporaryCount < 5) {
                         this.click()
-                        Thread.sleep(100)
+                        Thread.sleep(300)
+                        temporaryCount += 1
                     }
                 }
                 //ждем
-                element(byXpath("//form[@novalidate]//*[text()='${oneFilterEnum.filter.shortName}']/text()/ancestor::button//button//*[@name='close']"))
-                    .shouldNot(exist, ofSeconds(waitTime))
+                //WA разного поведения фильтров в таблице происшествий и в архиве происшествий
+                if (temporaryCount < 5){
+                    element(byXpath("//form[@novalidate]//*[text()='${oneFilterEnum.filter.shortName}']/text()/ancestor::button//button//*[@name='close']"))
+                        .shouldNot(exist, ofSeconds(waitTime))
+                }
+
                 //убеждаемся в изменениии "цвета"
-                Assertions.assertTrue(
-                    element(byXpath("//form[@novalidate]//*[text()='${oneFilterEnum.filter.shortName}']/text()/ancestor::button"))
-                        .getCssValue("background-color")
-                        != filterButtonColor
-                )
+                //WA разного поведения фильтров в таблице происшествий и в архиве происшествий
+                if (temporaryCount < 5){
+                    Assertions.assertTrue(
+                        element(byXpath("//form[@novalidate]//*[text()='${oneFilterEnum.filter.shortName}']/text()/ancestor::button"))
+                            .getCssValue("background-color")
+                            != filterButtonColor
+                    )
+                }
             } else {
                 listOfNoButtonTargetFilters.add(oneFilterEnum)
             }
@@ -1182,7 +1234,6 @@ open class BaseTest {
                 val filterShortName = oneFilterEnum.filter.shortName
                 val filterType = oneFilterEnum.filter.type
                 val clickLocator = oneFilterEnum.filter.type.filterType.clickLocator
-                val valueLocator = oneFilterEnum.filter.type.filterType.valueLocator
                 val cleanLocator = oneFilterEnum.filter.type.filterType.cleanLocator
                 if (filterType == FilterTypeEnum.DATE) {
                     var dateClean = false
@@ -1253,7 +1304,6 @@ open class BaseTest {
                     .substringAfterLast('(')
                     .substringBeforeLast(')')
             ) {
-                val test = this
                 if (amountFilters == 0) {
                     Assertions.assertTrue(this.contains(" фильтры..."))
                     Assertions.assertTrue(

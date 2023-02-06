@@ -15,6 +15,8 @@ import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
+import test_library.menu.MyMenu
+import test_library.menu.SubmenuInterface
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -32,7 +34,7 @@ class Reports : BaseTest(){
         logonTool()
         //кликаем по иконке отчетов
         //Переходим в "отчет по обращениям"
-        menuNavigation("Отчеты","По обращениям", waitTime)
+        menuNavigation(MyMenu.Reports.CallsReport, waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/.."))
             .should(exist, ofSeconds(waitTime))
@@ -140,7 +142,7 @@ class Reports : BaseTest(){
             date = LocalDate.now()
             //кликаем по иконке происшествий в боковом меню
             //Переходим в "Список происшетвий"
-            menuNavigation("Происшествия","Список происшествий",waitTime)
+            menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
             //кликаем по "создать обращение"
             element(byXpath("//span[text()='Создать обращение']/..")).click()
             //заполняем карточку
@@ -219,7 +221,7 @@ class Reports : BaseTest(){
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //кликаем по иконке отчетов
         //Переходим в "отчет по обращениям"
-        menuNavigation("Отчеты", "По обращениям", waitTime)
+        menuNavigation(MyMenu.Reports.CallsReport, waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/parent::button")).click()
         //Заполняем поля отчета - название
@@ -322,7 +324,7 @@ class Reports : BaseTest(){
         logonTool()
         //кликаем по иконке отчетов
         //Переходим в "отчет по деятельности сотрудников"
-        menuNavigation("Отчеты", "По сотрудникам", waitTime)
+        menuNavigation(MyMenu.Reports.EmployeesReport, waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/parent::button")).click()
         //Заполняем поля отчета - название
@@ -399,7 +401,7 @@ class Reports : BaseTest(){
             date = LocalDate.now()
             //кликаем по иконке происшествий в боковом меню
             //Переходим в "Список происшетвий"
-            menuNavigation("Происшествия", "Список происшествий", waitTime)
+            menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
             //кликаем по "создать обращение"
             element(byXpath("//span[text()='Создать обращение']/parent::button")).click()
             //заполняем карточку
@@ -482,7 +484,7 @@ class Reports : BaseTest(){
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //кликаем по иконке отчетов
         //Переходим в "отчет по деятельности сотрудников"
-        menuNavigation("Отчеты", "По сотрудникам", waitTime)
+        menuNavigation(MyMenu.Reports.EmployeesReport, waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/parent::button"))
             .should(exist, ofSeconds(waitTime))
@@ -562,8 +564,7 @@ class Reports : BaseTest(){
     fun `Reports 0030 проверка отчетов по происшествиям с использованием фильтров по пострадавшим, адресу и типу происшествия`() {
         dateTime = LocalDateTime.now()
         date = LocalDate.now()
-        //возможные статусы КП
-        val statusList = listOf("Новая", "В обработке", "Реагирование", "Завершена", "Отменена","Закрыта")
+        //для удобства отладки сведем выдачу в консоль в одно место кода
         //два отчета, с адресом и без, вынесены с список, для сокращения кода через forEach
         val reportsAddressList = mutableListOf("без адреса", "адресный")
         //временный список отчетов в которые попадет создаваемая КП
@@ -588,7 +589,7 @@ class Reports : BaseTest(){
         var icReportCreate: String = ""
         logonTool()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        menuNavigation("Отчеты", "По происшествиям", waitTime)
+        menuNavigation(MyMenu.Reports.IncidentReport, waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
@@ -742,7 +743,7 @@ class Reports : BaseTest(){
         //Создаем КП
         val rndIC = (2..6).random()
         for (i in 1..6){
-            menuNavigation("Происшествия", "Создать карточку", waitTime)
+            menuNavigation(MyMenu.Incidents.CreateIncident, waitTime)
 //            menuNavigation("Происшествия", "Список происшествий", waitTime)
 //            element(byCssSelector("table#incidents"))
 //                .should(exist, ofSeconds(waitTime))
@@ -1110,7 +1111,7 @@ class Reports : BaseTest(){
             icReportsList.clear()
         }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        menuNavigation("Отчеты", "По происшествиям", waitTime)
+        menuNavigation(MyMenu.Reports.IncidentReport, waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
@@ -1237,13 +1238,13 @@ class Reports : BaseTest(){
     open fun Statuses(): Any {
         return arrayOf<Array<Any>>(
 //            arrayOf("По происшествиям", "2 МО, Зеленчукский район КЧР, ГО Черкесский, ЕДДС, Оператор, Уровень происшествия", 2),
-            arrayOf("По обращениям", "2 МО, Зеленчукский район КЧР, ГО Черкесский, ЕДДС, Оператор", 2),
-            arrayOf("По сотрудникам", "2 МО, Зеленчукский район КЧР, ГО Черкесский, ЕДДС", 3)
+            arrayOf(MyMenu.Reports.CallsReport, "2 МО, Зеленчукский район КЧР, ГО Черкесский, ЕДДС, Оператор", 2),
+            arrayOf(MyMenu.Reports.EmployeesReport, "2 МО, Зеленчукский район КЧР, ГО Черкесский, ЕДДС", 3)
         )
     }
 
     @Test(retryAnalyzer = Retry::class, dataProvider = "Расширенная проверка формирования отчетов", groups = ["ПМИ", "ALL"])
-    fun `Reports 0070 Расширенная проверка формирования отчетов`(reportType: String, reportsString: String, valueColumnNumber: Int ) {
+    fun `Reports 0070 Расширенная проверка формирования отчетов`(reportType: SubmenuInterface, reportsString: String, valueColumnNumber: Int ) {
         dateTime = LocalDateTime.now()
         date = LocalDate.now()
         val reportList = reportsString.split(", ")
@@ -1254,9 +1255,9 @@ class Reports : BaseTest(){
         logonTool()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //Переходим в "отчет По..."
-        menuNavigation("Отчеты",reportType, waitTime)
+        menuNavigation(reportType, waitTime)
         //кликаем по "Создать отчет"
-        element(byXpath("//span[text()='Создать отчет']/ancestor::button"))
+        element(byXpath("//*[text()='Создать отчет']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
@@ -1446,7 +1447,7 @@ class Reports : BaseTest(){
                 .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
             val operator = element(byXpath("//p[text()='Должностное лицо:']/following-sibling::p")).ownText.trim()
 //            back()
-            menuNavigation("Происшествия", "Создать карточку", waitTime)
+            menuNavigation(MyMenu.Incidents.CreateIncident, waitTime)
             //Источник события - выбираем случайно
             createICToolCalltype("", waitTime)
             //Номер телефона
@@ -1503,9 +1504,9 @@ class Reports : BaseTest(){
             //дополняем значения карт
             var validatedValue = ""//некоторое значение которое мы проверяем в отчете, в зависимости от отчета, это либо тип происшествия, либо источник обращения, либо оператор
             when(reportType){
-                "По происшествиям" -> {validatedValue = shortSelectedIncidentType}
-                "По обращениям" -> {validatedValue = createdCallType}
-                "По сотрудникам" -> {validatedValue = operator}
+                MyMenu.Reports.IncidentReport -> {validatedValue = shortSelectedIncidentType}
+                MyMenu.Reports.CallsReport -> {validatedValue = createdCallType}
+                MyMenu.Reports.EmployeesReport -> {validatedValue = operator}
             }
             reportsMapKeysList.forEach{reportKey ->
 //                oldReportsMap.get(reportKey)
@@ -1533,7 +1534,7 @@ class Reports : BaseTest(){
         }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         logonTool()
-        menuNavigation("Отчеты",reportType, waitTime)
+        menuNavigation(reportType, waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/.."))
             .should(exist, ofSeconds(waitTime))
