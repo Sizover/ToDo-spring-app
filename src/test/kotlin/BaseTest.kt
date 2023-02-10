@@ -19,10 +19,11 @@ import com.codeborne.selenide.WebDriverRunner
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import org.openqa.selenium.chrome.ChromeOptions
+import test_library.alerts.AlertsEnum
 import test_library.filters.FilterTypeEnum
 import test_library.filters.FilterEnum
-import test_library.menu.MyMenu
 import test_library.menu.SubmenuInterface
+import test_library.statuses.StatusEnum
 import java.text.SimpleDateFormat
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
@@ -30,13 +31,18 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.LinkedHashMap
 import java.util.Locale
+import kotlin.random.Random
 
 
 open class BaseTest {
     //просто переменные с текущей датой, для различных целей
     public var date = LocalDate.now()
     public var dateTime = LocalDateTime.now()
-    public val waitTime: Long = 15
+
+    //"короткое" ожидание для совершения действия направленного на элемент страницы
+    public val waitTime: Long = 5
+
+    //"длинное" ожидание для совершения действия направленного на элемент страницы
     public val longWait: Long = 15
 
     // отладочная переменная для выведения (или нет) отладочной информации, в консоль
@@ -204,27 +210,37 @@ open class BaseTest {
         val checkboxTrue = "checkboxFocus"
         val checkboxFalse = "checkboxNormal"
 //        val checkboxAlias = ""
+        var checkboxNameListDraft = mutableListOf<String>()
         val checkboxNameList = mutableListOf<String>()
-        //Открываем выпадающий список
-        element(byXpath("//*[@name='table']/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        //Дожидаемся, что список появился
-        element(byCssSelector("div[role='presentation'] label"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
+        // Определяем надо ли выставлять колонки и формируем их список
+        if (checkboxName.isNotEmpty()) {
+            if (checkboxName.contains(";")) {
+                checkboxNameListDraft = checkboxName.split(';').map { it.trim() }.toMutableList()
+            } else {
+                checkboxNameListDraft.add(checkboxName)
+            }
+            checkboxNameListDraft.forEach { column ->
+                if (element(byXpath("//table/thead//*[text()='$column']")).exists() != checkboxCondition){
+                    checkboxNameList.add(column)
+                }
+            }
+        }
+        if (checkboxName.isEmpty() || checkboxNameList.isNotEmpty()){
+            //Открываем выпадающий список
+            element(byXpath("//*[@name='table']/ancestor::button"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+            //Дожидаемся, что список появился
+            element(byCssSelector("div[role='presentation'] label"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+        }
         //если передали пустое значение, то проходимся по всем чек-боксам, если нет, то нет =)
         if (checkboxName.isEmpty()) {
             elements(byXpath("//label/span[text()]")).forEach {
                 checkboxNameList.add(it.ownText)
             }
-        } else if (checkboxName.contains(";")) {
-            checkboxName.split(";").forEach {
-                checkboxNameList.add(it.trim())
-            }
-        } else {
-            checkboxNameList.add(checkboxName)
         }
         checkboxNameList.forEach {
             //проверяем что нам выдали и что надо сделать
@@ -258,13 +274,15 @@ open class BaseTest {
 
             }
         }
-        Thread.sleep(500)
-        while (element(byXpath("//div[@role='presentation']")).exists()) {
-            element(byXpath("//div[@role='presentation']")).click()
-            Thread.sleep(100)
+        if (checkboxName.isEmpty() || checkboxNameList.isNotEmpty()){
+            Thread.sleep(500)
+            while (element(byXpath("//div[@role='presentation']")).exists()) {
+                element(byXpath("//div[@role='presentation']")).click()
+                Thread.sleep(500)
+            }
+            element(byXpath("//div[@role='presentation']"))
+                .shouldNot(exist, ofSeconds(waitTime))
         }
-        element(byXpath("//div[@role='presentation']"))
-            .shouldNot(exist, ofSeconds(waitTime))
     }
 
     fun inputRandomOld(inputName: String)
@@ -481,6 +499,41 @@ open class BaseTest {
         Thread.sleep(300)
     }
 
+    fun checkOrangeAlert(text: String, clickButtonClose: Boolean, waitTime: Long){
+        //Проверяем оранжевую всплывашку
+        element(byXpath("//div[@role='alert']//*[@name='snackbarWarning']"))
+            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//div[@role='alert']//*[text()='$text']"))
+            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+        if (clickButtonClose){
+            Thread.sleep(300)
+            element(byXpath("//div[@role='alert']//*[@name='snackbarClose']/ancestor::button"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+        }
+        Thread.sleep(300)
+    }
+    fun checkAlert(alertEnum: AlertsEnum, text: String, clickButtonClose: Boolean, waitTime: Long){
+        //Проверяем оранжевую всплывашку
+        element(byXpath("//div[@role='alert']//*[@name='${alertEnum.name}']"))
+            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//div[@role='alert']//*[text()='$text']"))
+            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+        if (clickButtonClose){
+            Thread.sleep(300)
+            element(byXpath("//div[@role='alert']//*[@name='snackbarClose']/ancestor::button"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+        }
+        Thread.sleep(300)
+    }
+
     //Что бы не править каждый тест, перевевожу создание и проверку полей КП на абстрактные методы для каждого поля
     fun createICToolCalltype(calltype: String, waitTime: Long){
         element(byCssSelector("div#calltype"))
@@ -656,10 +709,10 @@ open class BaseTest {
         }
     }
 
-    fun checkICToolIsStatus(status: String, waitTime: Long) {
+    fun checkICToolIsStatus(status: StatusEnum, waitTime: Long) {
         elements(byXpath("//div[@id='incidentButtons']//button"))
             .shouldHave(CollectionCondition.size(2))
-        element(byXpath("//div[@id='incidentButtons']//*[text()='$status']/text()/ancestor::button"))
+        element(byXpath("//div[@id='incidentButtons']//*[text()='${status.name}']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
     }
@@ -792,32 +845,30 @@ open class BaseTest {
         }
     }
 
-    fun updateICToolStatus(iCStatus: String, waitTime: Long) {
+    fun updateICToolStatus(iCStatusEnum: StatusEnum?, waitTime: Long) {
         //просто линейный список статусов задающий направление переходов
-        val statusList = listOf("Новая", "В обработке", "Реагирование", "Завершена", "Отменена", "Закрыта")
+//        val statusList = listOf("Новая", "В обработке", "Реагирование", "Завершена", "Отменена", "Закрыта")
+        val statusList = StatusEnum.values()
         //Доступные статусы для каждого статуса
-        val possibleStatusesMap: LinkedHashMap<String, List<String>> = linkedMapOf(
-            "Новая" to listOf("В обработке", "Реагирование", "Завершена", "Отменена", "Закрыта"),
-            "В обработке" to listOf("Реагирование", "Завершена", "Отменена", "Закрыта"),
-            "Реагирование" to listOf("Завершена", "Отменена", "Закрыта"),
-            "Завершена" to listOf("Закрыта"),
-            "Отменена" to listOf("Закрыта")
+        val possibleStatusesMap: LinkedHashMap<StatusEnum, List<StatusEnum>> = linkedMapOf(
+            StatusEnum.Новая to listOf(StatusEnum.`В обработке`, StatusEnum.Реагирование, StatusEnum.Завершена, StatusEnum.Отменена, StatusEnum.Закрыта),
+            StatusEnum.`В обработке` to listOf(StatusEnum.Реагирование, StatusEnum.Завершена, StatusEnum.Отменена, StatusEnum.Закрыта),
+            StatusEnum.Реагирование to listOf(StatusEnum.Завершена, StatusEnum.Отменена, StatusEnum.Закрыта),
+            StatusEnum.Завершена to listOf(StatusEnum.Закрыта),
+            StatusEnum.Отменена to listOf(StatusEnum.Закрыта)
         )
-        val targetedStatus: String
-        var nextStatus: String
+        val targetedStatus: StatusEnum
+        var nextStatus: StatusEnum
         //определяем текущий статус
-        var statusNow = element(byXpath("//div[@id='incidentButtons']//button[1]//text()/..")).ownText
+
+//        var statusNow = element(byXpath("//div[@id='incidentButtons']//button[1]//text()/..")).ownText
+        var statusNow = StatusEnum.values().find { it.name == element(byXpath("//div[@id='incidentButtons']//button[1]//text()/..")).ownText }
         //определяем целевой статус
-        targetedStatus =
-            if (iCStatus.isEmpty()) {
-            possibleStatusesMap[statusNow]!!.random()
-        } else {
-            iCStatus
-        }
+        targetedStatus = iCStatusEnum ?: possibleStatusesMap[statusNow]!!.random()
         //пока не достигнем целового статуса выполняем последовательные переходы
         do {
             nextStatus = statusList[statusList.indexOf(statusNow) + 1]
-            element(byXpath("//div[@id='incidentButtons']//*[text()='$statusNow']/text()/ancestor::button"))
+            element(byXpath("//div[@id='incidentButtons']//*[text()='${statusNow!!.name}']/text()/ancestor::button"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
                 .click()
@@ -826,16 +877,16 @@ open class BaseTest {
             Thread.sleep(200)
             elements(byXpath("//div[@role='presentation']//*[text()]/text()/ancestor::button[not (@disabled)]"))
                 .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(1))
-            if (elements(byXpath("//div[@role='presentation']//*[text()='$targetedStatus']/text()/ancestor::button[not (@disabled)]")).size ==1){
+            if (elements(byXpath("//div[@role='presentation']//*[text()='${targetedStatus.name}']/text()/ancestor::button[not (@disabled)]")).size ==1){
                 nextStatus = targetedStatus
             }
-            element(byXpath("//div[@role='presentation']//*[text()='$nextStatus']/text()/ancestor::button[not (@disabled)]"))
+            element(byXpath("//div[@role='presentation']//*[text()='${nextStatus.name}']/text()/ancestor::button[not (@disabled)]"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
                 .click()
             element(byXpath("//div[@role='presentation']"))
                 .shouldNot(exist, ofSeconds(waitTime))
-            element(byXpath("//div[@id='incidentButtons']//button[1]//text()/parent::*[text()='$nextStatus']"))
+            element(byXpath("//div[@id='incidentButtons']//button[1]//text()/parent::*[text()='${nextStatus.name}']"))
                 .should(exist, ofSeconds(waitTime))
             //statusNow = element(byXpath("//div[@id='incidentButtons']//button[1]//text()/..")).ownText
             statusNow = nextStatus
@@ -920,7 +971,7 @@ open class BaseTest {
                 .click()
             element(byXpath("//div[@role='tabpanel' and @id='simple-tabpanel-card']/form"))
                 .should(exist, ofSeconds(waitTime))
-            checkICToolIsStatus("В обработке", waitTime)
+            checkICToolIsStatus(StatusEnum.`В обработке`, waitTime)
         }
     }
 
@@ -1042,7 +1093,7 @@ open class BaseTest {
                 }
             } else if (filterType == FilterTypeEnum.HIERARCHICATALOG){
                 //открываем весь список, если до этого мы не выбирали случайное значение и уже открыли список
-                if (filterValues.isNotEmpty()){
+                if (filterValues.isNotEmpty() && indexOfFilterValue == 0){
                     element(byXpath("//*[text()='$filterFullName']/ancestor::div[@data-testid]//input"))
                         .should(exist, ofSeconds(waitTime))
                         .shouldBe(visible, ofSeconds(waitTime))
@@ -1318,6 +1369,51 @@ open class BaseTest {
                 }
             }
         }
+    }
+
+    //методы генерирования некоторых человекоподобных имен
+    val c = "бвгджзклмнпрстфхцчшщ".toList()
+    val v = "аеиоуэюя".toList()
+    val cc = "бббвввввввввгггдддддджжзззккккккклллллллллмммммнннннннннннннппппппрррррррррсссссссссссттттттттттттфххцчччшшщ".toList()
+    val vv = "ааааааааааааааааеееееееееееееееееиииииииииииииииооооооооооооооооооооооуууууэюяяяя".toList()
+    val lnTails = listOf("ов", "ин", "ев")
+    val posTails = listOf("ер", "ор", "ист", "ик")
+    val cityTails = listOf("дар", "град", "рск", "йск", "во", "хабль", "бург")
+    val e = "abcdefghijklmnopqrstuvwxyz".toList()
+
+    fun generatefirstNameI(): String {
+        var name = ""
+        for (i in 1..(2..5).random()){
+            name = if (i == 1){
+                name + cc.random()
+            } else {
+                name + vv.random() + cc.random()
+            }
+        }
+        if (Random.nextBoolean()){
+            name = vv.random() + name
+        }
+        return name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+    }
+    fun generatemiddleNameO(): String {
+        return if (Random.nextBoolean()){
+            generatefirstNameI() + "овна"
+        } else generatefirstNameI() + "ович"
+    }
+    fun generatelastNameF(): String {
+        return generatefirstNameI() + lnTails.random()
+    }
+    fun generateEmail(): String {
+        var email = ""
+        repeat((2..6).random()){
+            email += e.random()
+        }
+        email += "@"
+        repeat((2..6).random()){
+            email += e.random()
+        }
+        email += ".ru"
+        return email
     }
 
 

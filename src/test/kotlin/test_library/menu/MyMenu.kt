@@ -25,7 +25,7 @@ class MyMenu {
     }
 
     enum class Dictionaries(override val menu: MenuEnum, override val subMenu: String, override val desc: String?) : SubmenuInterface {
-        CumulativePlans(MenuEnum.Справочники, "Алгоритм реагирования", null),
+        CumulativePlans(MenuEnum.Справочники, "Алгоритмы реагирования", null),
         VideoCameras(MenuEnum.Справочники, "Видеокамеры", null),
         Sensors(MenuEnum.Справочники, "Датчики", null),
         Hotlines(MenuEnum.Справочники, "Дежурные службы", null),

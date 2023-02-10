@@ -10,13 +10,13 @@ import com.codeborne.selenide.Selectors.byCssSelector
 import com.codeborne.selenide.Selectors.byText
 import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.*
-import com.codeborne.selenide.SelenideElement.*
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import test_library.menu.MyMenu
 import test_library.menu.SubmenuInterface
+import test_library.statuses.StatusEnum
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -209,7 +209,7 @@ class Reports : BaseTest(){
                 element(byCssSelector("#simple-tabpanel-card"))
                     .should(exist, ofSeconds(waitTime))
                 //что она в нужном статусе
-                checkICToolIsStatus("В обработке", waitTime)
+                checkICToolIsStatus(StatusEnum.`В обработке`, waitTime)
             }
             //и что это именно так карточка которую мы только что создали
             if (i < 3 || i == 6) {
@@ -467,12 +467,12 @@ class Reports : BaseTest(){
                 element(byCssSelector("#simple-tabpanel-card"))
                     .should(exist, ofSeconds(waitTime))
                 //что она в нужном статусе
-                checkICToolIsStatus("В обработке", waitTime)
+                checkICToolIsStatus(StatusEnum.`В обработке`, waitTime)
             }
             if (i == 4) {
                 //закрываем одну карточку
-                updateICToolStatus("Завершена", waitTime)
-                updateICToolStatus("Закрыта", waitTime)
+                updateICToolStatus(StatusEnum.Завершена, waitTime)
+                updateICToolStatus(StatusEnum.Закрыта, waitTime)
             }
             //и что это именно так карточка которую мы только что создали
             if (i < 4) {
@@ -820,7 +820,7 @@ class Reports : BaseTest(){
 //                .should(exist, ofSeconds(waitTime))
 //                .shouldBe(visible, ofSeconds(waitTime))
 //                .click()
-            checkICToolIsStatus("В обработке", waitTime)
+            checkICToolIsStatus(StatusEnum.`В обработке`, waitTime)
             //выполним назначение ДДС
             if (ddsTypeList.isNotEmpty()){
                 element(byXpath(" //header//*[text()='Работа с ДДС']/ancestor::button"))
@@ -1016,7 +1016,7 @@ class Reports : BaseTest(){
             } else {
                 updateICStatus = (1..6).random()
                 if (updateICStatus != 1) {
-                    updateICToolStatus("", waitTime)
+                    updateICToolStatus(null, waitTime)
                 }
             }
             Thread.sleep(500)
@@ -1499,7 +1499,7 @@ class Reports : BaseTest(){
             element(byCssSelector("#simple-tabpanel-card"))
                 .should(exist, ofSeconds(waitTime))
             //что она в нужном статусе
-            checkICToolIsStatus("В обработке", waitTime)
+            checkICToolIsStatus(StatusEnum.`В обработке`, waitTime)
             checkICToolDopInfo("Reports 0070, i=$i $dateTime $reportsMapKeysList", waitTime)
             //дополняем значения карт
             var validatedValue = ""//некоторое значение которое мы проверяем в отчете, в зависимости от отчета, это либо тип происшествия, либо источник обращения, либо оператор

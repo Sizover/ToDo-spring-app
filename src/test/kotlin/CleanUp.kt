@@ -7,6 +7,8 @@ import com.codeborne.selenide.Selenide.back
 import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
 import org.openqa.selenium.Keys
+import test_library.menu.MyMenu
+import test_library.statuses.StatusEnum
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 
@@ -21,9 +23,9 @@ class CleanUp : BaseTest(){
         var menuVariable =1
         for (m in 1..3){
             when (m) {
-                1 -> {menuNavigation("Отчеты", "По происшествиям", waitTime)}
-                2 -> {menuNavigation("Отчеты", "По обращениям", waitTime)}
-                3 -> {menuNavigation("Отчеты", "По сотрудникам", waitTime)}
+                1 -> {menuNavigation(MyMenu.Reports.IncidentReport, waitTime)}
+                2 -> {menuNavigation(MyMenu.Reports.CallsReport, waitTime)}
+                3 -> {menuNavigation(MyMenu.Reports.EmployeesReport, waitTime)}
             }
 //        tools.menuNavigation("Отчеты", "По обращениям", waitTime)
 //        tools.menuNavigation("Отчеты", "По сотрудникам", waitTime)
@@ -107,7 +109,7 @@ class CleanUp : BaseTest(){
         logoffTool()
         //переходим к списку происшествий и ждем загрузки
         anyLogonTool("autotest_admin", "autotest_admin")
-        menuNavigation("Происшествия","Список происшествий",waitTime)
+        menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
         element(byCssSelector("table>tbody>tr"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -174,12 +176,12 @@ class CleanUp : BaseTest(){
                 .click()
             if (statusIC == "Новая"){
                 try {
-                    checkICToolIsStatus("В обработке", waitTime)
+                    checkICToolIsStatus(StatusEnum.`В обработке`, waitTime)
                 } catch (_:  Throwable) {
                 }
             }
             Thread.sleep(500)
-            updateICToolStatus("Закрыта", waitTime)
+            updateICToolStatus(StatusEnum.Закрыта, waitTime)
             back()
             element(byXpath("//table/tbody/tr[1]"))
                 .should(exist, ofSeconds(waitTime))

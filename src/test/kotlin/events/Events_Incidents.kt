@@ -5,20 +5,19 @@ import BaseTest
 import com.codeborne.selenide.CollectionCondition
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.visible
-import com.codeborne.selenide.Selectors.byCssSelector
 import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.*
 import com.codeborne.selenide.WebDriverRunner.url
 import org.openqa.selenium.Keys
 import org.testng.annotations.Test
 import test_library.filters.FilterEnum
-import test_library.menu.MyMenu
+import test_library.menu.MyMenu.*
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class events_Incidents :BaseTest() {
+class Events_Incidents :BaseTest() {
 
 
     @Test (retryAnalyzer = Retry::class, groups = ["ALL"])
@@ -27,7 +26,7 @@ class events_Incidents :BaseTest() {
         val dateStartList = LocalDate.now().minusMonths(2).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
         val dateEndList = LocalDate.now().minusMonths(1).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
         logonTool()
-        menuNavigation(MyMenu.System.Audit, waitTime)
+        menuNavigation(System.Audit, waitTime)
         element(byXpath("//table/tbody//*[text()='Аудит справочников']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -61,7 +60,7 @@ class events_Incidents :BaseTest() {
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         Thread.sleep(5000)
-        menuNavigation(MyMenu.Dictionaries.Municipalities, waitTime)
+        menuNavigation(Dictionaries.Municipalities, waitTime)
         element(byXpath("//table/tbody"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -120,7 +119,7 @@ class events_Incidents :BaseTest() {
         //сначала соберем номера за последний месяц
         date = LocalDate.now()
         dateTime = LocalDateTime.now()
-        val menuList = listOf(MyMenu.Incidents.IncidentsList, MyMenu.Incidents.IncidentsArchive)
+        val menuList = listOf(Incidents.IncidentsList, Incidents.IncidentsArchive)
         val falseСallsNumbersList = mutableListOf<String>()
         val moreMonthFalseСallsNumbersList = mutableListOf<String>()
         var anotherRound: Boolean
@@ -258,7 +257,7 @@ class events_Incidents :BaseTest() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //переходим в форму обращения, вставляем номер ложный моложе месяца, ждем банер,
         // очищаем вставляем ложный более месяца, банера быть не должно
-        menuNavigation(MyMenu.Incidents.CreateIncident, waitTime)
+        menuNavigation(Incidents.CreateIncident, waitTime)
         createICToolCalltype("Телефон (ССОП)", waitTime)
         var rndTel = falseСallsNumbersList.random()
         createICToolPhone(rndTel, waitTime)

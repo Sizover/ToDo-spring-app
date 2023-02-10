@@ -12,7 +12,8 @@ import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
 import org.testng.annotations.Test
-import test_library.menu.MyMenu
+import test_library.menu.MyMenu.*
+import test_library.statuses.StatusEnum.*
 
 class Labels : BaseTest(){
 
@@ -24,7 +25,7 @@ class Labels : BaseTest(){
         date = LocalDate.now()
         dateTime = LocalDateTime.now()
         logonTool()
-        menuNavigation(MyMenu.Dictionaries.Labels, waitTime)
+        menuNavigation(Dictionaries.Labels, waitTime)
         tableCheckbox("Метка;Описание", true, waitTime)
         //воспользуемся поиском, что бы найти созданную метку не удаленную в упавший проход
         element(byXpath("//*[@name='search']/ancestor::button"))
@@ -120,7 +121,7 @@ class Labels : BaseTest(){
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //Регистрируем КП
         logonTool()
-        menuNavigation(MyMenu.Incidents.CreateIncident, waitTime)
+        menuNavigation(Incidents.CreateIncident, waitTime)
         createICToolCalltype("", waitTime)
         createICToolPhone("", waitTime)
         createICToolFIO("AutoTest", "Labels 0010", "", waitTime)
@@ -169,7 +170,7 @@ class Labels : BaseTest(){
         element(byCssSelector("#simple-tabpanel-card"))
             .should(exist, ofSeconds(waitTime))
         //что она в нужном статусе
-        checkICToolIsStatus("В обработке", waitTime)
+        checkICToolIsStatus(`В обработке`, waitTime)
         //и что это именно так карточка которую мы только что создали
         checkICToolDopInfo("AutoTest Labels 0010 $dateTime", waitTime)
         createdLabel.forEach {
@@ -233,7 +234,7 @@ class Labels : BaseTest(){
         //перезалогиниваемся, что бы исключить кеширование и расширить тест
         Thread.sleep(500)
         logonTool()
-        menuNavigation(MyMenu.Dictionaries.Labels, waitTime)
+        menuNavigation(Dictionaries.Labels, waitTime)
         //воспользуемся поиском, что бы найти созданную метку
         tableSearch("AutoTest", waitTime)
         Thread.sleep(500)

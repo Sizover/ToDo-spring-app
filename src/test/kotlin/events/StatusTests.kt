@@ -10,7 +10,9 @@ import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
 import org.testng.annotations.DataProvider
-import test_library.menu.MyMenu
+import test_library.menu.MyMenu.*
+import test_library.statuses.StatusEnum.*
+import test_library.statuses.StatusEnum
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -23,14 +25,14 @@ open class StatusTests : BaseTest(){
     @DataProvider(name = "Статусы детей и родителей", parallel = false)
     open fun Statuses(): Any {
         return arrayOf<Array<Any>>(
-//            arrayOf("Завершена", "Завершена", "Завершена"),
-//            arrayOf("Отменена", "Отменена", "Завершена"),
-            arrayOf("Отменена", "Завершена", "Завершена")
+            arrayOf(Завершена, Завершена, Завершена),
+            arrayOf(Отменена, Отменена, Завершена),
+            arrayOf(Отменена, Завершена, Завершена)
         )
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, dataProvider = "Статусы детей и родителей", groups = ["ALL"])
-    fun `Status 0010 Проверка сумарного статуса родительской КП`(Status1: String, Status2: String, StutusSum: String) {
+    fun `Status 0010 Проверка сумарного статуса родительской КП`(Status1: StatusEnum, Status2: StatusEnum, StutusSum: StatusEnum) {
         //Проверка изменения статусов родительской карточки в зависимости от статусов дочерних
         //проверяемые комбинации - 2 статуса дочерней карточки, последний - искомой родительской
         //используемые службы и их логины операторов, пар соответственно должно быть как и статусов дочерних КП
@@ -39,7 +41,7 @@ open class StatusTests : BaseTest(){
         date = LocalDate.now()
         dateTime = LocalDateTime.now()
         logonTool()
-        menuNavigation(MyMenu.Incidents.CreateIncident, waitTime)
+        menuNavigation(Incidents.CreateIncident, waitTime)
         element(byXpath("//form[@novalidate]"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -75,7 +77,7 @@ open class StatusTests : BaseTest(){
             //проверяя что нам в принципе загрузило какую-то карточку
         element(byCssSelector("#simple-tabpanel-card")).should(exist, ofSeconds(longWait))
             //что она в статусе "В обработке"
-        checkICToolIsStatus("В обработке", longWait)
+        checkICToolIsStatus(StatusEnum.`В обработке`, longWait)
             //и что это именно так карточка которую мы только что создали
         checkICToolDopInfo("AutoTest S 0010 $Status1 $Status2 $StutusSum $dateTime", waitTime)
         element(byXpath("//*[text()='Работа с ДДС']/text()/ancestor::button"))
@@ -116,27 +118,27 @@ open class StatusTests : BaseTest(){
         logoffTool()
 
         var i = 1
-        var statusI = ""
+        var statusI: StatusEnum = Status1
             for ((hotline, login) in hotlinesMap) {
                 when(i){
                     1 -> statusI = Status1
                     2 -> statusI = Status2
                 }
                 anyLogonTool(login, login)
-                menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
+                menuNavigation(Incidents.IncidentsList, waitTime)
                 tableCheckbox("Описание", true, waitTime)
                 //Находим созданную КП в КИАП ДДС
                 element(byText("AutoTest S 0010 $Status1 $Status2 $StutusSum $dateTime"))
                     .should(exist, ofSeconds(waitTime))
                     .click()
-                checkICToolIsStatus("В обработке", waitTime)
+                checkICToolIsStatus(StatusEnum.`В обработке`, waitTime)
                 //устанавливаем статус
                 updateICToolStatus(statusI, longWait)
                 i += 1
                 logoffTool()
             }
         logonTool()
-        menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
+        menuNavigation(Incidents.IncidentsList, waitTime)
         tableCheckbox("Описание", true, waitTime)
         //Находим созданную родительскую КП
         element(byText("AutoTest S 0010 $Status1 $Status2 $StutusSum $dateTime"))

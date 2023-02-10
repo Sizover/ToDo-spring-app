@@ -10,7 +10,6 @@ import com.codeborne.selenide.Selenide.elements
 import org.openqa.selenium.Keys
 import test_library.filters.FilterEnum
 import test_library.menu.MyMenu
-import test_library.menu.SubMenuEnum
 import java.io.File
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
@@ -72,7 +71,7 @@ class PlayGround : BaseTest(){
             telCodeElementsCollection.forEach {
                 telCodeList.add(it.ownText)
             }
-        //воспользуемся поиском что бы найти МО с "AutoTest" в названии
+        //воспользуемся поиском, что бы найти МО с "AutoTest" в названии
         element(byXpath("//*[@name='search']/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -94,7 +93,7 @@ class PlayGround : BaseTest(){
             val autotestMOElementsList = elements(byXpath("//tbody/tr/td[1]//*[contains(text(),'AutoTest')]"))
             //можно при наполнении moATItWas через else if проверить на соответствие заголовка МО "AutoTest Основное МО"
             // и удалить его из moAtCreated в таком случае
-            //или просто потом проверить есть ли "AutoTest Основное МО" в moATItWas, и если  нет положить в moAtCreated
+            //или просто потом проверить есть ли "AutoTest Основное МО" в moATItWas, и если нет положить в moAtCreated
             // перед этим не удаляя его из КИАП
             autotestMOElementsList.forEach {
                 if (
@@ -208,7 +207,7 @@ class PlayGround : BaseTest(){
     fun `Черновик2`() {
 
         logonTool()
-        menuNavigation(MyMenu.Map.SubMenuMap, waitTime)
+
         Thread.sleep(1000)
         setFilterByEnum(
             FilterEnum.Дата_регистрации,
@@ -217,7 +216,7 @@ class PlayGround : BaseTest(){
         Thread.sleep(1000)
         cleanFilterByEnum(listOf(), waitTime)
         Thread.sleep(1000)
-        SubMenuEnum.`Типы происшествий`.subMMMenu
+
 //        element(byXpath("html/body/div[@role='presentation']//*[text()='Пользователь системы']/ancestor::fieldset//*[text()='Да']/ancestor::label//input/..")).click()
 //        Thread.sleep(1000)
 //        println(element(byXpath("html/body/div[@role='presentation']//*[text()='Пользователь системы']/ancestor::fieldset//*[text()='Все']/ancestor::label//input/..")).getCssValue("background-color"))

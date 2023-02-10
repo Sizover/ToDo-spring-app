@@ -10,12 +10,13 @@ import com.codeborne.selenide.Selenide.*
 import org.junit.jupiter.api.Assertions
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import test_library.menu.MyMenu
+import test_library.menu.MyMenu.*
+import test_library.statuses.StatusEnum.*
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-class dicts_Incidents :BaseTest() {
+class Dicts_Incidents :BaseTest() {
 
 
     @DataProvider(name = "Языки")
@@ -33,7 +34,7 @@ class dicts_Incidents :BaseTest() {
         logonTool()
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
-        menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
+        menuNavigation(Incidents.IncidentsList, waitTime)
         //кликаем по "создать обращение"
         element(byXpath("//*[text()='Создать обращение']/text()/ancestor::button")).click()
         //заполняем карточку
@@ -76,7 +77,7 @@ class dicts_Incidents :BaseTest() {
         element(byCssSelector("#simple-tabpanel-card"))
             .should(exist, ofSeconds(waitTime))
         //что она в статусе "В обработке"
-        checkICToolIsStatus("В обработке", longWait)
+        checkICToolIsStatus(`В обработке`, longWait)
         //и что это именно так карточка которую мы только что создали
         checkICToolDopInfo("AutoTest INC 0010 inc $dateTime $language1", waitTime)
         Assertions.assertTrue(
@@ -101,7 +102,7 @@ class dicts_Incidents :BaseTest() {
             .should(exist, ofSeconds(waitTime))
         element(byXpath("//table/tbody//*[text()='INC 0010 adr $dateTime']/ancestor::tr/td[$callTypeColumm][text()='$callType']"))
             .should(exist, ofSeconds(waitTime))
-        menuNavigation(MyMenu.Incidents.CreateIncident, waitTime)
+        menuNavigation(Incidents.CreateIncident, waitTime)
         //заполняем карточку
         //Источник события - выбираем случайно
         createICToolCalltype("", waitTime)
@@ -144,7 +145,7 @@ class dicts_Incidents :BaseTest() {
         //проверяя что нам в принципе загрузило какую-то карточку
         element(byCssSelector("#simple-tabpanel-card")).should(exist, ofSeconds(waitTime))
         //что она в статусе "В обработке"
-        checkICToolIsStatus("В обработке", waitTime)
+        checkICToolIsStatus(`В обработке`, waitTime)
         //развернём второе обращение
         element(byXpath("//*[text()='2']/ancestor::div[@id='panel1a-header']//*[name()='svg']/ancestor::div[1]"))
             .should(exist, ofSeconds(waitTime))

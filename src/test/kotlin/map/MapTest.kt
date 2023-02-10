@@ -9,7 +9,8 @@ import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.*
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
-import test_library.menu.MyMenu
+import test_library.menu.MyMenu.*
+import test_library.statuses.StatusEnum.*
 import java.time.Duration.ofSeconds
 import kotlin.math.PI
 import kotlin.math.abs
@@ -118,7 +119,7 @@ class MapTest  : BaseTest(){
             element(byCssSelector("header button svg[name='user']"))
                 .should(exist, ofSeconds(waitTime))
         }
-        menuNavigation(MyMenu.Incidents.CreateIncident, waitTime)
+        menuNavigation(Incidents.CreateIncident, waitTime)
         createICToolCalltype("", waitTime)
         createICToolPhone("", waitTime)
         createICToolFIO("Map", "Test", "002", waitTime)
@@ -131,11 +132,12 @@ class MapTest  : BaseTest(){
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
         inputRandomNew("incidentTypeId-textfield", false, waitTime)
-        element(byXpath("//*[text()='Сохранить карточку']/text()/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        checkICToolIsStatus("В обработке", waitTime)
+        pushButtonCreateIC("Autotest MT_002, Широта = $lat, Долгота = $lon", waitTime)
+//        element(byXpath("//*[text()='Сохранить карточку']/text()/ancestor::button"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+//            .click()
+        checkICToolIsStatus(`В обработке`, waitTime)
         checkICToolDopInfo("Autotest MT_002, Широта = $lat, Долгота = $lon", waitTime)
         //переходим в карту
         element(byCssSelector("div#place div[style*='cursor']"))
@@ -172,7 +174,9 @@ class MapTest  : BaseTest(){
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         back()
-        checkICToolIsStatus("В обработке", waitTime)
+        element(byXpath("//div[@role='tabpanel' and @id='simple-tabpanel-card']/form"))
+            .should(exist, ofSeconds(waitTime))
+        checkICToolIsStatus(`В обработке`, waitTime)
         checkICToolDopInfo("Autotest MT_002, Широта = $lat, Долгота = $lon", waitTime)
         logoffTool()
     }
