@@ -521,8 +521,14 @@ open class BaseTest {
         element(byXpath("//div[@role='alert']//*[@name='${alertEnum.name}']"))
             .should(exist, ofSeconds(waitTime))
 //            .shouldBe(visible, ofSeconds(waitTime))
-        element(byXpath("//div[@role='alert']//*[text()='$text']"))
-            .should(exist, ofSeconds(waitTime))
+        if (text.isNotEmpty()){
+            element(byXpath("//div[@role='alert']//*[text()='$text']"))
+                .should(exist, ofSeconds(waitTime))
+        } else {
+            element(byXpath("//div[@role='alert']//*[text()]"))
+                .should(exist, ofSeconds(waitTime))
+        }
+
 //            .shouldBe(visible, ofSeconds(waitTime))
         if (clickButtonClose){
             Thread.sleep(300)

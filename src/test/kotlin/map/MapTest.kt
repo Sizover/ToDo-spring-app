@@ -9,6 +9,7 @@ import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.*
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
+import test_library.alerts.AlertsEnum
 import test_library.menu.MyMenu.*
 import test_library.statuses.StatusEnum.*
 import java.time.Duration.ofSeconds
@@ -54,53 +55,52 @@ class MapTest  : BaseTest(){
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `MT_001 Проверка отображения значов на карте при применении различных фильтров карты`(){
         logonTool()
-    //открываем карту
-    element(byXpath("//span[@aria-label='Открыть карту в отдельном окне']/button"))
-        .should(exist, ofSeconds(waitTime))
-        .shouldBe(visible, ofSeconds(waitTime))
-        .click()
-    //Переключаемся между окнами
-    switchTo().window(1)
-    element(byCssSelector("div.leaflet-control button.MuiIconButton-sizeSmall"))
-        .should(exist, ofSeconds(waitTime))
-        .shouldBe(visible, ofSeconds(waitTime))
-        .click()
-    //открываем настройки карты
-    element(byXpath("//main/div[@style='display: block;']"))
-        .should(exist, ofSeconds(waitTime))
-        .shouldBe(visible, ofSeconds(waitTime))
-    //отключаем все чек боксы
-    while (elements(byXpath("//main/div[@style='display: block;']//*[name()='path'][@d]/../../input")).size > 0) {
-//        element(byXpath("//main/div[@style='display: block;']")).scrollIntoView(false)
-        element(byXpath("//main/div[@style='display: block;']//*[name()='path'][@d]/../../input")).sendKeys(Keys.END)
-        element(byXpath("//main/div[@style='display: block;']//*[name()='path'][@d]/../../input")).click()
-        Thread.sleep(500)
-    }
-    //включаем чекбокс всех происшествий
+        //открываем карту
+        element(byXpath("//span[@aria-label='Открыть карту в отдельном окне']/button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        //Переключаемся между окнами
+        switchTo().window(1)
+        element(byCssSelector("div.leaflet-control button.MuiIconButton-sizeSmall"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        //открываем настройки карты
+        element(byXpath("//main/div[@style='display: block;']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        //отключаем все чек боксы
+        while (elements(byXpath("//main/div[@style='display: block;']//*[name()='path'][@d]/../../input")).size > 0) {
+            element(byXpath("//main/div[@style='display: block;']//*[name()='path'][@d]/../../input")).sendKeys(Keys.END)
+            element(byXpath("//main/div[@style='display: block;']//*[name()='path'][@d]/../../input")).click()
+            Thread.sleep(500)
+        }
+        //включаем чекбокс всех происшествий
         val checkboxSelector = "//h6[text()='%s']/../parent::span/parent::label/span[@style]//input"
         val checkboxStatus = "//h6[text()='%s']/../parent::span/parent::label/span[@style]//*[name()='path']"
-    element(byXpath(checkboxSelector.format("Все статусы")))
-        .should(exist, ofSeconds(waitTime))
-        .click()
-    //убеждаемся, что он включился
-    element(byXpath(checkboxStatus.format("Все статусы")))
-        .should(exist, ofSeconds(waitTime))
-    //подсчитываем элементы, что бы сравнить их сумму с нулем
-    val markerSelector = "div.leaflet-pane.leaflet-marker-pane>img.%s"
-    val markerIncidentInProcess = elements(byCssSelector(markerSelector.format("markerIncidentInProcess"))).size
-    val markerIncidentFinished = elements(byCssSelector(markerSelector.format("markerIncidentFinished"))).size
-    val markerIncidentNew = elements(byCssSelector(markerSelector.format("markerIncidentNew"))).size
-    val markerIncidentResponse = elements(byCssSelector(markerSelector.format("markerIncidentResponse"))).size
-    val numericMarker = elements(byXpath("//div[contains(@class,'markerIncident')]/*[text()]")).size
-    val summaryMarker:Int = markerIncidentInProcess + markerIncidentFinished + markerIncidentNew + markerIncidentResponse + numericMarker
-    Assertions.assertTrue(summaryMarker > 0)
-    //выключаем чекбокс происшествий
         element(byXpath(checkboxSelector.format("Все статусы")))
-        .should(exist, ofSeconds(waitTime))
-        .click()
-    //убеждаемся, что он выключился
+            .should(exist, ofSeconds(waitTime))
+            .click()
+        //убеждаемся, что он включился
         element(byXpath(checkboxStatus.format("Все статусы")))
-        .shouldNot(exist, ofSeconds(waitTime))
+            .should(exist, ofSeconds(waitTime))
+        //подсчитываем элементы, что бы сравнить их сумму с нулем
+        val markerSelector = "div.leaflet-pane.leaflet-marker-pane>img.%s"
+        val markerIncidentInProcess = elements(byCssSelector(markerSelector.format("markerIncidentInProcess"))).size
+        val markerIncidentFinished = elements(byCssSelector(markerSelector.format("markerIncidentFinished"))).size
+        val markerIncidentNew = elements(byCssSelector(markerSelector.format("markerIncidentNew"))).size
+        val markerIncidentResponse = elements(byCssSelector(markerSelector.format("markerIncidentResponse"))).size
+        val numericMarker = elements(byXpath("//div[contains(@class,'markerIncident')]/*[text()]")).size
+        val summaryMarker:Int = markerIncidentInProcess + markerIncidentFinished + markerIncidentNew + markerIncidentResponse + numericMarker
+        Assertions.assertTrue(summaryMarker > 0)
+        //выключаем чекбокс происшествий
+        element(byXpath(checkboxSelector.format("Все статусы")))
+            .should(exist, ofSeconds(waitTime))
+            .click()
+      //убеждаемся, что он выключился
+        element(byXpath(checkboxStatus.format("Все статусы")))
+            .shouldNot(exist, ofSeconds(waitTime))
         MTtool_001("Дежурные службы")
         MTtool_001("Камеры")
         MTtool_001("Датчики")
@@ -178,6 +178,63 @@ class MapTest  : BaseTest(){
             .should(exist, ofSeconds(waitTime))
         checkICToolIsStatus(`В обработке`, waitTime)
         checkICToolDopInfo("Autotest MT_002, Широта = $lat, Долгота = $lon", waitTime)
+        logoffTool()
+    }
+
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
+    fun `MT_002 Проверка PM1363~B - Общая ошибка приложения после обновления страницы карты`() {
+        logonTool()
+        //открываем карту
+        element(byXpath("//span[@aria-label='Открыть карту в отдельном окне']/button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        //Переключаемся между окнами
+        switchTo().window(1)
+        //Ждем некоторый кусочек карты. Картинку.
+        element(byXpath("//div[@id='skeleton']//main//img[@alt and @role='presentation' and @src]"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        //ждем кнопку настроек карты (что б наверняка)
+        element(byXpath("//button/*[@aria-label='Показать слои']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        //обновляем страницу
+        refresh()
+        //Ждем некоторый кусочек карты. Картинку.
+        element(byXpath("//div[@id='skeleton']//main//img[@alt and @role='presentation' and @src]"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        //ждем кнопку настроек карты
+        element(byXpath("//button/*[@aria-label='Показать слои']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        //Возвращаемся в основное окно
+        switchTo().window(0)
+        checkAlert(AlertsEnum.snackbarInfo, "Закрыта карта в другом окне", true, 30)
+        //Переходим в справочник организаций
+        menuNavigation(Dictionaries.Companies, waitTime)
+        //выводим столбец карты
+        tableCheckbox("Карта", true, waitTime)
+        val mapColumn = tableNumberOfColumn("Карта", waitTime)
+        element(byXpath("//table/tbody/tr/td[$mapColumn]/*[@aria-label='Показать на карте']/button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        elements(byXpath("//table/tbody/tr/td[$mapColumn]/*[@aria-label='Показать на карте']/button"))
+            .random()
+            .click()
+        element(byXpath("//div[@role='alert']//*[@name='snackbarError']"))
+            .shouldNot(exist, ofSeconds(waitTime))
+        //Ждем некоторый кусочек карты. Картинку.
+        element(byXpath("//div[@id='skeleton']//main//img[@alt and @role='presentation' and @src]"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        //ждем кнопку настроек карты
+        element(byXpath("//button/*[@aria-label='Показать слои']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//div[@role='alert']//*[@name='snackbarError']"))
+            .shouldNot(exist, ofSeconds(waitTime))
         logoffTool()
     }
 }
