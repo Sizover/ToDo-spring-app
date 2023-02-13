@@ -1,5 +1,4 @@
 
-import com.codeborne.selenide.Condition
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Selectors.byCssSelector
@@ -8,9 +7,13 @@ import com.codeborne.selenide.Selenide.back
 import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
 import org.openqa.selenium.Keys
+import test_library.alerts.AlertsEnum
+import test_library.filters.FilterEnum
+import test_library.menu.MyMenu
+import test_library.statuses.StatusEnum
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
-import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class CleanUp : BaseTest(){
 
@@ -23,22 +26,23 @@ class CleanUp : BaseTest(){
         var menuVariable =1
         for (m in 1..3){
             when (m) {
-                1 -> {menuNavigation("Отчеты", "По происшествиям", waitTime)}
-                2 -> {menuNavigation("Отчеты", "По обращениям", waitTime)}
-                3 -> {menuNavigation("Отчеты", "По сотрудникам", waitTime)}
+                1 -> {menuNavigation(MyMenu.Reports.IncidentReport, waitTime)}
+                2 -> {menuNavigation(MyMenu.Reports.CallsReport, waitTime)}
+                3 -> {menuNavigation(MyMenu.Reports.EmployeesReport, waitTime)}
             }
 //        tools.menuNavigation("Отчеты", "По обращениям", waitTime)
 //        tools.menuNavigation("Отчеты", "По сотрудникам", waitTime)
-            stringsOnPage(50, waitTime)
+            tableStringsOnPage(50, waitTime)
 //            var stringNumder = 1
             //считаем количество строк - понадобится для прерываемого цикла
             var countString = elements(byXpath("//tbody/tr")).size
 //            println(countString)
             //определяем индекс последнего столбца, что бы потом кликать по трем точкам
             val menuColumn = elements(byXpath("//thead/tr/th")).size
+            val nameColumn = tableNumberOfColumn("Наименование отчета", waitTime)
 //            println(menuColumn)
             //входим в большой цикл без защитного счетчика
-            checkbox("Наименование отчета", true, waitTime)
+            tableCheckbox("Наименование отчета", true, waitTime)
             //"Проверка формирования отчетов" это часть названия отчета присваемого всем отчетам создаваемыми автотестами
             while (elements(byXpath("//tbody/tr//*[contains(text(),'Проверка формирования отчетов')]")).size > 0 ){
                 countString = elements(byXpath("//tbody/tr")).size
@@ -51,30 +55,25 @@ class CleanUp : BaseTest(){
                         } else {
                             element(byXpath("//tbody/tr[$i]")).sendKeys(Keys.END)
                         }
-                        val deletedReport = element(byXpath("//tbody/tr[$i]/td[1 and contains(text(),'Проверка формирования отчетов')]")).ownText
+                        val deletedReport = element(byXpath("//tbody/tr[$i]/td[$nameColumn and contains(text(),'Проверка формирования отчетов')]")).ownText
                         element(byXpath("//tbody/tr[$i]/td[$menuColumn]//button")).click()
-                        element(byXpath("//*[text()='Удалить']/parent::button"))
+                        element(byXpath("//div[@role='presentation']//*[text()='Удалить']/text()/ancestor::button"))
                             .should(exist, ofSeconds(waitTime))
                             .shouldBe(visible, ofSeconds(waitTime))
                             .click()
-                        element(byXpath("//*[text()='Подтвердите удаление записи']"))
+                        element(byXpath("//div[@role='presentation']//div[@role='dialog']//*[text()='Подтвердите удаление записи']"))
                             .should(exist, ofSeconds(waitTime))
                             .shouldBe(visible, ofSeconds(waitTime))
                         Thread.sleep(200)
-                        element(byXpath("//span[@title='Удалить']/button"))
+                        element(byXpath("//div[@role='presentation']//div[@role='dialog']//*[text()='Удалить']/text()/ancestor::button"))
                             .should(exist, ofSeconds(waitTime))
                             .shouldBe(visible, ofSeconds(waitTime))
                             .click()
                         //                    Thread.sleep(1000)
                         //хдем зеленую всплывашку
-                        element(byXpath("//*[contains(@class, 'MuiAlert-standardSuccess')][@role='alert']//*[text()='Запись удалена']"))
-                            .should(exist, ofSeconds(waitTime))
-                            .shouldBe(visible, ofSeconds(waitTime))
-                        //закрываем зеленую всплывашку
-                        element(byXpath("//*[contains(@class, 'MuiAlert-standardSuccess')][@role='alert']//button"))
-                            .click()
+                        checkAlert(AlertsEnum.snackbarSuccess, "Запись удалена", true, waitTime)
                         //ждем исчезновения отчета, который удаляли
-                        element(byXpath("//tbody/tr[$i]/td[1]//*[text()='$deletedReport']"))
+                        element(byXpath("//tbody/tr[$i]/td[$nameColumn]//text()/parent::*[text()='$deletedReport']"))
                             .shouldNot(exist, ofSeconds(waitTime))
                         Thread.sleep(1500)
                         // прерываем цикл for потому что таблица перестроилась после удаления отчета
@@ -96,77 +95,75 @@ class CleanUp : BaseTest(){
         logonTool()
         //убедимся что мы за оператор:
         //кликаем по иконке оператора сверху справа
-        element(byXpath("//header//button//*[text()]/ancestor::button")).click()
+        element(byXpath("//header//button//*[@name='user']/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
         //пероеходим в профиль пользователя
         element(byCssSelector("a[href='/profile']>button"))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-        element(byCssSelector("a[href='/profile']>button")).click()
+        element(byCssSelector("a[href='/profile']>button"))
+            .click()
         //Извлекаем имя оператора
         element(byXpath("//p[text()='Должностное лицо:']/following-sibling::p"))
-            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-        val operator = element(byXpath("//p[text()='Должностное лицо:']/following-sibling::p")).ownText
-        val operatorFIO = operator.trim()
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        val operatorFIO = element(byXpath("//p[text()='Должностное лицо:']/following-sibling::p")).ownText.trim()
         logoffTool()
         //переходим к списку происшествий и ждем загрузки
         anyLogonTool("autotest_admin", "autotest_admin")
-        menuNavigation("Происшествия","Список происшествий",waitTime)
+        menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
         element(byCssSelector("table>tbody>tr"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        checkbox("Статус", true, waitTime)
-        val statusColumn = numberOfColumn("Статус", waitTime)
+        tableCheckbox("Статус", true, waitTime)
+        val statusColumn = tableNumberOfColumn("Статус", waitTime)
         //отчищаем фильтры, что бы закрывать и дочерние карточки ДДС
-        element(byXpath("//span[contains(text(),'Еще фильтры')]/.."))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        element(byXpath("//span[text()='Очистить все']/.."))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
+        cleanFilterByEnum(listOf(), waitTime)
         Thread.sleep(2500)
         //устанавливаем фильтр по оператору по которому логинится автотест
-        if (elements(byXpath("//span[text()='Оператор']/parent::button")).size == 1 ){
-            element(byXpath("//span[text()='Оператор']/parent::button")).click()
-        } else {
-            element(byXpath("//span[contains(text(),'Еще фильтры')]/parent::button")).click()
-        }
-        element(byXpath("//input[@name='createdBy']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        element(byXpath("//body/div[@role='presentation']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        element(byXpath("//input[@name='createdBy']")).sendKeys(operatorFIO)
-        element(byXpath("//body/div[@role='presentation']//*[text()='$operatorFIO']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        element(byXpath("//span[text()='Применить']/parent::button")).click()
+        setFilterByEnum(FilterEnum.Оператор, operatorFIO, waitTime)
+//        if (elements(byXpath("//span[text()='Оператор']/parent::button")).size == 1 ){
+//            element(byXpath("//span[text()='Оператор']/parent::button")).click()
+//        } else {
+//            element(byXpath("//span[contains(text(),'Еще фильтры')]/parent::button")).click()
+//        }
+//        element(byXpath("//input[@name='createdBy']"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+//            .click()
+//        element(byXpath("//body/div[@role='presentation']"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+//        element(byXpath("//input[@name='createdBy']")).sendKeys(operatorFIO)
+//        element(byXpath("//body/div[@role='presentation']//*[text()='$operatorFIO']"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+//            .click()
+//        element(byXpath("//span[text()='Применить']/parent::button")).click()
         Thread.sleep(2500)
         //устанавливаем фильтр по дате регистрации
-        if (elements(byXpath("//span[text()='Дата регистрации']/parent::button")).size == 1){
-            element(byXpath("//span[text()='Дата регистрации']/parent::button")).click()
-        } else {
-            element(byXpath("//span[contains(text(),'Еще фильтры')]/parent::button")).click()
-        }
-        val dateStartList = dateStart.split("-")
-        val dateEndList = dateEnd.split("-")
-        //заполняем дату начала и конца периода
-        element(byCssSelector("input#callReceivedAtStart"))
-            .sendKeys("${dateStartList[2]}.${dateStartList[1]}.${dateStartList[0]}0000")
-        element(byCssSelector("input#callReceivedAtEnd"))
-            .sendKeys("${dateEndList[2]}.${dateEndList[1]}.${dateEndList[0]}2359")
-        element(byXpath("//span[text()='Применить']/parent::button")).click()
-        element(byXpath("//table/tbody/tr//*[text()]"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
+        setFilterByEnum(FilterEnum.Дата_регистрации, LocalDate.now().minusWeeks(20).format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString()+";", waitTime)
+//        if (elements(byXpath("//span[text()='Дата регистрации']/parent::button")).size == 1){
+//            element(byXpath("//span[text()='Дата регистрации']/parent::button")).click()
+//        } else {
+//            element(byXpath("//span[contains(text(),'Еще фильтры')]/parent::button")).click()
+//        }
+//        val dateStartList = dateStart.split("-")
+//        val dateEndList = dateEnd.split("-")
+//        //заполняем дату начала и конца периода
+//        element(byCssSelector("input#callReceivedAtStart"))
+//            .sendKeys("${dateStartList[2]}.${dateStartList[1]}.${dateStartList[0]}0000")
+//        element(byCssSelector("input#callReceivedAtEnd"))
+//            .sendKeys("${dateEndList[2]}.${dateEndList[1]}.${dateEndList[0]}2359")
+//        element(byXpath("//span[text()='Применить']/parent::button")).click()
+//        element(byXpath("//table/tbody/tr//*[text()]"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
         Thread.sleep(2500)
         //ищем надпись "Нет данных"
-        var noData = elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size
         // и войдя в цикл без защитного счетчика
-        while (noData == 0){//переходим в каждую первую карточку и меняем статус, на "Закрыта"
+        while (!element(byXpath("//table/tbody/tr//*[text()='Нет данных']")).exists()){//переходим в каждую первую карточку и меняем статус, на "Закрыта"
             //карточки в статусе новая, вызывают проблемы из-за того что меняют статус автоматически, даже когда по нему клацаешь
             //поэтому для них дождемся перехода в статус "в обработке"
             val statusIC = element(byXpath("//table/tbody/tr[1]/td[$statusColumn]//*[text()]")).ownText
@@ -176,18 +173,17 @@ class CleanUp : BaseTest(){
                 .click()
             if (statusIC == "Новая"){
                 try {
-                    checkICToolIsStatus("В обработке", waitTime)
+                    checkICToolIsStatus(StatusEnum.`В обработке`, waitTime)
                 } catch (_:  Throwable) {
                 }
             }
             Thread.sleep(500)
-            updateICToolStatus("Закрыта", waitTime)
+            updateICToolStatus(StatusEnum.Закрыта, longWait)
             back()
             element(byXpath("//table/tbody/tr[1]"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
             Thread.sleep(1000)
-            noData = elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size
         }
         logoffTool()
     }

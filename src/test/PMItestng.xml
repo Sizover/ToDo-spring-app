@@ -13,12 +13,12 @@
         <classes>
             <class name="dicts.SearchTests"></class>
             <class name="dicts.Labels"></class>
-            <class name="dicts.Incidents"></class>
+            <class name="dicts.dicts_Incidents"></class>
+            <class name="events.events_Incidents"></class>
             <class name="events.StatusTests"></class>
             <class name="map.MapTest"></class>
             <class name="pmi_tests.PimTests"></class>
             <class name="reports.Reports"></class>
-            <!--class name="JustTests"></class-->
             <class name="CleanUp"></class>
         </classes>
     </test>

@@ -10,11 +10,13 @@ import com.codeborne.selenide.Selectors.byCssSelector
 import com.codeborne.selenide.Selectors.byText
 import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.*
-import com.codeborne.selenide.SelenideElement.*
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
+import test_library.menu.MyMenu
+import test_library.menu.SubmenuInterface
+import test_library.statuses.StatusEnum
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -32,29 +34,33 @@ class Reports : BaseTest(){
         logonTool()
         //кликаем по иконке отчетов
         //Переходим в "отчет по обращениям"
-        menuNavigation("Отчеты","По обращениям", waitTime)
+        menuNavigation(MyMenu.Reports.CallsReport, waitTime)
         //кликаем по "Создать отчет"
-        element(byXpath("//span[text()='Создать отчет']/.."))
+        element(byXpath("//*[text()='Создать отчет']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
         //Заполняем поля отчета - название
         element(byCssSelector("input#title"))
             .sendKeys("Reports 0010 Проверка формирования отчетов по обращениям $dateTime отсчет")
-        //впердоливаем говнокод по преобразование даты
-        val dateM = date.toString().split("-")
         //заполняем дату начала и конца периода отчета сегоднешним числом
-        element(byCssSelector("input#periodStart"))
-            .sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
-        element(byCssSelector("input#periodEnd")).sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
+        element(byXpath("//form[@novalidate]//*[text()='Период']/following-sibling::*//input[@placeholder='с']"))
+            .sendKeys(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString())
+        element(byXpath("//form[@novalidate]//*[text()='Период']/following-sibling::*//input[@placeholder='по']"))
+            .sendKeys(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString())
         //вбиваем адрес
         addressInput("address", "Карачаево-Черкесская Респ, г Карачаевск", waitTime)
         //создаем отчет
-        element(byXpath("//span[text()='Создать']/..")).click()
+        element(byXpath("//form[@novalidate]//*[text()='Создать']/text()/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
         //переходим в созданный отчет
         element(byXpath("//tbody/tr/td"))
             .shouldHave(text("Reports 0010 Проверка формирования отчетов по обращениям $dateTime отсчет"))
-            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime)).click()
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
         //проверяем и запоминаем общее количество обращений
         val tableSelector = "//table/tbody/tr/td[text()='%s']/following-sibling::td"
         val all = element(byXpath(tableSelector.format("Общее количество вызовов (обращений):"))).ownText.toInt()
@@ -140,13 +146,22 @@ class Reports : BaseTest(){
             date = LocalDate.now()
             //кликаем по иконке происшествий в боковом меню
             //Переходим в "Список происшетвий"
-            menuNavigation("Происшествия","Список происшествий",waitTime)
+            menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
             //кликаем по "создать обращение"
-            element(byXpath("//span[text()='Создать обращение']/..")).click()
+            element(byXpath("//*[text()='Создать обращение']/text()/ancestor::button"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
             //заполняем карточку
             //Источник события - выбираем по порядку
-            element(byCssSelector("div#calltype")).click()
-            element(byCssSelector("div#menu->div>ul[role='listbox']>li:nth-child($i)")).click()
+            element(byCssSelector("div#calltype"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+            element(byCssSelector("div#menu->div>ul[role='listbox']>li:nth-child($i)"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
             //Номер телефона
             createICToolPhone("", waitTime)
             //ФИО
@@ -207,7 +222,7 @@ class Reports : BaseTest(){
                 element(byCssSelector("#simple-tabpanel-card"))
                     .should(exist, ofSeconds(waitTime))
                 //что она в нужном статусе
-                checkICToolIsStatus("В обработке", waitTime)
+                checkICToolIsStatus(StatusEnum.`В обработке`, waitTime)
             }
             //и что это именно так карточка которую мы только что создали
             if (i < 3 || i == 6) {
@@ -219,7 +234,7 @@ class Reports : BaseTest(){
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //кликаем по иконке отчетов
         //Переходим в "отчет по обращениям"
-        menuNavigation("Отчеты", "По обращениям", waitTime)
+        menuNavigation(MyMenu.Reports.CallsReport, waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/parent::button")).click()
         //Заполняем поля отчета - название
@@ -227,9 +242,9 @@ class Reports : BaseTest(){
             .sendKeys("Reports 0010 Проверка формирования отчетов по обращениям $dateTime сверка")
         //заполняем дату начала и конца периода отчета сегоднешним числом
         element(byCssSelector("input#periodStart"))
-            .sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
+            .sendKeys(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString())
         element(byCssSelector("input#periodEnd"))
-            .sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
+            .sendKeys(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString())
         //вбиваем адрес
         addressInput("address","Карачаево-Черкесская Респ, г Карачаевск",waitTime)
         //создаем отчет
@@ -322,22 +337,20 @@ class Reports : BaseTest(){
         logonTool()
         //кликаем по иконке отчетов
         //Переходим в "отчет по деятельности сотрудников"
-        menuNavigation("Отчеты", "По сотрудникам", waitTime)
+        menuNavigation(MyMenu.Reports.EmployeesReport, waitTime)
         //кликаем по "Создать отчет"
-        element(byXpath("//span[text()='Создать отчет']/parent::button")).click()
+        element(byXpath("//*[text()='Создать отчет']/text()/ancestor::button")).click()
         //Заполняем поля отчета - название
         element(byCssSelector("input#title"))
             .sendKeys("Reports 0020 Проверка формирования отчетов по деятельности сотрудников $dateTime отсчет")
-        //впердоливаем говнокод по преобразование даты
-        val dateM = date.toString().split("-")
         //заполняем дату начала и конца периода отчета сегоднешним числом
         element(byCssSelector("input#periodStart"))
-            .sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
+            .sendKeys(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString())
         element(byCssSelector("input#periodEnd"))
-            .sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
+            .sendKeys(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString())
         addressInput("address", "Карачаево-Черкесская Респ, г Карачаевск", waitTime)
         //создаем отчет
-        element(byXpath("//span[text()='Создать']/parent::button")).click()
+        element(byXpath("//*[text()='Создать']/text()/ancestor::button")).click()
         //переходим в созданный отчет
         element(byXpath("//tbody/tr/td"))
             .shouldHave(text("Reports 0020 Проверка формирования отчетов по деятельности сотрудников $dateTime отсчет"))
@@ -399,7 +412,7 @@ class Reports : BaseTest(){
             date = LocalDate.now()
             //кликаем по иконке происшествий в боковом меню
             //Переходим в "Список происшетвий"
-            menuNavigation("Происшествия", "Список происшествий", waitTime)
+            menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
             //кликаем по "создать обращение"
             element(byXpath("//span[text()='Создать обращение']/parent::button")).click()
             //заполняем карточку
@@ -432,7 +445,7 @@ class Reports : BaseTest(){
                 element(byCssSelector("input#incidentTypeId-autocomplete")).setValue("П.5.1.5 Auto-Test")
                     .sendKeys(Keys.DOWN, Keys.ENTER)
                 //Создаем карточку
-                element(byXpath("//span[text()='Сохранить карточку']/parent::button")).click()
+                element(byXpath("//*[text()='Сохранить карточку']/text()/ancestor::button")).click()
             } else if (i == 4) {
                 //регистрируем обращение в ранее созданную карточку.
                 element(byXpath("//*[@name='refetch']/ancestor::button"))
@@ -443,17 +456,17 @@ class Reports : BaseTest(){
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
-                element(byXpath("//span[text()='Привязать к происшествию']/parent::button")).click()
+                element(byXpath("//*[text()='Привязать к происшествию']/text()/ancestor::button")).click()
             } else if (i == 5) {
                 //регистрируем ложное обращение
-                element(byXpath("//*[text()='Ложное обращение']/ancestor::button")).click()
+                element(byXpath("//*[text()='Ложное обращение']/text()/ancestor::button")).click()
                 //ждем загрузки таблицы происшествий
                 element(byCssSelector("main div table>tbody"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
             } else if (i == 6) {
                 //регистрируем консультацию
-                element(byXpath("//span[text()='Консультация']/parent::button")).click()
+                element(byXpath("//*[text()='Консультация']/text()/ancestor::button")).click()
                 //ждем загрузки таблицы происшествий
                 element(byCssSelector("main div table>tbody"))
                     .should(exist, ofSeconds(waitTime))
@@ -465,12 +478,12 @@ class Reports : BaseTest(){
                 element(byCssSelector("#simple-tabpanel-card"))
                     .should(exist, ofSeconds(waitTime))
                 //что она в нужном статусе
-                checkICToolIsStatus("В обработке", waitTime)
+                checkICToolIsStatus(StatusEnum.`В обработке`, waitTime)
             }
             if (i == 4) {
                 //закрываем одну карточку
-                updateICToolStatus("Завершена", waitTime)
-                updateICToolStatus("Закрыта", waitTime)
+                updateICToolStatus(StatusEnum.Завершена, waitTime)
+                updateICToolStatus(StatusEnum.Закрыта, waitTime)
             }
             //и что это именно так карточка которую мы только что создали
             if (i < 4) {
@@ -482,7 +495,7 @@ class Reports : BaseTest(){
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //кликаем по иконке отчетов
         //Переходим в "отчет по деятельности сотрудников"
-        menuNavigation("Отчеты", "По сотрудникам", waitTime)
+        menuNavigation(MyMenu.Reports.EmployeesReport, waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/parent::button"))
             .should(exist, ofSeconds(waitTime))
@@ -492,11 +505,13 @@ class Reports : BaseTest(){
         element(byCssSelector("input#title")).sendKeys("Reports 0020 Проверка формирования отчетов по деятельности сотрудников $dateTime сверка")
         //впердоливаем говнокод по преобразование даты
         //заполняем дату начала и конца периода отчета сегоднешним числом
-        element(byCssSelector("input#periodStart")).sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
-        element(byCssSelector("input#periodEnd")).sendKeys("${dateM[2]}.${dateM[1]}.${dateM[0]}")
+        element(byCssSelector("input#periodStart"))
+            .sendKeys(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString())
+        element(byCssSelector("input#periodEnd"))
+            .sendKeys(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString())
         addressInput("address","Карачаево-Черкесская Респ, г Карачаевск",waitTime)
         //создаем отчет
-        element(byXpath("//span[text()='Создать']/parent::button")).click()
+        element(byXpath("//*[text()='Создать']/text()/ancestor::button")).click()
         //переходим в созданный отчет
         element(byXpath("//tbody/tr/td"))
             .shouldHave(text("Reports 0020 Проверка формирования отчетов по деятельности сотрудников $dateTime сверка"))
@@ -562,8 +577,7 @@ class Reports : BaseTest(){
     fun `Reports 0030 проверка отчетов по происшествиям с использованием фильтров по пострадавшим, адресу и типу происшествия`() {
         dateTime = LocalDateTime.now()
         date = LocalDate.now()
-        //возможные статусы КП
-        val statusList = listOf("Новая", "В обработке", "Реагирование", "Завершена", "Отменена","Закрыта")
+        //для удобства отладки сведем выдачу в консоль в одно место кода
         //два отчета, с адресом и без, вынесены с список, для сокращения кода через forEach
         val reportsAddressList = mutableListOf("без адреса", "адресный")
         //временный список отчетов в которые попадет создаваемая КП
@@ -588,16 +602,14 @@ class Reports : BaseTest(){
         var icReportCreate: String = ""
         logonTool()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        menuNavigation("Отчеты", "По происшествиям", waitTime)
+        menuNavigation(MyMenu.Reports.IncidentReport, waitTime)
         //кликаем по "Создать отчет"
-        element(byXpath("//span[text()='Создать отчет']/ancestor::button"))
+        element(byXpath("//*[text()='Создать отчет']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
         element(byCssSelector("form[novalidate]"))
             .should(exist, ofSeconds(waitTime))
-        //впердоливаем говнокод по преобразование даты
-        val today = date.toString().split("-")
         //заполняем дату начала и конца периода отчета сегодняшним числом
         element(byCssSelector("form[novalidate] input#periodStart"))
             .sendKeys(date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")))
@@ -742,7 +754,7 @@ class Reports : BaseTest(){
         //Создаем КП
         val rndIC = (2..6).random()
         for (i in 1..6){
-            menuNavigation("Происшествия", "Создать карточку", waitTime)
+            menuNavigation(MyMenu.Incidents.CreateIncident, waitTime)
 //            menuNavigation("Происшествия", "Список происшествий", waitTime)
 //            element(byCssSelector("table#incidents"))
 //                .should(exist, ofSeconds(waitTime))
@@ -819,7 +831,7 @@ class Reports : BaseTest(){
 //                .should(exist, ofSeconds(waitTime))
 //                .shouldBe(visible, ofSeconds(waitTime))
 //                .click()
-            checkICToolIsStatus("В обработке", waitTime)
+            checkICToolIsStatus(StatusEnum.`В обработке`, waitTime)
             //выполним назначение ДДС
             if (ddsTypeList.isNotEmpty()){
                 element(byXpath(" //header//*[text()='Работа с ДДС']/ancestor::button"))
@@ -900,7 +912,7 @@ class Reports : BaseTest(){
                 ddsNameList.forEach { ddsName ->
                     var ddsICStatus = ""
                     updateICStatus = (1..6).random()
-                    if (updateICStatus== 1) {
+                    if (updateICStatus == 1) {
                         ddsICStatus = "Новые"
                     }
                     if (updateICStatus > 1) {
@@ -1015,7 +1027,7 @@ class Reports : BaseTest(){
             } else {
                 updateICStatus = (1..6).random()
                 if (updateICStatus != 1) {
-                    updateICToolStatus("", waitTime)
+                    updateICToolStatus(null, waitTime)
                 }
             }
             Thread.sleep(500)
@@ -1110,7 +1122,7 @@ class Reports : BaseTest(){
             icReportsList.clear()
         }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        menuNavigation("Отчеты", "По происшествиям", waitTime)
+        menuNavigation(MyMenu.Reports.IncidentReport, waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
@@ -1121,9 +1133,9 @@ class Reports : BaseTest(){
         //впердоливаем говнокод по преобразование даты
         //заполняем дату начала и конца периода отчета сегодняшним числом
         element(byCssSelector("form[novalidate] input#periodStart"))
-            .sendKeys("${today[2]}.${today[1]}.${today[0]}")
+            .sendKeys(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString())
         element(byCssSelector("form[novalidate] input#periodEnd"))
-            .sendKeys("${today[2]}.${today[1]}.${today[0]}")
+            .sendKeys(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString())
         //создаем новые отчеты
         reportsAddressList.forEach { address ->
 //            element(byCssSelector("form[novalidate] input#title")).let { el ->
@@ -1160,11 +1172,11 @@ class Reports : BaseTest(){
             }
         }
         //скрываем форму создания отчета
-        element(byXpath("//form[@novalidate]//*[text()='Очистить']/ancestor::button"))
+        element(byXpath("//form[@novalidate]//*[text()='Очистить']//text()ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
-        element(byXpath("//*[text()='Скрыть форму']/ancestor::button"))
+        element(byXpath("//*[text()='Скрыть форму']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
@@ -1237,34 +1249,34 @@ class Reports : BaseTest(){
     open fun Statuses(): Any {
         return arrayOf<Array<Any>>(
 //            arrayOf("По происшествиям", "2 МО, Зеленчукский район КЧР, ГО Черкесский, ЕДДС, Оператор, Уровень происшествия", 2),
-            arrayOf("По обращениям", "2 МО, Зеленчукский район КЧР, ГО Черкесский, ЕДДС, Оператор", 2),
-            arrayOf("По сотрудникам", "2 МО, Зеленчукский район КЧР, ГО Черкесский, ЕДДС", 3)
+            arrayOf(MyMenu.Reports.CallsReport, "2 МО, Зеленчукский район КЧР, ГО Черкесский, ЕДДС, Оператор", 2),
+            arrayOf(MyMenu.Reports.EmployeesReport, "2 МО, Зеленчукский район КЧР, ГО Черкесский, ЕДДС", 3)
         )
     }
 
     @Test(retryAnalyzer = Retry::class, dataProvider = "Расширенная проверка формирования отчетов", groups = ["ПМИ", "ALL"])
-    fun `Reports 0070 Расширенная проверка формирования отчетов`(reportType: String, reportsString: String, valueColumnNumber: Int ) {
+    fun `Reports 0070 Расширенная проверка формирования отчетов`(reportType: SubmenuInterface, reportsString: String, valueColumnNumber: Int ) {
         dateTime = LocalDateTime.now()
         date = LocalDate.now()
         val reportList = reportsString.split(", ")
         val oldReportsMap : LinkedHashMap<String, MutableMap<String, Int>> = linkedMapOf()
         val oneReportMap : LinkedHashMap<String, Int> = linkedMapOf()
         val newReportsMap : LinkedHashMap<String, MutableMap<String, Int>> = linkedMapOf()
-        val today = date.toString().split("-")
         logonTool()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //Переходим в "отчет По..."
-        menuNavigation("Отчеты",reportType, waitTime)
+        menuNavigation(reportType, waitTime)
         //кликаем по "Создать отчет"
-        element(byXpath("//span[text()='Создать отчет']/ancestor::button"))
+        element(byXpath("//*[text()='Создать отчет']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
         //впердоливаем говнокод по преобразование даты
         //заполняем дату начала и конца периода отчета сегоднешним числом
         element(byCssSelector("input#periodStart"))
-            .sendKeys("${today[2]}.${today[1]}.${today[0]}")
-        element(byCssSelector("input#periodEnd")).sendKeys("${today[2]}.${today[1]}.${today[0]}")
+            .sendKeys(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString())
+        element(byCssSelector("input#periodEnd"))
+            .sendKeys(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString())
         reportList.forEach{report ->
             //Заполняем поля отчета - название
             element(byCssSelector("input#title"))
@@ -1377,7 +1389,7 @@ class Reports : BaseTest(){
                 }
             }
             //создаем отчет
-            element(byXpath("//span[text()='Создать']/..")).click()
+            element(byXpath("//*[text()='Создать']/text()/ancestor::button")).click()
             //ждем созданный отчет
             element(byText("Reports 0070 Проверка формирования отчетов $reportType $dateTime отсчет $report"))
                 .should(exist, ofSeconds(waitTime))
@@ -1385,11 +1397,11 @@ class Reports : BaseTest(){
                 clearInput("//input[@id='title']", waitTime)
             }
         }
-        element(byXpath("//*[text()='Очистить']/ancestor::button"))
+        element(byXpath("//*[text()='Очистить']/test()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
-        element(byXpath("//*[text()='Скрыть форму']/ancestor::button"))
+        element(byXpath("//*[text()='Скрыть форму']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
@@ -1402,7 +1414,7 @@ class Reports : BaseTest(){
             //ждем
             elements(byXpath("//main//table"))
                 .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(1), ofSeconds(waitTime))
-            element(byXpath("//*[text()='Печать']/ancestor::button"))
+            element(byXpath("//*[text()='Печать']/text()/ancestor::button"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
             for (i in 1..elements(byXpath("//main//table/tbody/tr")).size){
@@ -1436,17 +1448,19 @@ class Reports : BaseTest(){
             anyLogonTool(login, password)
             //убедимся что мы за оператор:
             //кликаем по иконке оператора сверху справа
-            element(byXpath("//header//button//*[text()]/ancestor::button")).click()
+            element(byXpath("//header//button//*[@name='user']/ancestor::button")).click()
             //пероеходим в профиль пользователя
             element(byCssSelector("a[href='/profile']>button"))
-                .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-            element(byCssSelector("a[href='/profile']>button")).click()
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+            element(byCssSelector("a[href='/profile']>button"))
+                .click()
             //Извлекаем имя оператора
             element(byXpath("//p[text()='Должностное лицо:']/following-sibling::p"))
                 .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
             val operator = element(byXpath("//p[text()='Должностное лицо:']/following-sibling::p")).ownText.trim()
 //            back()
-            menuNavigation("Происшествия", "Создать карточку", waitTime)
+            menuNavigation(MyMenu.Incidents.CreateIncident, waitTime)
             //Источник события - выбираем случайно
             createICToolCalltype("", waitTime)
             //Номер телефона
@@ -1483,8 +1497,8 @@ class Reports : BaseTest(){
             val longSelectedIncidentType = element(byCssSelector("input#incidentTypeId-autocomplete")).getAttribute("value").toString()
             val shortSelectedIncidentType = longSelectedIncidentType.substring(longSelectedIncidentType.indexOf(' ') + 1)
             val createdCallType = element(byXpath("//label[text()='Источник события']/following-sibling::div/div")).ownText
-            if (elements(byXpath("//*[text()='Место происшествия']/../..//label[text()='Уточните адрес происшествия']/following-sibling::div[contains(@class,'error')]"))
-                    .size > 0){
+            if (element(byXpath("//*[text()='Место происшествия']/../..//label[text()='Уточните адрес происшествия']/following-sibling::div[contains(@class,'error')]"))
+                    .exists()){
                 element(byXpath("(//*[text()='Место происшествия']/../..//span[@aria-label='add'])[1]/button"))
                     .click()
             }
@@ -1498,14 +1512,14 @@ class Reports : BaseTest(){
             element(byCssSelector("#simple-tabpanel-card"))
                 .should(exist, ofSeconds(waitTime))
             //что она в нужном статусе
-            checkICToolIsStatus("В обработке", waitTime)
+            checkICToolIsStatus(StatusEnum.`В обработке`, waitTime)
             checkICToolDopInfo("Reports 0070, i=$i $dateTime $reportsMapKeysList", waitTime)
             //дополняем значения карт
             var validatedValue = ""//некоторое значение которое мы проверяем в отчете, в зависимости от отчета, это либо тип происшествия, либо источник обращения, либо оператор
             when(reportType){
-                "По происшествиям" -> {validatedValue = shortSelectedIncidentType}
-                "По обращениям" -> {validatedValue = createdCallType}
-                "По сотрудникам" -> {validatedValue = operator}
+                MyMenu.Reports.IncidentReport -> {validatedValue = shortSelectedIncidentType}
+                MyMenu.Reports.CallsReport -> {validatedValue = createdCallType}
+                MyMenu.Reports.EmployeesReport -> {validatedValue = operator}
             }
             reportsMapKeysList.forEach{reportKey ->
 //                oldReportsMap.get(reportKey)
@@ -1533,7 +1547,7 @@ class Reports : BaseTest(){
         }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         logonTool()
-        menuNavigation("Отчеты",reportType, waitTime)
+        menuNavigation(reportType, waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/.."))
             .should(exist, ofSeconds(waitTime))
@@ -1542,8 +1556,9 @@ class Reports : BaseTest(){
         //впердоливаем говнокод по преобразование даты
         //заполняем дату начала и конца периода отчета сегоднешним числом
         element(byCssSelector("input#periodStart"))
-            .sendKeys("${today[2]}.${today[1]}.${today[0]}")
-        element(byCssSelector("input#periodEnd")).sendKeys("${today[2]}.${today[1]}.${today[0]}")
+            .sendKeys(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString())
+        element(byCssSelector("input#periodEnd"))
+            .sendKeys(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString())
         reportList.forEach{report ->
             //Заполняем поля отчета - название
             element(byCssSelector("input#title"))
@@ -1670,11 +1685,11 @@ class Reports : BaseTest(){
                 clearInput("//input[@id='title']", waitTime)
             }
         }
-        element(byXpath("//*[text()='Очистить']/ancestor::button"))
+        element(byXpath("//*[text()='Очистить']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
-        element(byXpath("//*[text()='Скрыть форму']/ancestor::button"))
+        element(byXpath("//*[text()='Скрыть форму']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
@@ -1687,7 +1702,7 @@ class Reports : BaseTest(){
             //ждем
             elements(byXpath("//main//table"))
                 .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(1), ofSeconds(waitTime))
-            element(byXpath("//*[text()='Печать']/ancestor::button"))
+            element(byXpath("//*[text()='Печать']/text()/ancestor::button"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
             for (i in 1..elements(byXpath("//main//table/tbody/tr")).size){

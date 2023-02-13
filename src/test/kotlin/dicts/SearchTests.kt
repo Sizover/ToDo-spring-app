@@ -11,6 +11,8 @@ import com.codeborne.selenide.Selenide.elements
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import org.testng.annotations.DataProvider
+import test_library.menu.MyMenu.*
+import test_library.menu.SubmenuInterface
 import java.time.Duration.ofSeconds
 import java.time.LocalDateTime
 
@@ -24,20 +26,20 @@ class SearchTests : BaseTest(){
     @DataProvider(name = "Справочники единого алгоритма полной проверки поиска")
     open fun `Справочники полной проверки поиска`(): Any {
         return arrayOf<Array<Any>>(
-            arrayOf("Видеокамеры", "Наименование", "Наименование"),
-            arrayOf("Датчики", "Наименование", "Наименование"),
-            arrayOf("Метки", "Имя метки", "Метка"),
-            arrayOf("Силы и средства", "Наименование", "Наименование")
+            arrayOf(Dictionaries.VideoCameras, "Наименование", "Наименование"),
+            arrayOf(Dictionaries.Sensors, "Наименование", "Наименование"),
+            arrayOf(Dictionaries.Labels, "Имя метки", "Метка"),
+            arrayOf(Dictionaries.HotlineAssets, "Наименование", "Наименование")
         )
     }
 
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, dataProvider = "Справочники единого алгоритма полной проверки поиска" , groups = ["ALL"])
     fun `Search 0010 Проверка создания, поиска и удаления справочных сущностей некоторых справочников`
-            (subMenu: String, nameOfName: String, nameColumnName: String) {
+            (menu: SubmenuInterface, nameOfName: String, nameColumnName: String) {
         //Видеокамеры
         logonTool()
-        menuNavigation("Справочники", subMenu, waitTime)
+        menuNavigation(menu, waitTime)
         //открываем поиск что бы прочитать подсказку
         element(byXpath("//*[@name='search']/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
@@ -52,20 +54,17 @@ class SearchTests : BaseTest(){
         element(byXpath("//*[@name='search']/following-sibling::input"))
             .sendKeys("AT_", Keys.ENTER)
         Thread.sleep(1000)
-        if (elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size != 0 ){
-
-        }
-        while (elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size == 0){
+        while (!element(byXpath("//table/tbody/tr//*[text()='Нет данных']")).exists()){
             val elName = element(byXpath("//table/tbody/tr[1]/td[1]//text()/..")).ownText
             element(byXpath("//table/tbody/tr[1]/td[last()]//button"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
                 .click()
-            element(byXpath("//div[@role='presentation']//*[text()='Удалить']/ancestor::button"))
+            element(byXpath("//div[@role='presentation']//*[text()='Удалить']/text()/ancestor::button"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
                 .click()
-            element(byXpath("//div[@role='presentation']//div[@role='dialog']//*[text()='Удалить']/ancestor::button"))
+            element(byXpath("//div[@role='presentation']//div[@role='dialog']//*[text()='Удалить']/text()/ancestor::button"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
                 .click()
@@ -73,7 +72,7 @@ class SearchTests : BaseTest(){
                 .shouldNot(exist, ofSeconds(waitTime))
         }
         //жмем добавить
-        element(byXpath("//*[contains(text(),'Добавить ')]/ancestor::button"))
+        element(byXpath("//*[contains(text(),'Добавить ')]/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
@@ -97,7 +96,7 @@ class SearchTests : BaseTest(){
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
-                if ((unitPlaceohlder == "Источник") && (subMenu == "Датчики")){
+                if ((unitPlaceohlder == "Источник") && (menu == Dictionaries.Sensors)){
                     element(byXpath("//label[contains(text(),'$unitPlaceohlder')]/following-sibling::div/input"))
                         .sendKeys("https://AT/source/${uniqueName}.com")
                 } else {
@@ -152,7 +151,7 @@ class SearchTests : BaseTest(){
         elements(byXpath("//div[contains(@class,'Mui-error')]/input"))
             .shouldHave(CollectionCondition.size(0), ofSeconds(waitTime))
         //сохраняем
-        element(byXpath("//*[text()='Добавить']/ancestor::button"))
+        element(byXpath("//*[text()='Добавить']/text()/ancestor::button"))
             .click()
         //ждем загрузки
         element(byXpath("//table"))
@@ -161,9 +160,9 @@ class SearchTests : BaseTest(){
         //проверяем что записей в таблице более одной
         elements(byXpath("//table/tbody/tr"))
             .shouldHave(CollectionCondition.sizeGreaterThan(1), ofSeconds(waitTime))
-        checkbox(nameColumnName, true, waitTime)
+        tableCheckbox(nameColumnName, true, waitTime)
         //проверяем открыт ли, и если нет открываем поиск
-        if (elements(byXpath("//*[@name='search']/following-sibling::input")).size != 1){
+        if (!element(byXpath("//*[@name='search']/following-sibling::input")).exists()){
             element(byXpath("//*[@name='search']/ancestor::button"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
@@ -188,7 +187,7 @@ class SearchTests : BaseTest(){
             Thread.sleep(500)
             elements(byXpath("//table/tbody/tr"))
                 .shouldHave(CollectionCondition.size(1), ofSeconds(waitTime))
-            val nameColumn = numberOfColumn(nameColumnName, waitTime)
+            val nameColumn = tableNumberOfColumn(nameColumnName, waitTime)
 //            elements(byXpath("//table/tbody/tr/td[$nameColumn][text()='AT_${nameOfName}_$uniqueName']"))
 //                .shouldHave(CollectionCondition.size(1), ofSeconds(waitTime))
             Assertions.assertTrue(
@@ -197,7 +196,7 @@ class SearchTests : BaseTest(){
                     elements(byXpath("//table/tbody/tr/td[$nameColumn]//*[text()='AT $nameOfName $uniqueName']")).size
                     == 1
             )
-            if (subMenu == "Метки"){
+            if (menu == Dictionaries.Labels){
                 elements(byXpath("//table/tbody/tr/td[$nameColumn]//*[text()='AT $nameOfName $uniqueName']"))
                     .shouldHave(CollectionCondition.size(1), ofSeconds(waitTime))
             } else {
@@ -210,17 +209,17 @@ class SearchTests : BaseTest(){
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
-                element(byXpath("//*[text()='Удалить']/ancestor::button"))
+                element(byXpath("//*[text()='Удалить']/text()/ancestor::button"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
-                element(byXpath("//*[@role='dialog']//*[text()='Удалить']/ancestor::button"))
+                element(byXpath("//*[@role='dialog']//*[text()='Удалить']/text()/ancestor::button"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
                 Thread.sleep(500)
                 element(byXpath("//table/tbody/tr/td[$nameColumn][text()='AT_${nameOfName}_$uniqueName']"))
-                    .shouldNot(exist, ofSeconds(waitTime))
+                    .shouldNot(exist, ofSeconds(longWait))
                 element(byXpath("//table/tbody/tr[1]//*[text()='Нет данных']"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
