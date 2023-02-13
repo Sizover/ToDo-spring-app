@@ -1016,7 +1016,7 @@ open class BaseTest {
                     .substringAfterLast('(')
                     .substringBeforeLast(')')
             ){
-                amountFilters = if(this.isNotEmpty()){
+                amountFilters = if(!this.contains("фильтры...")){
                     this.toInt()
                 } else {
                     0
