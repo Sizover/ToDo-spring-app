@@ -1,6 +1,9 @@
 package test_library.menu
 
 enum class MenuEnum {
+// Енум используемый в функции menuNavigation класса BaseTest.
+// Представляет собой словарь содержащий существующие родительские разделы меню.
+// Используется в class MyMenu по name.
     `Главная`,
     `Происшествия`,
     `Карта`,
