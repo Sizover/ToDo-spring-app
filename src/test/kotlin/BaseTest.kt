@@ -285,26 +285,6 @@ open class BaseTest {
         }
     }
 
-    fun inputRandomOld(inputName: String)
-    //Выбирает случайное значение в переданном импуте (сначала проклацывает весь список, считая проклацывания, потом проклацывает, до некоторого случайного значения)
-    {
-        while (elements(byXpath("//body/div[@role='presentation']//*[text()]")).size == 0) {
-            element(byXpath("//input[@name='$inputName']")).click()
-            Thread.sleep(500)
-        }
-        var countInputString = 0
-        do {
-            element(byXpath("//input[@name='$inputName']")).sendKeys(Keys.DOWN)
-            countInputString += 1
-        } while (elements(byCssSelector("input[name='$inputName'][aria-activedescendant^='$inputName-option']")).size > 0)
-        //выбираем случайную организацию из доступных
-        val rndInputValue = (1 until countInputString).random()
-        repeat(rndInputValue) {
-            element(byXpath("//input[@name='$inputName']")).sendKeys(Keys.DOWN)
-        }
-        element(byXpath("//input[@name='$inputName']")).sendKeys(Keys.ENTER)
-
-    }
 
 
     fun inputRandomNew(inputName: String, parentInclusive: Boolean, waitTime: Long) {
@@ -366,9 +346,7 @@ open class BaseTest {
         }
     }
 
-//    fun menuNavigation(menu: SubmenuInterface) {
-//        menuNavigation(menu.desc.toString(), menu.subMenu, waitTime = 10L)
-//    }
+
     fun menuNavigation(submenuInterface: SubmenuInterface, waitTime: Long){
     //просто унифицируем переход по различным РМ, что бы было легче поддерживать тесты
         val menu = submenuInterface.menu.name
@@ -382,8 +360,6 @@ open class BaseTest {
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
-        //временная строка до починки бага
-//        element(byXpath("//button[@data-testid='app-bar-button']")).click()
     }
 
     fun addressInput(inputID: String,address: String, waitTime: Long)
@@ -428,7 +404,6 @@ open class BaseTest {
 
 
     fun tableNumberOfColumn(columnName: String, waitTime: Long): Int{
-//        val columnsElements = elements(byXpath("//table/thead/tr/th//*[text()]"))
         val columnsElements = elements(byXpath("//table/thead/tr/th"))
         val columsName = mutableListOf<String>()
         columnsElements.forEachIndexed{index, element ->
@@ -480,42 +455,6 @@ open class BaseTest {
     }
 
 
-
-    fun checkGreenAlert(text: String, clickButtonClose: Boolean, waitTime: Long){
-        //Проверяем зеленую всплывашку
-        element(byXpath("//div[@role='alert']//*[@name='snackbarSuccess']"))
-            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-        element(byXpath("//div[@role='alert']//*[text()='$text']"))
-            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-        if (clickButtonClose){
-            Thread.sleep(300)
-            element(byXpath("//div[@role='alert']//*[@name='snackbarClose']/ancestor::button"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
-        }
-        Thread.sleep(300)
-    }
-
-    fun checkOrangeAlert(text: String, clickButtonClose: Boolean, waitTime: Long){
-        //Проверяем оранжевую всплывашку
-        element(byXpath("//div[@role='alert']//*[@name='snackbarWarning']"))
-            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-        element(byXpath("//div[@role='alert']//*[text()='$text']"))
-            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-        if (clickButtonClose){
-            Thread.sleep(300)
-            element(byXpath("//div[@role='alert']//*[@name='snackbarClose']/ancestor::button"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
-        }
-        Thread.sleep(300)
-    }
     fun checkAlert(alertEnum: AlertsEnum, text: String, clickButtonClose: Boolean, waitTime: Long){
         //Проверяем оранжевую всплывашку
         element(byXpath("//div[@role='alert']//*[@name='${alertEnum.name}']"))
@@ -528,8 +467,6 @@ open class BaseTest {
             element(byXpath("//div[@role='alert']//*[text()]"))
                 .should(exist, ofSeconds(waitTime))
         }
-
-//            .shouldBe(visible, ofSeconds(waitTime))
         if (clickButtonClose){
             Thread.sleep(300)
             element(byXpath("//div[@role='alert']//*[@name='snackbarClose']/ancestor::button"))
@@ -1387,7 +1324,7 @@ open class BaseTest {
     val cityTails = listOf("дар", "град", "рск", "йск", "во", "хабль", "бург")
     val e = "abcdefghijklmnopqrstuvwxyz".toList()
 
-    fun generatefirstNameI(): String {
+    fun generateFirstNameI(): String {
         var name = ""
         for (i in 1..(2..5).random()){
             name = if (i == 1){
@@ -1401,13 +1338,13 @@ open class BaseTest {
         }
         return name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
     }
-    fun generatemiddleNameO(): String {
+    fun generateMiddleNameO(): String {
         return if (Random.nextBoolean()){
-            generatefirstNameI() + "овна"
-        } else generatefirstNameI() + "ович"
+            generateFirstNameI() + "овна"
+        } else generateFirstNameI() + "ович"
     }
-    fun generatelastNameF(): String {
-        return generatefirstNameI() + lnTails.random()
+    fun generateLastNameF(): String {
+        return generateFirstNameI() + lnTails.random()
     }
     fun generateEmail(): String {
         var email = ""

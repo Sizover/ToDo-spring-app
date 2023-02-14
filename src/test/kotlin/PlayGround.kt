@@ -180,25 +180,30 @@ class PlayGround : BaseTest(){
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
     fun `Черновик`() {
-        logonTool()
-        menuNavigation("Происшествия", "Создать карточку", waitTime)
-        createICToolCalltype("", waitTime)
-        createICToolPhone("", waitTime)
-        createICToolFIO("1", "2", "3", waitTime)
-        val bB = (1..100).random()
-        addressInput("callAddress", "Карачаево-Черкесская Респ, г Карачаевск $bB", waitTime)
-        createICToolsDopInfo("test", waitTime)
-        element(byXpath("//*[text()='Создать карточку']/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        inputRandomNew("incidentTypeId-textfield", false, waitTime)
-        element(byXpath("//*[text()='Сохранить карточку']/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        checkICToolIsStatus("В обработке", longWait)
-        updateICToolStatus("", waitTime)
+
+        repeat(100){
+//            val r = test2().generatelastNameF()
+//            val rr = test2().generatefirstNameI()
+//            val rrr = test2().generatemiddleNameO()
+            println("${generateLastNameF()} ${generateFirstNameI()} ${generateMiddleNameO()}")
+        }
+
+//    logonTool()
+//        tableCheckbox("ЧЧИД", true, waitTime)
+//        logonTool()
+//        menuNavigation("Происшествия", "Список происшествий", waitTime)
+//        Thread.sleep(100)
+//        setFilterByName("Дата регистрации", LocalDate.now().minusMonths(1).format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString()+";", waitTime)
+        //setDateFilter("Дата регистрации", LocalDate.now().minusMonths(1).format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString(), "", waitTime)
+//        while (true) {
+//            println(
+//                element(byXpath("//div[@role='presentation']//*[text()='Уровень происшествия']/following-sibling::*//button[1]"))
+//                    .getCssValue("background-color")
+//            )
+//            Thread.sleep(100)
+//        }
+
+
 
 
     }
