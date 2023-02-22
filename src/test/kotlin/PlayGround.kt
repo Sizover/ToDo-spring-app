@@ -5,15 +5,11 @@ import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Selectors.byCssSelector
 import com.codeborne.selenide.Selectors.byXpath
-import com.codeborne.selenide.Selenide.element
-import com.codeborne.selenide.Selenide.elements
+import com.codeborne.selenide.Selenide.*
 import org.openqa.selenium.Keys
-import test_library.filters.FilterEnum
 import test_library.menu.MyMenu
 import java.io.File
 import java.time.Duration.ofSeconds
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 
 class PlayGround : BaseTest(){
@@ -181,7 +177,7 @@ class PlayGround : BaseTest(){
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
     fun `Черновик`() {
         logonTool()
-        menuNavigation("Происшествия", "Создать карточку", waitTime)
+//        menuNavigation("Происшествия", "Создать карточку", waitTime)
         createICToolCalltype("", waitTime)
         createICToolPhone("", waitTime)
         createICToolFIO("1", "2", "3", waitTime)
@@ -197,8 +193,8 @@ class PlayGround : BaseTest(){
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
-        checkICToolIsStatus("В обработке", longWait)
-        updateICToolStatus("", waitTime)
+//        checkICToolIsStatus("В обработке", longWait)
+//        updateICToolStatus("", waitTime)
 
 
     }
@@ -207,15 +203,51 @@ class PlayGround : BaseTest(){
     fun `Черновик2`() {
 
         logonTool()
+        Thread.sleep(1000)
+//        menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
+        Thread.sleep(1000)
+        open("https://test.kiap.local/events/incidents/2f5b8daf-a247-48fb-9243-d3b51b524afe?page=0&perPage=20&mid%5B%5D=4be3343e-103d-4237-9ba4-59f9e3e0c14b&mid%5B%5D=919225df-bd80-495f-b9ff-a8116b354390&hid%5B%5D=8ccba807-9763-47e3-93ff-7dd2c2cb564f")
+        Thread.sleep(1000)
+        element(byXpath("//div[@role='presentation']//*[@name='phoneCall']/ancestor::*[text()='Позвонить']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+//        elements("div#iplan div[role='button'][aria-expanded='false']")
+//            .findBy(exactText("AutoTest Dicts CP 0010 child 1 Простой"))
+//            .find(byXpath("ancestor::div[@role='button' and @aria-expanded='false']"))
+//        println(elements("div#iplan div[role='button'][aria-expanded='false']")
+//            .findBy(("AutoTest Dicts CP 0010 child 1 Простой"))
+//            .find(byXpath("ancestor::div[@role='button' and @aria-expanded='false']")))
+//        element(byXpath("//*[text()='Добавить новый']/text()/ancestor::button"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+//            .click()
+//        //заполняем поля
+//        element(byXpath("//form[@novalidate]"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+//        element(byXpath("//form[@novalidate]//*[text()='Тип происшествия*']/following-sibling::*//input"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+//            .click()
+//        element(byXpath("(//div[@role='presentation']//*[@name='arrowRight'])[1]/ancestor::li"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+//            .click()
+//        element(byXpath("(//div[@role='presentation']//li)[1]//*[@name='arrowDown']"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+//        element(byXpath("//div[@role='presentation']//*[text()='П.5.1.5 Auto-Test']/text()/ancestor::li"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+//            .click()
+//        Thread.sleep(1000)
+//        println(element(byXpath("//div[@role='presentation']")).innerHtml())
 
-        Thread.sleep(1000)
-        setFilterByEnum(
-            FilterEnum.Дата_регистрации,
-            "${LocalDate.now().minusMonths(1).minusDays(1).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))};${LocalDate.now().minusMonths(2).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))}",
-            waitTime)
-        Thread.sleep(1000)
-        cleanFilterByEnum(listOf(), waitTime)
-        Thread.sleep(1000)
+//        Thread.sleep(1000)
+//        menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
+//        val test = element(byXpath("//form[@novalidate]//button[1]//text()/..")).ownText//.substringBefore('\n')
+//        Thread.sleep(1000)
 
 //        element(byXpath("html/body/div[@role='presentation']//*[text()='Пользователь системы']/ancestor::fieldset//*[text()='Да']/ancestor::label//input/..")).click()
 //        Thread.sleep(1000)

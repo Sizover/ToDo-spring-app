@@ -11,10 +11,11 @@
             </run>
         </groups>
         <classes>
+            <class name="dicts.Dicts_CumulativePlans"></class>
             <class name="dicts.SearchTests"></class>
             <class name="dicts.Labels"></class>
-            <class name="dicts.dicts_Incidents"></class>
-            <class name="events.events_Incidents"></class>
+            <class name="dicts.Dicts_Incidents"></class>
+            <class name="events.Events_Incidents"></class>
             <class name="events.StatusTests"></class>
             <class name="map.MapTest"></class>
             <class name="pmi_tests.PimTests"></class>
