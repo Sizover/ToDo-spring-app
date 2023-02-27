@@ -4,6 +4,8 @@ import test_library.menu.SubmenuInterface
 
 
 class MyMenu {
+    // "Словарь" енумов хранящий множество подменю для каждого родительского раздела меню КИАП.
+    // Реализованно именно в таком виде для удобства использовани в IDE
     enum class MainPage(override val menu: MenuEnum, override val subMenu: String, override val desc: String?) : SubmenuInterface {
         Home(MenuEnum.Главная, "Главная", null)
     }

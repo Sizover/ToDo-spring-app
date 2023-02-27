@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
+import test_library.alerts.AlertsEnum.snackbarSuccess
 import test_library.alerts.AlertsEnum.snackbarWarning
 import test_library.filters.FilterEnum.Источники
 import test_library.filters.FilterEnum.Пользователь
@@ -272,12 +273,12 @@ class PimTests : BaseTest(){
         //загружаем файлы проверяя их прикрепление
         element(byCssSelector("input#upload-file"))
             .uploadFile(File("/home/isizov/IdeaProjects/testing-e2e/src/test/resources/fixtures/AutoTest.webp"))
-        checkGreenAlert("Файл загружен", true, waitTime)
+        checkAlert(snackbarSuccess, "Файл загружен", true, waitTime)
         element(byXpath("//div[@id='files']//*[text()='AutoTest.webp']"))
             .should(exist, ofSeconds(waitTime))
         element(byCssSelector("input#upload-file"))
             .uploadFile(File("/home/isizov/IdeaProjects/testing-e2e/src/test/resources/fixtures/Тестовый файл_.docx"))
-        checkGreenAlert("Файл загружен", true, waitTime)
+        checkAlert(snackbarSuccess, "Файл загружен", true, waitTime)
         element(byXpath("//div[@id='files']//*[text()='Тестовый файл_.docx']"))
             .should(exist, ofSeconds(waitTime))
         logoffTool()
@@ -301,7 +302,7 @@ class PimTests : BaseTest(){
             .should(exist, ofSeconds(waitTime))
         //Прикрепляем файл
         element(byCssSelector("input#upload-file")).uploadFile(File("/home/isizov/IdeaProjects/testing-e2e/src/test/resources/fixtures/test.pdf"))
-        checkGreenAlert("Файл загружен", true, waitTime)
+        checkAlert(snackbarSuccess, "Файл загружен", true, waitTime)
         element(byXpath("//div[@id='files']//*[text()='test.pdf']"))
             .should(exist, ofSeconds(waitTime))
         logoffTool()
@@ -507,7 +508,7 @@ class PimTests : BaseTest(){
                     .click()
                 //Проверяем и закрываем зеленую "всплывашку"
                 try {
-                    checkGreenAlert("Пункт выполнен", true, longWait)
+                    checkAlert(snackbarSuccess, "Пункт выполнен", true, longWait)
                 } catch (_:  Throwable) {
                     if (print){ println("PMI 0130: При выполнении пункта реагирования не появился зеленый алерт") }
                 }
@@ -836,7 +837,7 @@ class PimTests : BaseTest(){
             teamChangeStatusTime = nowTime.format(DateTimeFormatter.ofPattern("HH:mm:ss, dd.MM.yyyy"))
             teamChangeStatusTimeMinus = nowTime.minusSeconds(1).format(DateTimeFormatter.ofPattern("HH:mm:ss, dd.MM.yyyy"))
             teamChangeStatusTimePlus = nowTime.plusSeconds(1).format(DateTimeFormatter.ofPattern("HH:mm:ss, dd.MM.yyyy"))
-            checkGreenAlert("OK", true, longWait)
+            checkAlert(snackbarSuccess, "OK", true, longWait)
             var count = 0
             while ((element(byXpath("//*[text()='$teamStatus']/text()/ancestor::button")).getCssValue("background-color") != teamStatusButtonColor) && count < 100){
                 Thread.sleep(100)
