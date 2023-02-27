@@ -1,17 +1,18 @@
 package dicts
 
-import Retry
 import BaseTest
+import Retry
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Selectors.byCssSelector
 import com.codeborne.selenide.Selectors.byXpath
-import com.codeborne.selenide.Selenide.*
+import com.codeborne.selenide.Selenide.element
+import com.codeborne.selenide.Selenide.elements
 import org.junit.jupiter.api.Assertions
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import test_library.menu.MyMenu.*
-import test_library.statuses.StatusEnum.*
+import test_library.menu.MyMenu.Incidents
+import test_library.statuses.StatusEnum.`В обработке`
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -54,7 +55,7 @@ class Dicts_Incidents :BaseTest() {
         //Номер телефона
         createICToolPhone("", waitTime)
         //ФИО
-        createICToolFIO("$date AutoTestLastname inc", "INC 0010 Firstname", language1, waitTime)
+        createICToolFIO(generateLastNameF(),generateFirstNameI(), generateMiddleNameO(), waitTime)
         //адрес
         element(byXpath("//input[@id='callAddress']"))
             .click()
@@ -80,13 +81,12 @@ class Dicts_Incidents :BaseTest() {
         checkICToolIsStatus(`В обработке`, longWait)
         //и что это именно так карточка которую мы только что создали
         checkICToolDopInfo("AutoTest INC 0010 inc $dateTime $language1", waitTime)
+        //считаем количество обращений
         Assertions.assertTrue(
             elements(byXpath("//*[text()='1']/ancestor::div[@id='panel1a-header']//*[text()='$callType']"))
                 .size
                 == 1
         )
-        element(byXpath("//main//header//*[text()='Обращения']//ancestor::button"))
-            .scrollTo()
         element(byXpath("//main//header//*[text()='Обращения']//ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))

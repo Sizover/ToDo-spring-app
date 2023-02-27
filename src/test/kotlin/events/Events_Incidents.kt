@@ -1,17 +1,22 @@
 package events
 
-import Retry
 import BaseTest
+import Retry
 import com.codeborne.selenide.CollectionCondition
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Selectors.byXpath
-import com.codeborne.selenide.Selenide.*
+import com.codeborne.selenide.Selenide.back
+import com.codeborne.selenide.Selenide.element
+import com.codeborne.selenide.Selenide.elements
+import com.codeborne.selenide.Selenide.open
 import com.codeborne.selenide.WebDriverRunner.url
 import org.openqa.selenium.Keys
 import org.testng.annotations.Test
 import test_library.filters.FilterEnum
-import test_library.menu.MyMenu.*
+import test_library.menu.MyMenu.Dictionaries
+import test_library.menu.MyMenu.Incidents
+import test_library.menu.MyMenu.System
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -81,7 +86,7 @@ class Events_Incidents :BaseTest() {
         element(byXpath("//*[text()='Сохранить']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        if (elements(byXpath("//div[@role='textbox']/p[contains(text(),'Event INC 5020 Test')]")).size > 0){
+        if (element(byXpath("//div[@role='textbox']/p[contains(text(),'Event INC 5020 Test')]")).exists()){
             element(byXpath("//div[@role='textbox']/p[contains(text(),'Event INC 5020 Test')][last()]"))
                 .click()
             element(byXpath("//div[@role='textbox']/p[contains(text(),'Event INC 5020 Test')][last()]"))
@@ -120,8 +125,8 @@ class Events_Incidents :BaseTest() {
         date = LocalDate.now()
         dateTime = LocalDateTime.now()
         val menuList = listOf(Incidents.IncidentsList, Incidents.IncidentsArchive)
-        val falseСallsNumbersList = mutableListOf<String>()
-        val moreMonthFalseСallsNumbersList = mutableListOf<String>()
+        val falseCallsNumbersList = mutableListOf<String>()
+        val moreMonthFalseCallsNumbersList = mutableListOf<String>()
         var anotherRound: Boolean
         logonTool()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -159,15 +164,15 @@ class Events_Incidents :BaseTest() {
                         with(element(byXpath("//strong[text()='Контактный номер:']/following-sibling::span//*[text()]")).ownText)
                         {
                             if (
-                                (!falseСallsNumbersList.contains(this.filter { it.isDigit() }))
+                                (!falseCallsNumbersList.contains(this.filter { it.isDigit() }))
                                 &&
                                 ((this.filter { it.isDigit() }).length > 8)
                             ){
-                                falseСallsNumbersList.add(this.filter { it.isDigit() })
+                                falseCallsNumbersList.add(this.filter { it.isDigit() })
                             }
                         }
                         if (
-                            (!falseСallsNumbersList.contains(element(byXpath("//strong[text()='Контактный номер:']/following-sibling::span//*[text()]"))
+                            (!falseCallsNumbersList.contains(element(byXpath("//strong[text()='Контактный номер:']/following-sibling::span//*[text()]"))
                                 .ownText
                                 .filter { it.isDigit() }))
                             &&
@@ -176,7 +181,7 @@ class Events_Incidents :BaseTest() {
                                 .filter { it.isDigit() }).length > 8)
                             )
                         {
-                            falseСallsNumbersList.add(element(byXpath("//strong[text()='Контактный номер:']/following-sibling::span//*[text()]"))
+                            falseCallsNumbersList.add(element(byXpath("//strong[text()='Контактный номер:']/following-sibling::span//*[text()]"))
                                 .ownText
                                 .filter { it.isDigit() })
                         }
@@ -201,7 +206,7 @@ class Events_Incidents :BaseTest() {
             element(byXpath("//form[@novalidate]"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
-            if (moreMonthFalseСallsNumbersList.size <= 10) {
+            if (moreMonthFalseCallsNumbersList.size <= 10) {
                 //Отчищаем фильтры
                 cleanFilterByEnum(listOf(), waitTime)
                 //устанавливаем фильры "Типы происшествий", "Дата регистрации", "Источники"
@@ -228,11 +233,11 @@ class Events_Incidents :BaseTest() {
                                 .shouldBe(visible, ofSeconds(waitTime))
                             with(element(byXpath("//strong[text()='Контактный номер:']/following-sibling::span//*[text()]")).ownText)
                             {
-                                if ((!moreMonthFalseСallsNumbersList.contains(this.filter { it.isDigit() }))
+                                if ((!moreMonthFalseCallsNumbersList.contains(this.filter { it.isDigit() }))
                                     &&
                                     ((this.filter { it.isDigit() }).length > 8)
                                 ){
-                                    moreMonthFalseСallsNumbersList.add(this.filter { it.isDigit() })
+                                    moreMonthFalseCallsNumbersList.add(this.filter { it.isDigit() })
                                 }
                             }
                             back()
@@ -241,7 +246,7 @@ class Events_Incidents :BaseTest() {
                         if ((element(byXpath("(//tfoot//nav//span[contains(@aria-label,'На страницу номер')])[last()]/parent::div"))
                                 .getAttribute("style")!!
                                 .contains("color: black;"))
-                            && (moreMonthFalseСallsNumbersList.size <= 10)
+                            && (moreMonthFalseCallsNumbersList.size <= 10)
                         ) {
                             anotherRound = true
                             element(byXpath("//tfoot//nav//span[contains(@aria-label,'На следующую страницу')]/p[text()='Вперед']"))
@@ -259,7 +264,7 @@ class Events_Incidents :BaseTest() {
         // очищаем вставляем ложный более месяца, банера быть не должно
         menuNavigation(Incidents.CreateIncident, waitTime)
         createICToolCalltype("Телефон (ССОП)", waitTime)
-        var rndTel = falseСallsNumbersList.random()
+        var rndTel = falseCallsNumbersList.random()
         createICToolPhone(rndTel, waitTime)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //маленький WA
@@ -276,7 +281,7 @@ class Events_Incidents :BaseTest() {
         element(byXpath("//*[@name='noteError']/ancestor::div[@role='alert']//*[text()='Номер данного абонента был зафиксирован ранее как ложный']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        rndTel = moreMonthFalseСallsNumbersList.random()
+        rndTel = moreMonthFalseCallsNumbersList.random()
         clearInput("//input[@id='phone']", waitTime)
         createICToolPhone(rndTel, waitTime)
         Thread.sleep(5000)

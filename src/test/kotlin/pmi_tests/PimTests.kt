@@ -390,7 +390,7 @@ class PimTests : BaseTest(){
         //проверяя что нам в принципе загрузило какую-то карточку
         element(byCssSelector("#simple-tabpanel-card")).should(exist, ofSeconds(waitTime))
         //что она в статусе "В обработке"
-        checkICToolIsStatus(`В обработке`, waitTime)
+        checkICToolIsStatus(`В обработке`, longWait)
         //и что это именно так карточка которую мы только что создали
         checkICToolDopInfo("AutoTest N 0130 $dateTime", waitTime)
 
@@ -410,7 +410,7 @@ class PimTests : BaseTest(){
             .click()
         //Проверяем подпункты 1.0; 1.1; 1.2; 2.0; 2.1; 2.2.
         val headSelector = "div#simple-tabpanel-iplan > div > div > div > div:nth-child(%d) > div > div#panel1a-header"
-        val headChildSelector = "div#simple-tabpanel-iplan > div > div > div > div:nth-child(%d) >div>div>div>div>div#panel1a-content>div>div>div:nth-child(%d)>form"
+        val headChildSelector = "div#simple-tabpanel-iplan > div > div > div > div:nth-child(%d) >div>div>div>div>div#panel1a-content>div>div>div:nth-child(%d)"//>form"
         element(byCssSelector(headSelector.format(1)))
             .shouldHave(text("Мероприятие 1.0"))
         element(byCssSelector(headChildSelector.format(1, 1)))
@@ -470,10 +470,10 @@ class PimTests : BaseTest(){
             val childCount =
                 elements(byCssSelector("div#simple-tabpanel-iplan>div>div>div>div:nth-child($p) div#panel1a-content form")).size
             for (c in 1..childCount) {
-                val colorItemSelector = "div#simple-tabpanel-iplan > div > div > div > div:nth-child($p) >div>div>div>div>div#panel1a-content>div>div>div:nth-child($c)>form>div[style='background-color: rgb(%s); border-color: rgb(%s);']"
-                val itemSelector = "div#simple-tabpanel-iplan > div > div > div > div:nth-child($p) >div>div>div>div>div#panel1a-content>div>div>div:nth-child($c)>form"
+                val colorItemSelector = "div#simple-tabpanel-iplan > div > div > div > div:nth-child($p) >div>div>div>div>div#panel1a-content>div>div>div:nth-child($c)>div[style='background-color: rgb(%s); border-color: rgb(%s);']"
+                val itemSelector = "div#simple-tabpanel-iplan > div > div > div > div:nth-child($p) >div>div>div>div>div#panel1a-content>div>div>div:nth-child($c)"
                 val circleSelector = "div#simple-tabpanel-iplan > div > div > div > div:nth-child($p) > div > div#panel1a-header div.MuiBox-root > div:nth-child($c) > span[aria-label^='Статус: %s'] rect[fill='%s']"
-                val textFieldSelector = "div#simple-tabpanel-iplan > div > div > div > div:nth-child($p) >div>div>div>div>div#panel1a-content>div>div>div:nth-child($c)>form p[data-empty-text='Нажмите здесь, чтобы вводить текст']"
+                val textFieldSelector = "div#simple-tabpanel-iplan > div > div > div > div:nth-child($p) >div>div>div>div>div#panel1a-content>div>div>div:nth-child($c) p[data-empty-text='Нажмите здесь, чтобы вводить текст']"
                 element(byCssSelector(colorItemSelector.format("247, 248, 251", "208, 214, 220")))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))

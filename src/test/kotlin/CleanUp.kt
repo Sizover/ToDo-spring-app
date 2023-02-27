@@ -10,6 +10,7 @@ import org.openqa.selenium.Keys
 import test_library.alerts.AlertsEnum
 import test_library.filters.FilterEnum
 import test_library.menu.MyMenu
+import test_library.operator_data.OperatorDataEnum
 import test_library.statuses.StatusEnum
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
@@ -93,22 +94,8 @@ class CleanUp : BaseTest(){
         val dateStart = LocalDate.now().minusDays(50).toString()
         val dateEnd = LocalDate.now().toString()
         logonTool()
-        //убедимся что мы за оператор:
-        //кликаем по иконке оператора сверху справа
-        element(byXpath("//header//button//*[@name='user']/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        //пероеходим в профиль пользователя
-        element(byCssSelector("a[href='/profile']>button"))
-            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-        element(byCssSelector("a[href='/profile']>button"))
-            .click()
-        //Извлекаем имя оператора
-        element(byXpath("//p[text()='Должностное лицо:']/following-sibling::p"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        val operatorFIO = element(byXpath("//p[text()='Должностное лицо:']/following-sibling::p")).ownText.trim()
+        //запомним что мы за оператор:
+        val operatorFIO = operatorData(OperatorDataEnum.`Должностное лицо`)
         logoffTool()
         //переходим к списку происшествий и ждем загрузки
         anyLogonTool("autotest_admin", "autotest_admin")
