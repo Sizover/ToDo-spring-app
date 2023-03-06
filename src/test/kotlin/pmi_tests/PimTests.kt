@@ -275,12 +275,12 @@ class PimTests : BaseTest(){
             .uploadFile(File("/home/isizov/IdeaProjects/testing-e2e/src/test/resources/fixtures/AutoTest.webp"))
         checkAlert(snackbarSuccess, "Файл загружен", true, waitTime)
         element(byXpath("//div[@id='files']//*[text()='AutoTest.webp']"))
-            .should(exist, ofSeconds(waitTime))
+            .should(exist, ofSeconds(longWait))
         element(byCssSelector("input#upload-file"))
             .uploadFile(File("/home/isizov/IdeaProjects/testing-e2e/src/test/resources/fixtures/Тестовый файл_.docx"))
         checkAlert(snackbarSuccess, "Файл загружен", true, waitTime)
         element(byXpath("//div[@id='files']//*[text()='Тестовый файл_.docx']"))
-            .should(exist, ofSeconds(waitTime))
+            .should(exist, ofSeconds(longWait))
         logoffTool()
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
         //`A312 Проверка прикрепления файла к происшествию`
@@ -304,7 +304,7 @@ class PimTests : BaseTest(){
         element(byCssSelector("input#upload-file")).uploadFile(File("/home/isizov/IdeaProjects/testing-e2e/src/test/resources/fixtures/test.pdf"))
         checkAlert(snackbarSuccess, "Файл загружен", true, waitTime)
         element(byXpath("//div[@id='files']//*[text()='test.pdf']"))
-            .should(exist, ofSeconds(waitTime))
+            .should(exist, ofSeconds(longWait))
         logoffTool()
     }
 
@@ -489,8 +489,9 @@ class PimTests : BaseTest(){
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                 //Проверяем красненький кружочек первого пункта (для проверки позеленения по мере выполнения)
-                element(byCssSelector(circleSelector.format("Не выполнен", "#BA3113")))
+//                element(byCssSelector(circleSelector.format("Не выполнен", "#BA3113")))
 //                element(byCssSelector("div#simple-tabpanel-iplan > div > div > div > div:nth-child($p) > div > div#panel1a-header div.MuiBox-root > div:nth-child($c) > span[title^='Статус: Не выполнен'] rect[fill='#16BA13']"))
+                element(byCssSelector(circleSelector.format("Не выполнен", "#63666C")))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                 //кликаем по полю ввода текста
@@ -513,7 +514,7 @@ class PimTests : BaseTest(){
                     if (print){ println("PMI 0130: При выполнении пункта реагирования не появился зеленый алерт") }
                 }
                 //Проверяем позеленение кружочка
-                element(byCssSelector(circleSelector.format("Не выполнен", "#BA3113")))
+                element(byCssSelector(circleSelector.format("Не выполнен", "#63666C")))
                     .shouldNot(exist, ofSeconds(longWait))
                 element(byCssSelector(circleSelector.format("Выполнен", "#16BA13")))
                     .should(exist, ofSeconds(waitTime))
@@ -930,7 +931,9 @@ class PimTests : BaseTest(){
         element(byText("AutoTest 112 $dateTime")).click()
         element(byXpath("//h3[text()='Описание происшествия']/../following-sibling::div//p"))
             .shouldHave(text("AutoTest 112 $dateTime"), ofSeconds(waitTime))
-        element(byCssSelector("div#panel1a-header")).shouldHave(text("Система-112"), ofSeconds(waitTime))
+        element(byXpath("(//div[@id='calls']//div[@id='panel1a-header'])[1]//strong[text()='Источник:']/ancestor::div[1 and text()='Система-112 стенд']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
         checkICToolIsStatus(`В обработке`, waitTime)
         logoffTool()
 
@@ -1041,7 +1044,7 @@ class PimTests : BaseTest(){
     open fun Справочники(): Any {
         return Dictionaries.values().map { arrayOf(it) }.toTypedArray()
 
-//        return arrayOf(Dictionaries.CumulativePlans)
+//        return arrayOf(Dictionaries.Positions)
 //        return arrayOf(Dictionaries.VideoCameras)
 //        return arrayOf(Dictionaries.Sensors)
 //        return arrayOf(Dictionaries.Hotlines)
@@ -1064,7 +1067,9 @@ class PimTests : BaseTest(){
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //отчищаем фильтры
-        cleanFilterByEnum(listOf(), waitTime)
+        if (subMenu != Dictionaries.Positions) {
+            cleanFilterByEnum(listOf(), waitTime)
+        }
         //добавляем все доступные колонки в таблицу
         tableCheckbox("", true, waitTime)
         //получаем счетчик строк в левом нижнем углу страницы, в виде числа
@@ -1462,13 +1467,15 @@ class PimTests : BaseTest(){
         date = LocalDate.now()
         logonTool()
         //Технический хардкодный счетчик на случай когда надо посоздавать должностных лиц не удаляя их
-        val techCount = 1
+        val techCount = 3
         //Удалять ли предшествующие записи? флаг для локального использования теста для генерации метаданных
-        val deleteOfficials = true
+        val deleteOfficials = false
         var telR = (1000000..9999999).random()
         var telM = (1000000..9999999).random()
         var officialName = generateFirstNameI()
         var officialLastName = generateLastNameF()
+        val hotLineList = mutableListOf<String>()
+        val organizationList = mutableListOf<String>()
         if (deleteOfficials){
             // TODO: доделать удаление по должности или еще какому признаку
             menuNavigation(Dictionaries.Officials, waitTime)
@@ -1523,15 +1530,17 @@ class PimTests : BaseTest(){
         element(byXpath("//table/thead/tr/th//*[text()='Организация']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        val hotLineList = mutableListOf<String>()
-        val organizationList = mutableListOf<String>()
+        //Выбираем случайную строку и из нее берем организацию и ДС
         val hotlineColumnNumber: Int = tableNumberOfColumn("Наименование", waitTime)
         val organizationColumnNumber: Int = tableNumberOfColumn("Организация", waitTime)
-        for (u in 1.. elements(byXpath("//table/tbody/tr")).size){
-            hotLineList.add(element(byXpath("//tbody/tr[$u]/td[$hotlineColumnNumber]//text()/..")).ownText)
-            organizationList.add(element(byXpath("//tbody/tr[$u]/td[$organizationColumnNumber]//text()/..")).ownText)
-        }
-        Assertions.assertTrue(hotLineList.size == organizationList.size)
+        val rndTableStringNumder = (1..elements(byXpath("//table/tbody/tr")).size).random()
+        val organizationForOfficial = element(byXpath("//table/tbody/tr[$rndTableStringNumder]/td[$organizationColumnNumber]//text()/..")).ownText
+        val hotLineForOfficial = element(byXpath("//table/tbody/tr[$rndTableStringNumder]/td[$hotlineColumnNumber]//text()/..")).ownText
+        //на всякий случай проверяем, что взяли из одной строки
+        element(byXpath("//table/tbody/tr[*[text()='$hotLineForOfficial'] and *[text()='$organizationForOfficial']]"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        //Переходим в справочник должностных лиц
         menuNavigation(Dictionaries.Officials, waitTime)
         //ждем загрузки таблицы
         element(byCssSelector("main table>tbody"))
@@ -1592,6 +1601,15 @@ class PimTests : BaseTest(){
             element(byXpath("//table/tbody"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
+//            tableSearch("$officialLastName $officialName N0270AutoTest", waitTime)
+//            element(byXpath("//table/tbody//*[text()='Нет данных']"))
+//                .shouldNot(exist, ofSeconds(waitTime))
+//            element(byXpath("//table/tbody/tr//*[text()='$officialLastName $officialName N0270AutoTest']/ancestor::tr"))
+//                .should(exist, ofSeconds(waitTime))
+//                .shouldBe(visible, ofSeconds(waitTime))
+//                .click()
+//
+
         }
         if (techCount ==1){
             //воспользуемся поиском

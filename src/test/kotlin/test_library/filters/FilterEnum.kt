@@ -11,13 +11,17 @@ enum class FilterEnum (val filter: FilterObject) {
 
     `Дата-время`(FilterObject("Дата/время", "Дата/время", FilterTypeEnum.DATE,)),
 
-    `Охват`(FilterObject("Охват", "Территориальный охват", FilterTypeEnum.POOLBUTTONS)),
+    //`Охват`(FilterObject("Охват", "Территориальный охват", FilterTypeEnum.POOLBUTTONS)),
+    `Охват`(FilterObject("Охват", "Охват", FilterTypeEnum.POOLBUTTONS)),
 
-    `Статусы`(FilterObject("Статусы", "Статусы карточки", FilterTypeEnum.POOLBUTTONS)),
+    //`Статусы`(FilterObject("Статусы", "Статусы карточки", FilterTypeEnum.POOLBUTTONS)),
+    `Статусы`(FilterObject("Статусы", "Статусы", FilterTypeEnum.POOLBUTTONS)),
 
-    `Уровни`(FilterObject("Уровни", "Уровень происшествия", FilterTypeEnum.POOLBUTTONS)),
+    //`Уровни`(FilterObject("Уровни", "Уровень происшествия", FilterTypeEnum.POOLBUTTONS)),
+    `Уровни`(FilterObject("Уровни", "Уровни", FilterTypeEnum.POOLBUTTONS)),
 
-    `Источники`(FilterObject("Источники", "Источники событий", FilterTypeEnum.POOLBUTTONS)),
+    //`Источники`(FilterObject("Источники", "Источники событий", FilterTypeEnum.POOLBUTTONS)),
+    `Источники`(FilterObject("Источники", "Источники", FilterTypeEnum.POOLBUTTONS)),
 
     `Угрозы`(FilterObject("Угрозы людям", "Угроза людям", FilterTypeEnum.RADIOBUTTON)),
 

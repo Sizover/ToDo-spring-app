@@ -1,7 +1,5 @@
 package test_library.menu
 
-import test_library.menu.SubmenuInterface
-
 
 class MyMenu {
     // "Словарь" енумов хранящий множество подменю для каждого родительского раздела меню КИАП.
@@ -31,6 +29,7 @@ class MyMenu {
         VideoCameras(MenuEnum.Справочники, "Видеокамеры", null),
         Sensors(MenuEnum.Справочники, "Датчики", null),
         Hotlines(MenuEnum.Справочники, "Дежурные службы", null),
+        Positions(MenuEnum.Справочники, "Должности", null),
         Officials(MenuEnum.Справочники, "Должностные лица", null),
         Labels(MenuEnum.Справочники, "Метки", null),
         Municipalities(MenuEnum.Справочники, "Муниципальные образования", null),
