@@ -136,7 +136,9 @@ class Events_Incidents :BaseTest() {
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
             //Отчищаем фильтры
-            cleanFilterByEnum(listOf(), waitTime)
+            if (menu != Incidents.IncidentsArchive){
+                cleanFilterByEnum(listOf(), waitTime)
+            }
             //устанавливаем фильры "Типы происшествий", "Дата регистрации", "Источники"
             setFilterByEnum(FilterEnum.Типы_происшествий, "Л Ложные", waitTime)
             setFilterByEnum(

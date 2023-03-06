@@ -137,6 +137,7 @@ class Dicts_Incidents :BaseTest() {
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
+        Thread.sleep(500)
         element(byXpath("//*[text()='Привязать к происшествию']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
