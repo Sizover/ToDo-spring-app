@@ -43,7 +43,7 @@ class CleanUp : BaseTest(){
             val nameColumn = tableNumberOfColumn("Наименование отчета", waitTime)
 //            println(menuColumn)
             //входим в большой цикл без защитного счетчика
-            tableCheckbox("Наименование отчета", true, waitTime)
+            tableColumnCheckbox("Наименование отчета", true, waitTime)
             //"Проверка формирования отчетов" это часть названия отчета присваемого всем отчетам создаваемыми автотестами
             while (elements(byXpath("//tbody/tr//*[contains(text(),'Проверка формирования отчетов')]")).size > 0 ){
                 countString = elements(byXpath("//tbody/tr")).size
@@ -103,7 +103,7 @@ class CleanUp : BaseTest(){
         element(byCssSelector("table>tbody>tr"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        tableCheckbox("Статус", true, waitTime)
+        tableColumnCheckbox("Статус", true, waitTime)
         val statusColumn = tableNumberOfColumn("Статус", waitTime)
         //отчищаем фильтры, что бы закрывать и дочерние карточки ДДС
         cleanFilterByEnum(listOf(), waitTime)

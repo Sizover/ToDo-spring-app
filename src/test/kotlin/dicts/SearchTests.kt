@@ -1,7 +1,7 @@
 package dicts
 
-import Retry
 import BaseTest
+import Retry
 import com.codeborne.selenide.CollectionCondition
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.visible
@@ -11,7 +11,7 @@ import com.codeborne.selenide.Selenide.elements
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import org.testng.annotations.DataProvider
-import test_library.menu.MyMenu.*
+import test_library.menu.MyMenu.Dictionaries
 import test_library.menu.SubmenuInterface
 import java.time.Duration.ofSeconds
 import java.time.LocalDateTime
@@ -41,10 +41,10 @@ class SearchTests : BaseTest(){
         logonTool()
         menuNavigation(menu, waitTime)
         //открываем поиск что бы прочитать подсказку
-        element(byXpath("//*[@name='search']/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
+//        element(byXpath("//*[@name='search']/ancestor::button"))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+//            .click()
         element(byXpath("//*[@name='search']/following-sibling::input"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -160,7 +160,7 @@ class SearchTests : BaseTest(){
         //проверяем что записей в таблице более одной
         elements(byXpath("//table/tbody/tr"))
             .shouldHave(CollectionCondition.sizeGreaterThan(1), ofSeconds(waitTime))
-        tableCheckbox(nameColumnName, true, waitTime)
+        tableColumnCheckbox(nameColumnName, true, waitTime)
         //проверяем открыт ли, и если нет открываем поиск
         if (!element(byXpath("//*[@name='search']/following-sibling::input")).exists()){
             element(byXpath("//*[@name='search']/ancestor::button"))

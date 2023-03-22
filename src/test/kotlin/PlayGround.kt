@@ -5,8 +5,10 @@ import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Selectors.byCssSelector
 import com.codeborne.selenide.Selectors.byXpath
-import com.codeborne.selenide.Selenide.*
+import com.codeborne.selenide.Selenide.element
+import com.codeborne.selenide.Selenide.elements
 import org.openqa.selenium.Keys
+import test_library.filters.FilterEnum
 import test_library.menu.MyMenu
 import java.io.File
 import java.time.Duration.ofSeconds
@@ -25,7 +27,7 @@ class PlayGround : BaseTest(){
     val moATCreated = mutableListOf<String>("AutoTest T 0020 МО")
     logonTool()
     menuNavigation(MyMenu.Dictionaries.Municipalities, waitTime)
-    tableCheckbox("", true, waitTime)
+    tableColumnCheckbox("", true, waitTime)
     Thread.sleep(1000)
     //внесем существующие телефонные коды в отдельный список
 //       var telCodeElementsCollection = elements(byXpath(""))
@@ -206,17 +208,38 @@ class PlayGround : BaseTest(){
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
     fun `Черновик2`() {
-
         logonTool()
-        Thread.sleep(1000)
-//        menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
-        Thread.sleep(1000)
-        open("https://test.kiap.local/events/incidents/2f5b8daf-a247-48fb-9243-d3b51b524afe?page=0&perPage=20&mid%5B%5D=4be3343e-103d-4237-9ba4-59f9e3e0c14b&mid%5B%5D=919225df-bd80-495f-b9ff-a8116b354390&hid%5B%5D=8ccba807-9763-47e3-93ff-7dd2c2cb564f")
-        Thread.sleep(1000)
-        element(byXpath("//div[@role='presentation']//*[@name='phoneCall']/ancestor::*[text()='Позвонить']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
+        Thread.sleep(100)
+        menuNavigation(MyMenu.KB.Explorer,  waitTime)
+        setFilterByEnum(FilterEnum.МО, "Краснодарский Край ", waitTime)
+        Thread.sleep(100)
+//        val test = "Краснодарский Край &||&"
+//        println(test.substringBefore("&||&").trim())
+
+
+
+//        logonTool()
+//        menuNavigation(MyMenu.KB.Explorer, waitTime)
+//        element(byXpath("//h6/../.."))
+//            .should(exist, ofSeconds(waitTime))
+//            .shouldBe(visible, ofSeconds(waitTime))
+//        for (i in 0 until elements(byXpath("//h6/../..")).size){
+//            elements(byXpath("//h6/../.."))[i].find(".MuiTypography-root.MuiTypography-caption.css-1arurh3").click()
+//            Thread.sleep(1000)
+
+//        elements(byXpath("//h6/../..")).forEach { el ->
+//            el.
+
+
+
+
+//            el.find(byXpath("*[text()='ОТКРЫТЬ' and text()=' ПОДРОБНОСТИ']/.."))
+//                .click()
+
+
+
+
+
 //        elements("div#iplan div[role='button'][aria-expanded='false']")
 //            .findBy(exactText("AutoTest Dicts CP 0010 child 1 Простой"))
 //            .find(byXpath("ancestor::div[@role='button' and @aria-expanded='false']"))

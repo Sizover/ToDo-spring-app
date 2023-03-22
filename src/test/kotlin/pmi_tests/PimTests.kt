@@ -291,7 +291,7 @@ class PimTests : BaseTest(){
         //Переходим в "Список происшетвий" )
         menuNavigation(Incidents.IncidentsList, waitTime)
         //добавляем в таблицу происшествий столбец "Описание"
-        tableCheckbox("Описание", true, waitTime)
+        tableColumnCheckbox("Описание", true, waitTime)
         //Переходим в созданное ранее происшествие
         element(byText("AutoTest N 0110 $dateTime")).click()
         checkICToolDopInfo("AutoTest N 0110 $dateTime", waitTime)
@@ -446,7 +446,7 @@ class PimTests : BaseTest(){
         //Переходим в "Список происшетвий"
         menuNavigation(Incidents.IncidentsList, waitTime)
         //добавляем в таблицу происшествий столбец "Описание"
-        tableCheckbox("Описание", true, waitTime)
+        tableColumnCheckbox("Описание", true, waitTime)
         //Переходим в созданное ранее происшествие
         element(byText("AutoTest N 0130 $dateTime")).click()
         checkICToolDopInfo("AutoTest N 0130 $dateTime", waitTime)
@@ -544,7 +544,7 @@ class PimTests : BaseTest(){
         setFilterByEnum(Типы_происшествий, "К Консультации;Л Ложные", waitTime)
         //Дожидаемся применения фильтра
         Thread.sleep(500)
-        tableCheckbox("Подгруппа", true, waitTime)
+        tableColumnCheckbox("Подгруппа", true, waitTime)
         var targetColumn = tableNumberOfColumn("Подгруппа", waitTime)
         Thread.sleep(500)
         var intA: Int = elements(byXpath("//table/tbody/tr")).size
@@ -556,7 +556,7 @@ class PimTests : BaseTest(){
         cleanFilterByEnum(listOf(Типы_происшествий), waitTime)
         /////////////////////////////////////////////////////////////////////////////////////////
         //применяем фильтр "Статусы"
-        tableCheckbox("Статус", true, waitTime)
+        tableColumnCheckbox("Статус", true, waitTime)
         setFilterByEnum(Статусы, "В обработке;Реагирование", waitTime)
         targetColumn = tableNumberOfColumn("Статус", waitTime)
         intA = elements(byXpath("//table/tbody/tr")).size
@@ -571,7 +571,7 @@ class PimTests : BaseTest(){
         setFilterByEnum(Уровни, "Угроза ЧС;ЧС", waitTime)
         //Дожидаемся применения фильтра
         Thread.sleep(2000)
-        tableCheckbox("Уровень происшествия", true, waitTime)
+        tableColumnCheckbox("Уровень происшествия", true, waitTime)
         targetColumn = tableNumberOfColumn("Уровень происшествия", waitTime)
         Thread.sleep(500)
         intA = elements(byXpath("//table/tbody/tr")).size
@@ -584,7 +584,7 @@ class PimTests : BaseTest(){
         cleanFilterByEnum(listOf(Уровни), waitTime)
         /////////////////////////////////////////////////////////////////////////////////////////
         //Открываем фильтр "Источники"
-        tableCheckbox("Источник", true, waitTime)
+        tableColumnCheckbox("Источник", true, waitTime)
         //Устанавливаем значения фильтров
         setFilterByEnum(Источники, "Видеоаналитика;СМС", waitTime)
         targetColumn = tableNumberOfColumn("Источник", waitTime)
@@ -677,7 +677,7 @@ class PimTests : BaseTest(){
         //Переходим в "Список происшетвий"
         menuNavigation(Incidents.IncidentsList, waitTime)
         //добавляем в таблицу происшествий столбец "Описание"
-        tableCheckbox("Описание", true, waitTime)
+        tableColumnCheckbox("Описание", true, waitTime)
         //Переходим в созданное ранее происшествие
         element(byText("AutoTest PMI 0150 $dateTime")).click()
         checkICToolDopInfo("AutoTest PMI 0150 $dateTime", waitTime)
@@ -704,7 +704,7 @@ class PimTests : BaseTest(){
         //Переходим в "Список происшетвий"
         menuNavigation(Incidents.IncidentsList, waitTime)
         //добавляем в таблицу происшествий столбец "Описание"
-        tableCheckbox("Описание", true, waitTime)
+        tableColumnCheckbox("Описание", true, waitTime)
         //Находим созданную КП в КИАП ДДС
         element(byText("AutoTest PMI 0150 $dateTime")).should(exist, ofSeconds(waitTime)).click()
         //устанавливаем статус "Реагирование"
@@ -718,7 +718,7 @@ class PimTests : BaseTest(){
         //Переходим в "Список происшетвий"
         menuNavigation(Incidents.IncidentsList, waitTime)
         //добавляем в таблицу происшествий столбец "Описание"
-        tableCheckbox("Описание", true, waitTime)
+        tableColumnCheckbox("Описание", true, waitTime)
         //Находим созданную КП
         element(byText("AutoTest PMI 0150 $dateTime")).should(exist, ofSeconds(waitTime)).click()
         //проверяем статус родительской карточки
@@ -926,7 +926,7 @@ class PimTests : BaseTest(){
         //Сбрасываем фильтры
         cleanFilterByEnum(listOf(), waitTime)
         //добавляем в таблицу происшествий столбец "Описание"
-        tableCheckbox("Описание", true, waitTime)
+        tableColumnCheckbox("Описание", true, waitTime)
         //Переходим в созданное ранее в 112 происшествие
         element(byText("AutoTest 112 $dateTime")).click()
         element(byXpath("//h3[text()='Описание происшествия']/../following-sibling::div//p"))
@@ -956,10 +956,10 @@ class PimTests : BaseTest(){
             .shouldBe(visible, ofSeconds(waitTime))
         //ищем столбец "файлы"
         if (!element(byXpath("//*[text()='Файлы']/ancestor::thead")).exists()) {
-            tableCheckbox("Файлы", true, waitTime)
+            tableColumnCheckbox("Файлы", true, waitTime)
         }
         if (!element(byXpath("//*[text()='Наименование']/ancestor::thead")).exists()) {
-            tableCheckbox("Наименование", true, waitTime)
+            tableColumnCheckbox("Наименование", true, waitTime)
         }
         element(byXpath("//*[text()='Файлы']/ancestor::thead"))
             .should(exist, ofSeconds(waitTime))
@@ -1071,7 +1071,7 @@ class PimTests : BaseTest(){
             cleanFilterByEnum(listOf(), waitTime)
         }
         //добавляем все доступные колонки в таблицу
-        tableCheckbox("", true, waitTime)
+        tableColumnCheckbox("", true, waitTime)
         //получаем счетчик строк в левом нижнем углу страницы, в виде числа
         val allRecordCountUse = element(byXpath("//table/tfoot//p[contains(text(),'Всего ')]"))
             .ownText
@@ -1328,7 +1328,7 @@ class PimTests : BaseTest(){
         element(byCssSelector("main table>tbody"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        tableCheckbox("Наименование", true, waitTime)
+        tableColumnCheckbox("Наименование", true, waitTime)
         tableSearch(organizationName, waitTime)
         //переходим в ту же организацию
         element(byXpath("//table/tbody//*[text()='$organizationName']/text()/ancestor::td"))
@@ -1395,7 +1395,7 @@ class PimTests : BaseTest(){
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //Собираем все ФИО, что бы не проверять организацию у которой руководитель не указан
-        tableCheckbox("Руководитель;Наименование", true, waitTime)
+        tableColumnCheckbox("Руководитель;Наименование", true, waitTime)
         val officialIdColumn = tableNumberOfColumn("Руководитель", waitTime)
         elements(byXpath("//table/tbody/tr/td[$officialIdColumn]//text()/ancestor::td"))
             .random()
@@ -1467,9 +1467,9 @@ class PimTests : BaseTest(){
         date = LocalDate.now()
         logonTool()
         //Технический хардкодный счетчик на случай когда надо посоздавать должностных лиц не удаляя их
-        val techCount = 3
+        val techCount = 1
         //Удалять ли предшествующие записи? флаг для локального использования теста для генерации метаданных
-        val deleteOfficials = false
+        val deleteOfficials = true
         var telR = (1000000..9999999).random()
         var telM = (1000000..9999999).random()
         var officialName = generateFirstNameI()
@@ -1480,7 +1480,7 @@ class PimTests : BaseTest(){
             // TODO: доделать удаление по должности или еще какому признаку
             menuNavigation(Dictionaries.Officials, waitTime)
             setFilterByEnum(Пользователь, "Нет", waitTime)
-            tableCheckbox("ФИО", true, waitTime)
+            tableColumnCheckbox("ФИО", true, waitTime)
             tableSearch("N0270AutoTest", waitTime)
             val fioColumnNubber = tableNumberOfColumn("ФИО", waitTime)
             Thread.sleep(1000)
@@ -1522,7 +1522,7 @@ class PimTests : BaseTest(){
         //переключаемся на 500 записей на странице
         tableStringsOnPage(500, waitTime)
         //выставляем отображение нужных столбцов
-        tableCheckbox("Наименование;Организация", true, waitTime)
+        tableColumnCheckbox("Наименование;Организация", true, waitTime)
         element(byXpath("//table/thead/tr/th//*[text()='Наименование']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))

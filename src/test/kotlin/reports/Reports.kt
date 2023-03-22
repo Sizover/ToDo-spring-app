@@ -26,7 +26,7 @@ import kotlin.random.Random
 
 class Reports : BaseTest(){
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
+    @Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL", "Reports"])
     fun `Reports 0010 Проверка формирования отчетов по обращениям`() {
         //A.3.23 Проверка формирования отчетов по обращениям
         dateTime = LocalDateTime.now()
@@ -329,7 +329,7 @@ class Reports : BaseTest(){
 
 
 
-    @Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
+    @Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL", "Reports"])
     fun `Reports 0020 Проверка формирования отчетов по деятельности сотрудников`() {
         //A.3.24 Проверка формирования отчетов по деятельности сотрудников
         dateTime = LocalDateTime.now()
@@ -573,7 +573,7 @@ class Reports : BaseTest(){
     }
 
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
+    @Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL", "Reports"])
     fun `Reports 0030 проверка отчетов по происшествиям с использованием фильтров по пострадавшим, адресу и типу происшествия`() {
         dateTime = LocalDateTime.now()
         date = LocalDate.now()
@@ -1254,7 +1254,7 @@ class Reports : BaseTest(){
         )
     }
 
-    @Test(retryAnalyzer = Retry::class, dataProvider = "Расширенная проверка формирования отчетов", groups = ["ПМИ", "ALL"])
+    @Test(retryAnalyzer = Retry::class, dataProvider = "Расширенная проверка формирования отчетов", groups = ["ПМИ", "ALL", "Reports"])
     fun `Reports 0070 Расширенная проверка формирования отчетов`(reportType: SubmenuInterface, reportsString: String, valueColumnNumber: Int ) {
         dateTime = LocalDateTime.now()
         date = LocalDate.now()

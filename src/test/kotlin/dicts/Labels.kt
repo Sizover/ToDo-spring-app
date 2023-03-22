@@ -26,7 +26,7 @@ class Labels : BaseTest(){
         dateTime = LocalDateTime.now()
         logonTool()
         menuNavigation(Dictionaries.Labels, waitTime)
-        tableCheckbox("Метка;Описание", true, waitTime)
+        tableColumnCheckbox("Метка;Описание", true, waitTime)
         //воспользуемся поиском, что бы найти созданную метку не удаленную в упавший проход
         element(byXpath("//*[@name='search']/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
