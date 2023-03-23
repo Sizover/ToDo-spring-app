@@ -754,7 +754,7 @@ class Dicts_KB: BaseTest() {
             element(byXpath("//form[@novalidate]"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
-            //TODO удалить трайкейтч (баг 1800?)
+            //TODO удалить трайкейтч (баг 1800 1653?)
             try {
                 element(byXpath("//*[text()='Сохранить']/text()/ancestor::button"))
                     .shouldNot(exist, ofSeconds(longWait))
@@ -978,9 +978,7 @@ class Dicts_KB: BaseTest() {
 
     @Test(retryAnalyzer = Retry::class, groups = ["ALL", "KB"])
     fun `KB 0020 Проверка фильтров статей БЗ`() {
-        //составим карту разделов
-        val listOfCategories: MutableList<Any> = mutableListOf()
-        //путь из папок к каждой конкретной статье
+        //путь из папок к каждой конкретной папке
         val categoryRouteMap: MutableMap<String, List<String>> = mutableMapOf()
         //атрибуты статьи
         val mapOfAttArt: MutableMap<String, MutableMap<String, MutableList<String>?>> = mutableMapOf()
@@ -991,7 +989,6 @@ class Dicts_KB: BaseTest() {
         val incidentTypesMap: MutableMap<String, String> = mutableMapOf()
         logonTool()
         menuNavigation(MyMenu.Dictionaries.IncidentTypes, waitTime)
-        //table/thead/tr/th[1]//*[contains(@name,'arrow')]/ancestor::button
         //ждем
         element(byXpath("//table/thead/tr/th[1]//*[contains(@name,'arrow')]/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
@@ -1005,6 +1002,7 @@ class Dicts_KB: BaseTest() {
                 .click()
             Thread.sleep(300)
         }
+        //заполняем карту кодов и наименований
         tableColumnCheckbox("Код;Тип происшествия", true, waitTime)
         val codeColumn = tableNumberOfColumn("Код", waitTime)
         val typeColumn = tableNumberOfColumn("Тип происшествия", waitTime)
@@ -1012,7 +1010,6 @@ class Dicts_KB: BaseTest() {
             incidentTypesMap.put(element(byXpath("//table/tbody/tr[$tblStr]/td[$codeColumn]//text()/..")).ownText,
                 element(byXpath("//table/tbody/tr[$tblStr]/td[$typeColumn]//text()/..")).ownText)
         }
-        println(incidentTypesMap)
         menuNavigation(MyMenu.KB.Categories, waitTime)
         //ждем и убеждаемся что мы там где надо
         element(byXpath("//div[@id='dict-title']//h2[text()='Разделы базы знаний']"))
@@ -1041,11 +1038,8 @@ class Dicts_KB: BaseTest() {
             .shouldNot(exist, ofSeconds(waitTime))
         //выставляем нужные столбцы
         tableColumnCheckbox("Раздел;Кол-во статей;Кол-во разделов", true, waitTime)
-//        tableCheckbox("Кол-во статей", true, waitTime)
-//        tableCheckbox("Кол-во разделов", true, waitTime)
         val colOfNameCat = tableNumberOfColumn("Раздел", waitTime)
         val colOfAmountArt = tableNumberOfColumn("Кол-во статей", waitTime)
-        val colOfAmountCat = tableNumberOfColumn("Кол-во разделов", waitTime)
         //для всей таблицы построчно выполняем
         for (tblStrNum in 1..elements(byXpath("//table/tbody/tr")).size){
             //запомним уровень вложенности
@@ -1062,24 +1056,28 @@ class Dicts_KB: BaseTest() {
                 categoryRouteMap.put(element(byXpath("//table/tbody/tr[$tblStrNum]/td[$colOfNameCat]//text()/..")).ownText, routeList.toList())
             }
         }
-        //соберем атрибуты тех статей что есть на экране
         menuNavigation(MyMenu.KB.Explorer, waitTime)
         tableStringsOnPage(50, waitTime)
+        //соберем атрибуты тех статей что есть на экране
         cleanFilterByEnum(listOf(), waitTime)
         element(byXpath("//div[@id='kb-card']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
+        //для каждой карточки статьи
         for (artNum in 1..elements(byXpath("//div[@id='kb-card']")).size){
             val oneArtAttMap: MutableMap<String, MutableList<String>> = mutableMapOf()
+            //имя статьи
             val artName = element(byXpath("//div[@id='kb-card'][$artNum]//h6[2]")).ownText
-//            val catName = element(byXpath("//div[@id='kb-card'][$artNum]//h6[2]")).ownText
+            //имя раздела, но в списке
             val catNameList = listOf<String>(element(byXpath("//div[@id='kb-card'][$artNum]//h6[1]")).ownText)
             oneArtAttMap.put("Раздел", catNameList.toMutableList())
+            //окрываем подробности каждой карточки
             element(byXpath("//div[@id='kb-card'][$artNum]//*[text()='ОТКРЫТЬ' and text()=' ПОДРОБНОСТИ']/.."))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
                 .scrollIntoView("{block: \"center\"}")
                 .click()
+            //ждем
             element(byXpath("//div[@id='kb-card'][$artNum]//*[text()='ОТКРЫТЬ' and text()=' ПОДРОБНОСТИ']/.."))
                 .shouldNot(exist, ofSeconds(waitTime))
             element(byXpath("//div[@id='kb-card'][$artNum]//*[text()='СКРЫТЬ' and text()=' ПОДРОБНОСТИ']/.."))
@@ -1091,6 +1089,7 @@ class Dicts_KB: BaseTest() {
             element(byXpath("//div[@id='kb-card'][$artNum]//*[text()='Муниципальные образования']"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
+            //зачитываем каждый аттрибут и кдалем его в список, а его в карту
             listOfAttName.forEach { attName ->
                 val oneAttList: MutableList<String> = mutableListOf()
                 if (element(byXpath("//div[@id='kb-card'][$artNum]//*[text()='$attName']")).exists()){
@@ -1100,7 +1099,9 @@ class Dicts_KB: BaseTest() {
                 }
                 oneArtAttMap.put(attName, oneAttList)
             }
+            //статью в карту кладем под уникальным именем
             mapOfAttArt.put("$artName&|&$artNum", oneArtAttMap as MutableMap<String, MutableList<String>?>)
+            //закрываем подробности
             element(byXpath("//div[@id='kb-card'][$artNum]//*[text()='СКРЫТЬ' and text()=' ПОДРОБНОСТИ']/.."))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
@@ -1112,31 +1113,30 @@ class Dicts_KB: BaseTest() {
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
         }
+        //выбираем значение каждого аттрибута для применения в фильтре
         listOfAttName.forEach { attName ->
             val rndAttValue = mapOfAttArt.keys.map { mapOfAttArt[it]!!.get(attName) }.flatMap { it!! }.distinct().random()
-            //val rndAttValue2 = mapOfAttArt.keys.map { mapOfAttArt[it]!!.get(attName) }.let { it.flatMap { it!! }.distinct().random() }
             val filterEnum = FilterEnum.values().filter { it.filterAlias.fullName == attName}[0]
+            //значение атрибута и значение фильтра не всегда одно и тоже, поэтому выкручиваемся
             var filterRndAttValue = ""
-                when (attName) {
-                    "Типы происшествий" -> filterRndAttValue = "$rndAttValue ${incidentTypesMap[rndAttValue]}"
-                    "Муниципальные образования" -> filterRndAttValue = "$rndAttValue&||&"
-                    "Метки" -> filterRndAttValue = rndAttValue
+            when (attName) {
+                "Типы происшествий" -> filterRndAttValue = "$rndAttValue ${incidentTypesMap[rndAttValue]}"
+                //&||& символ костыль, что бы фильтр отключил обратно авто-включаемых потомков в фильтре
+                "Муниципальные образования" -> filterRndAttValue = "$rndAttValue&||&"
+                "Метки" -> filterRndAttValue = rndAttValue
             }
-            println(rndAttValue)
-            println(filterRndAttValue)
-//            if (attName == "Типы происшествий"){
-//                rndAttValue += " ${incidentTypesMap[rndAttValue]}"
-//            } else if (attName == "Муниципальные образования"){
-//                rndAttValue += "&||&"
-//            }
+            //устанавливаем фильтр
             setFilterByEnum(filterEnum, filterRndAttValue, waitTime)
             Thread.sleep(1000)
+            //убеждаемся что все статьи из ранее зафиксированных, которые соответствуют фильтрам, присутствуют
             mapOfAttArt.keys.filter { mapOfAttArt[it]!![attName]?.contains(rndAttValue) == true }.forEach { artName ->
                 element(byXpath("//div[@id='kb-card']//h6[2 and text()='${artName.substringBefore("&|&")}']"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
             }
+            //убеждаемся что все статьи из отображенных соответствуют фильтрам
             for (artNum in 1..elements(byXpath("//div[@id='kb-card']")).size){
+                //открываем подробности каждой карточки и проверяем наличие атрибута из фильтра и закрываем подробности
                 element(byXpath("//div[@id='kb-card'][$artNum]//*[text()='ОТКРЫТЬ' and text()=' ПОДРОБНОСТИ']/.."))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
@@ -1170,9 +1170,11 @@ class Dicts_KB: BaseTest() {
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
             }
+            //выбираем случайную статью из тех что подходят по фильтру, из ранее созданного списка
             val rndArt = mapOfAttArt.keys.filter { mapOfAttArt[it]!![attName]?.contains(rndAttValue) == true }.random()
-            val rndArtName = rndArt.substringBefore("&|&")
+            //запоминаем раздел статьи
             val rndCatName = mapOfAttArt[rndArt]!!["Раздел"]!![0]
+            //если раздел интересуемой статьи лежит в не корне, то... перемещаемся по папкам к нему
             if (!element(byXpath("//div[@id='category']//*[text()='$rndCatName']")).exists()){
                 categoryRouteMap[rndCatName]!!.forEach { cat ->
                     element(byXpath("//div[@id='category']//*[text()='$cat']"))
@@ -1181,15 +1183,19 @@ class Dicts_KB: BaseTest() {
                         .click()
                 }
             }
+            //переходим в раздел статьи
             element(byXpath("//div[@id='category']//*[text()='$rndCatName']"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
                 .scrollIntoView("{block: \"center\"}")
                 .click()
+            //проверяем наличие статьи
             element(byXpath("//div[@id='kb-card']//h6[2 and text()='${rndArt.substringBefore("&|&")}']"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
+            //проверяем что все статьи папки соответствуют фильтрам
             for (artNum in 1..elements(byXpath("//div[@id='kb-card']")).size){
+                //для каждой карточки статьи открываем подробности, проверяем, закрываем подробности
                 element(byXpath("//div[@id='kb-card'][$artNum]//*[text()='ОТКРЫТЬ' and text()=' ПОДРОБНОСТИ']/.."))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
@@ -1223,34 +1229,30 @@ class Dicts_KB: BaseTest() {
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
             }
-//            categoryRouteMap[rndCatName]!!.reversed().forEach { cat ->
-//                element(byXpath("//nav//li[last()]//*[text()='$cat']"))
-//                    .should(exist, ofSeconds(waitTime))
-//                    .shouldBe(visible, ofSeconds(waitTime))
-//                element(byXpath("//div[@id='category-up']"))
-//                    .should(exist, ofSeconds(waitTime))
-//                    .shouldBe(visible, ofSeconds(waitTime))
-//                    .click()
-//            }
-//            cleanFilterByEnum(listOf(filterEnum), waitTime)
-            element(byXpath("//nav//*[text()='База знаний']/ancestor::li"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .click()
-            element(byXpath("//nav//li[last()]//*[text()='База знаний']"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-
+            //возвращаемся в корневую папку одним из двух способов, поднимаясь в папку ".." используя развернутый маршрут к папке
+            if (Random.nextBoolean()){
+                categoryRouteMap[rndCatName]!!.reversed().forEach { cat ->
+                element(byXpath("//nav//li[last()]//*[text()='$cat']"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                element(byXpath("//div[@id='category-up']"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .click()
+                }
+            cleanFilterByEnum(listOf(filterEnum), waitTime)
+            } else {
+                //или по хлебным крошкам
+                element(byXpath("//nav//*[text()='База знаний']/ancestor::li"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .click()
+                element(byXpath("//nav//li[last()]//*[text()='База знаний']"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                element(byXpath("//form[@novalidate]//button//button"))
+                    .shouldNot(exist, ofSeconds(waitTime))
+            }
         }
-
-
-
-
-
-
-
-        Thread.sleep(1000)
-
     }
-
 }
