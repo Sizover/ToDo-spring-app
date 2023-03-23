@@ -40,12 +40,12 @@ class Dicts_CumulativePlans:BaseTest() {
         logonTool()
         //Переходим в справочник
         menuNavigation(Dictionaries.CumulativePlans, waitTime)
-        tableCheckbox("Наименование мероприятий/блока", true, waitTime)
+        tableColumnCheckbox("Наименование мероприятий/блока", true, waitTime)
         var nameCPColumn = tableNumberOfColumn("Наименование мероприятий/блока", waitTime)
         //очищаем фильтр
         cleanFilterByEnum(listOf(), waitTime)
         //выводим столбец с нумерацией пунктов
-        tableCheckbox("№", true, waitTime)
+        tableColumnCheckbox("№", true, waitTime)
         //запоминаем столбец с нумерацией пунктов
         var columnOfNumber = tableNumberOfColumn("№", waitTime)
         //удалим результаты предыдущих провальных тестов
@@ -232,12 +232,12 @@ class Dicts_CumulativePlans:BaseTest() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //Идем за данными для заполнения доп полей
         menuNavigation(Dictionaries.Hotlines, waitTime)
-        tableCheckbox("Наименование", true, waitTime)
+        tableColumnCheckbox("Наименование", true, waitTime)
         val hotlineNameColumn = tableNumberOfColumn("Наименование", waitTime)
         val rndHLName = elements(byXpath("//table/tbody/tr/td[$hotlineNameColumn]//text()/..")).random().ownText
         menuNavigation(Dictionaries.Officials, waitTime)
-        tableCheckbox("ФИО", true, waitTime)
-        tableCheckbox("Раб.телефон", true, waitTime)
+        tableColumnCheckbox("ФИО", true, waitTime)
+        tableColumnCheckbox("Раб.телефон", true, waitTime)
         val officialsFIOColumn = tableNumberOfColumn("ФИО", waitTime)
         val officialsWorkPhoneColumn = tableNumberOfColumn("Раб.телефон", waitTime)
         val rndOfficialsFIO = elements(byXpath("//table/tbody/tr/td[$officialsFIOColumn]//text()/..")).random().ownText.trim()
@@ -532,12 +532,12 @@ class Dicts_CumulativePlans:BaseTest() {
         //А теперь удаляем все
         listOfRemoved.clear()
         menuNavigation(Dictionaries.CumulativePlans, waitTime)
-        tableCheckbox("Наименование мероприятий/блока", true, waitTime)
+        tableColumnCheckbox("Наименование мероприятий/блока", true, waitTime)
         nameCPColumn = tableNumberOfColumn("Наименование мероприятий/блока", waitTime)
         //очищаем фильтр
         cleanFilterByEnum(listOf(), waitTime)
         //выводим столбец с нумерацией пунктов
-        tableCheckbox("№", true, waitTime)
+        tableColumnCheckbox("№", true, waitTime)
         //запоминаем столбец с нумерацией пунктов
         columnOfNumber = tableNumberOfColumn("№", waitTime)
         //удалим результаты предыдущих провальных тестов

@@ -215,7 +215,7 @@ class MapTest  : BaseTest(){
         //Переходим в справочник организаций
         menuNavigation(Dictionaries.Companies, waitTime)
         //выводим столбец карты
-        tableCheckbox("Карта", true, waitTime)
+        tableColumnCheckbox("Карта", true, waitTime)
         val mapColumn = tableNumberOfColumn("Карта", waitTime)
         element(byXpath("//table/tbody/tr/td[$mapColumn]/*[@aria-label='Показать на карте']/button"))
             .should(exist, ofSeconds(waitTime))

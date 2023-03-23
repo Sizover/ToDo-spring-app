@@ -126,7 +126,7 @@ open class StatusTests : BaseTest(){
                 }
                 anyLogonTool(login, login)
                 menuNavigation(Incidents.IncidentsList, waitTime)
-                tableCheckbox("Описание", true, waitTime)
+                tableColumnCheckbox("Описание", true, waitTime)
                 //Находим созданную КП в КИАП ДДС
                 element(byText("AutoTest S 0010 $Status1 $Status2 $StutusSum $dateTime"))
                     .should(exist, ofSeconds(waitTime))
@@ -139,7 +139,7 @@ open class StatusTests : BaseTest(){
             }
         logonTool()
         menuNavigation(Incidents.IncidentsList, waitTime)
-        tableCheckbox("Описание", true, waitTime)
+        tableColumnCheckbox("Описание", true, waitTime)
         //Находим созданную родительскую КП
         element(byText("AutoTest S 0010 $Status1 $Status2 $StutusSum $dateTime"))
             .should(exist, ofSeconds(waitTime))
