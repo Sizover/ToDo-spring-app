@@ -259,25 +259,35 @@ open class BaseTest {
     //При пустом имени, выклацывает весь список в указанное состояние
     //Допустимо передавать несколько значений разделяя их ; без пробелов
     {
+        //открывался ли список, что бы закрывать его
+        var open = false
+        //константы состояния чекбоксов взятые из DOMа
         val checkboxTrue = "checkboxFocus"
         val checkboxFalse = "checkboxNormal"
-//        val checkboxAlias = ""
+        //черновик списка интересующих столбцов
         var checkboxNameListDraft = mutableListOf<String>()
+        //чистовик списка интересующих столбцов
         val checkboxNameList = mutableListOf<String>()
         // Определяем надо ли выставлять колонки и формируем их список
         if (checkboxesName.isNotEmpty()) {
+            //преобразуем переданную строку в черновой список
             if (checkboxesName.contains(";")) {
                 checkboxNameListDraft = checkboxesName.split(';').map { it.trim() }.toMutableList()
             } else {
                 checkboxNameListDraft.add(checkboxesName)
             }
+            //если в текущей таблице интересующий нас столбец не в интересующем нас состоянии,
+            //то добавляем столбец в чистовик
             checkboxNameListDraft.forEach { column ->
                 if (element(byXpath("//table/thead//*[text()='$column']")).exists() != checkboxCondition){
                     checkboxNameList.add(column)
                 }
             }
         }
+        //если действия нужны над всеми столбцами или в таблице столбцы не так как мы хотим
+        //то открываем список столбцов
         if (checkboxesName.isEmpty() || checkboxNameList.isNotEmpty()){
+            open = true
             //Открываем выпадающий список
             element(byXpath("//*[@name='table']/ancestor::button"))
                 .should(exist, ofSeconds(waitTime))
@@ -288,12 +298,13 @@ open class BaseTest {
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
         }
-        //если передали пустое значение, то проходимся по всем чек-боксам, если нет, то нет =)
+        //если передали пустое значение, то проходимся по всем чек-боксам, добавляя их в чистовик
         if (checkboxesName.isEmpty()) {
             elements(byXpath("//label/span[text()]")).forEach {
                 checkboxNameList.add(it.ownText)
             }
         }
+        //по чистовику переводим чекбоксы в интересующее состояние
         checkboxNameList.forEach {
             //проверяем что нам выдали и что надо сделать
             element(byXpath("//span[text()='$it']/parent::label//input"))
@@ -326,7 +337,8 @@ open class BaseTest {
 
             }
         }
-        if (checkboxesName.isEmpty() || checkboxNameList.isNotEmpty()){
+        //если открывали список чекбоксов, то закрываем его
+        if (open){
             Thread.sleep(500)
             while (element(byXpath("//div[@role='presentation']")).exists()) {
                 element(byXpath("//div[@role='presentation']")).click()
@@ -1322,7 +1334,9 @@ open class BaseTest {
                         .shouldHave(CollectionCondition.size(2), ofSeconds(waitTime))
                 }
                 //чтобы обойти машинный глюк с несработавшим кликом, кликаем в цикле
-                val test = oneFilterValue.substringBefore("&||&").trim()
+                element(byXpath(clickLocator(filterFullName, oneFilterValue.substringBefore("&||&").trim())))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
                 while (element(byXpath(clickLocator(filterFullName, oneFilterValue.substringBefore("&||&").trim()))).exists()){
                     element(byXpath(clickLocator(filterFullName, oneFilterValue.substringBefore("&||&").trim())))
                         .should(exist, ofSeconds(waitTime))
@@ -1339,12 +1353,13 @@ open class BaseTest {
                             Thread.sleep(300)
                     }
                 }
-                //сворачиваем выпадающий список
-                //println(element(byXpath("//div[@role='presentation'][last()]")).innerHtml())
-                element(byXpath("//*[text()='$filterFullName']/ancestor::div[@data-testid]//input/..//button[@aria-label='Close']"))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
-                    .click()
+                //сворачиваем выпадающий список, если заканчиваем перебор списка
+                if (indexOfFilterValue == listOfTargetValues.lastIndex) {
+                    element(byXpath("//*[text()='$filterFullName']/ancestor::div[@data-testid]//input/..//button[@aria-label='Close']"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                        .click()
+                }
             } else if (filterType == FilterTypeEnum.DATE){
                 //можно еще вставить проверку на то что даты не больше сегодняшней, но пока оставлю так
 //                var dateS = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH).parse(oneFilterValue)
@@ -1360,14 +1375,14 @@ open class BaseTest {
                     }
                     if (indexOfFilterValue == 0){
                         if (oneFilterValue.trim().isNotEmpty()){
-                            element(byXpath(filter.filterAlias.type.filterType.clickLocator(filterFullName, "с")))
+                            element(byXpath(filter.filterAlias.type.filterType.clickLocator(filterFullName, "с __.__.____ __:__")))
                                 .should(exist, ofSeconds(waitTime))
                                 .shouldBe(visible, ofSeconds(waitTime))
                                 .sendKeys(oneFilterValue +"0000")
                         }
                     } else if ((indexOfFilterValue == 1)) {
                         if (oneFilterValue.trim().isNotEmpty()){
-                            element(byXpath(filter.filterAlias.type.filterType.clickLocator(filterFullName, "по")))
+                            element(byXpath(filter.filterAlias.type.filterType.clickLocator(filterFullName, "по __.__.____ __:__")))
                                 .should(exist, ofSeconds(waitTime))
                                 .shouldBe(visible, ofSeconds(waitTime))
                                 .sendKeys(oneFilterValue +"2359")
@@ -1632,7 +1647,8 @@ open class BaseTest {
             .click()
         //пероеходим в профиль пользователя
         element(byCssSelector("a[href='/profile']>button"))
-            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
         element(byCssSelector("a[href='/profile']>button"))
             .click()
         //Извлекаем имя оператора
@@ -1640,7 +1656,7 @@ open class BaseTest {
             element(byXpath("//p[text()='${it.name}:']/following-sibling::p"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
-            operatorDataMap.put(it.name, element(byXpath("//p[text()='${it.name}:']/following-sibling::p")).ownText.trim())
+            operatorDataMap.put(it.name, element(byXpath("//p[text()='${it.name}:']/following-sibling::p//text()/..")).ownText.trim())
         }
 //        element(byXpath("//p[text()='Должностное лицо:']/following-sibling::p"))
 //            .should(exist, ofSeconds(waitTime))

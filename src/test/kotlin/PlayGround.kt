@@ -8,7 +8,6 @@ import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
 import org.openqa.selenium.Keys
-import test_library.filters.FilterEnum
 import test_library.menu.MyMenu
 import java.io.File
 import java.time.Duration.ofSeconds
@@ -208,11 +207,7 @@ class PlayGround : BaseTest(){
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
     fun `Черновик2`() {
-        logonTool()
-        Thread.sleep(100)
-        menuNavigation(MyMenu.KB.Explorer,  waitTime)
-        setFilterByEnum(FilterEnum.МО, "Краснодарский Край ", waitTime)
-        Thread.sleep(100)
+
 //        val test = "Краснодарский Край &||&"
 //        println(test.substringBefore("&||&").trim())
 

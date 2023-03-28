@@ -355,7 +355,7 @@ class Dicts_CumulativePlans:BaseTest() {
                         .should(exist, ofSeconds(waitTime))
                         .shouldBe(visible, ofSeconds(waitTime))
                     //element(byXpath("//form[@novalidate]//*[text()='Выберите службу из имеющихся']/following-sibling::*//input"))
-                    element(byXpath("//div[@data-testid='typeData']//input[@placeholder='Показаны не все, введите поисковую строку, чтобы выбрать нужные записи.']"))
+                    element(byXpath("//div[@data-testid='typeData']//*[text()='Выберите службу из имеющихся']/following-sibling::*//input"))
                         .should(exist, ofSeconds(waitTime))
                         .shouldBe(visible, ofSeconds(waitTime))
                         .sendKeys(rndHLName)
@@ -440,20 +440,22 @@ class Dicts_CumulativePlans:BaseTest() {
             .shouldBe(visible, ofSeconds(waitTime))
         //раскрываем каждого из созданных детей
         listOfChildPC.forEachIndexed { index, childPCName ->
-            val locator = "//div[@id='iplan']//*[text()='$childPCName']/ancestor::div[@role='button' and @aria-expanded='%s']"
-            element(byXpath(locator.format("false")))
+            val clickLocator = "//div[@id='iplan']//*[text()='$childPCName']"
+            val stateLocator = "//div[@id='iplan']//*[text()='$childPCName']/ancestor::div[@role='button' and @aria-expanded='%s']"
+            element(byXpath(clickLocator))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
+                .scrollIntoView("{block: \"center\"}")
                 .click()
-            element(byXpath(locator.format("false")))
+            element(byXpath(stateLocator.format("false")))
                 .shouldNot(exist, ofSeconds(waitTime))
-            element(byXpath(locator.format("true")))
+            element(byXpath(stateLocator.format("true")))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
             //В зависимости от типа делаем доп действие
             if (childPCName.contains("Контакт")){
                 //div[@id='iplan']//*[text()='AutoTest Dicts CP 0010 child 2 Контакт']/ancestor::div[@role='button' and @aria-expanded='true']//*[@name='phoneCall']/ancestor::button[2]
-                element(byXpath(locator.format("true") + "//*[@name='phoneCall']/ancestor::button[2]"))
+                element(byXpath(stateLocator.format("true") + "//*[@name='phoneCall']/ancestor::button[2]"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                 //Пока не победил микрофон для запуска браузера
@@ -475,32 +477,34 @@ class Dicts_CumulativePlans:BaseTest() {
                 //div[@id='iplan']//*[text()='AutoTest Dicts CP 0010 child 3 Назначение']/ancestor::div[@role='button' and @aria-expanded='true']//form[@novalidate]//*[text()='Назначить']/text()/ancestor::button
                 //div[@id='iplan']//*[text()='AutoTest Dicts CP 0010 child 3 Назначение']/ancestor::div[@role='button' and @aria-expanded='true']/..//*[text()='Описание назначения']/../following-sibling::*//p
                 //div[@id='iplan']//*[text()='AutoTest Dicts CP 0010 child 3 Назначение']/ancestor::div[@role='button' and @aria-expanded='true']//form[@novalidate]//*[text()='Назначено']/text()/ancestor::button[@disabled]
-                element(byXpath(locator.format("true") + "/..//*[text()='Описание назначения']/../following-sibling::*//p"))
+                element(byXpath(stateLocator.format("true") + "/..//*[text()='Описание назначения']/../following-sibling::*//p"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .sendKeys("Назначено AutoTest Dicts CP 0010")
-                element(byXpath(locator.format("true") + "//form[@novalidate]//*[text()='Назначить']/text()/ancestor::button"))
+                element(byXpath(stateLocator.format("true") + "//form[@novalidate]//*[text()='Назначить']/text()/ancestor::button"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
+                    .scrollIntoView("{block: \"center\"}")
                     .click()
-                element(byXpath(locator.format("true") + "//form[@novalidate]//*[text()='Назначить']/text()/ancestor::button"))
+                element(byXpath(stateLocator.format("true") + "//form[@novalidate]//*[text()='Назначить']/text()/ancestor::button"))
                     .shouldNot(exist, ofSeconds(longWait))
-                element(byXpath(locator.format("true") + "//form[@novalidate]//*[text()='Назначено']/text()/ancestor::button[@disabled]"))
+                element(byXpath(stateLocator.format("true") + "//form[@novalidate]//*[text()='Назначено']/text()/ancestor::button[@disabled]"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
             }
-            element(byXpath(locator.format("true") + "/..//*[text()='Уточните комментарий']/../following-sibling::*//p"))
+            element(byXpath(stateLocator.format("true") + "/..//*[text()='Уточните комментарий']/../following-sibling::*//p"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
                 .sendKeys("\"$childPCName\" Выполнен")
 //            element(byXpath("//div[@id='iplan']//*[text()='$childPCName']/ancestor::div[@role='button' and @aria-expanded='true']/..//*[text()='Выполнить']/text()/ancestor::button"))
-            element(byXpath(locator.format("true") + "/..//*[text()='Выполнить']/text()/ancestor::button"))
+            element(byXpath(stateLocator.format("true") + "/..//*[text()='Выполнить']/text()/ancestor::button"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
+                .scrollIntoView("{block: \"center\"}")
                 .click()
-            element(byXpath(locator.format("true")))
+            element(byXpath(stateLocator.format("true")))
                 .shouldNot(exist, ofSeconds(waitTime))
-            element(byXpath(locator.format("false")))
+            element(byXpath(stateLocator.format("false")))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
             element(byXpath("//div[@id='iplan']//*[text()='AutoTest Dicts CP 0010 parent 1 отредактировано']/ancestor::div[@role='button' and @aria-expanded='true']"))
@@ -519,6 +523,7 @@ class Dicts_CumulativePlans:BaseTest() {
         element(byXpath("//header//div[@role='tablist']//*[text()='Работа с ДДС']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
+            .scrollIntoView("{block: \"center\"}")
             .click()
         element(byXpath("//div[@role='tabpanel' and @id='simple-tabpanel-hotlines']//*[text()='Выбрать ДДС']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))

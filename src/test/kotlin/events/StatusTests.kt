@@ -1,6 +1,6 @@
 package events
-import Retry
 import BaseTest
+import Retry
 import com.codeborne.selenide.CollectionCondition
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.visible
@@ -10,9 +10,10 @@ import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
 import org.testng.annotations.DataProvider
-import test_library.menu.MyMenu.*
-import test_library.statuses.StatusEnum.*
+import test_library.menu.MyMenu.Incidents
 import test_library.statuses.StatusEnum
+import test_library.statuses.StatusEnum.Завершена
+import test_library.statuses.StatusEnum.Отменена
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -32,7 +33,7 @@ open class StatusTests : BaseTest(){
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, dataProvider = "Статусы детей и родителей", groups = ["ALL"])
-    fun `Status 0010 Проверка сумарного статуса родительской КП`(Status1: StatusEnum, Status2: StatusEnum, StutusSum: StatusEnum) {
+    fun `Status 0010 Проверка сумарного статуса родительской КП`(status1: StatusEnum, status2: StatusEnum, statusSum: StatusEnum) {
         //Проверка изменения статусов родительской карточки в зависимости от статусов дочерних
         //проверяемые комбинации - 2 статуса дочерней карточки, последний - искомой родительской
         //используемые службы и их логины операторов, пар соответственно должно быть как и статусов дочерних КП
@@ -62,13 +63,13 @@ open class StatusTests : BaseTest(){
             .click()
         element(byXpath("//form//label[text()='Долгота']/..//input[@name='lon']"))
             .sendKeys(lon.toString())
-        createICToolsDopInfo("AutoTest S 0010 $Status1 $Status2 $StutusSum $dateTime", waitTime)
+        createICToolsDopInfo("AutoTest S 0010 $status1 $status2 $statusSum $dateTime", waitTime)
         element(byXpath("//*[text()='Создать карточку']/text()/parent::button")).click()
         inputRandomNew("incidentTypeId-textfield", false, waitTime)
             //добавляем метку при создании КП
         inputRandomNew("labelsId-textfield", true, waitTime)
             //Создаем карточку
-        pushButtonCreateIC("AutoTest S 0010 $Status1 $Status2 $StutusSum $dateTime", longWait)
+        pushButtonCreateIC("AutoTest S 0010 $status1 $status2 $statusSum $dateTime", longWait)
 //        element(byXpath("//*[text()='Сохранить карточку']/text()/ancestor::button"))
 //            .should(exist, ofSeconds(waitTime))
 //            .shouldBe(visible, ofSeconds(waitTime))
@@ -79,7 +80,7 @@ open class StatusTests : BaseTest(){
             //что она в статусе "В обработке"
         checkICToolIsStatus(StatusEnum.`В обработке`, longWait)
             //и что это именно так карточка которую мы только что создали
-        checkICToolDopInfo("AutoTest S 0010 $Status1 $Status2 $StutusSum $dateTime", waitTime)
+        checkICToolDopInfo("AutoTest S 0010 $status1 $status2 $statusSum $dateTime", waitTime)
         element(byXpath("//*[text()='Работа с ДДС']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -103,6 +104,8 @@ open class StatusTests : BaseTest(){
                 Thread.sleep(500)
             }
         }
+        val descriptionFunction = "Назначение ДДС для проверки статусов $dateTime"
+        enterTextInMDtextboxByName("Описание назначения", descriptionFunction, waitTime)
         element(byXpath("//*[text()='Назначить']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -111,27 +114,27 @@ open class StatusTests : BaseTest(){
             element(byXpath(ddsCardSelector.format(hotline)))
                 .should(exist, ofSeconds(longWait))
         }
-        element(byXpath(ddsCardSelector.format("AutoTest S 0010 $Status1 $Status2 $StutusSum $dateTime")))
+        element(byXpath(ddsCardSelector.format(descriptionFunction)))
             .should(exist, ofSeconds(waitTime))
-        elements(byXpath(ddsCardSelector.format("AutoTest S 0010 $Status1 $Status2 $StutusSum $dateTime")))
+        elements(byXpath(ddsCardSelector.format(descriptionFunction)))
             .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(hotlinesMap.size))
         logoffTool()
 
         var i = 1
-        var statusI: StatusEnum = Status1
+        var statusI: StatusEnum = status1
             for ((hotline, login) in hotlinesMap) {
                 when(i){
-                    1 -> statusI = Status1
-                    2 -> statusI = Status2
+                    1 -> statusI = status1
+                    2 -> statusI = status2
                 }
                 anyLogonTool(login, login)
                 menuNavigation(Incidents.IncidentsList, waitTime)
                 tableColumnCheckbox("Описание", true, waitTime)
                 //Находим созданную КП в КИАП ДДС
-                element(byText("AutoTest S 0010 $Status1 $Status2 $StutusSum $dateTime"))
+                element(byText("AutoTest S 0010 $status1 $status2 $statusSum $dateTime"))
                     .should(exist, ofSeconds(waitTime))
                     .click()
-                checkICToolIsStatus(StatusEnum.`В обработке`, waitTime)
+                checkICToolIsStatus(StatusEnum.`В обработке`, longWait)
                 //устанавливаем статус
                 updateICToolStatus(statusI, longWait)
                 i += 1
@@ -141,11 +144,11 @@ open class StatusTests : BaseTest(){
         menuNavigation(Incidents.IncidentsList, waitTime)
         tableColumnCheckbox("Описание", true, waitTime)
         //Находим созданную родительскую КП
-        element(byText("AutoTest S 0010 $Status1 $Status2 $StutusSum $dateTime"))
+        element(byText("AutoTest S 0010 $status1 $status2 $statusSum $dateTime"))
             .should(exist, ofSeconds(waitTime))
             .click()
         //проверяем статус родительской карточки
-        checkICToolIsStatus(StutusSum, waitTime)
+        checkICToolIsStatus(statusSum, waitTime)
         logoffTool()
     }
 }

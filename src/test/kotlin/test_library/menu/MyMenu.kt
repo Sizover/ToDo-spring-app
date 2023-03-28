@@ -19,9 +19,11 @@ class MyMenu {
     }
 
     enum class Reports(override val menu: MenuEnum, override val subMenu: String, override val desc: String?) : SubmenuInterface {
-        IncidentReport(MenuEnum.Отчеты, "По происшествиям", null),
+        IncidentsReport(MenuEnum.Отчеты, "По происшествиям", null),
         CallsReport(MenuEnum.Отчеты, "По обращениям", null),
-        EmployeesReport(MenuEnum.Отчеты, "По сотрудникам", null)
+        UsersReport(MenuEnum.Отчеты, "По сотрудникам", null),
+        SummaryReport(MenuEnum.Отчеты, "По форме", null)
+
     }
 
     enum class Dictionaries(override val menu: MenuEnum, override val subMenu: String, override val desc: String?) : SubmenuInterface {
