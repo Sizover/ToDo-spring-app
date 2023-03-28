@@ -17,6 +17,7 @@ import test_library.filters.FilterEnum
 import test_library.menu.MyMenu.Dictionaries
 import test_library.menu.MyMenu.Incidents
 import test_library.menu.MyMenu.System
+import test_library.operator_data.OperatorDataEnum
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -31,6 +32,8 @@ class Events_Incidents :BaseTest() {
         val dateStartList = LocalDate.now().minusMonths(2).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
         val dateEndList = LocalDate.now().minusMonths(1).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
         logonTool()
+        //узнаем свой МО
+        val operatorsMunicipalities = operatorData(OperatorDataEnum.`Муниципальное образование`)
         menuNavigation(System.Audit, waitTime)
         element(byXpath("//table/tbody//*[text()='Аудит справочников']"))
             .should(exist, ofSeconds(waitTime))
@@ -45,19 +48,6 @@ class Events_Incidents :BaseTest() {
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         val url = url()
-        //узнаем свой МО
-        element(byXpath("//header//*[@name='user']/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        element(byXpath("//div[@role='presentation']//*[text()='Профиль пользователя']/text()/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        element(byXpath("//*[text()='Муниципальное образование:']/following-sibling::*[text()]"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        val operatorsMunicipalities = element(byXpath("//*[text()='Муниципальное образование:']/following-sibling::*[text()]")).ownText
         logoffTool()
         logonTool()
         open(url)

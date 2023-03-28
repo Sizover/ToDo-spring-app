@@ -1,19 +1,21 @@
 package dicts
 
-import Retry
 import BaseTest
+import Retry
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Selectors.byCssSelector
 import com.codeborne.selenide.Selectors.byXpath
-import com.codeborne.selenide.Selenide.*
+import com.codeborne.selenide.Selenide.element
+import com.codeborne.selenide.Selenide.elements
 import org.openqa.selenium.Keys
+import org.testng.annotations.Test
+import test_library.menu.MyMenu.Dictionaries
+import test_library.menu.MyMenu.Incidents
+import test_library.statuses.StatusEnum.`В обработке`
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
-import org.testng.annotations.Test
-import test_library.menu.MyMenu.*
-import test_library.statuses.StatusEnum.*
 
 class Labels : BaseTest(){
 
@@ -28,14 +30,7 @@ class Labels : BaseTest(){
         menuNavigation(Dictionaries.Labels, waitTime)
         tableColumnCheckbox("Метка;Описание", true, waitTime)
         //воспользуемся поиском, что бы найти созданную метку не удаленную в упавший проход
-        element(byXpath("//*[@name='search']/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        element(byCssSelector("input[placeholder]"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        element(byCssSelector("input[placeholder]")).sendKeys("AutoTest", Keys.ENTER)
+        tableSearch("АвтоТест", waitTime)
         Thread.sleep(500)
 //        if (elements(byXpath("//tbody/tr//*[text()='Нет данных']")).size == 0){
             while (!element(byXpath("//tbody/tr//text()/parent::*[text()='Нет данных']")).exists()) {
@@ -62,7 +57,7 @@ class Labels : BaseTest(){
                 .shouldBe(visible, ofSeconds(waitTime))
 //        }
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        val labelList = listOf<String>("AutoTest", "Child label")
+        val labelList = listOf<String>("АвтоТест", "Дочерняя метка")
         val labelListName = mutableListOf<String>()
         labelList.forEach {
             //жмем добавить метку
@@ -74,26 +69,35 @@ class Labels : BaseTest(){
             element(byXpath("//label[text()='Родительский тип']"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
-            if (it == "Child label") {
+            if (it != labelList[0]) {
                 element(byCssSelector("input#parent"))
                     .click()
-//                element(byXpath("//body/div[@role='presentation']//*[contains(text(),'AutoTest')]"))
-                element(byXpath("//body/div[@role='presentation']//*[text()='AutoTest']/ancestor::li"))
+                element(byXpath("//body/div[@role='presentation']//*[text()='${labelList[0]}']/ancestor::li"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
             }
             //вводим имя метки
-            element(byCssSelector("input#title")).click()
-            element(byCssSelector("input#title")).sendKeys(it)
+            element(byCssSelector("input#title"))
+                .should(exist, ofSeconds(longWait))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+            element(byCssSelector("input#title"))
+                .should(exist, ofSeconds(longWait))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .sendKeys(it)
             //запоминаем образец метки, что бы убеждаться в её создании
             val labelSample = element(byXpath("//label[text()='Предварительный просмотр']/..//*[@type='form']//*[text()]")).ownText
             labelListName.add(labelSample)
             //добавляем описание
             element(byCssSelector("textarea[name='description']")).click()
             element(byCssSelector("textarea[name='description']")).sendKeys("Метка \"$labelSample\" создана автотестом и должна быть удалена им же")
-            //выбираем цвет индиго (случайно?)
-            elements(byXpath("//input[@value and @type='radio' and not(@name='custom')]"))
+            //выбираем случайный цвет
+            elements(byXpath("//form[@novalidate]//*[@aria-labelledby]//input"))
+                .random()
+                .click()
+            //выбираем случайный оттенок
+            elements(byXpath("//form[@novalidate]//*[@aria-labelledby]/ancestor::div[1]/following-sibling::div[1]//input"))
                 .random()
                 .click()
             //создаем
@@ -219,6 +223,8 @@ class Labels : BaseTest(){
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
+        element(byXpath("//*[text()='Сохранить']/text()/ancestor::button"))
+            .shouldNot(exist, ofSeconds(waitTime))
         //проверяем что все метки на месте
         labelListName.forEach {
             element(byXpath(" //span[contains(text(),'$it')]"))
@@ -236,7 +242,7 @@ class Labels : BaseTest(){
         logonTool()
         menuNavigation(Dictionaries.Labels, waitTime)
         //воспользуемся поиском, что бы найти созданную метку
-        tableSearch("AutoTest", waitTime)
+        tableSearch("АвтоТест", waitTime)
         Thread.sleep(500)
         while (!element(byXpath("//tbody/tr//text()/parent::*[text()='Нет данных']")).exists()) {
             val removedLadel = element(byXpath("(//tbody/tr/td[1])[last()]")).innerText()

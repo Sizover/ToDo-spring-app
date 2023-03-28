@@ -364,15 +364,15 @@ class Dicts_KB: BaseTest() {
                 .shouldBe(visible, ofSeconds(waitTime))
             //проверяем минитабличку
             //TODO раскоментить блок проверки минитаблицы (баг 1873)
-//            if (nameOfCategory == nameOfCategoriesList[0]){
-//                element(byXpath("//*[text()='Порядок подчиненности']/..//table/tbody/tr[1]//*[text()='$nameOfCategory$substringForUpdate']"))
-//                    .should(exist, ofSeconds(waitTime))
-//                    .shouldBe(visible, ofSeconds(waitTime))
-//            } else {
-//                element(byXpath("//*[text()='Порядок подчиненности']/..//table/tbody/tr[2]//*[text()='$nameOfCategory$substringForUpdate']"))
-//                    .should(exist, ofSeconds(waitTime))
-//                    .shouldBe(visible, ofSeconds(waitTime))
-//            }
+            if (nameOfCategory == nameOfCategoriesList[0]){
+                element(byXpath("//*[text()='Порядок подчиненности']/..//table/tbody/tr[1]//*[text()='$nameOfCategory$substringForUpdate']"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+            } else {
+                element(byXpath("//*[text()='Порядок подчиненности']/..//table/tbody/tr[2]//*[text()='$nameOfCategory$substringForUpdate']"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+            }
             //переходим в изменение
             element(byXpath("//*[text()='Изменить']/text()/ancestor::button"))
                 .should(exist, ofSeconds(waitTime))
@@ -1230,16 +1230,25 @@ class Dicts_KB: BaseTest() {
                     .shouldBe(visible, ofSeconds(waitTime))
             }
             //возвращаемся в корневую папку одним из двух способов, поднимаясь в папку ".." используя развернутый маршрут к папке
-            if (Random.nextBoolean()){
-                categoryRouteMap[rndCatName]!!.reversed().forEach { cat ->
-                element(byXpath("//nav//li[last()]//*[text()='$cat']"))
+            if (Random.nextBoolean() && categoryRouteMap.keys.contains(rndCatName)){
+                //проверяем хлебные крошки
+                element(byXpath("//nav//li[last()]//*[text()='$rndCatName']"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
+                categoryRouteMap[rndCatName]!!.reversed().forEach { cat ->
+                    element(byXpath("//div[@id='category-up']"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                        .click()
+                    //проверяем хлебные крошки
+                    element(byXpath("//nav//li[last()]//*[text()='$cat']"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                }
                 element(byXpath("//div[@id='category-up']"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
-                }
             cleanFilterByEnum(listOf(filterEnum), waitTime)
             } else {
                 //или по хлебным крошкам
@@ -1247,12 +1256,15 @@ class Dicts_KB: BaseTest() {
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
-                element(byXpath("//nav//li[last()]//*[text()='База знаний']"))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
-                element(byXpath("//form[@novalidate]//button//button"))
-                    .shouldNot(exist, ofSeconds(waitTime))
             }
+            //проверяем хлебные крошки
+            //TODO раскоментить проверку хлебных крошек (баг 1862)
+//            element(byXpath("//nav//li[last()]//*[text()='База знаний']"))
+//                .should(exist, ofSeconds(waitTime))
+//                .shouldBe(visible, ofSeconds(waitTime))
+            //Проверяем отсутствие примененных фильтров
+            element(byXpath("//form[@novalidate]//button//button"))
+                .shouldNot(exist, ofSeconds(waitTime))
         }
     }
 }

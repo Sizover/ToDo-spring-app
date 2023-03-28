@@ -1,17 +1,22 @@
 package map
 //import kotlin.collections.EmptyMap.keys
-import Retry
 import BaseTest
+import Retry
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Selectors.byCssSelector
 import com.codeborne.selenide.Selectors.byXpath
-import com.codeborne.selenide.Selenide.*
+import com.codeborne.selenide.Selenide.back
+import com.codeborne.selenide.Selenide.element
+import com.codeborne.selenide.Selenide.elements
+import com.codeborne.selenide.Selenide.refresh
+import com.codeborne.selenide.Selenide.switchTo
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import test_library.alerts.AlertsEnum
-import test_library.menu.MyMenu.*
-import test_library.statuses.StatusEnum.*
+import test_library.menu.MyMenu.Dictionaries
+import test_library.menu.MyMenu.Incidents
+import test_library.statuses.StatusEnum.`В обработке`
 import java.time.Duration.ofSeconds
 import kotlin.math.PI
 import kotlin.math.abs
@@ -182,7 +187,7 @@ class MapTest  : BaseTest(){
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
-    fun `MT_002 Проверка PM1363~B - Общая ошибка приложения после обновления страницы карты`() {
+    fun `MT_003 Проверка PM1363~B - Общая ошибка приложения после обновления страницы карты`() {
         logonTool()
         //открываем карту
         element(byXpath("//span[@aria-label='Открыть карту в отдельном окне']/button"))

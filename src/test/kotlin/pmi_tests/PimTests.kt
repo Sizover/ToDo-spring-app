@@ -1,6 +1,8 @@
 package pmi_tests
 
 //import kotlin.collections.EmptyMap.keys
+//import test_library.statuses.StatusEnum.`В обработке`
+//import test_library.statuses.StatusEnum.Реагирование
 import BaseTest
 import Retry
 import com.codeborne.selenide.CollectionCondition
@@ -32,7 +34,11 @@ import test_library.filters.FilterEnum.Уровни
 import test_library.menu.MyMenu.Dictionaries
 import test_library.menu.MyMenu.Incidents
 import test_library.menu.SubmenuInterface
+import test_library.statuses.StatusEnum
 import test_library.statuses.StatusEnum.`В обработке`
+import test_library.statuses.StatusEnum.Завершена
+import test_library.statuses.StatusEnum.Закрыта
+import test_library.statuses.StatusEnum.Отменена
 import test_library.statuses.StatusEnum.Реагирование
 import java.io.File
 import java.time.Duration.ofSeconds
@@ -271,10 +277,11 @@ class PimTests : BaseTest(){
         checkICToolIsStatus(`В обработке`, waitTime)
         //и что это именно так карточка которую мы только что создали
         checkICToolDopInfo("AutoTest N 0110 $dateTime", waitTime)
+        Thread.sleep(5000)
         //загружаем файлы проверяя их прикрепление
         element(byCssSelector("input#upload-file"))
             .uploadFile(File("/home/isizov/IdeaProjects/testing-e2e/src/test/resources/fixtures/AutoTest.webp"))
-        checkAlert(snackbarSuccess, "Файл загружен", true, waitTime)
+        checkAlert(snackbarSuccess, "Файл загружен", true, longWait)
         element(byXpath("//div[@id='files']//*[text()='AutoTest.webp']"))
             .should(exist, ofSeconds(longWait))
         element(byCssSelector("input#upload-file"))
@@ -636,8 +643,19 @@ class PimTests : BaseTest(){
         logoffTool()
     }
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
-    fun `PMI 0150 Назначение карточки происшествия на службу ДДС-ЕДДС с последующей проверкой изменения статуса родительской карточки`() {
+
+    @DataProvider(name = "Статусы проверки единичной дочерней", parallel = false)
+    open fun Status(): Any {
+        return arrayOf<Array<Any>>(
+            arrayOf(Завершена),
+            arrayOf(Отменена),
+            arrayOf(Реагирование),
+            arrayOf(Закрыта)
+        )
+    }
+
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class, dataProvider = "Статусы проверки единичной дочерней", groups = ["ПМИ", "ALL"])
+    fun `PMI 0150 Назначение карточки происшествия на службу ДДС-ЕДДС с последующей проверкой изменения статуса родительской карточки`(status: StatusEnum) {
         //A311 Регистрация вызова (формирование карточки происшествия)
         //A.3.17 Назначение карточки происшествия на службу ДДС/ЕДДС (только службы, которые подключены к Системе)
         //Проверка изменения статуса родительской карточки при изменении статуса карточки назначения
@@ -662,14 +680,21 @@ class PimTests : BaseTest(){
         //заполняем дополнительную информацию
         createICToolsDopInfo("AutoTest PMI 0150 $dateTime", waitTime)
         //регистрируем обращение
-        element(byXpath("//*[text()='Создать карточку']/text()/ancestor::button")).click()
+        element(byXpath("//*[text()='Создать карточку']/text()/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
         //выбираем тип происшествия
-        element(byCssSelector("input#incidentTypeId-autocomplete")).sendKeys("П.5.1.5 Auto-Test", Keys.DOWN, Keys.ENTER)
+        element(byCssSelector("input#incidentTypeId-autocomplete"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .sendKeys("П.5.1.5 Auto-Test", Keys.DOWN, Keys.ENTER)
         //Создаем карточку
         pushButtonCreateIC("AutoTest PMI 0150 $dateTime", waitTime)
         //Убеждаемся, что нам загрузило созданную карточку
         //проверяя что нам в принципе загрузило какую-то карточку
-        element(byCssSelector("#simple-tabpanel-card")).should(exist, ofSeconds(waitTime))
+        element(byCssSelector("#simple-tabpanel-card"))
+            .should(exist, ofSeconds(waitTime))
         //что она в статусе "В обработке"
         checkICToolIsStatus(`В обработке`, waitTime)
         //и что это именно так карточка которую мы только что создали
@@ -680,23 +705,43 @@ class PimTests : BaseTest(){
         //добавляем в таблицу происшествий столбец "Описание"
         tableColumnCheckbox("Описание", true, waitTime)
         //Переходим в созданное ранее происшествие
-        element(byText("AutoTest PMI 0150 $dateTime")).click()
+        element(byText("AutoTest PMI 0150 $dateTime"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
         checkICToolDopInfo("AutoTest PMI 0150 $dateTime", waitTime)
         //Переходим во вкладку "Работа с ДДС"
-        element(byXpath("//*[text()='Работа с ДДС']/text()/ancestor::button")).click()
+        element(byXpath("//*[text()='Работа с ДДС']/text()/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
         //жмем "добавить"
         //element(byCssSelector("div#simple-tabpanel-hotlines button")).click()
-        element(byXpath("//*[text()='Выбрать ДДС']/text()/ancestor::button")).click()
-        Thread.sleep(150)
+        element(byXpath("//*[text()='Выбрать ДДС']/text()/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
         //выбираем ДДС-02 г.Черкесск
-        element(byXpath("//*[text()='ДДС ЭОС']/ancestor::div[@id='panel1a-header']")).click()
-        Thread.sleep(150)
-        element(byXpath("//*[text()='ДДС-02 г.Черкесск']/ancestor::div/div/label//input")).click()
-        Thread.sleep(150)
-        element(byXpath("//*[text()='Назначить']/text()/ancestor::button")).click()
-        Thread.sleep(150)
-        element(byText("ДДС-02 г.Черкесск")).should(exist, ofSeconds(waitTime))
-        element(byText("AutoTest PMI 0150 $dateTime")).should(exist, ofSeconds(waitTime))
+        element(byXpath("//*[text()='ДДС ЭОС']/ancestor::div[@id='panel1a-header']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byXpath("//*[text()='ДДС-02 г.Черкесск']/ancestor::div/div/label//input"))
+            .should(exist, ofSeconds(waitTime))
+            .click()
+        val descriptionFunction = "Назначение ДДС для проверки статусов $dateTime"
+        val ddsCardSelector = "//*[text()='Назначенные службы']/ancestor::div[@role='tabpanel']//form[@novalidate]//*[text()='%s']"
+        enterTextInMDtextboxByName("Описание назначения", descriptionFunction, waitTime)
+        element(byXpath("//*[text()='Назначить']/text()/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .click()
+        element(byXpath(ddsCardSelector.format(descriptionFunction)))
+            .should(exist, ofSeconds(waitTime))
+        element(byXpath("//*[text()='Назначенные службы']/ancestor::div[@role='tabpanel']//form[@novalidate]//*[text()='$descriptionFunction']"))
+            .should(exist, ofSeconds(waitTime))
+        element(byText("ДДС-02 г.Черкесск"))
+            .should(exist, ofSeconds(waitTime))
 
         logoffTool()
         logonDds()
@@ -710,8 +755,8 @@ class PimTests : BaseTest(){
         element(byText("AutoTest PMI 0150 $dateTime")).should(exist, ofSeconds(waitTime)).click()
         //устанавливаем статус "Реагирование"
         checkICToolIsStatus(`В обработке`, waitTime)
-        updateICToolStatus(Реагирование, waitTime)
-        checkICToolIsStatus(Реагирование, waitTime)
+        updateICToolStatus(status, waitTime)
+        checkICToolIsStatus(status, waitTime)
         logoffTool()
         //Возвращаемся в КИАП и проверяем статус родительской карточки
         logonTool()
@@ -723,7 +768,11 @@ class PimTests : BaseTest(){
         //Находим созданную КП
         element(byText("AutoTest PMI 0150 $dateTime")).should(exist, ofSeconds(waitTime)).click()
         //проверяем статус родительской карточки
-        checkICToolIsStatus(Реагирование, waitTime)
+        if (status != Реагирование){
+            checkICToolIsStatus(Завершена, waitTime)
+        } else {
+            checkICToolIsStatus(Реагирование, waitTime)
+        }
         logoffTool()
     }
 
@@ -987,7 +1036,7 @@ class PimTests : BaseTest(){
         element(byText("AutoTest 112 $dateTime")).click()
         element(byXpath("//h3[text()='Описание происшествия']/../following-sibling::div//p"))
             .shouldHave(text("AutoTest 112 $dateTime"), ofSeconds(waitTime))
-        element(byXpath("(//div[@id='calls']//div[@id='panel1a-header'])[1]//strong[text()='Источник:']/ancestor::div[1 and text()='Система-112 стенд']"))
+        element(byXpath("(//div[@id='calls']//div[@id='panel1a-header'])[1]//strong[text()='Источник/Оператор:']/ancestor::div[1 and text()='Система-112 стенд']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         checkICToolIsStatus(`В обработке`, waitTime)
@@ -1011,12 +1060,7 @@ class PimTests : BaseTest(){
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //ищем столбец "файлы"
-        if (!element(byXpath("//*[text()='Файлы']/ancestor::thead")).exists()) {
-            tableColumnCheckbox("Файлы", true, waitTime)
-        }
-        if (!element(byXpath("//*[text()='Наименование']/ancestor::thead")).exists()) {
-            tableColumnCheckbox("Наименование", true, waitTime)
-        }
+        tableColumnCheckbox("Наименование;Файлы", true, waitTime)
         element(byXpath("//*[text()='Файлы']/ancestor::thead"))
             .should(exist, ofSeconds(waitTime))
         element(byXpath("//*[text()='Наименование']/ancestor::thead"))
@@ -1137,15 +1181,7 @@ class PimTests : BaseTest(){
             .toInt()
         //ситаем количество слолбцов, при том что последний нам не пригодится
         val comumnCount = elements(byXpath("//table/thead/tr/th")).size
-//            println("allRecordCountString $allRecordCountString")
-//            println("allRecordCountNotUse $allRecordCountNotUse")
-//            println("allRecordCountUse $allRecordCountUse")
-        //отркрываем поисковую строку
-        element(byXpath("//*[@name='search']/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        element(byCssSelector("input[placeholder]"))
+        element(byXpath("//*[@name='search']/following-sibling::input[@placeholder]"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //читаем что есть в подсказке
@@ -1170,10 +1206,6 @@ class PimTests : BaseTest(){
                     element(byCssSelector("thead>tr>th svg[name='arrowDown']"))
                         .should(exist, ofSeconds(waitTime))
                         .shouldBe(visible, ofSeconds(waitTime))
-//                    hierarchy = true
-//                    if (subMenu == "Типы происшествий"){
-//                        allRecordCountUse = elements(byXpath("//tbody/tr")).size
-//                    }
                     firstColumnIsButton = 1
                 }
                 //проверяем существует ли заголовок столбца, и если существует, то:
@@ -1200,7 +1232,8 @@ class PimTests : BaseTest(){
                                 fullSearchValue = searchValue
                                 //проверяем не номер ли это телефона и видоизменяем запись , к.т. в формате +Х(ХХХ)ХХХ-ХХ-ХХ в поисковой строке не вернет результатов, только +ХХХХХХХХХХ
                                 //аналогично с ФИО
-                                val ioRegex = Regex("[а-яА-Яa-zA-Z]{1}[.]\\s{1}[а-яА-Яa-zA-Z]{1}[.]{1}")
+//                                val ioRegex = Regex("[а-яА-Яa-zA-Z]{1}[.]\\s{1}[а-яА-Яa-zA-Z]{1}[.]{1}")
+                                val ioRegex = Regex("[а-яА-Яa-zA-Z]{2,}\\s{1}[а-яА-Яa-zA-Z]{1}[.]{1}")
                                 val telRegex = Regex("[+7(]{1}[0-9]{3}[)]{1}[0-9]{3}[-]{1}[0-9]{2}[-]{1}[0-9]{2}")
                                 val workTelRegex = Regex("[0-9]{1}[-][0-9]{5}[-][0-9]{3}[-][0-9]{3}")
                                     if (telRegex.containsMatchIn(searchValue)
@@ -1305,7 +1338,7 @@ class PimTests : BaseTest(){
             .shouldBe(visible, ofSeconds(waitTime))
         //считаем строки и переходим в случайную организацию
         val organizationTableStringCount = elements(byXpath("//table/tbody/tr")).size
-        var rndOrganization = (1..organizationTableStringCount).random()
+        val rndOrganization = (1..organizationTableStringCount).random()
 //        if (rndOrganization == organizationTableStringCount){
 //            element(byCssSelector("body")).sendKeys(Keys.END)
 //        } else { element(byXpath("//table/tbody/tr[${rndOrganization + 1}]"))

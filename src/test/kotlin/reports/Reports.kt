@@ -26,11 +26,14 @@ import kotlin.random.Random
 
 class Reports : BaseTest(){
 
+    val rndFloat = Random.nextFloat().toString().substringAfter(".")
+
     @Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL", "Reports"])
     fun `Reports 0010 Проверка формирования отчетов по обращениям`() {
         //A.3.23 Проверка формирования отчетов по обращениям
         dateTime = LocalDateTime.now()
         date = LocalDate.now()
+        val reporTtitle = "Reports 0010 $rndFloat"
         logonTool()
         //кликаем по иконке отчетов
         //Переходим в "отчет по обращениям"
@@ -41,12 +44,14 @@ class Reports : BaseTest(){
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
         //Заполняем поля отчета - название
+//        element(byCssSelector("input#title"))
+//            .sendKeys("Reports 0010 Проверка формирования отчетов по обращениям $dateTime отсчет")
         element(byCssSelector("input#title"))
-            .sendKeys("Reports 0010 Проверка формирования отчетов по обращениям $dateTime отсчет")
+            .sendKeys("Reports 0010 $rndFloat отсчет")
         //заполняем дату начала и конца периода отчета сегоднешним числом
-        element(byXpath("//form[@novalidate]//*[text()='Период']/following-sibling::*//input[@placeholder='с']"))
+        element(byXpath("//form[@novalidate]//*[text()='Период']/following-sibling::*//input[@placeholder='с __.__.____']"))
             .sendKeys(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString())
-        element(byXpath("//form[@novalidate]//*[text()='Период']/following-sibling::*//input[@placeholder='по']"))
+        element(byXpath("//form[@novalidate]//*[text()='Период']/following-sibling::*//input[@placeholder='по __.__.____']"))
             .sendKeys(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString())
         //вбиваем адрес
         addressInput("address", "Карачаево-Черкесская Респ, г Карачаевск", waitTime)
@@ -57,7 +62,7 @@ class Reports : BaseTest(){
             .click()
         //переходим в созданный отчет
         element(byXpath("//tbody/tr/td"))
-            .shouldHave(text("Reports 0010 Проверка формирования отчетов по обращениям $dateTime отсчет"))
+            .shouldHave(text("Reports 0010 $rndFloat отсчет"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
@@ -239,7 +244,7 @@ class Reports : BaseTest(){
         element(byXpath("//span[text()='Создать отчет']/parent::button")).click()
         //Заполняем поля отчета - название
         element(byCssSelector("input#title"))
-            .sendKeys("Reports 0010 Проверка формирования отчетов по обращениям $dateTime сверка")
+            .sendKeys("Reports 0010 $rndFloat сверка")
         //заполняем дату начала и конца периода отчета сегоднешним числом
         element(byCssSelector("input#periodStart"))
             .sendKeys(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString())
@@ -251,7 +256,7 @@ class Reports : BaseTest(){
         element(byXpath("//span[text()='Создать']/parent::button")).click()
         //переходим в созданный отчет
         element(byXpath("//tbody/tr/td"))
-            .shouldHave(text("Reports 0010 Проверка формирования отчетов по обращениям $dateTime сверка"))
+            .shouldHave(text("Reports 0010 $rndFloat сверка"))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime)).click()
         //проверяем и запоминаем общее количество обращений
         val allT = element(byXpath(tableSelector.format("Общее количество вызовов (обращений):"))).ownText.toInt()
@@ -337,7 +342,7 @@ class Reports : BaseTest(){
         logonTool()
         //кликаем по иконке отчетов
         //Переходим в "отчет по деятельности сотрудников"
-        menuNavigation(MyMenu.Reports.EmployeesReport, waitTime)
+        menuNavigation(MyMenu.Reports.UsersReport, waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//*[text()='Создать отчет']/text()/ancestor::button")).click()
         //Заполняем поля отчета - название
@@ -495,7 +500,7 @@ class Reports : BaseTest(){
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //кликаем по иконке отчетов
         //Переходим в "отчет по деятельности сотрудников"
-        menuNavigation(MyMenu.Reports.EmployeesReport, waitTime)
+        menuNavigation(MyMenu.Reports.UsersReport, waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/parent::button"))
             .should(exist, ofSeconds(waitTime))
@@ -602,7 +607,7 @@ class Reports : BaseTest(){
         var icReportCreate: String = ""
         logonTool()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        menuNavigation(MyMenu.Reports.IncidentReport, waitTime)
+        menuNavigation(MyMenu.Reports.IncidentsReport, waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//*[text()='Создать отчет']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
@@ -1122,7 +1127,7 @@ class Reports : BaseTest(){
             icReportsList.clear()
         }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        menuNavigation(MyMenu.Reports.IncidentReport, waitTime)
+        menuNavigation(MyMenu.Reports.IncidentsReport, waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
@@ -1250,7 +1255,7 @@ class Reports : BaseTest(){
         return arrayOf<Array<Any>>(
 //            arrayOf("По происшествиям", "2 МО, Зеленчукский район КЧР, ГО Черкесский, ЕДДС, Оператор, Уровень происшествия", 2),
             arrayOf(MyMenu.Reports.CallsReport, "2 МО, Зеленчукский район КЧР, ГО Черкесский, ЕДДС, Оператор", 2),
-            arrayOf(MyMenu.Reports.EmployeesReport, "2 МО, Зеленчукский район КЧР, ГО Черкесский, ЕДДС", 3)
+            arrayOf(MyMenu.Reports.UsersReport, "2 МО, Зеленчукский район КЧР, ГО Черкесский, ЕДДС", 3)
         )
     }
 
@@ -1517,9 +1522,9 @@ class Reports : BaseTest(){
             //дополняем значения карт
             var validatedValue = ""//некоторое значение которое мы проверяем в отчете, в зависимости от отчета, это либо тип происшествия, либо источник обращения, либо оператор
             when(reportType){
-                MyMenu.Reports.IncidentReport -> {validatedValue = shortSelectedIncidentType}
+                MyMenu.Reports.IncidentsReport -> {validatedValue = shortSelectedIncidentType}
                 MyMenu.Reports.CallsReport -> {validatedValue = createdCallType}
-                MyMenu.Reports.EmployeesReport -> {validatedValue = operator}
+                MyMenu.Reports.UsersReport -> {validatedValue = operator}
             }
             reportsMapKeysList.forEach{reportKey ->
 //                oldReportsMap.get(reportKey)

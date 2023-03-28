@@ -70,15 +70,18 @@ enum class FilterTypeEnum(val filterType: FilterTypeObject) {
         FilterTypeObject(
         //cleanLocator
         fun(fullName: String): String {
-            return "html/body/div[@role='presentation']//*[text()='$fullName']/ancestor::fieldset//*[text()='Все']/ancestor::label//input/.."
+//            return "html/body/div[@role='presentation']//*[text()='$fullName']/ancestor::fieldset//*[text()='Все']/ancestor::label//input/.."
+            return "html/body/div[@role='presentation']//*[text()='$fullName']/following-sibling::*//*[text()='Все']/ancestor::button"
         },
         //valueLocator
         fun(fullName: String): String {
-            return "html/body/div[@role='presentation']//*[text()='$fullName']/ancestor::fieldset//label//*[text() and not (contains(text(),'Все'))]"
+//            return "html/body/div[@role='presentation']//*[text()='$fullName']/ancestor::fieldset//label//*[text() and not (contains(text(),'Все'))]"
+            return "html/body/div[@role='presentation']//*[text()='$fullName']/following-sibling::*//*[text() and not(text()='Все')]"
         },
         //clickLocator
         fun(fullName: String, value: String): String {
-            return "html/body/div[@role='presentation']//*[text()='$fullName']/ancestor::fieldset//*[text()='$value']/ancestor::label//input/.."
+//            return "html/body/div[@role='presentation']//*[text()='$fullName']/ancestor::fieldset//*[text()='$value']/ancestor::label//input/.."
+            return "html/body/div[@role='presentation']//*[text()='$fullName']/following-sibling::*//*[text()='$value']/ancestor::button"
         })
     ),
 }
