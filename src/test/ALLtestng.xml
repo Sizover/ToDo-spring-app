@@ -12,6 +12,7 @@
             </run>
         </groups>
         <classes>
+            <class name="dicts.CheckingFiles"></class>
             <class name="dicts.Dicts_CumulativePlans"></class>
             <class name="dicts.SearchTests"></class>
             <class name="dicts.Labels"></class>
