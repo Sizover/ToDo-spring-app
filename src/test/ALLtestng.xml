@@ -22,6 +22,7 @@
             <class name="map.MapTest"></class>
             <class name="pmi_tests.PimTests"></class>
             <class name="reports.Reports"></class>
+            <class name="dicts.CheckingFiles"></class>
             <class name="CleanUp"></class>
         </classes>
     </test>
