@@ -12,7 +12,6 @@
             </run>
         </groups>
         <classes>
-            <class name="dicts.CheckingFiles"></class>
             <class name="dicts.Dicts_CumulativePlans"></class>
             <class name="dicts.SearchTests"></class>
             <class name="dicts.Labels"></class>
@@ -23,6 +22,7 @@
             <class name="map.MapTest"></class>
             <class name="pmi_tests.PimTests"></class>
             <class name="reports.Reports"></class>
+            <class name="dicts.CheckingFiles"></class>
             <class name="CleanUp"></class>
         </classes>
     </test>
