@@ -10,7 +10,7 @@ plugins {
 
 group = "ru.redgift"
 version = appVersion
-java.sourceCompatibility = JavaVersion.VERSION_11
+java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     maven {

@@ -99,6 +99,7 @@ class CleanUp : BaseTest(){
     fun `CleanUp 9999 Закрытие КП созданных под логином работы автотестов` (){
         //Закроем все происшествия созданные автотестом , например за неделю
         date = LocalDate.now()
+        val again = false
         val dateStart = LocalDate.now().minusDays(50).toString()
         val dateEnd = LocalDate.now().toString()
         logonTool()
@@ -111,75 +112,70 @@ class CleanUp : BaseTest(){
         element(byCssSelector("table>tbody>tr"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        tableColumnCheckbox("Статус", true, waitTime)
+        tableStringsOnPage(10, waitTime)
+        tableColumnCheckbox("Идентификатор;Статус", true, waitTime)
+        val idColumn = tableNumberOfColumn("Идентификатор", waitTime)
         val statusColumn = tableNumberOfColumn("Статус", waitTime)
         //отчищаем фильтры, что бы закрывать и дочерние карточки ДДС
         cleanFilterByEnum(listOf(), waitTime)
         Thread.sleep(2500)
         //устанавливаем фильтр по оператору по которому логинится автотест
         setFilterByEnum(FilterEnum.Оператор, operatorFIO, waitTime)
-//        if (elements(byXpath("//span[text()='Оператор']/parent::button")).size == 1 ){
-//            element(byXpath("//span[text()='Оператор']/parent::button")).click()
-//        } else {
-//            element(byXpath("//span[contains(text(),'Еще фильтры')]/parent::button")).click()
-//        }
-//        element(byXpath("//input[@name='createdBy']"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//            .click()
-//        element(byXpath("//body/div[@role='presentation']"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//        element(byXpath("//input[@name='createdBy']")).sendKeys(operatorFIO)
-//        element(byXpath("//body/div[@role='presentation']//*[text()='$operatorFIO']"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//            .click()
-//        element(byXpath("//span[text()='Применить']/parent::button")).click()
         Thread.sleep(2500)
         //устанавливаем фильтр по дате регистрации
         setFilterByEnum(FilterEnum.Дата_регистрации, LocalDate.now().minusWeeks(20).format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString()+";", waitTime)
-//        if (elements(byXpath("//span[text()='Дата регистрации']/parent::button")).size == 1){
-//            element(byXpath("//span[text()='Дата регистрации']/parent::button")).click()
-//        } else {
-//            element(byXpath("//span[contains(text(),'Еще фильтры')]/parent::button")).click()
-//        }
-//        val dateStartList = dateStart.split("-")
-//        val dateEndList = dateEnd.split("-")
-//        //заполняем дату начала и конца периода
-//        element(byCssSelector("input#callReceivedAtStart"))
-//            .sendKeys("${dateStartList[2]}.${dateStartList[1]}.${dateStartList[0]}0000")
-//        element(byCssSelector("input#callReceivedAtEnd"))
-//            .sendKeys("${dateEndList[2]}.${dateEndList[1]}.${dateEndList[0]}2359")
-//        element(byXpath("//span[text()='Применить']/parent::button")).click()
-//        element(byXpath("//table/tbody/tr//*[text()]"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
         Thread.sleep(2500)
+        //Получим счетчик строк внизу страницы
+//        val allRecordCountUse = element(byXpath("//table/tfoot//p[contains(text(),'Всего ')]"))
+//            .ownText
+//            .toString()
+//            .split("\n")[1]
+//            .split(" ")[0]
+//            .toInt()
         //ищем надпись "Нет данных"
         // и войдя в цикл без защитного счетчика
-        while (!element(byXpath("//table/tbody/tr//*[text()='Нет данных']")).exists()){//переходим в каждую первую карточку и меняем статус, на "Закрыта"
+        var again2 = 1
+        if (element(byXpath("//table/tbody/tr//*[text()='Нет данных']")).exists()){
+            again2 = 0
+        }
+        while (again2 > 0){//переходим в каждую первую карточку и меняем статус, на "Закрыта"
             //карточки в статусе новая, вызывают проблемы из-за того что меняют статус автоматически, даже когда по нему клацаешь
             //поэтому для них дождемся перехода в статус "в обработке"
-            val statusIC = element(byXpath("//table/tbody/tr[1]/td[$statusColumn]//*[text()]")).ownText
+//            val statusIC = element(byXpath("//table/tbody/tr[1]/td[$statusColumn]//*[text()]")).ownText
+            val idIC = element(byXpath("//table/tbody/tr[1]/td[$idColumn]//text()/..")).ownText
             element(byXpath("//table/tbody/tr[1]"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
                 .click()
-            if (statusIC == "Новая"){
-                try {
-                    checkICToolIsStatus(StatusEnum.`В обработке`, waitTime)
-                } catch (_:  Throwable) {
-                }
-            }
+//            if (statusIC == "Новая"){
+//                try {
+//                    checkICToolIsStatus(StatusEnum.`В обработке`, waitTime)
+//                } catch (_:  Throwable) {
+//                }
+//            }
             Thread.sleep(500)
             updateICToolStatus(StatusEnum.Закрыта, longWait)
             back()
             element(byXpath("//table/tbody/tr[1]"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
-            Thread.sleep(1000)
+            try {
+                element(byXpath("//table/tfoot//p[contains(text(),'Всего ')]"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                } catch (_:  Throwable) {
+                }
+            if (element(byXpath("//table/tbody/tr[2]")).exists()){
+                again2 = 2
+            }
+            element(byXpath("//table/tbody/tr[1]/td[$idColumn]//text()/parent::*[text()='$idIC']"))
+                .shouldNot(exist, ofSeconds(waitTime))
+            Thread.sleep(500)
+            again2 -= 1
         }
+        element(byXpath("//table/tbody/tr//*[text()='Нет данных']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
         logoffTool()
     }
 }

@@ -52,7 +52,7 @@ class SearchTests : BaseTest(){
             .getAttribute("placeholder")!!
             .split(", ")
         element(byXpath("//*[@name='search']/following-sibling::input"))
-            .sendKeys("АТ_", Keys.ENTER)
+            .sendKeys("АвтоТест", Keys.ENTER)
         Thread.sleep(1000)
         while (!element(byXpath("//table/tbody/tr//*[text()='Нет данных']")).exists()){
             val elName = element(byXpath("//table/tbody/tr[1]/td[1]//text()/..")).ownText
@@ -101,22 +101,22 @@ class SearchTests : BaseTest(){
                         .sendKeys("https://AT/source/${uniqueName}.com")
                 } else {
                     element(byXpath("//label[contains(text(),'$unitPlaceohlder')]/following-sibling::div/input"))
-                        .sendKeys("АТ_${unitPlaceohlder}_$uniqueName")
+                        .sendKeys("АвтоТест$unitPlaceohlder$uniqueName")
                 }
                 searchUnitsList
                     .add(element(byXpath("//label[contains(text(),'$unitPlaceohlder')]/following-sibling::div/input"))
                         .getAttribute("value").toString())
             } else if (elements(byXpath("//label[contains(text(),'$unitPlaceohlder')]/following-sibling::div/textarea[@name]")).size == 1){
                 element(byXpath("//label[contains(text(),'$unitPlaceohlder')]/following-sibling::div/textarea[@name]"))
-                    .sendKeys("АТ_${unitPlaceohlder}_$uniqueName")
+                    .sendKeys("АвтоТест$unitPlaceohlder$uniqueName")
                 searchUnitsList.add(element(byXpath("//label[contains(text(),'$unitPlaceohlder')]/following-sibling::div/textarea[@name]"))
                     .getAttribute("value").toString())
             } else if (elements(byXpath(mkdwnLabelSel.format(unitPlaceohlder))).size == 1){
                 element(byXpath(mkdwnLabelSel.format(unitPlaceohlder)))
                     .click()
                 element(byXpath(mkdwnLabelSel.format(unitPlaceohlder)))
-                    .sendKeys("АТ_${unitPlaceohlder}_$uniqueName")
-                searchUnitsList.add("АТ_${unitPlaceohlder}_$uniqueName")
+                    .sendKeys("АвтоТест$unitPlaceohlder$uniqueName")
+                searchUnitsList.add("АвтоТест$unitPlaceohlder$uniqueName")
             } else {
                 //а если нет, то укладываем тест, т.к. либо тест кривой, либо что-то не так с наименованиями подсказок и полей
                 count = false
@@ -188,21 +188,8 @@ class SearchTests : BaseTest(){
             elements(byXpath("//table/tbody/tr"))
                 .shouldHave(CollectionCondition.size(1), ofSeconds(waitTime))
             val nameColumn = tableNumberOfColumn(nameColumnName, waitTime)
-//            elements(byXpath("//table/tbody/tr/td[$nameColumn][text()='АТ_${nameOfName}_$uniqueName']"))
-//                .shouldHave(CollectionCondition.size(1), ofSeconds(waitTime))
-            Assertions.assertTrue(
-                elements(byXpath("//table/tbody/tr/td[$nameColumn][text()='АТ_${nameOfName}_$uniqueName']")).size
-                    +
-                    elements(byXpath("//table/tbody/tr/td[$nameColumn]//*[text()='AT $nameOfName $uniqueName']")).size
-                    == 1
-            )
-            if (menu == Dictionaries.Labels){
-                elements(byXpath("//table/tbody/tr/td[$nameColumn]//*[text()='AT $nameOfName $uniqueName']"))
-                    .shouldHave(CollectionCondition.size(1), ofSeconds(waitTime))
-            } else {
-                elements(byXpath("//table/tbody/tr/td[$nameColumn][text()='АТ_${nameOfName}_$uniqueName']"))
-                    .shouldHave(CollectionCondition.size(1), ofSeconds(waitTime))
-            }
+            elements(byXpath("//table/tbody/tr/td[$nameColumn]//text()/parent::*[text()='АвтоТест$nameOfName$uniqueName']"))
+                .shouldHave(CollectionCondition.size(1), ofSeconds(waitTime))
             // и на последнем круге, удаляем созданную запись
             if (searchUnit == searchUnitsList.last()){
                 element(byXpath("//table/tbody/tr/td[last()]//button"))
@@ -218,7 +205,7 @@ class SearchTests : BaseTest(){
                     .shouldBe(visible, ofSeconds(waitTime))
                     .click()
                 Thread.sleep(500)
-                element(byXpath("//table/tbody/tr/td[$nameColumn][text()='АТ_${nameOfName}_$uniqueName']"))
+                element(byXpath("//table/tbody/tr/td[$nameColumn][text()='АвтоТест$nameOfName$uniqueName']"))
                     .shouldNot(exist, ofSeconds(longWait))
                 element(byXpath("//table/tbody/tr[1]//*[text()='Нет данных']"))
                     .should(exist, ofSeconds(waitTime))

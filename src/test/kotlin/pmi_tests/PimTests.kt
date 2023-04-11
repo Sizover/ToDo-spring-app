@@ -799,20 +799,11 @@ class PimTests : BaseTest(){
         element(byXpath("//*[text()='Типы происшествий']//ancestor::button//*[@name='close']//ancestor::button[1]"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        //т.к. из за библиотеки построения таблицы, элементы скрытые за прокруткой вниз,
-        // с точки зрения драйвера браузера станут кликабельны раньше чем на самом деле до них докрутит прокрутка,
-        // сразу опускаемся вниз страницы (с прокруткой вверх будет аналогично, поэтому следующая строка не канает)
         //Выбираем случайную КП
-        elements(byXpath("//table/tbody/tr")).size
-        val rndA = (1..elements(byXpath("//table/tbody/tr")).size).random()
-        //rndA = 0
-        if (rndA == elements(byXpath("//table/tbody/tr")).size) {
-            element(byCssSelector("table[role='grid']")).sendKeys(Keys.END)
-        } else {
-            element(byXpath("//table/tbody/tr[${rndA + 1}]")).scrollIntoView(false)
-            //Thread.sleep(20000)
-        }
-        element(byXpath("//table/tbody/tr[$rndA]")).click()
+        elements(byXpath("//table/tbody/tr"))
+            .random()
+            .scrollIntoView("{block: \"center\"}")
+            .click()
         //Переходим в силы и средства
         element(byXpath("//*[text()='Силы и средства']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
@@ -837,7 +828,7 @@ class PimTests : BaseTest(){
         element(byXpath("//label[text()='Количество техники']/following-sibling::div/input"))
             .sendKeys("$teamST")
         element(byXpath("//form//label[text()='Примечание']/following-sibling::div/textarea[@name='description']"))
-            .sendKeys("С попытки №$rndA, бригада-Team$team, в количестве $teamS человек, выехала на место происшествия, используя $teamST единиц(ы) техники")
+            .sendKeys("Бригада-Team$team, в количестве $teamS человек, выехала на место происшествия, используя $teamST единиц(ы) техники")
         element(byXpath("//*[text()='Сохранить']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -868,7 +859,7 @@ class PimTests : BaseTest(){
         element(byXpath("//label[text()='Количество техники']/following-sibling::div/input[@value='$teamST']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        element(byXpath("//form//label[text()='Примечание']/following-sibling::div/textarea[@name='description' and text()='С попытки №$rndA, бригада-Team$team, в количестве $teamS человек, выехала на место происшествия, используя $teamST единиц(ы) техники']"))
+        element(byXpath("//form//label[text()='Примечание']/following-sibling::div/textarea[@name='description' and text()='Бригада-Team$team, в количестве $teamS человек, выехала на место происшествия, используя $teamST единиц(ы) техники']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //передвигаем бригаду по статусам
@@ -1221,19 +1212,22 @@ class PimTests : BaseTest(){
                             //искомое значение определяем случайно, среди имеющихся но с типами происшествий и откидыванием пустых значений других справочников придется возится
                             if (subMenu != Dictionaries.IncidentTypes) {
                                 if (elements(byXpath("//table/tbody/tr/td[$col]//text()/parent::*[not(text()='  ')]")).isNotEmpty()) {
-                                    searchValue = elements(byXpath("//table/tbody/tr/td[$col]//text()/parent::*[not(text()='  ')]"))
-                                        .random().ownText
+                                    do {
+                                        searchValue = elements(byXpath("//table/tbody/tr/td[$col]//text()/parent::*[not(text()='  ')]"))
+                                            .random().ownText
+                                    } while (searchValue.length < 3)
                                 } else {
                                     tableStringsOnPage(500, waitTime)
-                                    searchValue = elements(byXpath("//table/tbody/tr/td[$col]//text()/parent::*[not(text()='  ')]"))
-                                        .random().ownText
+                                    do {
+                                        searchValue = elements(byXpath("//table/tbody/tr/td[$col]//text()/parent::*[not(text()='  ')]"))
+                                            .random().ownText
+                                    } while (searchValue.length < 3)
                                     tableStringsOnPage(20, waitTime)
                                 }
                                 fullSearchValue = searchValue
                                 //проверяем не номер ли это телефона и видоизменяем запись , к.т. в формате +Х(ХХХ)ХХХ-ХХ-ХХ в поисковой строке не вернет результатов, только +ХХХХХХХХХХ
                                 //аналогично с ФИО
-//                                val ioRegex = Regex("[а-яА-Яa-zA-Z]{1}[.]\\s{1}[а-яА-Яa-zA-Z]{1}[.]{1}")
-                                val ioRegex = Regex("[а-яА-Яa-zA-Z]{2,}\\s{1}[а-яА-Яa-zA-Z]{1}[.]{1}")
+                                val ioRegex = Regex("[а-яА-Яa-zA-Z]{2,}(\\s{1}[а-яА-Яa-zA-Z]{1}[.]{1}){1,}")
                                 val telRegex = Regex("[+7(]{1}[0-9]{3}[)]{1}[0-9]{3}[-]{1}[0-9]{2}[-]{1}[0-9]{2}")
                                 val workTelRegex = Regex("[0-9]{1}[-][0-9]{5}[-][0-9]{3}[-][0-9]{3}")
                                     if (telRegex.containsMatchIn(searchValue)
