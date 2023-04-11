@@ -26,7 +26,6 @@ import test_library.filters.FilterEnum
 import test_library.filters.FilterTypeEnum
 import test_library.menu.SubmenuInterface
 import test_library.operator_data.OperatorDataEnum
-import test_library.operator_data.OperatorDataEnum.values
 import test_library.statuses.StatusEnum
 import java.text.SimpleDateFormat
 import java.time.Duration.ofSeconds
@@ -102,7 +101,7 @@ open class BaseTest {
         Configuration.browser = CHROME
 //
         Configuration.browserSize = "1920x1080"
-        Configuration.holdBrowserOpen = false
+        Configuration.holdBrowserOpen = true
         Configuration.webdriverLogsEnabled = false
         Configuration.headless = false
         Configuration.baseUrl = "https://test.kiap.local/"
@@ -899,6 +898,7 @@ open class BaseTest {
             element(byXpath("//div[@id='incidentButtons']//button[1]//text()/parent::*[text()='${nextStatus.name}']"))
                 .should(exist, ofSeconds(waitTime))
             //statusNow = element(byXpath("//div[@id='incidentButtons']//button[1]//text()/..")).ownText
+//            checkAlert(AlertsEnum.snackbarSuccess, "OK", true, waitTime)
             statusNow = nextStatus
             Thread.sleep(200)
         } while (statusNow != targetedStatus)
@@ -1652,11 +1652,17 @@ open class BaseTest {
         element(byCssSelector("a[href='/profile']>button"))
             .click()
         //Извлекаем имя оператора
-        values().forEach {
-            element(byXpath("//p[text()='${it.name}:']/following-sibling::p"))
+        OperatorDataEnum.values().forEach {
+            var locator = ""
+            if (it == OperatorDataEnum.`Должностное лицо`){
+                locator = "//*[@name='userProfile']/ancestor::div[2]//h2"
+            } else {
+                locator = "//p[text()='${it.name}']/following-sibling::p//text()/.."
+            }
+            element(byXpath(locator))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
-            operatorDataMap.put(it.name, element(byXpath("//p[text()='${it.name}:']/following-sibling::p//text()/..")).ownText.trim())
+            operatorDataMap.put(it.name, element(byXpath(locator)).ownText.trim())
         }
 //        element(byXpath("//p[text()='Должностное лицо:']/following-sibling::p"))
 //            .should(exist, ofSeconds(waitTime))

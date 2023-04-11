@@ -49,9 +49,9 @@ class Reports : BaseTest(){
         element(byCssSelector("input#title"))
             .sendKeys("Reports 0010 $rndFloat отсчет")
         //заполняем дату начала и конца периода отчета сегоднешним числом
-        element(byXpath("//form[@novalidate]//*[text()='Период']/following-sibling::*//input[@placeholder='с __.__.____']"))
+        element(byXpath("//form[@novalidate]//*[text()='Период, с']/following-sibling::*//input[@placeholder='с __.__.____']"))
             .sendKeys(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString())
-        element(byXpath("//form[@novalidate]//*[text()='Период']/following-sibling::*//input[@placeholder='по __.__.____']"))
+        element(byXpath("//form[@novalidate]//*[text()='Период, по']/following-sibling::*//input[@placeholder='по __.__.____']"))
             .sendKeys(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString())
         //вбиваем адрес
         addressInput("address", "Карачаево-Черкесская Респ, г Карачаевск", waitTime)
