@@ -26,7 +26,7 @@ class Labels : BaseTest(){
         //проверим создание метки и прикрепление метки к происшествию, возможно с удалением метки из КИАП
         date = LocalDate.now()
         dateTime = LocalDateTime.now()
-        logonTool()
+        logonTool(false)
         menuNavigation(Dictionaries.Labels, waitTime)
         tableColumnCheckbox("Метка;Описание", true, waitTime)
         //воспользуемся поиском, что бы найти созданную метку не удаленную в упавший проход
@@ -124,7 +124,7 @@ class Labels : BaseTest(){
         Thread.sleep(500)
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //Регистрируем КП
-        logonTool()
+        logonTool(false)
         menuNavigation(Incidents.CreateIncident, waitTime)
         createICToolCalltype("", waitTime)
         createICToolPhone("", waitTime)
@@ -239,7 +239,7 @@ class Labels : BaseTest(){
         logoffTool()
         //перезалогиниваемся, что бы исключить кеширование и расширить тест
         Thread.sleep(500)
-        logonTool()
+        logonTool(false)
         menuNavigation(Dictionaries.Labels, waitTime)
         //воспользуемся поиском, что бы найти созданную метку
         tableSearch("АвтоТест", waitTime)

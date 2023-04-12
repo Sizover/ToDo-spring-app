@@ -32,10 +32,10 @@ class CheckingFiles: BaseTest()  {
     @Test(retryAnalyzer = Retry::class, dataProvider = "Табличные справочники", groups = ["ALL"])
     fun `CF 0010 Проверка скачивания и корректности табличного CSV файла`(submenuInterface: SubmenuInterface) {
         Configuration.downloadsFolder = "/home/isizov/IdeaProjects/testing-e2e/build/Черновик2"
-        Configuration.proxyEnabled = true
+//        Configuration.proxyEnabled = true
 //        Configuration.fileDownload = FileDownloadMode.PROXY
         FileUtils.deleteDirectory(File("/home/isizov/IdeaProjects/testing-e2e/build/Черновик2"))
-        logonTool()
+        logonTool(true)
         menuNavigation(submenuInterface, waitTime)
         tableColumnCheckbox("", true, waitTime)
         //Если таблица иерархическая раскроем иерархию

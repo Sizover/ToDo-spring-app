@@ -69,7 +69,7 @@ class PimTests : BaseTest(){
         //логинимся
         //val tools = Tools()
 //        tools.logonTool()
-        logonTool()
+        logonTool(false)
         //кликаем по иконке справочников в боковом меню
         //Переходим в "Муниципальные образования"
         var subMenu = Dictionaries.Municipalities
@@ -103,7 +103,7 @@ class PimTests : BaseTest(){
         //A32 Убедиться в наличии списка объектов  в справочнике «Типы происшествий»
         //логинимся
         //val tools = Tools()
-        logonTool()
+        logonTool(false)
         //кликаем по иконке справочников в боковом меню
         //Переходим в "Типы происшествий"
         menuNavigation(Dictionaries.IncidentTypes, waitTime)
@@ -139,7 +139,7 @@ class PimTests : BaseTest(){
         //A33 Убедиться в наличии списка объектов  в справочнике «Организации»
         //логинимся
         //val tools = Tools()
-        logonTool()
+        logonTool(false)
         //кликаем по иконке справочников в боковом меню
         //Переходим в справочник "Организации"
         menuNavigation(Dictionaries.Companies, waitTime)
@@ -168,7 +168,7 @@ class PimTests : BaseTest(){
         //A38 Убедиться в наличии списка объектов  в меню «Список происшествий»
         //логинимся
         //val tools = Tools()
-        logonTool()
+        logonTool(false)
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
         menuNavigation(Incidents.IncidentsList, waitTime)
@@ -206,7 +206,7 @@ class PimTests : BaseTest(){
     fun `PMI 0090 Проверка загрузки таблицы «Архив происшествий»`() {
         //A39 Убедиться в наличии списка объектов  в меню «Архив происшествий»
         //логинимся
-        logonTool()
+        logonTool(false)
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Архив происшетвий"
         menuNavigation(Incidents.IncidentsArchive, waitTime)
@@ -247,7 +247,7 @@ class PimTests : BaseTest(){
         //A312 Проверка прикрепления файла к происшествию
         dateTime = LocalDateTime.now()
         date = LocalDate.now()
-        logonTool()
+        logonTool(false)
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
         menuNavigation(Incidents.IncidentsList, waitTime)
@@ -293,7 +293,7 @@ class PimTests : BaseTest(){
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
         //`A312 Проверка прикрепления файла к происшествию`
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
-        logonTool()
+        logonTool(false)
         //кликаем по иконке происшествий в боковом меню
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий" )
@@ -321,7 +321,7 @@ class PimTests : BaseTest(){
         //A313 Проверка наличия опросника абонента (заявителя)
         //val tools = Tools()
         //логинимся
-        logonTool()
+        logonTool(false)
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
         menuNavigation(Incidents.IncidentsList, waitTime)
@@ -367,7 +367,7 @@ class PimTests : BaseTest(){
         //логинимся
         dateTime = LocalDateTime.now()
         date = LocalDate.now()
-        logonTool()
+        logonTool(false)
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
         //кликаем по "создать обращение"
@@ -449,7 +449,7 @@ class PimTests : BaseTest(){
         //`A315 Проверка формирования действий оператора системы в рамках плана (алгоритма) реагирования с автоматизированным контролем выполнения
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        logonTool()
+        logonTool(false)
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
         menuNavigation(Incidents.IncidentsList, waitTime)
@@ -542,7 +542,7 @@ class PimTests : BaseTest(){
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `PMI 0140 Проверка фильтрации карточек происшествия`() {
         //A.3.16 Фильтрация карточек происшествия
-        logonTool()
+        logonTool(false)
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
         menuNavigation(Incidents.IncidentsList, waitTime)
@@ -662,7 +662,7 @@ class PimTests : BaseTest(){
         //логинимся
         dateTime = LocalDateTime.now()
         date = LocalDate.now()
-        logonTool()
+        logonTool(false)
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
         //кликаем по "создать обращение"
@@ -759,7 +759,7 @@ class PimTests : BaseTest(){
         checkICToolIsStatus(status, waitTime)
         logoffTool()
         //Возвращаемся в КИАП и проверяем статус родительской карточки
-        logonTool()
+        logonTool(false)
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
         menuNavigation(Incidents.IncidentsList, waitTime)
@@ -785,7 +785,7 @@ class PimTests : BaseTest(){
         var teamChangeStatusTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss, dd.MM.yyyy"))
         var teamChangeStatusTimePlus = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss, dd.MM.yyyy"))
         var teamChangeStatusTimeMinus = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss, dd.MM.yyyy"))
-        logonTool()
+        logonTool(false)
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
         menuNavigation(Incidents.IncidentsList, waitTime)
@@ -1016,7 +1016,7 @@ class PimTests : BaseTest(){
 
         logoffTool()
 
-        logonTool()
+        logonTool(false)
         //кликаем по иконке происшествий в боковом меню
         menuNavigation(Incidents.IncidentsList, waitTime)
         //Сбрасываем фильтры
@@ -1042,7 +1042,7 @@ class PimTests : BaseTest(){
         //который упадет если не сможет скачать файл
         Configuration.downloadsFolder = "/home/isizov/IdeaProjects/testing-e2e/build/download_PMI_0180"
         val companiesList = mutableListOf<String>()
-        logonTool()
+        logonTool(false)
         menuNavigation(Dictionaries.Companies, waitTime)
         tableStringsOnPage(50, waitTime)
         //кликаем по иконке справочников в боковом меню
@@ -1096,7 +1096,7 @@ class PimTests : BaseTest(){
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `PMI 0220 Проверка открытия карточек справочных сущностей`() {
         //A.3.28 Проверка централизованного хранения и управления структурированной справочной информации
-        logonTool()
+        logonTool(false)
 
 //        for (i in 1..10){
         Dictionaries.values().forEach {     it ->
@@ -1151,7 +1151,7 @@ class PimTests : BaseTest(){
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, dataProvider = "Справочники", groups = ["ПМИ", "ALL"])
     fun `PMI 0230 Проверка поиска справочных данных`(subMenu: SubmenuInterface) {
         //A.3.29 Проверка поиска справочных данных
-        logonTool()
+        logonTool(false)
         menuNavigation(subMenu, waitTime)
         //ждем загрузки таблицы
         element(byCssSelector("main table>tbody"))
@@ -1292,7 +1292,7 @@ class PimTests : BaseTest(){
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `PMI 0241 Проверка наличия справочников с иерархической системой классификации`(){
         //иерархических справосников стало больше, проверяем все
-        logonTool()
+        logonTool(false)
         for (dicts in 1..10) {
             //кликаем по иконке справочников
             element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul")).click()
@@ -1322,7 +1322,7 @@ class PimTests : BaseTest(){
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `PMI 0250 Проверка присвоения и удаления меток в карточке организации`(){
         //A.3.31 Проверка задания меток для указания признаков объектов
-        logonTool()
+        logonTool(false)
         //кликаем по иконке справочников
         //переходим в нужный справочник
         menuNavigation(Dictionaries.Companies, waitTime)
@@ -1403,7 +1403,7 @@ class PimTests : BaseTest(){
         logoffTool()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //теперь удалим эту (эти) метку(и)
-        logonTool()
+        logonTool(false)
         //кликаем по иконке справочников
         //переходим в нужный справочник
         menuNavigation(Dictionaries.Companies, waitTime)
@@ -1469,7 +1469,7 @@ class PimTests : BaseTest(){
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `PMI 0260 Проверка использования ассоциативных связей-ссылок между объектами справочников`(){
         //A.3.32 Проверка использования ассоциативных связей-ссылок между объектами справочников
-        logonTool()
+        logonTool(false)
         //кликаем по иконке справочников
         //переходим в нужный справочник
         menuNavigation(Dictionaries.Hotlines, waitTime)
@@ -1548,7 +1548,7 @@ class PimTests : BaseTest(){
         //A.3.35 Просмотр детальной истории записи/источников данных записи
         dateTime = LocalDateTime.now()
         date = LocalDate.now()
-        logonTool()
+        logonTool(false)
         //Технический хардкодный счетчик на случай когда надо посоздавать должностных лиц не удаляя их
         val techCount = 1
         //Удалять ли предшествующие записи? флаг для локального использования теста для генерации метаданных
@@ -1760,7 +1760,7 @@ class PimTests : BaseTest(){
             logoffTool()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             //а теперь удалим его
-            logonTool()
+            logonTool(false)
             //переходим в нужный справочник
             menuNavigation(Dictionaries.Officials, waitTime)
             //ждем загрузки таблицы

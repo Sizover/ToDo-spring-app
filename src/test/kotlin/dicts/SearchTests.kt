@@ -38,7 +38,7 @@ class SearchTests : BaseTest(){
     fun `Search 0010 Проверка создания, поиска и удаления справочных сущностей некоторых справочников`
             (menu: SubmenuInterface, nameOfName: String, nameColumnName: String) {
         //Видеокамеры
-        logonTool()
+        logonTool(false)
         menuNavigation(menu, waitTime)
         //открываем поиск что бы прочитать подсказку
 //        element(byXpath("//*[@name='search']/ancestor::button"))

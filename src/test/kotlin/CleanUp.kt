@@ -36,7 +36,7 @@ class CleanUp : BaseTest(){
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, dataProvider = "Справочники отчетов", groups = ["CleanUp"])
     fun `CleanUp 9998 Удаление отчетов созданных автотестами (по наличию части имени в отчете)`(subMenu: SubmenuInterface){
         //Удаляем все отчеты
-        logonTool()
+        logonTool(false)
 //        for (m in 1..3){
 //            when (m) {
 //                1 -> {menuNavigation(MyMenu.Reports.IncidentsReport, waitTime)}
@@ -102,7 +102,7 @@ class CleanUp : BaseTest(){
         val again = false
         val dateStart = LocalDate.now().minusDays(50).toString()
         val dateEnd = LocalDate.now().toString()
-        logonTool()
+        logonTool(false)
         //запомним что мы за оператор:
         val operatorFIO = operatorData(OperatorDataEnum.`Должностное лицо`)
         logoffTool()

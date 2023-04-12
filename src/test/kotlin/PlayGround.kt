@@ -36,7 +36,7 @@ class PlayGround : BaseTest(){
         //создадим пару МО, один оставив навсегда, а второй создавая и удаляя каждый раз
     val moATItWas = mutableListOf<String>()
     val moATCreated = mutableListOf<String>("AutoTest T 0020 МО")
-    logonTool()
+    logonTool(false)
     menuNavigation(MyMenu.Dictionaries.Municipalities, waitTime)
     tableColumnCheckbox("", true, waitTime)
     Thread.sleep(1000)
@@ -223,7 +223,7 @@ class PlayGround : BaseTest(){
         Configuration.proxyEnabled = true
 //        Configuration.fileDownload = FileDownloadMode.PROXY
         FileUtils.deleteDirectory(File("/home/isizov/IdeaProjects/testing-e2e/build/Черновик2"))
-        logonTool()
+        logonTool(true)
         menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
         tableColumnCheckbox("", true, waitTime)
         //Если таблица иерархическая раскроем иерархию

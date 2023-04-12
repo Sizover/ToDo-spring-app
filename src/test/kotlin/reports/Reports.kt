@@ -34,7 +34,7 @@ class Reports : BaseTest(){
         dateTime = LocalDateTime.now()
         date = LocalDate.now()
         val reporTtitle = "Reports 0010 $rndFloat"
-        logonTool()
+        logonTool(false)
         //кликаем по иконке отчетов
         //Переходим в "отчет по обращениям"
         menuNavigation(MyMenu.Reports.CallsReport, waitTime)
@@ -339,7 +339,7 @@ class Reports : BaseTest(){
         //A.3.24 Проверка формирования отчетов по деятельности сотрудников
         dateTime = LocalDateTime.now()
         date = LocalDate.now()
-        logonTool()
+        logonTool(false)
         //кликаем по иконке отчетов
         //Переходим в "отчет по деятельности сотрудников"
         menuNavigation(MyMenu.Reports.UsersReport, waitTime)
@@ -605,7 +605,7 @@ class Reports : BaseTest(){
         }
         //по какому типу происшествия строим отчет
         var icReportCreate: String = ""
-        logonTool()
+        logonTool(false)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         menuNavigation(MyMenu.Reports.IncidentsReport, waitTime)
         //кликаем по "Создать отчет"
@@ -1267,7 +1267,7 @@ class Reports : BaseTest(){
         val oldReportsMap : LinkedHashMap<String, MutableMap<String, Int>> = linkedMapOf()
         val oneReportMap : LinkedHashMap<String, Int> = linkedMapOf()
         val newReportsMap : LinkedHashMap<String, MutableMap<String, Int>> = linkedMapOf()
-        logonTool()
+        logonTool(false)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //Переходим в "отчет По..."
         menuNavigation(reportType, waitTime)
@@ -1551,7 +1551,7 @@ class Reports : BaseTest(){
             logoffTool()
         }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        logonTool()
+        logonTool(false)
         menuNavigation(reportType, waitTime)
         //кликаем по "Создать отчет"
         element(byXpath("//span[text()='Создать отчет']/.."))
