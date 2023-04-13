@@ -6,8 +6,9 @@ import com.codeborne.selenide.Condition
 import com.codeborne.selenide.Configuration
 import com.codeborne.selenide.DownloadOptions
 import com.codeborne.selenide.FileDownloadMode
-import com.codeborne.selenide.Selectors
+import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.element
+import com.codeborne.selenide.Selenide.elements
 import com.opencsv.CSVParserBuilder
 import com.opencsv.CSVReaderBuilder
 import org.apache.commons.io.FileUtils
@@ -39,18 +40,22 @@ class CheckingFiles: BaseTest()  {
         menuNavigation(submenuInterface, waitTime)
         tableColumnCheckbox("", true, waitTime)
         //Если таблица иерархическая раскроем иерархию
-        if (element(Selectors.byXpath("//table/thead/tr/th[1]//*[@name='arrowRight']/ancestor::button")).exists()){
-            element(Selectors.byXpath("//table/thead/tr/th[1]//*[@name='arrowRight']/ancestor::button"))
+        if (element(byXpath("//table/thead/tr/th[1]//*[@name='arrowRight']/ancestor::button")).exists()){
+            element(byXpath("//table/thead/tr/th[1]//*[@name='arrowRight']/ancestor::button"))
                 .click()
-            element(Selectors.byXpath("//table/thead/tr/th[1]//*[@name='arrowRight']/ancestor::button"))
+            element(byXpath("//table/thead/tr/th[1]//*[@name='arrowRight']/ancestor::button"))
                 .shouldNot(Condition.exist, Duration.ofSeconds(waitTime))
-            element(Selectors.byXpath("//table/thead/tr/th[1]//*[@name='arrowDown']/ancestor::button"))
+            element(byXpath("//table/thead/tr/th[1]//*[@name='arrowDown']/ancestor::button"))
                 .should(Condition.exist, Duration.ofSeconds(waitTime))
                 .shouldBe(Condition.visible, Duration.ofSeconds(waitTime))
         }
 //        element(Selectors.byXpath("//a[@download='download.csv']"))
 //            .download(DownloadOptions.using(FileDownloadMode.PROXY))
-        val testFile: File = element(Selectors.byXpath("//a[@download='download.csv']"))
+        var contolStringCount = 0
+        var contolColumnCount = 0
+        val contolTableColumnCount = elements(byXpath("//table/thead/tr/th")).size
+        val contolTableStringCount = elements(byXpath("//table/tbody/tr")).size
+        val testFile: File = element(byXpath("//a[@download='download.csv']"))
             .download(DownloadOptions.using(FileDownloadMode.FOLDER).withTimeout(59999))
         val fileReader = FileReader(testFile, StandardCharsets.UTF_8)
         val parser = CSVParserBuilder().withQuoteChar('\u0000').withSeparator(';').build()
@@ -61,10 +66,15 @@ class CheckingFiles: BaseTest()  {
                     for (row in rows) {
                         for (substring in row) {
                             Assertions.assertFalse(substring.lowercase().contains("object"))
+                            contolColumnCount += 1
                         }
+                        contolStringCount += 1
                     }
                 }
         }
+        Assertions.assertTrue(contolStringCount > 1)
+        Assertions.assertTrue(contolStringCount == contolTableStringCount + 1)
+        Assertions.assertTrue(contolColumnCount > contolTableColumnCount)
         logoffTool()
         Thread.sleep(1000)
         //Удаляем нафиг все что скачали

@@ -12,6 +12,7 @@ import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide
 import com.codeborne.selenide.Selenide.clearBrowserCookies
 import com.codeborne.selenide.Selenide.clearBrowserLocalStorage
+import com.codeborne.selenide.Selenide.closeWebDriver
 import com.codeborne.selenide.Selenide.closeWindow
 import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
@@ -19,8 +20,6 @@ import com.codeborne.selenide.Selenide.open
 import com.codeborne.selenide.WebDriverRunner
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
-import org.openqa.selenium.WebDriver
-import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.remote.DesiredCapabilities
 import test_library.alerts.AlertsEnum
@@ -79,30 +78,63 @@ open class BaseTest {
 
 
     fun logonTool(proxy: Boolean) {
-
         //https://overcoder.net/q/1369284/%D0%BA%D0%B0%D0%BA-%D1%80%D0%B0%D0%B7%D1%80%D0%B5%D1%88%D0%B8%D1%82%D1%8C-%D0%B8%D0%BB%D0%B8-%D0%B7%D0%B0%D0%BF%D1%80%D0%B5%D1%82%D0%B8%D1%82%D1%8C-%D1%83%D0%B2%D0%B5%D0%B4%D0%BE%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BE-%D0%B2%D1%81%D0%BF%D0%BB%D1%8B%D0%B2%D0%B0%D1%8E%D1%89%D0%B5%D0%B9-%D0%BA%D0%B0%D0%BC%D0%B5%D1%80%D0%B5-%D0%BC%D0%B8%D0%BA%D1%80%D0%BE%D1%84%D0%BE%D0%BD%D0%B0
+        //https://peter.sh/experiments/chromium-command-line-switches/
+        //https://selenide.org/javadoc/current/com/codeborne/selenide/Configuration.html
+        val options = ChromeOptions()
+        options.addArguments("--auto-accept-camera-and-microphone-capture")
+        options.addArguments("--use-fake-device-for-media-stream")
+//        options.addArguments("--use-file-for-fake-audio-capture")
+        options.addArguments("--use-fake-ui-for-media-stream")
+        Configuration.browser = CHROME
+        Configuration.timeout = 10000
+        Configuration.browserSize = "1920x1080"
+        Configuration.proxyEnabled = proxy
+        Configuration.holdBrowserOpen = false
+        Configuration.webdriverLogsEnabled = false
+        Configuration.headless = false
+        Configuration.baseUrl = "https://test.kiap.local/"
+        Configuration.browserCapabilities = options
+        open("https://test.kiap.local/")
+        clearBrowserCookies()
+        clearBrowserLocalStorage()
+        closeWindow()
+        //Thread.sleep(1000)
+        open("https://test.kiap.local/")
+        //логинимся
+        element(byName("username")).sendKeys("a.sizov")
+        element(byName("password")).sendKeys("a.sizov")
+        element(byName("login")).click()
+    }
 
+    fun logonTool2(){
 
-        //ChromeOptions addArguments
+        val options = ChromeOptions()
+        options.addArguments("--auto-accept-camera-and-microphone-capture")
+        options.addArguments("--use-fake-device-for-media-stream")
+//        options.addArguments("--use-file-for-fake-audio-capture")
+        options.addArguments("--use-fake-ui-for-media-stream")
+        Configuration.browser = CHROME
+        Configuration.browserSize = "1920x1080"
+        Configuration.holdBrowserOpen = false
+        Configuration.webdriverLogsEnabled = false
+        Configuration.headless = false
+        Configuration.baseUrl = "https://test.kiap.local/"
+        Configuration.browserCapabilities = options
+        open("https://test.kiap.local/")
+        element(byName("username")).sendKeys("i.sizov")
+        element(byName("password")).sendKeys("i.sizov")
+        //element(byName("username")).sendKeys("test")
+        //element(byName("password")).sendKeys("test!1+1")
+        element(byName("login")).click()
+        Thread.sleep(1000)
 
-
-        //на случай невыполнения шага, ждем что бы можно было успеть глазками посмотреть и руками потыкать
-//        System.setProperty("webdriver.http.factory", "jdk-http-client")
-//        val options = ChromeOptions()
-//        options.addArguments("--remote-allow-origins=*")
-//        val driver = ChromeDriver(options)
-//        driver.get("https://test.kiap.local/")
-//        driver.findElement(byXpath("//input[@id='username']")).sendKeys("a.sizov")
-//        element(byName("username")).sendKeys("a.sizov")
-//        element(byName("password")).sendKeys("a.sizov")
-//        element(byName("login")).click()
 
         Configuration.timeout = 10000
         //выбираем браузер
 //        Configuration.browser = FIREFOX
         Configuration.browser = CHROME
         Configuration.browserSize = "1920x1080"
-        Configuration.proxyEnabled = proxy
         Configuration.holdBrowserOpen = false
         Configuration.webdriverLogsEnabled = false
         Configuration.headless = false
@@ -117,17 +149,18 @@ open class BaseTest {
         open("https://test.kiap.local/")
 //        //open("https://stage.kiap.local/")
 //        //логинимся
-        element(byName("username")).sendKeys("a.sizov")
-        element(byName("password")).sendKeys("a.sizov")
+        element(byName("username")).sendKeys("i.sizov")
+        element(byName("password")).sendKeys("i.sizov")
         //element(byName("username")).sendKeys("test")
         //element(byName("password")).sendKeys("test!1+1")
         element(byName("login")).click()
+        Thread.sleep(1000)
 
-    }
 
-    fun logonTool2(){
-        WebDriverRunner.isChrome()
-        val options = ChromeOptions()
+
+
+//        WebDriverRunner.isChrome()
+//        val options = ChromeOptions()
 //        options.addArguments("--disable-extensions")
 //        options.addArguments("--headless")
 //        options.addArguments("--no-sandbox")
@@ -141,8 +174,8 @@ open class BaseTest {
 //        capabilities.setCapability(ChromeOptions.CAPABILITY, options)
 //        Configuration.browserCapabilities = capabilities
         //        open("/")
-        val webDriver: WebDriver = ChromeDriver(options)
-        webDriver.get("https://test.kiap.local/")
+//        val webDriver: WebDriver = ChromeDriver(options)
+//        webDriver.get("https://test.kiap.local/")
     }
 
 
@@ -248,6 +281,7 @@ open class BaseTest {
         clearBrowserCookies()
         clearBrowserLocalStorage()
         closeWindow()
+        closeWebDriver()
 
     }
 
