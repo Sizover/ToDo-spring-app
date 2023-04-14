@@ -90,7 +90,7 @@ open class BaseTest {
         Configuration.timeout = 10000
         Configuration.browserSize = "1920x1080"
         Configuration.proxyEnabled = proxy
-        Configuration.holdBrowserOpen = false
+        Configuration.holdBrowserOpen = true
         Configuration.webdriverLogsEnabled = false
         Configuration.headless = false
         Configuration.baseUrl = "https://test.kiap.local/"
@@ -1431,14 +1431,14 @@ open class BaseTest {
                     }
                     if (indexOfFilterValue == 0){
                         if (oneFilterValue.trim().isNotEmpty()){
-                            element(byXpath(filter.filterAlias.type.filterType.clickLocator(filterFullName, "с __.__.____ __:__")))
+                            element(byXpath(filter.filterAlias.type.filterType.clickLocator(filterFullName, "с")))
                                 .should(exist, ofSeconds(waitTime))
                                 .shouldBe(visible, ofSeconds(waitTime))
                                 .sendKeys(oneFilterValue +"0000")
                         }
                     } else if ((indexOfFilterValue == 1)) {
                         if (oneFilterValue.trim().isNotEmpty()){
-                            element(byXpath(filter.filterAlias.type.filterType.clickLocator(filterFullName, "по __.__.____ __:__")))
+                            element(byXpath(filter.filterAlias.type.filterType.clickLocator(filterFullName, "по")))
                                 .should(exist, ofSeconds(waitTime))
                                 .shouldBe(visible, ofSeconds(waitTime))
                                 .sendKeys(oneFilterValue +"2359")
