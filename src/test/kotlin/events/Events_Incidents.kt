@@ -31,7 +31,7 @@ class Events_Incidents :BaseTest() {
         //Проверяем баг который нашел Коля, но который не удается воспроизвести. Т.о. положительный проход подтвердит невоспроизведение
         val dateStartList = LocalDate.now().minusMonths(2).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
         val dateEndList = LocalDate.now().minusMonths(1).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-        logonTool()
+        logonTool(false)
         //узнаем свой МО
         val operatorsMunicipalities = operatorData(OperatorDataEnum.`Муниципальное образование`)
         menuNavigation(System.Audit, waitTime)
@@ -49,7 +49,7 @@ class Events_Incidents :BaseTest() {
             .shouldBe(visible, ofSeconds(waitTime))
         val url = url()
         logoffTool()
-        logonTool()
+        logonTool(false)
         open(url)
         element(byXpath("//table/tbody"))
             .should(exist, ofSeconds(waitTime))
@@ -118,7 +118,7 @@ class Events_Incidents :BaseTest() {
         val falseCallsNumbersList = mutableListOf<String>()
         val moreMonthFalseCallsNumbersList = mutableListOf<String>()
         var anotherRound: Boolean
-        logonTool()
+        logonTool(false)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         menuList.forEach { menu ->
             menuNavigation(menu, waitTime)

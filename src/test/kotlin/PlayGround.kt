@@ -1,27 +1,14 @@
 
 
 
-import com.codeborne.selenide.Condition
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.visible
-import com.codeborne.selenide.Configuration
-import com.codeborne.selenide.DownloadOptions
-import com.codeborne.selenide.FileDownloadMode
-import com.codeborne.selenide.Selectors
 import com.codeborne.selenide.Selectors.byCssSelector
 import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
-import com.opencsv.CSVParserBuilder
-import com.opencsv.CSVReaderBuilder
-import org.apache.commons.io.FileUtils
 import org.openqa.selenium.Keys
-import org.testng.annotations.Test
 import test_library.menu.MyMenu
-import java.io.File
-import java.io.FileReader
-import java.nio.charset.StandardCharsets
-import java.time.Duration
 import java.time.Duration.ofSeconds
 
 
@@ -36,7 +23,7 @@ class PlayGround : BaseTest(){
         //создадим пару МО, один оставив навсегда, а второй создавая и удаляя каждый раз
     val moATItWas = mutableListOf<String>()
     val moATCreated = mutableListOf<String>("AutoTest T 0020 МО")
-    logonTool()
+    logonTool(false)
     menuNavigation(MyMenu.Dictionaries.Municipalities, waitTime)
     tableColumnCheckbox("", true, waitTime)
     Thread.sleep(1000)
@@ -190,210 +177,15 @@ class PlayGround : BaseTest(){
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
     fun `Черновик`() {
 
-        repeat(100){
-//            val r = test2().generatelastNameF()
-//            val rr = test2().generatefirstNameI()
-//            val rrr = test2().generatemiddleNameO()
-            println("${generateLastNameF()} ${generateFirstNameI()} ${generateMiddleNameO()}")
-        }
-
-//    logonTool()
-//        tableCheckbox("ЧЧИД", true, waitTime)
-//        logonTool()
-//        menuNavigation("Происшествия", "Список происшествий", waitTime)
-//        Thread.sleep(100)
-//        setFilterByName("Дата регистрации", LocalDate.now().minusMonths(1).format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString()+";", waitTime)
-        //setDateFilter("Дата регистрации", LocalDate.now().minusMonths(1).format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString(), "", waitTime)
-//        while (true) {
-//            println(
-//                element(byXpath("//div[@role='presentation']//*[text()='Уровень происшествия']/following-sibling::*//button[1]"))
-//                    .getCssValue("background-color")
-//            )
-//            Thread.sleep(100)
-//        }
-
-
-
-
     }
 
-    @Test(retryAnalyzer = Retry::class, groups = ["ALL"])
-    fun `CF 0010 Проверка скачивания и корректности табличного CSV файла`() {
-        Configuration.downloadsFolder = "/home/isizov/IdeaProjects/testing-e2e/build/Черновик2"
-        Configuration.proxyEnabled = true
-//        Configuration.fileDownload = FileDownloadMode.PROXY
-        FileUtils.deleteDirectory(File("/home/isizov/IdeaProjects/testing-e2e/build/Черновик2"))
-        logonTool()
-        menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
-        tableColumnCheckbox("", true, waitTime)
-        //Если таблица иерархическая раскроем иерархию
-        if (element(Selectors.byXpath("//table/thead/tr/th[1]//*[@name='arrowRight']/ancestor::button")).exists()){
-            element(Selectors.byXpath("//table/thead/tr/th[1]//*[@name='arrowRight']/ancestor::button"))
-                .click()
-            element(Selectors.byXpath("//table/thead/tr/th[1]//*[@name='arrowRight']/ancestor::button"))
-                .shouldNot(Condition.exist, Duration.ofSeconds(waitTime))
-            element(Selectors.byXpath("//table/thead/tr/th[1]//*[@name='arrowDown']/ancestor::button"))
-                .should(Condition.exist, Duration.ofSeconds(waitTime))
-                .shouldBe(Condition.visible, Duration.ofSeconds(waitTime))
-        }
-//        element(Selectors.byXpath("//a[@download='download.csv']"))
-//            .download(DownloadOptions.using(FileDownloadMode.PROXY))
-        val testFile: File = element(Selectors.byXpath("//a[@download='download.csv']"))
-            .download(DownloadOptions.using(FileDownloadMode.FOLDER).withTimeout(59999))
-        val fileReader = FileReader(testFile, StandardCharsets.UTF_8)
-
-        val parser = CSVParserBuilder().withQuoteChar('\u0000').withSeparator(';').build()
-        fileReader.use { br ->
-            CSVReaderBuilder(br).withCSVParser(parser)
-                .build().use { reader ->
-                    val rows = reader.readAll()
-                    for (row in rows) {
-                        for (substring in row) {
-                            println(substring)
-                            //Assertions.assertFalse(substring.lowercase().contains("object"))
-                        }
-                    }
-                }
-        }
-        logoffTool()
-        Thread.sleep(1000)
-        //Удаляем нафиг все что скачали
-        FileUtils.deleteDirectory(File("/home/isizov/IdeaProjects/testing-e2e/build/Черновик2"))
-    }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class)
     fun `Черновик2`() {
 
-
-
-
-
-
-
-
-
-
-//        Files.newBufferedReader(myPath, StandardCharsets.UTF_8).use { br ->
-//            CSVReaderBuilder(br).withCSVParser(parser)
-//                .build().use { reader ->
-//
-//                    val rows = reader.readAll()
-//
-//                    for (row in rows) {
-//                        for (e in row) {
-//                            print("$e ")
-//                        }
-//
-//                        println()
-//                    }
-//                }
-//        }
-
-
-
-
-
-//        logonTool()
-//        menuNavigation(MyMenu.KB.Explorer, waitTime)
-//        element(byXpath("//h6/../.."))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//        for (i in 0 until elements(byXpath("//h6/../..")).size){
-//            elements(byXpath("//h6/../.."))[i].find(".MuiTypography-root.MuiTypography-caption.css-1arurh3").click()
-//            Thread.sleep(1000)
-
-//        elements(byXpath("//h6/../..")).forEach { el ->
-//            el.
-
-
-
-
-//            el.find(byXpath("*[text()='ОТКРЫТЬ' and text()=' ПОДРОБНОСТИ']/.."))
-//                .click()
-
-
-
-
-
-//        elements("div#iplan div[role='button'][aria-expanded='false']")
-//            .findBy(exactText("AutoTest Dicts CP 0010 child 1 Простой"))
-//            .find(byXpath("ancestor::div[@role='button' and @aria-expanded='false']"))
-//        println(elements("div#iplan div[role='button'][aria-expanded='false']")
-//            .findBy(("AutoTest Dicts CP 0010 child 1 Простой"))
-//            .find(byXpath("ancestor::div[@role='button' and @aria-expanded='false']")))
-//        element(byXpath("//*[text()='Добавить новый']/text()/ancestor::button"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//            .click()
-//        //заполняем поля
-//        element(byXpath("//form[@novalidate]"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//        element(byXpath("//form[@novalidate]//*[text()='Тип происшествия*']/following-sibling::*//input"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//            .click()
-//        element(byXpath("(//div[@role='presentation']//*[@name='arrowRight'])[1]/ancestor::li"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//            .click()
-//        element(byXpath("(//div[@role='presentation']//li)[1]//*[@name='arrowDown']"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//        element(byXpath("//div[@role='presentation']//*[text()='П.5.1.5 Auto-Test']/text()/ancestor::li"))
-//            .should(exist, ofSeconds(waitTime))
-//            .shouldBe(visible, ofSeconds(waitTime))
-//            .click()
-//        Thread.sleep(1000)
-//        println(element(byXpath("//div[@role='presentation']")).innerHtml())
-
-//        Thread.sleep(1000)
-//        menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
-//        val test = element(byXpath("//form[@novalidate]//button[1]//text()/..")).ownText//.substringBefore('\n')
-//        Thread.sleep(1000)
-
-//        element(byXpath("html/body/div[@role='presentation']//*[text()='Пользователь системы']/ancestor::fieldset//*[text()='Да']/ancestor::label//input/..")).click()
-//        Thread.sleep(1000)
-//        println(element(byXpath("html/body/div[@role='presentation']//*[text()='Пользователь системы']/ancestor::fieldset//*[text()='Все']/ancestor::label//input/..")).getCssValue("background-color"))
-//        cleanFilter("", waitTime)
-        //div[@role='presentation']//*[contains(text(),'Источники событий')]/following-sibling::*//*[@name='close']
-
-//        element(byCssSelector("input#parent")).selectedOptionValue  background-color
-//        val innerHtml = element(byXpath("//div[@role='presentation']")).innerHtml()
-//        println(element(byXpath("//div[@role='presentation']")).innerHtml())
-
-
-
     }
 
-    fun alignFile(inputName: String, lineLength: Int, outputName: String) {
-        val writer = File(outputName).bufferedWriter()
-        var currentLineLength = 0
-        for (line in File(inputName).readLines()) {
-            if (line.isEmpty()) {
-                writer.newLine()
-                if (currentLineLength > 0) {
-                    writer.newLine()
-                    currentLineLength = 0
-                }
-            }
-            for (word in line.split(Regex("\\s+"))) {
-                if (currentLineLength > 0) {
-                    if (word.length + currentLineLength >= lineLength) {
-                        writer.newLine()
-                        currentLineLength = 0
-                    }
-                    else {
-                        writer.write(" ")
-                        currentLineLength++
-                    }
-                }
-                writer.write(word)
-                currentLineLength += word.length
-            }
-        }
-        writer.close()
-    }
+
 
 
 

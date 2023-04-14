@@ -41,7 +41,7 @@ open class StatusTests : BaseTest(){
         //хотя траблшутить по параметрическим запускам наверное проще
         date = LocalDate.now()
         dateTime = LocalDateTime.now()
-        logonTool()
+        logonTool(false)
         menuNavigation(Incidents.CreateIncident, waitTime)
         element(byXpath("//form[@novalidate]"))
             .should(exist, ofSeconds(waitTime))
@@ -140,7 +140,7 @@ open class StatusTests : BaseTest(){
                 i += 1
                 logoffTool()
             }
-        logonTool()
+        logonTool(false)
         menuNavigation(Incidents.IncidentsList, waitTime)
         tableColumnCheckbox("Описание", true, waitTime)
         //Находим созданную родительскую КП

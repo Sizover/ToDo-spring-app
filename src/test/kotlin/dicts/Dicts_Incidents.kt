@@ -32,7 +32,7 @@ class Dicts_Incidents :BaseTest() {
     fun `Dicts INC 0010 Проверка наличия и работоспособности языка обращения в карточке обращения`(language1 : String, language2 : String) {
         dateTime = LocalDateTime.now()
         date = LocalDate.now()
-        logonTool()
+        logonTool(false)
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
         menuNavigation(Incidents.IncidentsList, waitTime)

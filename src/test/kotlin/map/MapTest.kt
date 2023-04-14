@@ -59,7 +59,7 @@ class MapTest  : BaseTest(){
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `MT_001 Проверка отображения значов на карте при применении различных фильтров карты`(){
-        logonTool()
+        logonTool(false)
         //открываем карту
         element(byXpath("//span[@aria-label='Открыть карту в отдельном окне']/button"))
             .should(exist, ofSeconds(waitTime))
@@ -119,7 +119,7 @@ class MapTest  : BaseTest(){
         //считываем ссылку в свойствах центрующей иконки, достаем оттуда координаты и сравниваем с заданными с учетом некоторой погрешности
         //убеждаемся что на карте присутствуют 5 кусочков из openStreetMap соответствующих координатам, возвращаемся в КП и убеждаемся что вернулись в КП
         try {
-            logonTool()
+            logonTool(false)
         } catch (_:  Throwable) {
             element(byCssSelector("header button svg[name='user']"))
                 .should(exist, ofSeconds(waitTime))
@@ -188,7 +188,7 @@ class MapTest  : BaseTest(){
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `MT_003 Проверка PM1363~B - Общая ошибка приложения после обновления страницы карты`() {
-        logonTool()
+        logonTool(false)
         //открываем карту
         element(byXpath("//span[@aria-label='Открыть карту в отдельном окне']/button"))
             .should(exist, ofSeconds(waitTime))

@@ -37,7 +37,7 @@ class Dicts_CumulativePlans:BaseTest() {
         val listOfRemoved = mutableListOf<String>()
         //Список созданных дочерних пунктов
         val listOfChildPC = mutableListOf<String>()
-        logonTool()
+        logonTool(false)
         //Переходим в справочник
         menuNavigation(Dictionaries.CumulativePlans, waitTime)
         tableColumnCheckbox("Наименование мероприятий/блока", true, waitTime)
@@ -69,6 +69,7 @@ class Dicts_CumulativePlans:BaseTest() {
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
                 .click()
+            Thread.sleep(100)
             element(byXpath("//div[@role='presentation']//*[text()='Удалить']/text()/ancestor::button"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
@@ -227,7 +228,7 @@ class Dicts_CumulativePlans:BaseTest() {
             .shouldBe(visible, ofSeconds(waitTime))
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         logoffTool()
-        logonTool()
+        logonTool(false)
         //TODO убрать разлогинивание, когда починиться баг 1800
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //Идем за данными для заполнения доп полей
@@ -245,11 +246,12 @@ class Dicts_CumulativePlans:BaseTest() {
         //Возвращаемся в справочник
         menuNavigation(Dictionaries.CumulativePlans, waitTime)
         var planItemType = ""
-        for (i in 1..3){
+        for (i in 1..4){
             when(i){
                 1 -> planItemType = "Простой"
                 2 -> planItemType = "Контакт"
                 3 -> planItemType = "Назначение"
+                4 -> planItemType = "Информационный"
             }
             element(byXpath("//*[text()='Добавить новый']/text()/ancestor::button"))
                 .should(exist, ofSeconds(waitTime))
@@ -428,6 +430,10 @@ class Dicts_CumulativePlans:BaseTest() {
         checkICToolIsStatus(`В обработке`, waitTime)
         checkICToolDopInfo("$dateTime AutoTest Dicts CP 0010 Создание, изменение, перемещение и удаление пунктов реагирования", waitTime)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //Проверяем то, что до манипуляций "Информационный" пункт выполнен
+        elements(byXpath("//div[@id='iplan']//*[contains(@aria-label,'Статус: Выполнен')]"))
+            .shouldHave(CollectionCondition.size(1))
+        var doneCount = 1
         //Раскрываем созданного родителя
         element(byXpath("//div[@id='iplan']//*[text()='AutoTest Dicts CP 0010 parent 1 отредактировано']/ancestor::div[@role='button' and @aria-expanded='false']"))
             .should(exist, ofSeconds(waitTime))
@@ -492,16 +498,34 @@ class Dicts_CumulativePlans:BaseTest() {
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
             }
-            element(byXpath(stateLocator.format("true") + "/..//*[text()='Уточните комментарий']/../following-sibling::*//p"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .sendKeys("\"$childPCName\" Выполнен")
 //            element(byXpath("//div[@id='iplan']//*[text()='$childPCName']/ancestor::div[@role='button' and @aria-expanded='true']/..//*[text()='Выполнить']/text()/ancestor::button"))
-            element(byXpath(stateLocator.format("true") + "/..//*[text()='Выполнить']/text()/ancestor::button"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
-                .scrollIntoView("{block: \"center\"}")
-                .click()
+            if (childPCName.contains("Информационный")){
+                element(byXpath(stateLocator.format("true") + "/..//*[text()='Уточните комментарий']/../following-sibling::*//p"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .sendKeys("\"$childPCName\" Проверен")
+                element(byXpath(stateLocator.format("true") + "/..//*[text()='Выполнить']/text()/ancestor::button"))
+                    .shouldNot(exist, ofSeconds(waitTime))
+                element(byXpath(stateLocator.format("true") + "/..//*[text()='Отменить выполнение']/text()/ancestor::button"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                element(byXpath(stateLocator.format("true") + "/..//*[text()='Сохранить комментарий без изменения статуса']/text()/ancestor::button"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .scrollIntoView("{block: \"center\"}")
+                    .click()
+            } else {
+                element(byXpath(stateLocator.format("true") + "/..//*[text()='Уточните комментарий']/../following-sibling::*//p"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .sendKeys("\"$childPCName\" Выполнен")
+                element(byXpath(stateLocator.format("true") + "/..//*[text()='Выполнить']/text()/ancestor::button"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .scrollIntoView("{block: \"center\"}")
+                    .click()
+                doneCount += 1
+            }
             element(byXpath(stateLocator.format("true")))
                 .shouldNot(exist, ofSeconds(waitTime))
             element(byXpath(stateLocator.format("false")))
@@ -511,7 +535,7 @@ class Dicts_CumulativePlans:BaseTest() {
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
             elements(byXpath("//div[@id='iplan']//*[contains(@aria-label,'Статус: Выполнен')]"))
-                .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(index + 1))
+                .shouldHave(CollectionCondition.size(doneCount))
         }
         //Проверяем назначенную ДДС в карточке
         element(byXpath("//form[@novalidate]//div[@id='hotlines']//form[@novalidate]//*[text()='$rndHLName']"))
@@ -568,6 +592,7 @@ class Dicts_CumulativePlans:BaseTest() {
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
                 .click()
+            Thread.sleep(100)
             element(byXpath("//div[@role='presentation']//*[text()='Удалить']/text()/ancestor::button"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))

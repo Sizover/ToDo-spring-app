@@ -37,7 +37,7 @@ class Dicts_KB: BaseTest() {
         val oneArticleAttributeMap: LinkedHashMap<String, String> = linkedMapOf()
         var removalWasArticl = false
         var removalWasCategory = false
-        logonTool()
+        logonTool(false)
         //сначала удалим статьи по списку, если они есть
         menuNavigation(MyMenu.KB.Articles, waitTime)
         //Ждем нужный заголовок, что бы убедится что мы там где должны
@@ -987,7 +987,7 @@ class Dicts_KB: BaseTest() {
         //для работы с фильтрами понадобится соответствие кода и наименования типа происшествия,
         // т.к. в статьях хранится только код, а в фильтре для однозначной навигации понадобится и наименование
         val incidentTypesMap: MutableMap<String, String> = mutableMapOf()
-        logonTool()
+        logonTool(false)
         menuNavigation(MyMenu.Dictionaries.IncidentTypes, waitTime)
         //ждем
         element(byXpath("//table/thead/tr/th[1]//*[contains(@name,'arrow')]/ancestor::button"))
