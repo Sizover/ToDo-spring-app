@@ -1,0 +1,20 @@
+include:
+  project: devops/devops-pipelines
+  ref: feature/D520 
+  file:
+    - infra/k8s-helm-deploy.yml     
+stages:
+  - prepare
+  - loader   
+  - test                              
+variables:
+  IMPORT_DIR: https://git.kiap.dev/kiap/kiap-pm/-/tree/develop/deploy/demo-maket-2022/ ## Абсолютный путь к папке для загрузки через loader
+  ## Версия среды: # release - сооветствует test.kiap.local(ветка develop),dev - сооветствует dev.kiap.local(ветка feature), v2.x - stage.kiap.local   
+## Версия среды киапы    
+  KIAP_VERSION: release 
+## Версия только компонента лоадера  
+  LOADER_VERSION: release
+
+deploy-kiap:
+  extends: .reinstall_helm_kiap
+  stage: prepare
