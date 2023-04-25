@@ -14,6 +14,7 @@ variables:
   KIAP_VERSION: release 
 ## Версия только компонента лоадера  
   LOADER_VERSION: release   
+  
 deploy-kiap:
   extends: .reinstall_helm_kiap
   stage: prepare
