@@ -23,3 +23,8 @@ variables:
 loader_data_qa:
   extends: .loader_data_qa
   stage: pre-test 
+
+pull_loader_data:
+  extends: .pull_loader_data
+  stage: prepare 
+
