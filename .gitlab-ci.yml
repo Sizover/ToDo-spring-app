@@ -7,7 +7,8 @@ include:
 stages:
   - prepare
   - pre-test   
-  - test                              
+  - test                    
+            
 variables:
   IMPORT_DIR: deploy/demo-maket-2022 ## Абсолютный путь к папке для загрузки через loader
   ## Версия среды: # release - сооветствует test.kiap.local(ветка develop),dev - сооветствует dev.kiap.local(ветка feature), v2.x - stage.kiap.local   
