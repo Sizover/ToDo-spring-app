@@ -3,12 +3,13 @@ include:
   ref: feature/D520 
   file:
     - infra/k8s-helm-deploy.yml     
+    - jobs/loader-data.yml
 stages:
   - prepare
-  - loader   
+  - pre-test   
   - test                              
 variables:
-  IMPORT_DIR: https://git.kiap.dev/kiap/kiap-pm/-/tree/develop/deploy/demo-maket-2022/ ## Абсолютный путь к папке для загрузки через loader
+  IMPORT_DIR: deploy/demo-maket-2022 ## Абсолютный путь к папке для загрузки через loader
   ## Версия среды: # release - сооветствует test.kiap.local(ветка develop),dev - сооветствует dev.kiap.local(ветка feature), v2.x - stage.kiap.local   
 ## Версия среды киапы    
   KIAP_VERSION: release 
@@ -18,3 +19,7 @@ variables:
 deploy-kiap:
   extends: .reinstall_helm_kiap
   stage: prepare
+
+loader_data_qa:
+  extends: .loader_data_qa
+  stage: pre-test 
