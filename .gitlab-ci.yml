@@ -15,9 +15,9 @@ variables:
   IMPORT_DIR: deploy/vladikavkaz
   ## Версия среды: # release - сооветствует test.kiap.local(ветка develop),dev - сооветствует dev.kiap.local(ветка feature), v2.x - stage.kiap.local   
 ## Версия среды киапы    
-  KIAP_VERSION: v2.9 
+  KIAP_VERSION: release 
 ## Версия только компонента лоадера  
-  LOADER_VERSION: v2.9       
+  LOADER_VERSION: release      
 
 deploy-kiap:
   extends: .reinstall_helm_kiap
