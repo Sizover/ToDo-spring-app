@@ -4,6 +4,7 @@ include:
   file:
     - infra/k8s-helm-deploy.yml     
     - jobs/loader-data.yml
+    - gradle/gradle-qa.yml
 stages:
   - prepare
   - pre-test   
@@ -13,7 +14,7 @@ variables:
   IMPORT_DIR: deploy/vladikavkaz
   ## Версия среды: # release - сооветствует test.kiap.local(ветка develop),dev - сооветствует dev.kiap.local(ветка feature), v2.x - stage.kiap.local   
 ## Версия среды киапы    
-  KIAP_VERSION: v2.9 
+  KIAP_VERSION: release 
 ## Версия только компонента лоадера  
   LOADER_VERSION: v2.9          
 deploy-kiap:
