@@ -10,6 +10,7 @@ import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
 import org.testng.annotations.DataProvider
+import test_library.icTabs.TabEnum
 import test_library.menu.MyMenu.Incidents
 import test_library.statuses.StatusEnum
 import test_library.statuses.StatusEnum.Завершена
@@ -49,20 +50,7 @@ open class StatusTests : BaseTest(){
         createICToolCalltype("", waitTime)
         createICToolPhone("", waitTime)
         createICToolFIO("Autotest", "Status 0010", "", waitTime)
-        val lat = (10..70).random() + kotlin.random.Random.nextFloat()
-        val lon = (10..100).random() + kotlin.random.Random.nextFloat()
-        element(byXpath("//form//label[text()='Широта']/..//input[@name='lat']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        element(byXpath("//form//label[text()='Широта']/..//input[@name='lat']"))
-            .sendKeys(lat.toString())
-        element(byXpath("//form//label[text()='Долгота']/..//input[@name='lon']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        element(byXpath("//form//label[text()='Долгота']/..//input[@name='lon']"))
-            .sendKeys(lon.toString())
+        createICToolRandomCoordinates("", waitTime)
         createICToolsDopInfo("AutoTest S 0010 $status1 $status2 $statusSum $dateTime", waitTime)
         element(byXpath("//*[text()='Создать карточку']/text()/parent::button")).click()
         inputRandomNew("incidentTypeId-textfield", false, waitTime)
@@ -81,10 +69,7 @@ open class StatusTests : BaseTest(){
         checkICToolIsStatus(StatusEnum.`В обработке`, longWait)
             //и что это именно так карточка которую мы только что создали
         checkICToolDopInfo("AutoTest S 0010 $status1 $status2 $statusSum $dateTime", waitTime)
-        element(byXpath("//*[text()='Работа с ДДС']/text()/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
+        icToolGoToTab(TabEnum.`Работа с ДДС`, waitTime)
         element(byXpath("//*[text()='Выбрать ДДС']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))

@@ -54,7 +54,7 @@ class Reports : BaseTest(){
         element(byXpath("//form[@novalidate]//*[text()='Период, по']/following-sibling::*//input[@placeholder='по __.__.____']"))
             .sendKeys(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString())
         //вбиваем адрес
-        addressInput("address", "Карачаево-Черкесская Респ, г Карачаевск", waitTime)
+        createICToolAddressInput("address", "Карачаево-Черкесская Респ, г Карачаевск", waitTime)
         //создаем отчет
         element(byXpath("//form[@novalidate]//*[text()='Создать']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
@@ -174,18 +174,18 @@ class Reports : BaseTest(){
             //Вводим случайный адрес
             val bB = (1..100).random()
             if (i == 2){
-                addressInput("callAddress", "Карачаево-Черкесская Респ, г Карачаевск $bB", waitTime)
+                createICToolAddressInput("callAddress", "Карачаево-Черкесская Респ, г Карачаевск $bB", waitTime)
                 //запоминаем адрес, что бы ввести его потом
                 adr = element(byCssSelector("input#callAddress")).value.toString()
                 dateTime2 = dateTime
             } else if (i == 3){
                 //Вводим ранее запомненный адрес
-                addressInput("callAddress", adr, waitTime)
+                createICToolAddressInput("callAddress", adr, waitTime)
             } else if (i == 6){
                 //Вводим адрес не попадающий в отчет
-                addressInput("callAddress", "г Черкесск, ул Мира $bB", waitTime)
+                createICToolAddressInput("callAddress", "г Черкесск, ул Мира $bB", waitTime)
             } else {
-                addressInput("callAddress", "Карачаево-Черкесская Респ, г Карачаевск $bB", waitTime)
+                createICToolAddressInput("callAddress", "Карачаево-Черкесская Респ, г Карачаевск $bB", waitTime)
             }
             //заполняем дополнительную информацию
             createICToolsDopInfo("Reports 0010, i=$i $dateTime", waitTime)
@@ -251,7 +251,7 @@ class Reports : BaseTest(){
         element(byCssSelector("input#periodEnd"))
             .sendKeys(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString())
         //вбиваем адрес
-        addressInput("address","Карачаево-Черкесская Респ, г Карачаевск",waitTime)
+        createICToolAddressInput("address","Карачаево-Черкесская Респ, г Карачаевск",waitTime)
         //создаем отчет
         element(byXpath("//span[text()='Создать']/parent::button")).click()
         //переходим в созданный отчет
@@ -353,7 +353,7 @@ class Reports : BaseTest(){
             .sendKeys(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString())
         element(byCssSelector("input#periodEnd"))
             .sendKeys(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString())
-        addressInput("address", "Карачаево-Черкесская Респ, г Карачаевск", waitTime)
+        createICToolAddressInput("address", "Карачаево-Черкесская Респ, г Карачаевск", waitTime)
         //создаем отчет
         element(byXpath("//*[text()='Создать']/text()/ancestor::button")).click()
         //переходим в созданный отчет
@@ -431,9 +431,9 @@ class Reports : BaseTest(){
 //            var aA = ('A'..'Z').random()
             val bB = (1..100).random()
             if (i != 4){
-                addressInput("callAddress", "Карачаево-Черкесская Респ, г Карачаевск $bB", waitTime)
+                createICToolAddressInput("callAddress", "Карачаево-Черкесская Респ, г Карачаевск $bB", waitTime)
             } else {
-                addressInput("callAddress", adr, waitTime)
+                createICToolAddressInput("callAddress", adr, waitTime)
             }
             //запоминаем адрес
             //Thread.sleep(500)
@@ -514,7 +514,7 @@ class Reports : BaseTest(){
             .sendKeys(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString())
         element(byCssSelector("input#periodEnd"))
             .sendKeys(LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString())
-        addressInput("address","Карачаево-Черкесская Респ, г Карачаевск",waitTime)
+        createICToolAddressInput("address","Карачаево-Черкесская Респ, г Карачаевск",waitTime)
         //создаем отчет
         element(byXpath("//*[text()='Создать']/text()/ancestor::button")).click()
         //переходим в созданный отчет
@@ -632,7 +632,7 @@ class Reports : BaseTest(){
                 .sendKeys("Reports 0030 Проверка формирования отчетов по происшествиям $dateTime отсчет $address")
             when (address){
                 "адресный" -> {
-                    addressInput("address", "Карачаево-Черкесская Респ, г Карачаевск", waitTime)
+                    createICToolAddressInput("address", "Карачаево-Черкесская Респ, г Карачаевск", waitTime)
                 }
                 "$victimsName N = $nVictims" -> {
                     element(byXpath("//form[@novalidate]//label[text()='$victimsName']/..//input"))
@@ -778,9 +778,9 @@ class Reports : BaseTest(){
             //номер дома
             val random = (1..100).random()
             if (i != rndIC) {
-                addressInput("callAddress", "Карачаево-Черкесская Респ, г Карачаевск $random", waitTime)
+                createICToolAddressInput("callAddress", "Карачаево-Черкесская Респ, г Карачаевск $random", waitTime)
             } else {
-                addressInput("callAddress", "г Черкесск $random", waitTime)
+                createICToolAddressInput("callAddress", "г Черкесск $random", waitTime)
             }
             //доп. инфо.
             createICToolsDopInfo("i = $i, rndIC = $rndIC Reports 0030 Проверка формирования отчетов по происшествиям $dateTime", waitTime)
@@ -1148,7 +1148,7 @@ class Reports : BaseTest(){
                 .sendKeys("Reports 0030 Проверка формирования отчетов по происшествиям $dateTime сверка $address")
             when (address){
                 "адресный" -> {
-                    addressInput("address", "Карачаево-Черкесская Респ, г Карачаевск", waitTime)
+                    createICToolAddressInput("address", "Карачаево-Черкесская Респ, г Карачаевск", waitTime)
                 }
                 "$victimsName N = $nVictims" -> {
                     element(byXpath("//form[@novalidate]//label[text()='$victimsName']/..//input"))

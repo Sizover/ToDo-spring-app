@@ -7,10 +7,8 @@ import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Selectors
 import com.codeborne.selenide.Selectors.byXpath
-import com.codeborne.selenide.Selenide.back
 import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
-import com.codeborne.selenide.Selenide.refresh
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import org.testng.annotations.Test
@@ -363,7 +361,6 @@ class Dicts_KB: BaseTest() {
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
             //проверяем минитабличку
-            //TODO раскоментить блок проверки минитаблицы (баг 1873)
             if (nameOfCategory == nameOfCategoriesList[0]){
                 element(byXpath("//*[text()='Порядок подчиненности']/..//table/tbody/tr[1]//*[text()='$nameOfCategory$substringForUpdate']"))
                     .should(exist, ofSeconds(waitTime))
@@ -428,16 +425,15 @@ class Dicts_KB: BaseTest() {
             element(byXpath("//form[@novalidate]//label[text()='Наименование раздела']/following-sibling::*//input[@value='$nameOfCategory' and @disabled]"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
-            //TODO раскоментить блок проверки минитаблицы
-//            if (nameOfCategory == nameOfCategoriesList[0]){
-//                element(byXpath("//*[text()='Порядок подчиненности']/..//table/tbody/tr[1]//*[text()='$nameOfCategory']"))
-//                    .should(exist, ofSeconds(waitTime))
-//                    .shouldBe(visible, ofSeconds(waitTime))
-//            } else {
-//                element(byXpath("//*[text()='Порядок подчиненности']/..//table/tbody/tr[2]//*[text()='$nameOfCategory']"))
-//                    .should(exist, ofSeconds(waitTime))
-//                    .shouldBe(visible, ofSeconds(waitTime))
-//            }
+            if (nameOfCategory == nameOfCategoriesList[0]){
+                element(byXpath("//*[text()='Порядок подчиненности']/..//table/tbody/tr[1]//*[text()='$nameOfCategory']"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+            } else {
+                element(byXpath("//*[text()='Порядок подчиненности']/..//table/tbody/tr[2]//*[text()='$nameOfCategory']"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+            }
             //возвращаемся в разделы
             element(byXpath("//nav/ol//*[text()='Разделы']/ancestor::li"))
                 .should(exist, ofSeconds(waitTime))
@@ -531,20 +527,9 @@ class Dicts_KB: BaseTest() {
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
             //проверяем отобразилась ли статья в папке
-            //TODO удалить трайкейтч (баг 1874)
-            try {
-                element(byXpath("//h6[text()='Статья $nameOfCategory']"))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
-            } catch (_:  Throwable) {
-                refresh()
-                element(byXpath("//h6[text()='Статья $nameOfCategory']"))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
-                if (print){
-                    println("Созданная статья \"Статья $nameOfCategory\" не отобразилась без обновления страницы")
-                }
-            }
+            element(byXpath("//h6[text()='Статья $nameOfCategory']"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
             //открываем подробности/атрибуты статьи
             element(byXpath("//h6[text()='Статья $nameOfCategory']/ancestor::div[1]/following-sibling::div//*[text()='ОТКРЫТЬ']"))
                 .should(exist, ofSeconds(waitTime))
@@ -672,28 +657,13 @@ class Dicts_KB: BaseTest() {
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
                 .click()
-            //TODO удалить трайкейтч (баг 1865)
-            try {
-                checkAlert(AlertsEnum.snackbarSuccess, "Запись обновлена", true, longWait)
-            } catch (_:  Throwable) {
-                if (print){
-                    println("Не получен алерт после сохранения изменений")
-                }
-            }
+            checkAlert(AlertsEnum.snackbarSuccess, "Запись обновлена", true, longWait)
             //ждем
             element(byXpath("//form[@novalidate]"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
-            //TODO удалить трайкейтч (баг 1800?)
-            try {
-                element(byXpath("//*[text()='Сохранить']/text()/ancestor::button"))
-                    .shouldNot(exist, ofSeconds(longWait))
-            } catch (_:  Throwable) {
-                if (print){
-                    println("Оператор не переведен в режим просмотра")
-                }
-                back()
-            }
+            element(byXpath("//*[text()='Сохранить']/text()/ancestor::button"))
+                .shouldNot(exist, ofSeconds(longWait))
             //проверяем хлебные крошки
             element(byXpath("//nav/ol/li[last()]//*[text()='Просмотр статьи']"))
                 .should(exist, ofSeconds(waitTime))
@@ -742,28 +712,13 @@ class Dicts_KB: BaseTest() {
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
                 .click()
-            //TODO удалить трайкейтч (баг 1865)
-            try {
-                checkAlert(AlertsEnum.snackbarSuccess, "Запись обновлена", true, longWait)
-            } catch (_:  Throwable) {
-                if (print){
-                    println("Не получен алерт после сохранения изменений")
-                }
-            }
+            checkAlert(AlertsEnum.snackbarSuccess, "Запись обновлена", true, longWait)
             //ждем
             element(byXpath("//form[@novalidate]"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
-            //TODO удалить трайкейтч (баг 1800 1653?)
-            try {
-                element(byXpath("//*[text()='Сохранить']/text()/ancestor::button"))
-                    .shouldNot(exist, ofSeconds(longWait))
-            } catch (_:  Throwable) {
-                if (print){
-                    println("Оператор не переведен в режим просмотра")
-                }
-                back()
-            }
+            element(byXpath("//*[text()='Сохранить']/text()/ancestor::button"))
+                .shouldNot(exist, ofSeconds(longWait))
             //проверяем хлебные крошки
             element(byXpath("//nav/ol/li[last()]//*[text()='Просмотр статьи']"))
                 .should(exist, ofSeconds(waitTime))
@@ -1029,7 +984,8 @@ class Dicts_KB: BaseTest() {
         element(byXpath("//table/thead/tr/th[1]//*[contains(@name,'arrow')]/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        while (element(byXpath("//table/tbody/tr/td[1]//*[@name='arrowRight']")).exists()){
+        Thread.sleep(500)
+        while (element(byXpath("//table/tbody/tr/td//*[@name='arrowRight']")).exists()){
             element(byXpath("//table/thead/tr/th[1]//*[contains(@name,'arrow')]/ancestor::button"))
                 .click()
             Thread.sleep(500)

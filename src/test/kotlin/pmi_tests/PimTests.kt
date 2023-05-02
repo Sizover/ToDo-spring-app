@@ -31,6 +31,7 @@ import test_library.filters.FilterEnum.Пользователь
 import test_library.filters.FilterEnum.Статусы
 import test_library.filters.FilterEnum.Типы_происшествий
 import test_library.filters.FilterEnum.Уровни
+import test_library.icTabs.TabEnum
 import test_library.menu.MyMenu.Dictionaries
 import test_library.menu.MyMenu.Incidents
 import test_library.menu.SubmenuInterface
@@ -261,7 +262,7 @@ class PimTests : BaseTest(){
         //ФИО
         createICToolFIO("$date AutoTest", "PMI 0110", "", waitTime)
         //адрес с тестированием транслитерации и клик по dadata
-        addressInput("callAddress","vbhf5", waitTime)
+        createICToolAddressInput("callAddress","vbhf5", waitTime)
         //заполняем дополнительную информацию
         createICToolsDopInfo("AutoTest N 0110 $dateTime", waitTime)
         //регистрируем обращение
@@ -381,7 +382,7 @@ class PimTests : BaseTest(){
         //ФИО
         createICToolFIO("$date AutoTest", "PMI 0130", "", waitTime)
         //адрес с тестированием транслитерации и клик по dadata
-        addressInput("callAddress","vbhf5", waitTime)
+        createICToolAddressInput("callAddress","vbhf5", waitTime)
         //заполняем дополнительную информацию
         createICToolsDopInfo("AutoTest N 0130 $dateTime", waitTime)
         //регистрируем обращение
@@ -407,10 +408,7 @@ class PimTests : BaseTest(){
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         //Переходим в "Реагирование"
-        element(byXpath("//*[text()='Реагирование']/text()/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
+        icToolGoToTab(TabEnum.Реагирование, waitTime)
         //Раскрываем всю карту реагирования
         element(byXpath("//*[text()='Развернуть все']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
@@ -459,10 +457,7 @@ class PimTests : BaseTest(){
         element(byText("AutoTest N 0130 $dateTime")).click()
         checkICToolDopInfo("AutoTest N 0130 $dateTime", waitTime)
         //Переходим в "Реагирование"
-        element(byXpath("//*[text()='Реагирование']/text()/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
+        icToolGoToTab(TabEnum.Реагирование, waitTime)
         //Раскрываем всю карту реагирования
         element(byXpath("//*[text()='Развернуть все']/text()/ancestor::button")).click()
         //Определяем количество родительских пунктов
@@ -593,6 +588,7 @@ class PimTests : BaseTest(){
         /////////////////////////////////////////////////////////////////////////////////////////
         //Открываем фильтр "Источники"
         tableColumnCheckbox("Источник", true, waitTime)
+        val sourceColumn = tableNumberOfColumn("Источник", waitTime)
         //Устанавливаем значения фильтров
         setFilterByEnum(Источники, "Видеоаналитика;СМС", waitTime)
         targetColumn = tableNumberOfColumn("Источник", waitTime)
@@ -600,8 +596,8 @@ class PimTests : BaseTest(){
         Thread.sleep(500)
         //Подсчитываем сработали ли фильтры
         intA = elements(byXpath("//table/tbody/tr")).size
-        intB = elements(byText("Видеоаналитика")).size
-        intC = elements(byText("СМС")).size
+        intB = elements(byXpath("//table/tbody/tr/td[$sourceColumn]//text()/parent::*[text()='Видеоаналитика']")).size
+        intC = elements(byXpath("//table/tbody/tr/td[$sourceColumn]//text()/parent::*[text()='СМС']")).size
         intS = intB + intC
         //с источниками все не так просто - в таблицу происшествий выносится источник последнего обращения по происшествию, а фильтр работает по источникам всех обращений по проишествию
         //Проверяем не закрались ли записи с последним обращением из источника не взятого в фильтр
@@ -676,7 +672,7 @@ class PimTests : BaseTest(){
         //ФИО
         createICToolFIO("$date AutoTestLastname", "AutoTestFirstname", "", waitTime)
         //адрес с тестированием транслитерации и клик по dadata
-        addressInput("callAddress","vbhf5",waitTime)
+        createICToolAddressInput("callAddress","vbhf5",waitTime)
         //заполняем дополнительную информацию
         createICToolsDopInfo("AutoTest PMI 0150 $dateTime", waitTime)
         //регистрируем обращение
@@ -711,10 +707,7 @@ class PimTests : BaseTest(){
             .click()
         checkICToolDopInfo("AutoTest PMI 0150 $dateTime", waitTime)
         //Переходим во вкладку "Работа с ДДС"
-        element(byXpath("//*[text()='Работа с ДДС']/text()/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
+        icToolGoToTab(TabEnum.`Работа с ДДС`, waitTime)
         //жмем "добавить"
         //element(byCssSelector("div#simple-tabpanel-hotlines button")).click()
         element(byXpath("//*[text()='Выбрать ДДС']/text()/ancestor::button"))
@@ -805,9 +798,7 @@ class PimTests : BaseTest(){
             .scrollIntoView("{block: \"center\"}")
             .click()
         //Переходим в силы и средства
-        element(byXpath("//*[text()='Силы и средства']/text()/ancestor::button"))
-            .should(exist, ofSeconds(waitTime)).shouldBe(visible, ofSeconds(waitTime))
-        element(byXpath("//*[text()='Силы и средства']/text()/ancestor::button")).click()
+        icToolGoToTab(TabEnum.`Силы и средства`, waitTime)
         //Определяемся куда кликать для добавления в зависимости от того, добавлены ли уже силы и средства
         //больше не надо определять назначена ли бригада, просто тыкаем по имени кнопки
         element(byXpath("//*[text()='Добавить']/text()/ancestor::button"))
@@ -1133,7 +1124,7 @@ class PimTests : BaseTest(){
 
     @DataProvider(name = "Справочники")
     open fun Справочники(): Any {
-        return Dictionaries.values().map { arrayOf(it) }.toTypedArray()
+//        return Dictionaries.values().map { arrayOf(it) }.toTypedArray()
 
 //        return arrayOf(Dictionaries.Positions)
 //        return arrayOf(Dictionaries.VideoCameras)
@@ -1141,7 +1132,7 @@ class PimTests : BaseTest(){
 //        return arrayOf(Dictionaries.Hotlines)
 //        return arrayOf(Dictionaries.Officials)
 //        return arrayOf(Dictionaries.Labels)
-//        return arrayOf(Dictionaries.Municipalities)
+        return arrayOf(Dictionaries.Municipalities)
 //        return arrayOf(Dictionaries.Companies)
 //        return arrayOf(Dictionaries.HotlineAssets)
 //        return arrayOf(Dictionaries.IncidentTypes)
@@ -1227,7 +1218,7 @@ class PimTests : BaseTest(){
                                 fullSearchValue = searchValue
                                 //проверяем не номер ли это телефона и видоизменяем запись , к.т. в формате +Х(ХХХ)ХХХ-ХХ-ХХ в поисковой строке не вернет результатов, только +ХХХХХХХХХХ
                                 //аналогично с ФИО
-                                val ioRegex = Regex("[а-яА-Яa-zA-Z]{2,}(\\s{1}[а-яА-Яa-zA-Z]{1}[.]{1}){1,}")
+                                val ioRegex = Regex("[а-яА-Яa-zA-Z]{2,}\\s{0,}(\\s{1}[а-яА-Яa-zA-Z]{1}[.]{1}){1,2}")
                                 val telRegex = Regex("[+7(]{1}[0-9]{3}[)]{1}[0-9]{3}[-]{1}[0-9]{2}[-]{1}[0-9]{2}")
                                 val workTelRegex = Regex("[0-9]{1}[-][0-9]{5}[-][0-9]{3}[-][0-9]{3}")
                                     if (telRegex.containsMatchIn(searchValue)
@@ -1235,7 +1226,7 @@ class PimTests : BaseTest(){
                                     ) {
                                         searchValue = searchValue.filter { it.isDigit() }
                                     } else if (ioRegex.containsMatchIn(searchValue)) {
-                                        searchValue = searchValue.split(" ")[0]
+                                        searchValue = searchValue.split(" ")[0].trim()
                                     }
                             } else if (subMenu == Dictionaries.IncidentTypes) { //Отдельно обрабатываем справочник типов происшествий
                                 searchValue = elements(byXpath("//table/tbody/tr/td[1][not(.//button)]/ancestor::tr/td[$col]//text()/.."))
@@ -1306,7 +1297,10 @@ class PimTests : BaseTest(){
                 && elements(byXpath("//table/thead/tr[1]/th[1]//*[text()]")).size ==0
             ){
                 val stringCount = elements(byXpath("//table/tbody/tr")).size
-                element(byXpath("//table/thead/tr[1]/th[1]//button")).click()
+                element(byXpath("//table/thead/tr[1]/th[1]//button"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .click()
                 element(byXpath("//table/thead/tr[1]/th[1]//*[@name='arrowDown']"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))

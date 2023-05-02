@@ -22,9 +22,11 @@ import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.remote.DesiredCapabilities
+import test_library.IncidentLevels.IncidentLevelEnum
 import test_library.alerts.AlertsEnum
 import test_library.filters.FilterEnum
 import test_library.filters.FilterTypeEnum
+import test_library.icTabs.TabEnum
 import test_library.menu.SubmenuInterface
 import test_library.operator_data.OperatorDataEnum
 import test_library.statuses.StatusEnum
@@ -90,7 +92,7 @@ open class BaseTest {
         Configuration.timeout = 10000
         Configuration.browserSize = "1920x1080"
         Configuration.proxyEnabled = proxy
-        Configuration.holdBrowserOpen = true
+        Configuration.holdBrowserOpen = false
         Configuration.webdriverLogsEnabled = false
         Configuration.headless = false
         Configuration.baseUrl = "https://test.kiap.local/"
@@ -179,74 +181,9 @@ open class BaseTest {
     }
 
 
-//    fun logonTool2(browser: String){
-//
-//        //https://overcoder.net/q/1369284/%D0%BA%D0%B0%D0%BA-%D1%80%D0%B0%D0%B7%D1%80%D0%B5%D1%88%D0%B8%D1%82%D1%8C-%D0%B8%D0%BB%D0%B8-%D0%B7%D0%B0%D0%BF%D1%80%D0%B5%D1%82%D0%B8%D1%82%D1%8C-%D1%83%D0%B2%D0%B5%D0%B4%D0%BE%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BE-%D0%B2%D1%81%D0%BF%D0%BB%D1%8B%D0%B2%D0%B0%D1%8E%D1%89%D0%B5%D0%B9-%D0%BA%D0%B0%D0%BC%D0%B5%D1%80%D0%B5-%D0%BC%D0%B8%D0%BA%D1%80%D0%BE%D1%84%D0%BE%D0%BD%D0%B0
-//
-//
-//        //ChromeOptions addArguments
-//
-//
-//        //на случай невыполнения шага, ждем что бы можно было успеть глазками посмотреть и руками потыкать
-//        Configuration.timeout = 20000
-//        //выбираем браузер
-//        //Configuration.browser = FIREFOX
-////        Configuration.browser = CHROME
-////        Configuration.browser = browser
-//        when (browser){
-//            CHROME -> {
-//                Configuration.browser = CHROME
-//                WebDriverRunner.isChrome()
-//                val chromeOpt = ChromeOptions()
-//                chromeOpt.addArguments("use-fake-device-for-media-stream")
-//                chromeOpt.addArguments("use-fake-ui-for-media-stream")
-//            }
-//            FIREFOX -> {
-//                Configuration.browser = FIREFOX
-//                WebDriverRunner.isFirefox()
-//                val firefoxOpt = FirefoxOptions()
-//                firefoxOpt.addArguments("-profile")
-//                firefoxOpt.addArguments("/home/isizov/snap/firefox/common/.mozilla/firefox/4m2vdd0k.default")
-//            }
-//        }
-//        Configuration.browserSize = "1920x1080"
-//        Configuration.holdBrowserOpen = false
-//        //Открываем КИАП
-//        //Selenide.open("http://test.kiap.local:8000")
-//
-//        Selenide.open("https://test.kiap.local/")
-//
-//        //Костыль для обхода проблем с тестами которые не завершились и упали
-//        clearBrowserCookies()
-//        clearBrowserLocalStorage()
-//        closeWindow()
-//        //Thread.sleep(1000)
-//        open("https://test.kiap.local/")
-//        //логинимся
-////        element(byName("username")).value = "a.sizov"
-////        element(byName("password")).value = "a.sizov"
-//        element(byName("username")).sendKeys("a.sizov")
-//        element(byName("password")).sendKeys("a.sizov")
-//        element(byName("login")).click()
 
-//        WebDriverRunner.isChrome()
-//        val options = ChromeOptions()
-//        options.addArguments("--disable-extensions")
-//        options.addArguments("--headless")
-//        options.addArguments("--no-sandbox")
-//        options.addArguments("--window-size=1920,1080")
-//        options.addArguments("--allow-file-access-from-files")
-//        options.addArguments("--use-fake-device-for-media-stream")
-//        options.addArguments("--use-fake-ui-for-media-stream")
-//        options.addArguments("--user-data-dir=/home/isizov/IdeaProjects/testing-e2e/src/test/resources/fixtures/ChromeProfile")
-//        options.addArguments("--window-size=1920,1080")
-//        val capabilities = DesiredCapabilities()
-//        capabilities.setCapability(ChromeOptions.CAPABILITY, options)
-//        Configuration.browserCapabilities = capabilities
-//        //        open("/")
-//        val webDriver: WebDriver = ChromeDriver(options)
-//        webDriver.get("https://test.kiap.local/")
-//    }
+//        //https://overcoder.net/q/1369284/%D0%BA%D0%B0%D0%BA-%D1%80%D0%B0%D0%B7%D1%80%D0%B5%D1%88%D0%B8%D1%82%D1%8C-%D0%B8%D0%BB%D0%B8-%D0%B7%D0%B0%D0%BF%D1%80%D0%B5%D1%82%D0%B8%D1%82%D1%8C-%D1%83%D0%B2%D0%B5%D0%B4%D0%BE%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BE-%D0%B2%D1%81%D0%BF%D0%BB%D1%8B%D0%B2%D0%B0%D1%8E%D1%89%D0%B5%D0%B9-%D0%BA%D0%B0%D0%BC%D0%B5%D1%80%D0%B5-%D0%BC%D0%B8%D0%BA%D1%80%D0%BE%D1%84%D0%BE%D0%BD%D0%B0
+
 
     fun anyLogonTool(username: String, password: String) {
         //https://overcoder.net/q/1369284/%D0%BA%D0%B0%D0%BA-%D1%80%D0%B0%D0%B7%D1%80%D0%B5%D1%88%D0%B8%D1%82%D1%8C-%D0%B8%D0%BB%D0%B8-%D0%B7%D0%B0%D0%BF%D1%80%D0%B5%D1%82%D0%B8%D1%82%D1%8C-%D1%83%D0%B2%D0%B5%D0%B4%D0%BE%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BE-%D0%B2%D1%81%D0%BF%D0%BB%D1%8B%D0%B2%D0%B0%D1%8E%D1%89%D0%B5%D0%B9-%D0%BA%D0%B0%D0%BC%D0%B5%D1%80%D0%B5-%D0%BC%D0%B8%D0%BA%D1%80%D0%BE%D1%84%D0%BE%D0%BD%D0%B0
@@ -481,28 +418,6 @@ open class BaseTest {
             .click()
     }
 
-    fun addressInput(inputID: String,address: String, waitTime: Long)
-    //унификация введения адреса
-    {
-        element(byCssSelector("#$inputID")).click()
-        element(byXpath("//div[@role='presentation']//*[text()='Начните вводить адрес для подсказки']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        address.toList().forEach{
-            element(byCssSelector("#$inputID")).sendKeys("$it")
-            Thread.sleep(100)
-        }
-        element(byXpath("//div[@role='presentation']//*[text()='Начните вводить адрес для подсказки']"))
-            .shouldNot(exist, ofSeconds(waitTime))
-        element(byXpath("//div[@role='presentation']//*[text()]"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-        element(byCssSelector("#$inputID")).sendKeys(Keys.DOWN, Keys.ENTER)
-        element(byXpath("//input[@id='$inputID']/parent::div//button[@title='Clear']"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-    }
-
 
     fun tableStringsOnPage(stringsOnPage: Int, waitTime: Long){
         element(byCssSelector("div[aria-labelledby='RPP']"))
@@ -596,7 +511,49 @@ open class BaseTest {
         Thread.sleep(300)
     }
 
-    //Что бы не править каждый тест, перевевожу создание и проверку полей КП на абстрактные методы для каждого поля
+    //Что бы не править каждый тест, перевожу создание и проверку полей КП на абстрактные методы для каждого поля
+
+    fun icToolGoToTab(tab: TabEnum, waitTime: Long){
+        element(byXpath("//main//div[@id='incidentPopoverButtons']//button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .scrollIntoView("{block: \"center\"}")
+            .click()
+//        elements(byXpath("//div[@role='presentation']//button"))
+//            .shouldHave(CollectionCondition.size(TabEnum.values().size))
+        element(byXpath("//div[@role='presentation']//*[text()='${tab.name}']/text()/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .scrollIntoView("{block: \"center\"}")
+            .click()
+        element(byXpath("//div[@role='presentation']//*[text()='${tab.name}']/text()/ancestor::button"))
+            .shouldNot(exist, ofSeconds(waitTime))
+    }
+
+
+    fun createICToolAddressInput(inputID: String, address: String, waitTime: Long)
+    //унификация введения адреса
+    {
+        element(byCssSelector("#$inputID")).click()
+        element(byXpath("//div[@role='presentation']//*[text()='Начните вводить адрес для подсказки']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        address.toList().forEach{
+            element(byCssSelector("#$inputID")).sendKeys("$it")
+            Thread.sleep(100)
+        }
+        element(byXpath("//div[@role='presentation']//*[text()='Начните вводить адрес для подсказки']"))
+            .shouldNot(exist, ofSeconds(waitTime))
+        element(byXpath("//div[@role='presentation']//*[text()]"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byCssSelector("#$inputID")).sendKeys(Keys.DOWN, Keys.ENTER)
+        element(byXpath("//input[@id='$inputID']/parent::div//button[@title='Clear']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+    }
+
+
     fun createICToolCalltype(calltype: String, waitTime: Long){
         element(byCssSelector("div#calltype"))
             .should(exist, ofSeconds(waitTime))
@@ -772,6 +729,106 @@ open class BaseTest {
             element(byXpath("//form//label[text()='Долгота']/..//input[@name='lon']"))
                 .sendKeys(lat_lonList[1])
         }
+    }
+
+    fun createICToolButtonCreateNewCall(){
+        shrinkCheckTool()
+        element(byXpath("//form[@novalidate]//*[text()='Создать карточку']/text()/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .scrollIntoView("{block: \"center\"}")
+            .click()
+        element(byXpath("//form[@novalidate]//*[text()='Сохранить карточку']/text()/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+    }
+
+    fun createICToolSelectIncidentType(incidentType: String, waitTime: Long) {
+        var incidentLevel = ""
+        if (incidentType.isNotEmpty()){
+            incidentLevel = incidentType.trim().substringBefore('.')
+            createICToolSelectIncidentLevel(IncidentLevelEnum.values().filter { it.Level.main }.firstOrNull { it.Level.aliasInCode == incidentLevel }, waitTime)
+        }
+//        if (incidentLevel.contains('.')){
+//            incidentLevel = incidentType.trim().substringBefore('.')
+//        }
+//        val test = IncidentLevelEnum.values().filter { it.Level.main }.firstOrNull { it.Level.aliasInCode == incidentLevel }
+        setOneValHierarchSelectInputByName("Типы происшествий", incidentType, false, waitTime)
+    }
+
+    fun createICToolSelectIncidentLevel(incidentLevel: IncidentLevelEnum?, waitTime: Long) {
+        if (incidentLevel != null){
+            setOneValHardSelectInputByName("Уровень происшествия", incidentLevel.name, waitTime)
+        } else {
+            setOneValHardSelectInputByName("Уровень происшествия", IncidentLevelEnum.values().random().name, waitTime)
+        }
+    }
+    //унификация заполнения инпута являющегося не иерархическим, полным селектом с единичным выбором
+    fun setOneValHardSelectInputByName(inputName: String, inputValue: String, waitTime: Long) {
+        if (elements(byXpath("//label[text()='$inputName']/following-sibling::div//*[text()='$inputValue']")).size == 0){
+            element(byXpath("//label[text()='$inputName']/following-sibling::div//*[@role='button']"))
+                .should(exist, ofSeconds(waitTime))
+                .scrollIntoView("{block: \"center\"}")
+                .click()
+            val realInputValue = if (inputValue.isEmpty()){
+                elements(byXpath("/div[@role='presentation' and @id='menu-']//ul//li//text()/..")).map { it.ownText }.random()
+            } else {
+                inputValue
+            }
+//        if (inputValue.isEmpty()){
+//            val realInputValue = elements(byXpath("/div[@role='presentation' and @id='menu-']//ul//li//text()/..")).map { it.ownText }.random()
+//        } else {val realInputValue = inputValue}
+            element(byXpath("//div[@role='presentation' and @id='menu-']//ul//*[text()='$realInputValue']/text()/ancestor::li"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+            element(byXpath("//label[text()='$inputName']/following-sibling::div//*[text()='$realInputValue']"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+        }
+    }
+
+    fun setOneValHierarchSelectInputByName(inputName: String, inputValue: String, parentInclusive: Boolean, waitTime: Long) {
+        if (elements(byXpath("//label[text()='$inputName']/following-sibling::div//input[@value='$inputValue']")).size == 0){
+            element(byXpath("//label[text()='$inputName']/following-sibling::div//input"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .scrollIntoView("{block: \"center\"}")
+                .click()
+            if (elements(byXpath("//body//div[@role='presentation']//li[1]//*[@name='arrowRight']")).size > 0) {
+                element(byXpath("//div[@role='presentation']/div/ul/li[1]/div"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .click()
+            }
+//            while (elements(byXpath("//body//div[@role='presentation']//li[1]//*[@name='arrowRight']")).size > 0){
+//                element(byXpath("//div[@role='presentation']/div/ul/li[1]/div")).click()
+//                Thread.sleep(150)
+//            }
+            element(byXpath("//body//div[@role='presentation']//li[1]//*[@name='arrowDown']"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+            val rndValueLocator = if (parentInclusive){
+                "//div[@role='presentation' and @data-popper-placement='bottom']//ul//li//text()/.."
+            } else {
+                "//div[@role='presentation' and @data-popper-placement='bottom']//ul//li[not(.//*[contains(@name,'arrow')])]//text()/.."
+            }
+            val realInputValue = if (inputValue.isEmpty()){
+                elements(byXpath(rndValueLocator)).map { it.ownText }.random()
+            } else {
+                inputValue
+            }
+            element(byXpath("//div[@role='presentation' and @data-popper-placement='bottom']//ul//*[text()='$realInputValue']/ancestor::li"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+            element(byXpath("//div[@role='presentation']"))
+                .shouldNot(exist, ofSeconds(waitTime))
+            element(byXpath("//label[text()='$inputName']/following-sibling::div//input[@value='$inputValue']"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+        }
+
     }
 
     fun checkICToolIsStatus(status: StatusEnum, waitTime: Long) {
