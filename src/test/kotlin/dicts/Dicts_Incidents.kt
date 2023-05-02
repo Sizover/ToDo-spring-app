@@ -11,6 +11,8 @@ import com.codeborne.selenide.Selenide.elements
 import org.junit.jupiter.api.Assertions
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
+import test_library.menu.MyMenu
+import test_library.menu.MyMenu.Dictionaries
 import test_library.menu.MyMenu.Incidents
 import test_library.statuses.StatusEnum.`В обработке`
 import java.time.Duration.ofSeconds
@@ -174,6 +176,105 @@ class Dicts_Incidents :BaseTest() {
         element(byXpath("//table/tbody//*[text()='INC 0010 adr2 $dateTime']/ancestor::tr/td[$callTypeColumm]//text()/parent::*[text()='$callType']"))
             .should(exist, ofSeconds(longWait))
         logoffTool()
+    }
+
+    @Test (retryAnalyzer = Retry::class, groups = ["ALL"])
+    fun `Dicts INC 0020 Проверка подсказки КП`() {
+        dateTime = LocalDateTime.now()
+        date = LocalDate.now()
+        val incidentTypesMap: MutableMap<String, String> = mutableMapOf()
+        logonTool(false)
+        //находим организацию, адрес которой будем указывать в КП, что бы потом проверить наличие этой организации в подсказке
+        menuNavigation(Dictionaries.Companies, waitTime)
+        tableStringsOnPage(50, waitTime)
+        tableColumnCheckbox("Наименование;Физ.адрес;Метки;Телефон организации", true, waitTime)
+        var nameColumn = tableNumberOfColumn("Наименование", waitTime)
+        var addressOrTupeColumn = tableNumberOfColumn("Физ.адрес", waitTime)
+        var labelsColumn = tableNumberOfColumn("Метки", waitTime)
+        val telColumn = tableNumberOfColumn("Телефон организации", waitTime)
+        var max = elements(byXpath("//table/tbody/tr")).size
+        var rnd = 0
+        var again = true
+        while (again){
+            rnd = (1..max).random()
+            if (element(byXpath("//table/tbody/tr[$rnd]/td[$addressOrTupeColumn]//text()/..")).exists()){
+                if (element(byXpath("//table/tbody/tr[$rnd]/td[$addressOrTupeColumn]//text()/..")).ownText.contains(", д ")){
+                    again = false
+                }
+            }
+        }
+        val orgName = element(byXpath("//table/tbody/tr[$rnd]/td[$nameColumn]//text()/..")).ownText
+        val orgAddress = element(byXpath("//table/tbody/tr[$rnd]/td[$addressOrTupeColumn]//text()/..")).ownText
+        val orgTel = element(byXpath("//table/tbody/tr[$rnd]/td[$telColumn]//text()/..")).ownText
+        val orgLabelsList = elements(byXpath("//table/tbody/tr[$rnd]/td[$labelsColumn]//text()/..")).map { it.ownText }
+        //находим статью с меткой и статью с типом происшествия, что бы потом проверить обе в подсказке
+        menuNavigation(MyMenu.KB.Articles, waitTime)
+        tableStringsOnPage(50, waitTime)
+        tableColumnCheckbox("Статья;Типы происшествий;Метки",true, waitTime)
+        nameColumn = tableNumberOfColumn("Статья", waitTime)
+        addressOrTupeColumn = tableNumberOfColumn("Типы происшествий", waitTime)
+        labelsColumn = tableNumberOfColumn("Метки", waitTime)
+        max = elements(byXpath("//table/tbody/tr")).size
+        do {
+            rnd = (1..max).random()
+        } while (!element(byXpath("//table/tbody/tr[$rnd]/td[$addressOrTupeColumn]//text()/..")).exists())
+//        var articleName = element(byXpath("//table/tbody/tr[$rnd]/td[$nameColumn]//text()/..")).ownText
+        //создаем пару: имя статьи - тип происшествия
+        val acticleForType = element(byXpath("//table/tbody/tr[$rnd]/td[$nameColumn]//text()/..")).ownText to elements(byXpath("//table/tbody/tr[$rnd]/td[$addressOrTupeColumn]//text()/..")).map { it.ownText }.random()
+        //создаем пару: имя статьи - метка
+        do {
+            rnd = (1..max).random()
+        } while (!element(byXpath("//table/tbody/tr[$rnd]/td[$labelsColumn]//text()/..")).exists())
+        val acticleForLabel = element(byXpath("//table/tbody/tr[$rnd]/td[$nameColumn]//text()/..")).ownText to elements(byXpath("//table/tbody/tr[$rnd]/td[$labelsColumn]//text()/..")).map { it.ownText }.random()
+        //т.к. код может быть не полный, то идем в справочник типов происшествия и находим ближайший подходящий конечный тип происшествия
+        menuNavigation(Dictionaries.IncidentTypes, waitTime)
+        tableColumnCheckbox("Код;Тип происшествия", true, waitTime)
+        //ждем
+        element(byXpath("//table/thead/tr/th[1]//*[contains(@name,'arrow')]/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//table/tbody/tr/td[1]//*[contains(@name,'arrow')]/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        //раскрываем всю иерархию
+        while (element(byXpath("//table/tbody/tr/td[1]//*[@name='arrowRight']/ancestor::button")).exists()){
+            element(byXpath("//table/thead/tr/th[1]//*[contains(@name,'arrow')]/ancestor::button"))
+                .click()
+            Thread.sleep(300)
+        }
+        nameColumn = tableNumberOfColumn("Тип происшествия", waitTime)
+        addressOrTupeColumn = tableNumberOfColumn("Код", waitTime)
+        var incidentTypeCodeForIC = ""
+        var incidentTypeNameForIC = ""
+        var incidentTypeInIC = ""
+        if (element(byXpath("//table/tbody//td[$addressOrTupeColumn]//text()/parent::*[text()='${acticleForType.second}']/ancestor::tr//*[contains(@name,'arrow')]")).exists()){
+            incidentTypeCodeForIC = element(byXpath("(//table/tbody//td[$addressOrTupeColumn]//text()/parent::*[text()='${acticleForType.second}']/ancestor::tr/following-sibling::tr[not(.//*[contains(@name,'arrow')])])[1]/td[$addressOrTupeColumn]//text()/..")).ownText
+            incidentTypeNameForIC = element(byXpath("(//table/tbody//td[$addressOrTupeColumn]//text()/parent::*[text()='${acticleForType.second}']/ancestor::tr/following-sibling::tr[not(.//*[contains(@name,'arrow')])])[1]/td[$nameColumn]//text()/..")).ownText
+            incidentTypeInIC = "$incidentTypeCodeForIC $incidentTypeNameForIC"
+        } else {
+            incidentTypeCodeForIC = acticleForType.second
+            incidentTypeNameForIC = element(byXpath("//table/tbody//td[$addressOrTupeColumn]//text()/parent::*[text()='${acticleForType.second}']/ancestor::tr/td[$nameColumn]//text()/..")).ownText
+            incidentTypeInIC = "$incidentTypeCodeForIC $incidentTypeNameForIC"
+        }
+        //создаем КП
+        menuNavigation(Incidents.CreateIncident, waitTime)
+        createICToolCalltype("", waitTime)
+        createICToolPhone("", waitTime)
+        createICToolFIO(generateLastNameF(), generateFirstNameI(), generateMiddleNameO(), waitTime)
+        createICToolAddressInput("callAddress", orgAddress, waitTime)
+        createICToolsDopInfo("Dicts INC 0010 Проверка подсказки КП $dateTime", waitTime)
+        createICToolButtonCreateNewCall()
+        createICToolSelectIncidentType(incidentTypeInIC, waitTime)
+        pushButtonCreateIC("Dicts INC 0010 Проверка подсказки КП $dateTime", waitTime)
+        //проверяем подсказки
+        element(byXpath("//h3[text()='База знаний']/following-sibling::*//a[contains(@href,'/kb/articles/') and text()='${acticleForType.first}']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//h3[text()='Ближайшие объекты']/following-sibling::*//a[contains(@href,'/dicts/companies/') and text()='$orgName']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        Thread.sleep(500)
+        //TODO дописать тест по завершении реализации
     }
 
 }

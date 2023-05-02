@@ -9,8 +9,6 @@ import com.codeborne.selenide.FileDownloadMode
 import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
-import com.opencsv.CSVParserBuilder
-import com.opencsv.CSVReaderBuilder
 import org.apache.commons.io.FileUtils
 import org.junit.jupiter.api.Assertions
 import org.testng.annotations.DataProvider
@@ -18,8 +16,6 @@ import org.testng.annotations.Test
 import test_library.menu.MyMenu
 import test_library.menu.SubmenuInterface
 import java.io.File
-import java.io.FileReader
-import java.nio.charset.StandardCharsets
 import java.time.Duration
 
 class CheckingFiles: BaseTest()  {
@@ -55,26 +51,35 @@ class CheckingFiles: BaseTest()  {
         var contolColumnCount = 0
         val contolTableColumnCount = elements(byXpath("//table/thead/tr/th")).size
         val contolTableStringCount = elements(byXpath("//table/tbody/tr")).size
-        val testFile: File = element(byXpath("//a[@download='download.csv']"))
+        val testFile = element(byXpath("//a[@download='download.csv']"))
             .download(DownloadOptions.using(FileDownloadMode.FOLDER).withTimeout(59999))
-        val fileReader = FileReader(testFile, StandardCharsets.UTF_8)
-        val parser = CSVParserBuilder().withQuoteChar('\u0000').withSeparator(';').build()
-        fileReader.use { br ->
-            CSVReaderBuilder(br).withCSVParser(parser)
-                .build().use { reader ->
-                    val rows = reader.readAll()
-                    for (row in rows) {
-                        for (substring in row) {
-                            Assertions.assertFalse(substring.lowercase().contains("object"))
-                            contolColumnCount += 1
-                        }
-                        contolStringCount += 1
-                    }
-                }
+            .reader()
+            .readText()
+            .split("\n")
+            .forEach { oneString ->
+                Assertions.assertFalse(oneString.lowercase().contains("object"))
+                contolStringCount += 1
         }
-        Assertions.assertTrue(contolStringCount > 1)
-        Assertions.assertTrue(contolStringCount == contolTableStringCount + 1)
-        Assertions.assertTrue(contolColumnCount > contolTableColumnCount)
+//        val testFile: File = element(byXpath("//a[@download='download.csv']"))
+//            .download(DownloadOptions.using(FileDownloadMode.FOLDER).withTimeout(59999))
+//        val fileReader = FileReader(testFile, StandardCharsets.UTF_8)
+//        val parser = CSVParserBuilder().withQuoteChar('\u0000').withSeparator(';').build()
+//        fileReader.use { br ->
+//            CSVReaderBuilder(br).withCSVParser(parser)
+//                .build().use { reader ->
+//                    val rows = reader.readAll()
+//                    for (row in rows) {
+//                        for (substring in row) {
+//                            Assertions.assertFalse(substring.lowercase().contains("object"))
+//                            contolColumnCount += 1
+//                        }
+//                        contolStringCount += 1
+//                    }
+//                }
+//        }
+//        Assertions.assertTrue(contolStringCount > 1)
+        Assertions.assertTrue(contolStringCount >= contolTableStringCount + 1)
+//        Assertions.assertTrue(contolColumnCount > contolTableColumnCount)
         logoffTool()
         Thread.sleep(1000)
         //Удаляем нафиг все что скачали

@@ -87,7 +87,7 @@ class Labels : BaseTest(){
                 .shouldBe(visible, ofSeconds(waitTime))
                 .sendKeys(it)
             //запоминаем образец метки, что бы убеждаться в её создании
-            val labelSample = element(byXpath("//label[text()='Предварительный просмотр']/..//*[@type='form']//*[text()]")).ownText
+            val labelSample = element(byXpath("//label[text()='Предварительный просмотр']/..//*[@aria-label]//text()/..")).ownText
             labelListName.add(labelSample)
             //добавляем описание
             element(byCssSelector("textarea[name='description']")).click()
