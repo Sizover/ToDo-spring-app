@@ -3,7 +3,6 @@ package dicts
 import BaseTest
 import Retry
 import com.codeborne.selenide.Condition
-import com.codeborne.selenide.Configuration
 import com.codeborne.selenide.DownloadOptions
 import com.codeborne.selenide.FileDownloadMode
 import com.codeborne.selenide.Selectors.byXpath
@@ -26,13 +25,13 @@ class CheckingFiles: BaseTest()  {
             .toTypedArray()
 
 
-    @Test(retryAnalyzer = Retry::class, dataProvider = "Табличные справочники", groups = ["ALL"])
+    @Test(retryAnalyzer = Retry::class, dataProvider = "Табличные справочники", groups = ["PROXY"])
     fun `CF 0010 Проверка скачивания и корректности табличного CSV файла`(submenuInterface: SubmenuInterface) {
-        Configuration.downloadsFolder = "/home/isizov/IdeaProjects/testing-e2e/build/Черновик2"
+//        Configuration.downloadsFolder = "/home/isizov/IdeaProjects/testing-e2e/build/CF_0010"
 //        Configuration.proxyEnabled = true
 //        Configuration.fileDownload = FileDownloadMode.PROXY
-        FileUtils.deleteDirectory(File("/home/isizov/IdeaProjects/testing-e2e/build/Черновик2"))
-        logonTool(true)
+//        FileUtils.deleteDirectory(File("/home/isizov/IdeaProjects/testing-e2e/build/CF_0010"))
+//        logonTool(true)
         menuNavigation(submenuInterface, waitTime)
         tableColumnCheckbox("", true, waitTime)
         //Если таблица иерархическая раскроем иерархию
@@ -83,6 +82,6 @@ class CheckingFiles: BaseTest()  {
         logoffTool()
         Thread.sleep(1000)
         //Удаляем нафиг все что скачали
-        FileUtils.deleteDirectory(File("/home/isizov/IdeaProjects/testing-e2e/build/Черновик2"))
+        FileUtils.deleteDirectory(File("/home/isizov/IdeaProjects/testing-e2e/build/CF_0010"))
     }
 }

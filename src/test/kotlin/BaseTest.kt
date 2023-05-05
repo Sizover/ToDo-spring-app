@@ -18,10 +18,16 @@ import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
 import com.codeborne.selenide.Selenide.open
 import com.codeborne.selenide.WebDriverRunner
+import org.apache.commons.io.FileUtils
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.remote.DesiredCapabilities
+import org.testng.annotations.AfterGroups
+import org.testng.annotations.AfterMethod
+import org.testng.annotations.BeforeGroups
+import org.testng.annotations.BeforeMethod
+import org.testng.annotations.Parameters
 import test_library.IncidentLevels.IncidentLevelEnum
 import test_library.alerts.AlertsEnum
 import test_library.filters.FilterEnum
@@ -30,6 +36,7 @@ import test_library.icTabs.TabEnum
 import test_library.menu.SubmenuInterface
 import test_library.operator_data.OperatorDataEnum
 import test_library.statuses.StatusEnum
+import java.io.File
 import java.text.SimpleDateFormat
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
@@ -43,6 +50,7 @@ open class BaseTest {
     //просто переменные с текущей датой, для различных целей
     public var date = LocalDate.now()
     public var dateTime = LocalDateTime.now()
+//    val config = Config.getConfig1()
 
     //"короткое" ожидание для совершения действия направленного на элемент страницы
     public val waitTime: Long = 5
@@ -76,10 +84,168 @@ open class BaseTest {
 //        options.merge(createCommonCapabilities(config, proxy))
     }
 
+//    @Parameters("url", "mainLogin", "mainPassword", "adminLogin", "adminPassword" )
+//    @BeforeMethod(alwaysRun = true)
+//    open fun getConf(urlEnv: String?, mainLoginEnv: String?, mainPasswordEnv: String?, adminLoginEnv: String?, adminPasswordEnv: String?){
+//        val standUrl = urlEnv
+//        val mainLogin = mainLoginEnv
+//        val mainPassword = mainPasswordEnv
+//        val adminLogin = adminLoginEnv
+//        val adminPassword = adminPasswordEnv
+//    }
+//
+//    @Parameters("url")
+//    @BeforeMethod(alwaysRun = true)
+//    fun getStandUrl(urlEnv: String?): String? = urlEnv
+//
+//    @Parameters("mainLogin")
+//    @BeforeMethod(alwaysRun = true)
+//    fun getMainLogin(mainLogin: String?): String? = mainLogin
+//
+//    @Parameters("mainPassword")
+//    @BeforeMethod(alwaysRun = true)
+//    fun getMainPassword(mainPassword: String?): String? = mainPassword
+//
+//    @Parameters("adminLogin")
+//    @BeforeMethod(alwaysRun = true)
+//    fun getAdminLogin(adminLogin: String?): String? = adminLogin
+//
+//    @Parameters("adminPassword")
+//    @BeforeMethod(alwaysRun = true)
+//    fun getAdminPassword(adminPassword: String?): String? = adminPassword
+
+
 
 
 
     fun logonTool(proxy: Boolean) {
+        //https://overcoder.net/q/1369284/%D0%BA%D0%B0%D0%BA-%D1%80%D0%B0%D0%B7%D1%80%D0%B5%D1%88%D0%B8%D1%82%D1%8C-%D0%B8%D0%BB%D0%B8-%D0%B7%D0%B0%D0%BF%D1%80%D0%B5%D1%82%D0%B8%D1%82%D1%8C-%D1%83%D0%B2%D0%B5%D0%B4%D0%BE%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BE-%D0%B2%D1%81%D0%BF%D0%BB%D1%8B%D0%B2%D0%B0%D1%8E%D1%89%D0%B5%D0%B9-%D0%BA%D0%B0%D0%BC%D0%B5%D1%80%D0%B5-%D0%BC%D0%B8%D0%BA%D1%80%D0%BE%D1%84%D0%BE%D0%BD%D0%B0
+        //https://peter.sh/experiments/chromium-command-line-switches/
+        //https://selenide.org/javadoc/current/com/codeborne/selenide/Configuration.html
+//        val options = ChromeOptions()
+//        options.addArguments("--auto-accept-camera-and-microphone-capture")
+//        options.addArguments("--use-fake-device-for-media-stream")
+////        options.addArguments("--use-file-for-fake-audio-capture")
+//        options.addArguments("--use-fake-ui-for-media-stream")
+//        Configuration.browser = CHROME
+//        Configuration.timeout = 10000
+//        Configuration.browserSize = "1920x1080"
+//        Configuration.proxyEnabled = proxy
+//        Configuration.holdBrowserOpen = false
+//        Configuration.webdriverLogsEnabled = false
+//        Configuration.headless = false
+//        Configuration.baseUrl = "https://test.kiap.local/"
+//        Configuration.browserCapabilities = options
+//        open(config.url)
+//        clearBrowserCookies()
+//        clearBrowserLocalStorage()
+//        closeWindow()
+//        open("https://test.kiap.local/")
+//        //логинимся
+//        element(byName("username")).sendKeys("a.sizov")
+//        element(byName("password")).sendKeys("a.sizov")
+//        element(byName("login")).click()
+    }
+
+//    @Parameters("url")
+//    @BeforeClass
+//    @BeforeTest
+//    fun testBeforeClass(urlEnv: String?){
+//        val options = ChromeOptions()
+//        options.addArguments("--auto-accept-camera-and-microphone-capture")
+//        options.addArguments("--use-fake-device-for-media-stream")
+////        options.addArguments("--use-file-for-fake-audio-capture")
+//        options.addArguments("--use-fake-ui-for-media-stream")
+//        Configuration.browser = CHROME
+//        Configuration.timeout = 10000
+//        Configuration.browserSize = "1920x1080"
+////        Configuration.proxyEnabled = false
+//        Configuration.holdBrowserOpen = false
+//        Configuration.webdriverLogsEnabled = false
+//        Configuration.headless = false
+//        Configuration.baseUrl = urlEnv
+//        Configuration.browserCapabilities = options
+//    }
+
+    @Parameters("url", "attachFolder")
+    @BeforeGroups("LOCAL")
+    fun testBeforeGroupLocal(urlEnv: String?, attachFolder: String?){
+        val options = ChromeOptions()
+        options.addArguments("--auto-accept-camera-and-microphone-capture")
+        options.addArguments("--use-fake-device-for-media-stream")
+//        options.addArguments("--use-file-for-fake-audio-capture")
+        options.addArguments("--use-fake-ui-for-media-stream")
+        Configuration.downloadsFolder = attachFolder
+        Configuration.browser = CHROME
+        Configuration.timeout = 10000
+        Configuration.browserSize = "1920x1080"
+        Configuration.proxyEnabled = true
+        Configuration.holdBrowserOpen = false
+        Configuration.webdriverLogsEnabled = false
+        Configuration.headless = false
+        Configuration.baseUrl = urlEnv
+        Configuration.browserCapabilities = options
+    }
+
+
+    @Parameters("url")
+    @BeforeGroups("PROXY")
+    fun testBeforeGroupProxy(urlEnv: String?){
+        val options = ChromeOptions()
+        options.addArguments("--auto-accept-camera-and-microphone-capture")
+        options.addArguments("--use-fake-device-for-media-stream")
+//        options.addArguments("--use-file-for-fake-audio-capture")
+        options.addArguments("--use-fake-ui-for-media-stream")
+        Configuration.browser = CHROME
+        Configuration.timeout = 10000
+        Configuration.browserSize = "1920x1080"
+        Configuration.proxyEnabled = true
+        Configuration.holdBrowserOpen = false
+        Configuration.webdriverLogsEnabled = false
+        Configuration.headless = false
+        Configuration.baseUrl = urlEnv
+        Configuration.browserCapabilities = options
+    }
+
+    @AfterGroups("PROXY")
+    fun testAfterGroups(){
+        Configuration.proxyEnabled = false
+    }
+
+    @Parameters("url")
+    @BeforeGroups("ALL", "CleanUp")
+    fun testBeforeGroups2(urlEnv: String?){
+        val options = ChromeOptions()
+        options.addArguments("--auto-accept-camera-and-microphone-capture")
+        options.addArguments("--use-fake-device-for-media-stream")
+//        options.addArguments("--use-file-for-fake-audio-capture")
+        options.addArguments("--use-fake-ui-for-media-stream")
+        Configuration.browser = CHROME
+        Configuration.timeout = 10000
+        Configuration.browserSize = "1920x1080"
+        Configuration.proxyEnabled = false
+        Configuration.holdBrowserOpen = false
+        Configuration.webdriverLogsEnabled = false
+        Configuration.headless = false
+        Configuration.baseUrl = urlEnv
+        Configuration.browserCapabilities = options
+    }
+
+    @Parameters("url", "mainLogin", "mainPassword")
+    @BeforeMethod(alwaysRun = true)
+    fun testBeforeMethod(urlEnv: String?, mainLoginEnv: String?, mainPasswordEnv: String?){
+        open(urlEnv)
+        //логинимся
+        element(byName("username")).sendKeys(mainLoginEnv)
+        element(byName("password")).sendKeys(mainPasswordEnv)
+        element(byName("login")).click()
+    }
+
+
+
+//    @Parameters("url", "mainLogin", "mainPassword", "adminLogin", "adminPassword" )
+//    @BeforeMethod(alwaysRun = true)
+    fun logonToolTest2(urlEnv: String?, mainLoginEnv: String?, mainPasswordEnv: String?, adminLoginEnv: String?, adminPasswordEnv: String?) {
         //https://overcoder.net/q/1369284/%D0%BA%D0%B0%D0%BA-%D1%80%D0%B0%D0%B7%D1%80%D0%B5%D1%88%D0%B8%D1%82%D1%8C-%D0%B8%D0%BB%D0%B8-%D0%B7%D0%B0%D0%BF%D1%80%D0%B5%D1%82%D0%B8%D1%82%D1%8C-%D1%83%D0%B2%D0%B5%D0%B4%D0%BE%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BE-%D0%B2%D1%81%D0%BF%D0%BB%D1%8B%D0%B2%D0%B0%D1%8E%D1%89%D0%B5%D0%B9-%D0%BA%D0%B0%D0%BC%D0%B5%D1%80%D0%B5-%D0%BC%D0%B8%D0%BA%D1%80%D0%BE%D1%84%D0%BE%D0%BD%D0%B0
         //https://peter.sh/experiments/chromium-command-line-switches/
         //https://selenide.org/javadoc/current/com/codeborne/selenide/Configuration.html
@@ -91,21 +257,20 @@ open class BaseTest {
         Configuration.browser = CHROME
         Configuration.timeout = 10000
         Configuration.browserSize = "1920x1080"
-        Configuration.proxyEnabled = proxy
+        Configuration.proxyEnabled = false
         Configuration.holdBrowserOpen = false
         Configuration.webdriverLogsEnabled = false
         Configuration.headless = false
-        Configuration.baseUrl = "https://test.kiap.local/"
+        Configuration.baseUrl = urlEnv
         Configuration.browserCapabilities = options
-        open("https://test.kiap.local/")
-        clearBrowserCookies()
-        clearBrowserLocalStorage()
-        closeWindow()
-        //Thread.sleep(1000)
-        open("https://test.kiap.local/")
+//        open(config.url)
+//        clearBrowserCookies()
+//        clearBrowserLocalStorage()
+//        closeWindow()
+        open(urlEnv)
         //логинимся
-        element(byName("username")).sendKeys("a.sizov")
-        element(byName("password")).sendKeys("a.sizov")
+        element(byName("username")).sendKeys(mainLoginEnv)
+        element(byName("password")).sendKeys(mainPasswordEnv)
         element(byName("login")).click()
     }
 
@@ -201,12 +366,11 @@ open class BaseTest {
         val opt = ChromeOptions()
         opt.addArguments("use-fake-device-for-media-stream")
         opt.addArguments("use-fake-ui-for-media-stream")
-        Selenide.open("https://test.kiap.local/")
-        //Костыль для обхода проблем с тестами которые не завершились и упали
-        clearBrowserCookies()
-        clearBrowserLocalStorage()
-        closeWindow()
-        //Thread.sleep(1000)
+//        Selenide.open(config.url)
+//        //Костыль для обхода проблем с тестами которые не завершились и упали
+//        clearBrowserCookies()
+//        clearBrowserLocalStorage()
+//        closeWindow()
         open("https://test.kiap.local/")
         //логинимся
         element(byName("username")).sendKeys(username)
@@ -214,12 +378,22 @@ open class BaseTest {
         element(byName("login")).click()
     }
 
+//    @AfterMethod(alwaysRun = true)
     fun logoffTool() {
+//        clearBrowserCookies()
+//        clearBrowserLocalStorage()
+//        closeWindow()
+//        closeWebDriver()
+    }
+
+    @Parameters("attachFolder")
+    @AfterMethod(alwaysRun = true)
+    fun logoffTool2(attachFolder: String?) {
+        FileUtils.deleteDirectory(File(attachFolder))
         clearBrowserCookies()
         clearBrowserLocalStorage()
         closeWindow()
         closeWebDriver()
-
     }
 
     fun authorizationTest() {
@@ -308,7 +482,9 @@ open class BaseTest {
             if (checkboxState == checkboxTrue && !checkboxCondition) {
                 //иногда драйвер опережает браузер и чек-бокс не прокликивается с первого раза, поэтому делаем так:
                 while (checkboxState == checkboxTrue) {
-                    element(byXpath("//span[text()='$it']/parent::label//input")).click()
+                    element(byXpath("//span[text()='$it']/parent::label//input"))
+                        .scrollIntoView("{block: \"center\"}")
+                        .click()
                     checkboxState = element(byXpath("//span[text()='$it']/parent::label//*[name()='svg'][@name]"))
                         .should(exist, ofSeconds(waitTime))
                         .getAttribute("name")
@@ -319,7 +495,9 @@ open class BaseTest {
             } else if (checkboxState == checkboxFalse && checkboxCondition) {
                 //иногда драйвер опережает браузер и чек-бокс не прокликивается с первого раза, поэтому делаем так:
                 while (checkboxState == checkboxFalse) {
-                    element(byXpath("//span[text()='$it']/parent::label//input")).click()
+                    element(byXpath("//span[text()='$it']/parent::label//input"))
+                        .scrollIntoView("{block: \"center\"}")
+                        .click()
                     checkboxState = element(byXpath("//span[text()='$it']/parent::label//*[name()='svg'][@name]"))
                         .should(exist, ofSeconds(waitTime))
                         .getAttribute("name")

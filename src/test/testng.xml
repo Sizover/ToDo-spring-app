@@ -2,19 +2,17 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 
 
-<suite name="All Test Suite">
-    <test name="All">
+<suite name="Test Suite">
+    <test name="TEST">
         <parameter name="url" value="https://test.kiap.local/"/>
         <parameter name="mainLogin" value="a.sizov"/>
         <parameter name="mainPassword" value="a.sizov"/>
         <parameter name="adminLogin" value="autotest_admin"/>
         <parameter name="adminPassword" value="autotest_admin"/>
-        <parameter name="attachFolder" value="/home/isizov/IdeaProjects/testing-e2e/build/attachTests"/>
+        <parameter name="attachFolder" value="/home/isizov/IdeaProjects/testing-e2e/build"/>
         <groups>
             <run>
-                <include name = "ALL"/>
-                <include name = "PROXY"/>
-                <include name = "CleanUp"/>
+                <include name = "LOCAL"/>
             </run>
         </groups>
         <classes>
@@ -30,6 +28,7 @@
             <class name="pmi_tests.PimTests"></class>
             <class name="reports.Reports"></class>
             <class name="CleanUp"></class>
+            <class name="PlayGround"></class>
         </classes>
     </test>
 </suite>
