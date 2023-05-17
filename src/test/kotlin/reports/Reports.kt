@@ -196,7 +196,7 @@ class Reports : BaseTest(){
                 element(byCssSelector("input#incidentTypeId-autocomplete")).setValue("П.5.1.5 Auto-Test")
                     .sendKeys(Keys.DOWN, Keys.ENTER)
                 //Создаем карточку
-                pushButtonCreateIC("Reports 0010, i=$i $dateTime", waitTime)
+                createICToolButtonCreateNewIC("Reports 0010, i=$i $dateTime", waitTime)
             } else if (i == 3) {
                 //регистрируем обращение в ранее созданную карточку.
 //                element(byText(adr)).click()
@@ -831,7 +831,7 @@ class Reports : BaseTest(){
             } else {
                 deathList = mutableListOf(1, 0, 0, 0, 0)
             }
-            pushButtonCreateIC("i = $i, rndIC = $rndIC Reports 0030 Проверка формирования отчетов по происшествиям $dateTime", waitTime)
+            createICToolButtonCreateNewIC("i = $i, rndIC = $rndIC Reports 0030 Проверка формирования отчетов по происшествиям $dateTime", waitTime)
 //            element(byXpath("//*[text()='Сохранить карточку']/ancestor::button"))
 //                .should(exist, ofSeconds(waitTime))
 //                .shouldBe(visible, ofSeconds(waitTime))
@@ -1507,7 +1507,7 @@ class Reports : BaseTest(){
                 element(byXpath("(//*[text()='Место происшествия']/../..//span[@aria-label='add'])[1]/button"))
                     .click()
             }
-            pushButtonCreateIC("Reports 0070, i=$i $dateTime $reportsMapKeysList", waitTime)
+            createICToolButtonCreateNewIC("Reports 0070, i=$i $dateTime $reportsMapKeysList", waitTime)
 //            element(byXpath("//*[text()='Сохранить карточку']/ancestor::button"))
 //                .should(exist, ofSeconds(waitTime))
 //                .shouldBe(visible, ofSeconds(waitTime))

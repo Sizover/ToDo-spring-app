@@ -3,13 +3,13 @@
 
 
 <suite name="All Test Suite">
+    <parameter name="url" value="${URL}"/>
+    <parameter name="mainLogin" value="${MAINLOGIN}"/>
+    <parameter name="mainPassword" value="${MAINPASSWORD}"/>
+    <parameter name="adminLogin" value="${ADMINLOGIN}"/>
+    <parameter name="adminPassword" value="${ADMINPASSWORD}"/>
+    <parameter name="attachFolder" value="${ATTACHFOLDER}"/>
     <test name="All">
-        <parameter name="url" value="https://test.kiap.local/"/>
-        <parameter name="mainLogin" value="a.sizov"/>
-        <parameter name="mainPassword" value="a.sizov"/>
-        <parameter name="adminLogin" value="autotest_admin"/>
-        <parameter name="adminPassword" value="autotest_admin"/>
-        <parameter name="attachFolder" value="/home/isizov/IdeaProjects/testing-e2e/build/attachTests"/>
         <groups>
             <run>
                 <include name = "ALL"/>
