@@ -74,7 +74,7 @@ class Dicts_Incidents :BaseTest() {
         //выбираем тип происшествия
         inputRandomNew("incidentTypeId-textfield", false, waitTime)
         //Создаем карточку
-        pushButtonCreateIC("AutoTest INC 0010 inc $dateTime $language1", waitTime)
+        createICToolButtonCreateNewIC("AutoTest INC 0010 inc $dateTime $language1", waitTime)
         //Убеждаемся, что нам загрузило созданную карточку
         //проверяя что нам в принципе загрузило какую-то карточку
         element(byCssSelector("#simple-tabpanel-card"))
@@ -265,7 +265,7 @@ class Dicts_Incidents :BaseTest() {
         createICToolsDopInfo("Dicts INC 0010 Проверка подсказки КП $dateTime", waitTime)
         createICToolButtonCreateNewCall()
         createICToolSelectIncidentType(incidentTypeInIC, waitTime)
-        pushButtonCreateIC("Dicts INC 0010 Проверка подсказки КП $dateTime", waitTime)
+        createICToolButtonCreateNewIC("Dicts INC 0010 Проверка подсказки КП $dateTime", waitTime)
         //проверяем подсказки
         element(byXpath("//h3[text()='База знаний']/following-sibling::*//a[contains(@href,'/kb/articles/') and text()='${acticleForType.first}']"))
             .should(exist, ofSeconds(waitTime))

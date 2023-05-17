@@ -105,7 +105,6 @@ class Events_Incidents :BaseTest() {
         element(byXpath("//*[text()='Изменить']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        logoffTool()
     }
 
 
@@ -293,7 +292,6 @@ class Events_Incidents :BaseTest() {
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()*/
-        logoffTool()
     }
 
 

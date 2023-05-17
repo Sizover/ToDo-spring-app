@@ -426,7 +426,7 @@ class Dicts_CumulativePlans:BaseTest() {
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
-        pushButtonCreateIC("$dateTime AutoTest Dicts CP 0010 Создание, изменение, перемещение и удаление пунктов реагирования", waitTime)
+        createICToolButtonCreateNewIC("$dateTime AutoTest Dicts CP 0010 Создание, изменение, перемещение и удаление пунктов реагирования", waitTime)
         checkICToolIsStatus(`В обработке`, waitTime)
         checkICToolDopInfo("$dateTime AutoTest Dicts CP 0010 Создание, изменение, перемещение и удаление пунктов реагирования", waitTime)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

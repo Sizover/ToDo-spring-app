@@ -2,15 +2,15 @@
 
 
 open class Config {
-//    var url = "https://test.kiap.local/"
+//    var urltest = "https://test.kiap.local/"
 //    var mainLogin = "a.sizov"
 //    var mainPassword = "a.sizov"
 //    var adminLogin = "autotest_admin"
 //    var adminPassword = "autotest_admin"
 //
 //    init {
-//        System.getenv("TEST_URL")?.let {
-//            url = it
+//        System.getProperty("TEST_URL")?.let {
+//            urltest = it
 //        }
 //        System.getenv("TEST_LOGIN")?.let {
 //            mainLogin = it
