@@ -137,7 +137,7 @@ class MapTest  : BaseTest(){
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
         inputRandomNew("incidentTypeId-textfield", false, waitTime)
-        pushButtonCreateIC("Autotest MT_002, Широта = $lat, Долгота = $lon", waitTime)
+        createICToolButtonCreateNewIC("Autotest MT_002, Широта = $lat, Долгота = $lon", waitTime)
 //        element(byXpath("//*[text()='Сохранить карточку']/text()/ancestor::button"))
 //            .should(exist, ofSeconds(waitTime))
 //            .shouldBe(visible, ofSeconds(waitTime))

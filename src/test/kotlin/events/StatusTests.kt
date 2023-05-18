@@ -57,7 +57,7 @@ open class StatusTests : BaseTest(){
             //добавляем метку при создании КП
         inputRandomNew("labelsId-textfield", true, waitTime)
             //Создаем карточку
-        pushButtonCreateIC("AutoTest S 0010 $status1 $status2 $statusSum $dateTime", longWait)
+        createICToolButtonCreateNewIC("AutoTest S 0010 $status1 $status2 $statusSum $dateTime", longWait)
 //        element(byXpath("//*[text()='Сохранить карточку']/text()/ancestor::button"))
 //            .should(exist, ofSeconds(waitTime))
 //            .shouldBe(visible, ofSeconds(waitTime))

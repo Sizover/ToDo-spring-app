@@ -1,6 +1,5 @@
 
 
-
 import com.codeborne.selenide.Condition
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.visible
@@ -29,9 +28,23 @@ class PlayGround : BaseTest(){
 
 
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["LOCAL"])
-    fun `Черновик`() {
+    @DataProvider(name = "TestProvider")
+    fun TestProviderFun(): Array<Array<String>> {
+        return arrayOf<Array<String>>(
+            arrayOf("1", "2", "3"),
+            arrayOf("0", "9", "8")
+        )
 
+    }
+
+//    @Test (retryAnalyzer = Retry::class, dataProvider = "TestProvider", groups = ["LOCAL"])
+//    @Parameters("testENV")
+    @org.testng.annotations.Test(retryAnalyzer = Retry::class, groups = ["LOCAL"])
+    fun `Черновик`() {
+        val test = standUrl
+
+
+        Thread.sleep(100)
 
     }
 

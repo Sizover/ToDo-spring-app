@@ -90,8 +90,6 @@ class CleanUp : BaseTest(){
                 }
             }
         }
-//        }
-        logoffTool()
     }
 
 
@@ -176,6 +174,5 @@ class CleanUp : BaseTest(){
         element(byXpath("//table/tbody/tr//*[text()='Нет данных']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        logoffTool()
     }
 }

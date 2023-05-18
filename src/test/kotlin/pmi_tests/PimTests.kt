@@ -10,7 +10,7 @@ import com.codeborne.selenide.Condition.exactText
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.text
 import com.codeborne.selenide.Condition.visible
-import com.codeborne.selenide.Configuration
+import com.codeborne.selenide.Selectors
 import com.codeborne.selenide.Selectors.byCssSelector
 import com.codeborne.selenide.Selectors.byName
 import com.codeborne.selenide.Selectors.byText
@@ -19,11 +19,11 @@ import com.codeborne.selenide.Selenide.back
 import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
 import com.codeborne.selenide.Selenide.switchTo
-import org.apache.commons.io.FileUtils
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
+import test_library.alerts.AlertsEnum
 import test_library.alerts.AlertsEnum.snackbarSuccess
 import test_library.alerts.AlertsEnum.snackbarWarning
 import test_library.filters.FilterEnum.Источники
@@ -32,6 +32,7 @@ import test_library.filters.FilterEnum.Статусы
 import test_library.filters.FilterEnum.Типы_происшествий
 import test_library.filters.FilterEnum.Уровни
 import test_library.icTabs.TabEnum
+import test_library.menu.MyMenu
 import test_library.menu.MyMenu.Dictionaries
 import test_library.menu.MyMenu.Incidents
 import test_library.menu.SubmenuInterface
@@ -96,7 +97,6 @@ class PimTests : BaseTest(){
                 .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(5))
         }
         //разлогиниваемся и закрываем браузер
-        logoffTool()
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
@@ -131,7 +131,6 @@ class PimTests : BaseTest(){
             }
         }
         Assertions.assertTrue(leafStringCount >= 5)
-        logoffTool()
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
@@ -160,7 +159,6 @@ class PimTests : BaseTest(){
         //ищем метки СЗО и сравниваем их количество на больше или равно 1
         elements(byXpath("//tbody/tr//*[text()='СЗО']"))
             .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(1))
-        logoffTool()
     }
 
 
@@ -199,7 +197,6 @@ class PimTests : BaseTest(){
         //println("$countB countB")
         //println("$countC countC")
         //println("$countD countD")
-        logoffTool()
     }
 
 
@@ -217,8 +214,6 @@ class PimTests : BaseTest(){
             .shouldBe(visible, ofSeconds(waitTime))
         elements(byXpath("//table/tbody/tr"))
             .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(2))
-        logoffTool()
-
     }
 
 //    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
@@ -238,7 +233,6 @@ class PimTests : BaseTest(){
         element(byName("password")).sendKeys("test")
         element(byName("login")).click()
         element(byCssSelector("#input-error")).shouldHave(exactText("Неправильное имя пользователя или пароль."))
-        logoffTool()
     }
 
 
@@ -251,7 +245,7 @@ class PimTests : BaseTest(){
         logonTool(false)
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
-        menuNavigation(Incidents.IncidentsList, waitTime)
+        menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
         //кликаем по "создать обращение"
         element(byXpath("//*[text()='Создать обращение']/text()/ancestor::button")).click()
         //заполняем карточку
@@ -266,28 +260,28 @@ class PimTests : BaseTest(){
         //заполняем дополнительную информацию
         createICToolsDopInfo("AutoTest N 0110 $dateTime", waitTime)
         //регистрируем обращение
-        element(byXpath("//*[text()='Создать карточку']/text()/ancestor::button")).click()
+        createICToolButtonCreateNewCall()
         //выбираем тип происшествия
-        element(byCssSelector("input#incidentTypeId-autocomplete")).setValue("П.5.1.5 Auto-Test").sendKeys(Keys.DOWN, Keys.RETURN)
+        createICToolSelectIncidentType("", waitTime)
         //Создаем карточку
-        pushButtonCreateIC("AutoTest N 0110 $dateTime", waitTime)
+        createICToolButtonCreateNewIC("AutoTest N 0110 $dateTime", waitTime)
         //Убеждаемся, что нам загрузило созданную карточку
         //проверяя что нам в принципе загрузило какую-то карточку
-        element(byCssSelector("#simple-tabpanel-card")).should(exist, ofSeconds(waitTime))
+        element(Selectors.byCssSelector("#simple-tabpanel-card")).should(exist, ofSeconds(waitTime))
         //что она в статусе "В обработке"
-        checkICToolIsStatus(`В обработке`, waitTime)
+        checkICToolIsStatus(StatusEnum.`В обработке`, waitTime)
         //и что это именно так карточка которую мы только что создали
         checkICToolDopInfo("AutoTest N 0110 $dateTime", waitTime)
         Thread.sleep(5000)
         //загружаем файлы проверяя их прикрепление
-        element(byCssSelector("input#upload-file"))
-            .uploadFile(File("/home/isizov/IdeaProjects/testing-e2e/src/test/resources/fixtures/AutoTest.webp"))
-        checkAlert(snackbarSuccess, "Файл загружен", true, longWait)
+        element(Selectors.byCssSelector("input#upload-file"))
+            .uploadFile(File(javaClass.getResource("/fixtures/AutoTest.webp").toURI()))
+        checkAlert(AlertsEnum.snackbarSuccess, "Файл загружен", true, longWait)
         element(byXpath("//div[@id='files']//*[text()='AutoTest.webp']"))
             .should(exist, ofSeconds(longWait))
-        element(byCssSelector("input#upload-file"))
-            .uploadFile(File("/home/isizov/IdeaProjects/testing-e2e/src/test/resources/fixtures/Тестовый файл_.docx"))
-        checkAlert(snackbarSuccess, "Файл загружен", true, waitTime)
+        element(Selectors.byCssSelector("input#upload-file"))
+            .uploadFile(File(javaClass.getResource("/fixtures/Тестовый файл_.docx").toURI()))
+        checkAlert(AlertsEnum.snackbarSuccess, "Файл загружен", true, longWait)
         element(byXpath("//div[@id='files']//*[text()='Тестовый файл_.docx']"))
             .should(exist, ofSeconds(longWait))
         logoffTool()
@@ -298,11 +292,11 @@ class PimTests : BaseTest(){
         //кликаем по иконке происшествий в боковом меню
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий" )
-        menuNavigation(Incidents.IncidentsList, waitTime)
+        menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
         //добавляем в таблицу происшествий столбец "Описание"
         tableColumnCheckbox("Описание", true, waitTime)
         //Переходим в созданное ранее происшествие
-        element(byText("AutoTest N 0110 $dateTime")).click()
+        element(Selectors.byText("AutoTest N 0110 $dateTime")).click()
         checkICToolDopInfo("AutoTest N 0110 $dateTime", waitTime)
         //Проверяем ранее прикрепленные файлы
         element(byXpath("//div[@id='files']//*[text()='Тестовый файл_.docx']"))
@@ -310,11 +304,11 @@ class PimTests : BaseTest(){
         element(byXpath("//div[@id='files']//*[text()='AutoTest.webp']"))
             .should(exist, ofSeconds(waitTime))
         //Прикрепляем файл
-        element(byCssSelector("input#upload-file")).uploadFile(File("/home/isizov/IdeaProjects/testing-e2e/src/test/resources/fixtures/test.pdf"))
-        checkAlert(snackbarSuccess, "Файл загружен", true, waitTime)
+        element(Selectors.byCssSelector("input#upload-file"))
+            .uploadFile(File(javaClass.getResource("/fixtures/test.pdf").toURI()))
+        checkAlert(AlertsEnum.snackbarSuccess, "Файл загружен", true, waitTime)
         element(byXpath("//div[@id='files']//*[text()='test.pdf']"))
             .should(exist, ofSeconds(longWait))
-        logoffTool()
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
@@ -357,7 +351,6 @@ class PimTests : BaseTest(){
         element(byXpath("//*[text()='\"Здравствуйте, оператор дежурной службы (имя и фамилия), представьтесь, пожалуйста\"']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        logoffTool()
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
@@ -394,7 +387,7 @@ class PimTests : BaseTest(){
 //            .should(exist, ofSeconds(waitTime))
 //            .shouldBe(visible, ofSeconds(waitTime))
 //            .click()
-        pushButtonCreateIC("AutoTest N 0130 $dateTime", waitTime)
+        createICToolButtonCreateNewIC("AutoTest N 0130 $dateTime", waitTime)
         //Убеждаемся, что нам загрузило созданную карточку
         //проверяя что нам в принципе загрузило какую-то карточку
         element(byCssSelector("#simple-tabpanel-card")).should(exist, ofSeconds(waitTime))
@@ -530,8 +523,6 @@ class PimTests : BaseTest(){
                     .shouldBe(visible, ofSeconds(waitTime))
             }
         }
-
-        logoffTool()
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
@@ -636,7 +627,6 @@ class PimTests : BaseTest(){
         } else {
             Assertions.assertTrue(intS == intA)
         }
-        logoffTool()
     }
 
 
@@ -686,7 +676,7 @@ class PimTests : BaseTest(){
             .shouldBe(visible, ofSeconds(waitTime))
             .sendKeys("П.5.1.5 Auto-Test", Keys.DOWN, Keys.ENTER)
         //Создаем карточку
-        pushButtonCreateIC("AutoTest PMI 0150 $dateTime", waitTime)
+        createICToolButtonCreateNewIC("AutoTest PMI 0150 $dateTime", waitTime)
         //Убеждаемся, что нам загрузило созданную карточку
         //проверяя что нам в принципе загрузило какую-то карточку
         element(byCssSelector("#simple-tabpanel-card"))
@@ -766,7 +756,6 @@ class PimTests : BaseTest(){
         } else {
             checkICToolIsStatus(Реагирование, waitTime)
         }
-        logoffTool()
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
@@ -908,9 +897,6 @@ class PimTests : BaseTest(){
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
         checkAlert(snackbarWarning, "Данный статус не может быть присвоен", true, longWait)
-
-
-        logoffTool()
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
@@ -1022,8 +1008,6 @@ class PimTests : BaseTest(){
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         checkICToolIsStatus(`В обработке`, waitTime)
-        logoffTool()
-
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
@@ -1031,7 +1015,6 @@ class PimTests : BaseTest(){
         //A.3.21 Просмотр паспортов опасных объектов
         //Из различных вариантов проверок скачивания+целостности скачивания было нагуглено, что самое оптимальное это метод .download()
         //который упадет если не сможет скачать файл
-        Configuration.downloadsFolder = "/home/isizov/IdeaProjects/testing-e2e/build/download_PMI_0180"
         val companiesList = mutableListOf<String>()
         logonTool(false)
         menuNavigation(Dictionaries.Companies, waitTime)
@@ -1071,17 +1054,6 @@ class PimTests : BaseTest(){
                 }
             back()
         }
-        //Удаляем нафиг все что скачали
-        FileUtils.deleteDirectory(File("/home/isizov/IdeaProjects/testing-e2e/build/download_PMI_0180"))
-        logoffTool()
-//Оставлю пока как пример если все-таки надумаю просматривать файлы
-//                    val fileExtension = subFileElement.getAttribute("aria-label")?.substringAfterLast('.')?.lowercase()
-//                    if (listOf("docx", "pdf").contains(fileExtension)){
-//                        subFileElement
-//                            .click()
-//                    } else if (listOf("svg", "png", "jpeg", "jpg").contains(fileExtension)){
-//                        subFileElement
-//                            .click()
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
@@ -1119,12 +1091,11 @@ class PimTests : BaseTest(){
             shrinkCheckTool()
         //Thread.sleep(5000)
         }
-    logoffTool()
     }
 
     @DataProvider(name = "Справочники")
     open fun Справочники(): Any {
-//        return Dictionaries.values().map { arrayOf(it) }.toTypedArray()
+        return Dictionaries.values().map { arrayOf(it) }.toTypedArray()
 
 //        return arrayOf(Dictionaries.Positions)
 //        return arrayOf(Dictionaries.VideoCameras)
@@ -1132,7 +1103,7 @@ class PimTests : BaseTest(){
 //        return arrayOf(Dictionaries.Hotlines)
 //        return arrayOf(Dictionaries.Officials)
 //        return arrayOf(Dictionaries.Labels)
-        return arrayOf(Dictionaries.Municipalities)
+//        return arrayOf(Dictionaries.Municipalities)
 //        return arrayOf(Dictionaries.Companies)
 //        return arrayOf(Dictionaries.HotlineAssets)
 //        return arrayOf(Dictionaries.IncidentTypes)
@@ -1274,8 +1245,6 @@ class PimTests : BaseTest(){
             //если выполнили поиск по каждой подсказке импута поиска, то перестаем перебирать и сравнивать с подсказкой имена столбцов
             if (breakReadColumnName == searchHintList.size) break
         }
-//        }
-        logoffTool()
     }
 
 
@@ -1309,7 +1278,6 @@ class PimTests : BaseTest(){
 
             }
         }
-        logoffTool()
     }
 
 
@@ -1457,7 +1425,6 @@ class PimTests : BaseTest(){
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
         }
-        logoffTool()
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
@@ -1531,7 +1498,6 @@ class PimTests : BaseTest(){
         element(byXpath("//main//h1[text()='$officialFIO']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        logoffTool()
     }
 
 
@@ -1781,8 +1747,6 @@ class PimTests : BaseTest(){
             element(byXpath("//tbody/tr//*[text()='Нет данных']"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
-            logoffTool()
         }
     }
-
 }

@@ -220,6 +220,5 @@ class SearchTests : BaseTest(){
                 Thread.sleep(500)
             }
         }
-        logoffTool()
     }
 }

@@ -8,13 +8,11 @@ import com.codeborne.selenide.FileDownloadMode
 import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
-import org.apache.commons.io.FileUtils
 import org.junit.jupiter.api.Assertions
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
 import test_library.menu.MyMenu
 import test_library.menu.SubmenuInterface
-import java.io.File
 import java.time.Duration
 
 class CheckingFiles: BaseTest()  {
@@ -31,7 +29,7 @@ class CheckingFiles: BaseTest()  {
 //        Configuration.proxyEnabled = true
 //        Configuration.fileDownload = FileDownloadMode.PROXY
 //        FileUtils.deleteDirectory(File("/home/isizov/IdeaProjects/testing-e2e/build/CF_0010"))
-//        logonTool(true)
+        logonTool(true)
         menuNavigation(submenuInterface, waitTime)
         tableColumnCheckbox("", true, waitTime)
         //Если таблица иерархическая раскроем иерархию
@@ -79,9 +77,5 @@ class CheckingFiles: BaseTest()  {
 //        Assertions.assertTrue(contolStringCount > 1)
         Assertions.assertTrue(contolStringCount >= contolTableStringCount + 1)
 //        Assertions.assertTrue(contolColumnCount > contolTableColumnCount)
-        logoffTool()
-        Thread.sleep(1000)
-        //Удаляем нафиг все что скачали
-        FileUtils.deleteDirectory(File("/home/isizov/IdeaProjects/testing-e2e/build/CF_0010"))
     }
 }
