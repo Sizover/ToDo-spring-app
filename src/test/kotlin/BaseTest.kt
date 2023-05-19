@@ -52,6 +52,9 @@ open class BaseTest {
     lateinit var adminLogin: String
     lateinit var adminPassword: String
     lateinit var attachFolder: String
+    lateinit var browserhead: String
+    lateinit var no_sandbox: String
+    lateinit var disable_gpu: String
 
     //"короткое" ожидание для совершения действия направленного на элемент страницы
     val waitTime: Long = 5
@@ -62,16 +65,19 @@ open class BaseTest {
     // отладочная переменная для выведения (или нет) отладочной информации, в консоль
     val print = true
 
-    @Parameters("url", "mainLogin", "mainPassword", "adminLogin", "adminPassword", "attachFolder")
+    @Parameters("url", "mainLogin", "mainPassword", "adminLogin", "adminPassword", "attachFolder", "headless", "no_sandbox", "disable_gpu")
 //    @BeforeSuite(alwaysRun = true)  Method
     @BeforeMethod(alwaysRun = true)
-    open fun getConf(urlValue: String, mainLoginValue: String, mainPasswordValue: String, adminLoginValue: String, adminPasswordValue: String, attachFolderValue: String){
+    open fun getConf(urlValue: String, mainLoginValue: String, mainPasswordValue: String, adminLoginValue: String, adminPasswordValue: String, attachFolderValue: String, headless: String, nosandbox: String, disablegpu: String){
         standUrl = urlValue
         mainLogin = mainLoginValue
         mainPassword = mainPasswordValue
         adminLogin = adminLoginValue
         adminPassword = adminPasswordValue
         attachFolder = attachFolderValue
+        browserhead = headless
+        no_sandbox = nosandbox
+        disable_gpu = disablegpu
     }
 
     fun logonTool(proxy: Boolean) {
@@ -83,13 +89,19 @@ open class BaseTest {
         options.addArguments("--use-fake-device-for-media-stream")
 //        options.addArguments("--use-file-for-fake-audio-capture")
         options.addArguments("--use-fake-ui-for-media-stream")
+        if (no_sandbox.toBoolean()){
+            options.addArguments("--no-sandbox")
+        }
+        if (disable_gpu.toBoolean()){
+            options.addArguments("--disable-gpu")
+        }
         Configuration.browser = CHROME
         Configuration.timeout = 10000
         Configuration.browserSize = "1920x1080"
         Configuration.proxyEnabled = proxy
         Configuration.holdBrowserOpen = false
         Configuration.webdriverLogsEnabled = false
-        Configuration.headless = false
+        Configuration.headless = browserhead.toBoolean()
         Configuration.baseUrl = standUrl
         Configuration.browserCapabilities = options
 //        open(standUrl)
@@ -112,13 +124,18 @@ open class BaseTest {
         options.addArguments("--use-fake-device-for-media-stream")
 //        options.addArguments("--use-file-for-fake-audio-capture")
         options.addArguments("--use-fake-ui-for-media-stream")
+        if (no_sandbox.toBoolean()){
+            options.addArguments("--no-sandbox")
+        }
+        if (disable_gpu.toBoolean()){
+            options.addArguments("--disable-gpu")
+        }
         Configuration.browser = CHROME
         Configuration.timeout = 10000
         Configuration.browserSize = "1920x1080"
-        Configuration.proxyEnabled = false
         Configuration.holdBrowserOpen = false
         Configuration.webdriverLogsEnabled = false
-        Configuration.headless = false
+        Configuration.headless = browserhead.toBoolean()
         Configuration.baseUrl = standUrl
         Configuration.browserCapabilities = options
         open(standUrl)

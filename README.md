@@ -66,17 +66,18 @@
 ```java -Dfirst-name=Cedrick -Dlast-name="von Braun" org.testng.TestNG testng.xml```
 
 Список значений используемых на ТС test  
-```ADMINLOGIN=autotest_admin;ADMINPASSWORD=autotest_admin;ATTACHFOLDER=./attachFolder;MAINLOGIN=a.sizov;MAINPASSWORD=a.sizov;TESTENV=TeStEnV;URL=https://test.kiap.local/```
+```ADMIN_LOGIN=autotest_admin;ADMIN_PASSWORD=autotest_admin;ATTACH_FOLDER=./attachFolder;DISABLE_GPU=false;HEADLESS=false;MAIN_LOGIN=a.sizov;MAIN_PASSWORD=a.sizov;NO_SANDBOX=false;URL=https://test.kiap.local/```
 
 
-"url" - ссылка на главную страницу КИАП.  
-"mainLogin" - основная УЗ под которой осуществляется вход в КИАП и осуществляются все/основные тестовые манипуляции.  
-"mainPassword" - пароль основной УЗ.  
-"adminLogin" - УЗ администратора, предназначенная для "наведения порядка" в среде запуска тестов.  
-"adminPassword" - пароль УЗ администратора.  
-"attachFolder" - директория в которую АТ проверяющие загрузку файлов, скачивают файлы.  
-
-
+"URL" - ссылка на главную страницу КИАП.  
+"MAIN_LOGIN" - основная УЗ под которой осуществляется вход в КИАП и осуществляются все/основные тестовые манипуляции.  
+"MAIN_PASSWORD" - пароль основной УЗ.  
+"ADMIN_LOGIN" - УЗ администратора, предназначенная для "наведения порядка" в среде запуска тестов.  
+"ADMIN_PASSWORD" - пароль УЗ администратора.  
+"ATTACH_FOLDER" - директория в которую АТ проверяющие загрузку файлов, скачивают файлы.  
+"HEADLESS" - булева настройка включения или выключения безголового режима браузера.  
+"DISABLE_GPU" - булева настройка применения [опции](https://peter.sh/experiments/chromium-command-line-switches/#disable-gpu) запуска браузера "--disable-gpu".  
+"NO_SANDBOX" - булева настройка применения [опции](https://peter.sh/experiments/chromium-command-line-switches/#disable-gpu) запуска браузера "--no-sandbox".
 ## Архитектура?
 
 Для управления составом запускаемых тестов используется аннотация @org.testng.annotations.Test с передачей параметра groups.  
