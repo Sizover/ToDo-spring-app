@@ -1,7 +1,7 @@
 package reports
 
-import Retry
 import BaseTest
+import Retry
 import com.codeborne.selenide.CollectionCondition
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.text
@@ -9,7 +9,9 @@ import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Selectors.byCssSelector
 import com.codeborne.selenide.Selectors.byText
 import com.codeborne.selenide.Selectors.byXpath
-import com.codeborne.selenide.Selenide.*
+import com.codeborne.selenide.Selenide.back
+import com.codeborne.selenide.Selenide.element
+import com.codeborne.selenide.Selenide.elements
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import org.testng.annotations.DataProvider
@@ -21,7 +23,6 @@ import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.LinkedHashMap
 import kotlin.random.Random
 
 class Reports : BaseTest(){
@@ -1196,6 +1197,29 @@ class Reports : BaseTest(){
             element(byXpath("//h4[text()='Отчет']/following-sibling::h4[text()='Reports 0030 Проверка формирования отчетов по происшествиям $dateTime сверка $address']"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
+            when(address){
+                "адресный" -> {
+                    element(byXpath("//*[text()='Адрес:']/../following-sibling::*//*[text()='Карачаево-Черкесская Респ, г Карачаевск']"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                }
+                "$victimsName N = $nVictims" -> {
+                    element(byXpath("//*[text()='Адрес:']/../following-sibling::*//*[text()='Карачаево-Черкесская Респ, г Карачаевск']"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                    element(byXpath("//*[text()='${victimsName.filter { it != ',' }}:']/../following-sibling::*//*[text()='$nVictims']"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                }
+                "Тип происшествия" -> {
+                    element(byXpath("//*[text()='Адрес:']/../following-sibling::*//*[text()='Карачаево-Черкесская Респ, г Карачаевск']"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                    element(byXpath("//*[text()='Тип происшествия:']/../following-sibling::*//*[text()='${icReportCreate.substringBefore(' ')}']"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                }
+            }
             //для каждой таблицы
             for (table in 1..elements(byXpath("//table")).size){
                 if (elements(byXpath("(//table)[$table]/tbody/tr[1]//*[text()='Нет данных']")).size == 0) {

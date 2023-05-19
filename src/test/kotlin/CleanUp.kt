@@ -139,18 +139,11 @@ class CleanUp : BaseTest(){
         while (elements(byXpath("//table/tbody/tr//*[text()='Нет данных']")).size == 0){//переходим в каждую первую карточку и меняем статус, на "Закрыта"
             //карточки в статусе новая, вызывают проблемы из-за того что меняют статус автоматически, даже когда по нему клацаешь
             //поэтому для них дождемся перехода в статус "в обработке"
-//            val statusIC = element(byXpath("//table/tbody/tr[1]/td[$statusColumn]//*[text()]")).ownText
             val idIC = element(byXpath("//table/tbody/tr[1]/td[$idColumn]//text()/..")).ownText
             element(byXpath("//table/tbody/tr[1]"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
                 .click()
-//            if (statusIC == "Новая"){
-//                try {
-//                    checkICToolIsStatus(StatusEnum.`В обработке`, waitTime)
-//                } catch (_:  Throwable) {
-//                }
-//            }
             Thread.sleep(500)
             updateICToolStatus(StatusEnum.Закрыта, longWait)
             back()
@@ -163,13 +156,9 @@ class CleanUp : BaseTest(){
                     .shouldBe(visible, ofSeconds(waitTime))
                 } catch (_:  Throwable) {
                 }
-//            if (element(byXpath("//table/tbody/tr[2]")).exists()){
-//                again2 = 2
-//            }
             element(byXpath("//table/tbody/tr[1]/td[$idColumn]//text()/parent::*[text()='$idIC']"))
                 .shouldNot(exist, ofSeconds(waitTime))
             Thread.sleep(500)
-//            again2 -= 1
         }
         element(byXpath("//table/tbody/tr//*[text()='Нет данных']"))
             .should(exist, ofSeconds(waitTime))

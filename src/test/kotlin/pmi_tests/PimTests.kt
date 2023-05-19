@@ -1281,7 +1281,7 @@ class PimTests : BaseTest(){
     }
 
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL", "LOCAL2"])
     fun `PMI 0250 Проверка присвоения и удаления меток в карточке организации`(){
         //A.3.31 Проверка задания меток для указания признаков объектов
         logonTool(false)
@@ -1300,9 +1300,10 @@ class PimTests : BaseTest(){
 //        } else { element(byXpath("//table/tbody/tr[${rndOrganization + 1}]"))
 //            .scrollIntoView(true)
 //        }
+//        element(byXpath("//table/tbody/tr[$rndOrganization]"))
+//            .scrollIntoView(false)
         element(byXpath("//table/tbody/tr[$rndOrganization]"))
-            .scrollIntoView(false)
-        element(byXpath("//table/tbody/tr[$rndOrganization]"))
+            .scrollIntoView("{block: \"center\"}")
             .click()
         //ждем Редактировать
         element(byXpath("//*[text()='Изменить']/ancestor::*[@aria-label='Редактировать']//button"))
@@ -1312,12 +1313,12 @@ class PimTests : BaseTest(){
         val organizationName = element(byXpath("//h1"))
             .ownText
         //считаем существующие метки на случай когда они есть и когда их нет
-        var amountLabels = elements(byXpath("//div[@id='labels']//span[@aria-label]//span[text()]")).size
+        var amountLabels = elements(byXpath("//div[@id='labels']//*[@aria-label]//span[text()]")).size
         val beforeLabelsList = mutableListOf<String>()
         val afterLabelsList = mutableListOf<String>()
         if (amountLabels > 0){
             for (i in 1..amountLabels){
-                beforeLabelsList.add(element(byXpath("//div[@id='labels']//span[@aria-label][$i]//span[text()]")).ownText)
+                beforeLabelsList.add(element(byXpath("//div[@id='labels']//*[@aria-label][$i]//span[text()]")).ownText)
             }
         }
         //жмем Редактировать
@@ -1340,10 +1341,10 @@ class PimTests : BaseTest(){
         //вставляем новую метку
         inputRandomNew("labelsId-textfield", true, waitTime)
         //пересчитываем метки
-        amountLabels = elements(byXpath("//label[text()='Метки']/..//span[@aria-label]//span[text()]")).size
+        amountLabels = elements(byXpath("//label[text()='Метки']/..//*[@aria-label]//span[text()]")).size
         //вносим каждую в список
         for (i in 1..amountLabels){
-            afterLabelsList.add(element(byXpath("//label[text()='Метки']/..//span[@aria-label][$i]//span[text()]")).ownText)
+            afterLabelsList.add(element(byXpath("//label[text()='Метки']/..//*[@aria-label][$i]//span[text()]")).ownText)
         }
         element(byXpath("//*[text()='Сохранить']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
@@ -1359,7 +1360,7 @@ class PimTests : BaseTest(){
         Assertions.assertTrue(afterLabelsList.size > beforeLabelsList.size)
         //убеждаемся что все метки есть на карточке
         afterLabelsList.forEach { label ->
-            element(byXpath("//div[@id='labels']//span[@aria-label]//span[text()='$label']"))
+            element(byXpath("//div[@id='labels']//*[@aria-label]//span[text()='$label']"))
                 .should(exist, ofSeconds(waitTime))
         }
         logoffTool()
@@ -1386,7 +1387,7 @@ class PimTests : BaseTest(){
             .shouldBe(visible, ofSeconds(waitTime))
         val newLabelsList = afterLabelsList.minus(beforeLabelsList.toSet())
         afterLabelsList.forEach { label ->
-            element(byXpath("//div[@id='labels']//span[@aria-label]//span[text()='$label']"))
+            element(byXpath("//div[@id='labels']//*[@aria-label]//span[text()='$label']"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
         }
@@ -1401,7 +1402,7 @@ class PimTests : BaseTest(){
             .shouldBe(visible, ofSeconds(waitTime))
             .scrollIntoView(false)
         newLabelsList.forEach {
-            element(byXpath("//label[text()='Метки']/..//span[text()='$it']/ancestor::span[@aria-label]//*[name()='svg']"))
+            element(byXpath("//label[text()='Метки']/..//span[text()='$it']/ancestor::*[@aria-label]//*[name()='svg']"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
                 .click()
@@ -1416,12 +1417,12 @@ class PimTests : BaseTest(){
             .shouldBe(visible, ofSeconds(waitTime))
         //убеждаемся, что нашей метки нет
         newLabelsList.forEach {
-            element(byXpath("//div[@id='labels']//span[@aria-label]//span[text()='$it']"))
+            element(byXpath("//div[@id='labels']//*[@aria-label]//span[text()='$it']"))
                 .shouldNot(exist, ofSeconds(waitTime))
                 .shouldNotBe(visible, ofSeconds(waitTime))
         }
         beforeLabelsList.forEach {
-            element(byXpath("//div[@id='labels']//span[@aria-label]//span[text()='$it']"))
+            element(byXpath("//div[@id='labels']//*[@aria-label]//span[text()='$it']"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
         }

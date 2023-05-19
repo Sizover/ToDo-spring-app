@@ -265,6 +265,5 @@ class Labels : BaseTest(){
         element(byXpath("//tbody/tr//text()/parent::*[text()='Нет данных']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        logoffTool()
     }
 }

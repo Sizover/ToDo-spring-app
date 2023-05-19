@@ -14,8 +14,8 @@ import com.codeborne.selenide.WebDriverRunner.url
 import org.openqa.selenium.Keys
 import org.testng.annotations.Test
 import test_library.filters.FilterEnum
+import test_library.menu.MyMenu
 import test_library.menu.MyMenu.Dictionaries
-import test_library.menu.MyMenu.Incidents
 import test_library.menu.MyMenu.System
 import test_library.operator_data.OperatorDataEnum
 import java.time.Duration.ofSeconds
@@ -113,7 +113,7 @@ class Events_Incidents :BaseTest() {
         //сначала соберем номера за последний месяц
         date = LocalDate.now()
         dateTime = LocalDateTime.now()
-        val menuList = listOf(Incidents.IncidentsList, Incidents.IncidentsArchive)
+        val menuList = listOf(MyMenu.Incidents.IncidentsList, MyMenu.Incidents.IncidentsArchive)
         val falseCallsNumbersList = mutableListOf<String>()
         val moreMonthFalseCallsNumbersList = mutableListOf<String>()
         var anotherRound: Boolean
@@ -125,7 +125,7 @@ class Events_Incidents :BaseTest() {
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
             //Отчищаем фильтры
-            if (menu != Incidents.IncidentsArchive){
+            if (menu != MyMenu.Incidents.IncidentsArchive){
                 cleanFilterByEnum(listOf(), waitTime)
             }
             //устанавливаем фильры "Типы происшествий", "Дата регистрации", "Источники"
@@ -170,7 +170,7 @@ class Events_Incidents :BaseTest() {
                             ((element(byXpath("//strong[text()='Контактный номер:']/following-sibling::span//*[text()]"))
                                 .ownText
                                 .filter { it.isDigit() }).length > 8)
-                            )
+                        )
                         {
                             falseCallsNumbersList.add(element(byXpath("//strong[text()='Контактный номер:']/following-sibling::span//*[text()]"))
                                 .ownText
@@ -179,7 +179,7 @@ class Events_Incidents :BaseTest() {
                         back()
                         Thread.sleep(200)
                     }
-                    if (element(byXpath("(//tfoot//nav//span[contains(@aria-label,'На страницу номер')])[last()]/parent::div"))
+                    if (element(byXpath("(//tfoot//nav/ul/li//*[contains(@aria-label,'На страницу номер')])[last()]/parent::div"))
                             .getAttribute("style")!!
                             .contains("color: black;")) {
                         anotherRound = true
@@ -234,13 +234,13 @@ class Events_Incidents :BaseTest() {
                             back()
                             Thread.sleep(200)
                         }
-                        if ((element(byXpath("(//tfoot//nav//span[contains(@aria-label,'На страницу номер')])[last()]/parent::div"))
+                        if ((element(byXpath("(//tfoot//nav/ul/li//*[contains(@aria-label,'На страницу номер')])[last()]/parent::div"))
                                 .getAttribute("style")!!
                                 .contains("color: black;"))
                             && (moreMonthFalseCallsNumbersList.size <= 10)
                         ) {
                             anotherRound = true
-                            element(byXpath("//tfoot//nav//span[contains(@aria-label,'На следующую страницу')]/p[text()='Вперед']"))
+                            element(byXpath("//tfoot//nav/ul/li//*[contains(@aria-label,'На следующую страницу')]/p[text()='Вперед']"))
                                 .click()
                         } else {
                             anotherRound = false
@@ -253,7 +253,7 @@ class Events_Incidents :BaseTest() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //переходим в форму обращения, вставляем номер ложный моложе месяца, ждем банер,
         // очищаем вставляем ложный более месяца, банера быть не должно
-        menuNavigation(Incidents.CreateIncident, waitTime)
+        menuNavigation(MyMenu.Incidents.CreateIncident, waitTime)
         createICToolCalltype("Телефон (ССОП)", waitTime)
         var rndTel = falseCallsNumbersList.random()
         createICToolPhone(rndTel, waitTime)
@@ -284,14 +284,14 @@ class Events_Incidents :BaseTest() {
         element(byXpath("//*[@name='noteError']/ancestor::div[@role='alert']//*[text()='Номер данного абонента был зафиксирован ранее как ложный']"))
             .shouldNot(exist, ofSeconds(waitTime))
 
-/*        element(byXpath("//span[text()='Отменить']/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
-        element(byXpath("//div[@role='dialog']//span[text()='Да, выйти без сохранения']/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()*/
+        /*        element(byXpath("//span[text()='Отменить']/ancestor::button"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .click()
+                element(byXpath("//div[@role='dialog']//span[text()='Да, выйти без сохранения']/ancestor::button"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .click()*/
     }
 
 
