@@ -4,11 +4,12 @@
 
 <suite name="All Test Suite">
     <parameter name="url" value="${URL}"/>
-    <parameter name="mainLogin" value="${MAINLOGIN}"/>
-    <parameter name="mainPassword" value="${MAINPASSWORD}"/>
-    <parameter name="adminLogin" value="${ADMINLOGIN}"/>
-    <parameter name="adminPassword" value="${ADMINPASSWORD}"/>
-    <parameter name="attachFolder" value="${ATTACHFOLDER}"/>
+    <parameter name="mainLogin" value="${MAIN_LOGIN}"/>
+    <parameter name="mainPassword" value="${MAIN_PASSWORD}"/>
+    <parameter name="adminLogin" value="${ADMIN_LOGIN}"/>
+    <parameter name="adminPassword" value="${ADMIN_PASSWORD}"/>
+    <parameter name="attachFolder" value="${ATTACH_FOLDER}"/>
+    <parameter name="headless" value="${HEADLESS}"/>
     <test name="All">
         <parameter name="url" value="https://test.kiap.local/"/>
         <parameter name="mainLogin" value="a.sizov"/>
