@@ -10,6 +10,8 @@
     <parameter name="adminPassword" value="${ADMIN_PASSWORD}"/>
     <parameter name="attachFolder" value="${ATTACH_FOLDER}"/>
     <parameter name="headless" value="${HEADLESS}"/>
+    <parameter name="no_sandbox" value="${NO_SANDBOX}"/>
+    <parameter name="disable_gpu" value="${DISABLE_GPU}"/>
     <test name="All">
         <parameter name="url" value="https://test.kiap.local/"/>
         <parameter name="mainLogin" value="a.sizov"/>

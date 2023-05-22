@@ -1253,11 +1253,9 @@ class PimTests : BaseTest(){
     fun `PMI 0241 Проверка наличия справочников с иерархической системой классификации`(){
         //иерархических справосников стало больше, проверяем все
         logonTool(false)
-        for (dicts in 1..10) {
-            //кликаем по иконке справочников
-            element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul")).click()
+        for (dict in MyMenu.Dictionaries.values()) {
             //переходим в каждый справочник
-            element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul//div/ul[$dicts]")).click()
+            menuNavigation(dict, waitTime)
             //ждем загрузки таблицы
             element(byCssSelector("main table>tbody"))
                 .should(exist, ofSeconds(waitTime))
@@ -1281,7 +1279,7 @@ class PimTests : BaseTest(){
     }
 
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL", "LOCAL2"])
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `PMI 0250 Проверка присвоения и удаления меток в карточке организации`(){
         //A.3.31 Проверка задания меток для указания признаков объектов
         logonTool(false)
@@ -1307,6 +1305,40 @@ class PimTests : BaseTest(){
             .click()
         //ждем Редактировать
         element(byXpath("//*[text()='Изменить']/ancestor::*[@aria-label='Редактировать']//button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        //из-за задержки в загрузке страницы, на месте названия организации отображается "Организации", поэтому подождем некоторого количества элементов
+        element(byXpath("//main//div[@id='dict-title']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//main//div[@id='left-menu']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//main//div[@id='card']/div[@id='labels']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//main//div[@id='card']/div[@id='main']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//main//div[@id='card']/div[@id='contacts']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//main//div[@id='card']/div[@id='hotlines']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//main//div[@id='card']/div[@id='details']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//main//div[@id='card']/div[@id='assets']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//main//div[@id='card']/div[@id='additional']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//main//div[@id='card']/div[@id='files']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//main//div[@id='card']/div[@id='positions']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //запомнинаем какую организацию редактируем
@@ -1468,10 +1500,12 @@ class PimTests : BaseTest(){
         element(byXpath("//main//h1[text()='$officialFIO']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        element(byXpath("//span[@aria-label='Редактировать']//*[text()='Изменить']/text()/ancestor::button"))
+        element(byXpath("//main//div[@id='dict-title']//*[@aria-label='Редактировать']//*[text()='Изменить']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
+        element(byCssSelector("div[class*='error']"))
+            .shouldNot(exist, ofSeconds(waitTime))
         element(byXpath("//label[text()='Фамилия']/..//input"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))

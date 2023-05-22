@@ -215,10 +215,6 @@ class Labels : BaseTest(){
                     .shouldBe(visible, ofSeconds(waitTime))
             }
         }
-        element(byCssSelector("input#labelsId-autocomplete"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
         element(byXpath("//*[text()='Сохранить']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
