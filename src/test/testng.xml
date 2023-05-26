@@ -22,11 +22,19 @@
         <parameter name="testENV" value="${TESTENV}"/-->
         <groups>
             <run>
-                <include name = "LOCAL"/>
+                <include name = "LOCAL2"/>
             </run>
         </groups>
-        <classes>
-            <!--class name="dicts.CheckingFiles"></class>
+        <packages>
+            <package name="dicts" />
+            <package name="events" />
+            <package name="map" />
+            <package name="map" />
+            <package name="pmi_tests" />
+            <package name="reports" />
+        </packages>
+        <!--classes>
+            <class name="dicts.CheckingFiles"></class>
             <class name="dicts.Dicts_CumulativePlans"></class>
             <class name="dicts.SearchTests"></class>
             <class name="dicts.Labels"></class>
@@ -37,8 +45,8 @@
             <class name="map.MapTest"></class>
             <class name="pmi_tests.PimTests"></class>
             <class name="reports.Reports"></class>
-            <class name="CleanUp"></class-->
+            <class name="CleanUp"></class>
             <class name="PlayGround"></class>
-        </classes>
+        </classes-->
     </test>
 </suite>

@@ -458,7 +458,7 @@ open class BaseTest {
     //Что бы не править каждый тест, перевожу создание и проверку полей КП на абстрактные методы для каждого поля
 
     fun icToolGoToTab(tab: TabEnum, waitTime: Long){
-        element(byXpath("//main//div[@id='incidentPopoverButtons']//button"))
+        element(byXpath("//main//div[@id='incidentButtons']//button[@id='incident-popover-buttons']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .scrollIntoView("{block: \"center\"}")

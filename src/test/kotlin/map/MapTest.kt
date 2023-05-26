@@ -51,6 +51,7 @@ class MapTest  : BaseTest(){
         //выключаем дежурные службы
         element(byXpath(checkboxSelector.format(checkboxName)))
             .should(exist, ofSeconds(waitTime))
+            .scrollIntoView("{block: \"center\"}")
             .click()
         element(byXpath(checkboxStatus.format(checkboxName)))
             .shouldNot(exist, ofSeconds(waitTime))
@@ -61,7 +62,7 @@ class MapTest  : BaseTest(){
     fun `MT_001 Проверка отображения значов на карте при применении различных фильтров карты`(){
         logonTool(false)
         //открываем карту
-        element(byXpath("//span[@aria-label='Открыть карту в отдельном окне']/button"))
+        element(byXpath("//*[@aria-label='Открыть карту в отдельном окне']/button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
@@ -110,7 +111,6 @@ class MapTest  : BaseTest(){
         MTtool_001("Камеры")
         MTtool_001("Датчики")
         MTtool_001("Организации")
-        logoffTool()
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
@@ -183,21 +183,20 @@ class MapTest  : BaseTest(){
             .should(exist, ofSeconds(waitTime))
         checkICToolIsStatus(`В обработке`, waitTime)
         checkICToolDopInfo("Autotest MT_002, Широта = $lat, Долгота = $lon", waitTime)
-        logoffTool()
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `MT_003 Проверка PM1363~B - Общая ошибка приложения после обновления страницы карты`() {
         logonTool(false)
         //открываем карту
-        element(byXpath("//span[@aria-label='Открыть карту в отдельном окне']/button"))
+        element(byXpath("//*[@aria-label='Открыть карту в отдельном окне']/button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
         //Переключаемся между окнами
         switchTo().window(1)
         //Ждем некоторый кусочек карты. Картинку.
-        element(byXpath("//div[@id='skeleton']//main//img[@alt and @role='presentation' and @src]"))
+        element(byXpath("//div[@id='skeleton']//main//img[@alt and @src]"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //ждем кнопку настроек карты (что б наверняка)
@@ -207,7 +206,7 @@ class MapTest  : BaseTest(){
         //обновляем страницу
         refresh()
         //Ждем некоторый кусочек карты. Картинку.
-        element(byXpath("//div[@id='skeleton']//main//img[@alt and @role='presentation' and @src]"))
+        element(byXpath("//div[@id='skeleton']//main//img[@alt and @src]"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //ждем кнопку настроек карты
@@ -231,7 +230,7 @@ class MapTest  : BaseTest(){
         element(byXpath("//div[@role='alert']//*[@name='snackbarError']"))
             .shouldNot(exist, ofSeconds(waitTime))
         //Ждем некоторый кусочек карты. Картинку.
-        element(byXpath("//div[@id='skeleton']//main//img[@alt and @role='presentation' and @src]"))
+        element(byXpath("//div[@id='skeleton']//main//img[@alt and @src]"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //ждем кнопку настроек карты
@@ -240,6 +239,5 @@ class MapTest  : BaseTest(){
             .shouldBe(visible, ofSeconds(waitTime))
         element(byXpath("//div[@role='alert']//*[@name='snackbarError']"))
             .shouldNot(exist, ofSeconds(waitTime))
-        logoffTool()
     }
 }

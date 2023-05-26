@@ -4,17 +4,18 @@ import BaseTest
 import Retry
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.visible
-import com.codeborne.selenide.Selectors.byCssSelector
+import com.codeborne.selenide.Selectors
 import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
 import org.junit.jupiter.api.Assertions
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
+import test_library.icTabs.TabEnum
 import test_library.menu.MyMenu
 import test_library.menu.MyMenu.Dictionaries
 import test_library.menu.MyMenu.Incidents
-import test_library.statuses.StatusEnum.`В обработке`
+import test_library.statuses.StatusEnum
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -37,7 +38,7 @@ class Dicts_Incidents :BaseTest() {
         logonTool(false)
         //кликаем по иконке происшествий в боковом меню
         //Переходим в "Список происшетвий"
-        menuNavigation(Incidents.IncidentsList, waitTime)
+        menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
         //кликаем по "создать обращение"
         element(byXpath("//*[text()='Создать обращение']/text()/ancestor::button")).click()
         //заполняем карточку
@@ -77,10 +78,10 @@ class Dicts_Incidents :BaseTest() {
         createICToolButtonCreateNewIC("AutoTest INC 0010 inc $dateTime $language1", waitTime)
         //Убеждаемся, что нам загрузило созданную карточку
         //проверяя что нам в принципе загрузило какую-то карточку
-        element(byCssSelector("#simple-tabpanel-card"))
+        element(Selectors.byCssSelector("#simple-tabpanel-card"))
             .should(exist, ofSeconds(waitTime))
         //что она в статусе "В обработке"
-        checkICToolIsStatus(`В обработке`, longWait)
+        checkICToolIsStatus(StatusEnum.`В обработке`, longWait)
         //и что это именно так карточка которую мы только что создали
         checkICToolDopInfo("AutoTest INC 0010 inc $dateTime $language1", waitTime)
         //считаем количество обращений
@@ -89,10 +90,7 @@ class Dicts_Incidents :BaseTest() {
                 .size
                 == 1
         )
-        element(byXpath("//main//header//*[text()='Обращения']//ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
+        icToolGoToTab(TabEnum.Обращения, waitTime)
         element(byXpath("//table"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -104,7 +102,7 @@ class Dicts_Incidents :BaseTest() {
             .should(exist, ofSeconds(waitTime))
         element(byXpath("//table/tbody//*[text()='INC 0010 adr $dateTime']/ancestor::tr/td[$callTypeColumm][text()='$callType']"))
             .should(exist, ofSeconds(waitTime))
-        menuNavigation(Incidents.CreateIncident, waitTime)
+        menuNavigation(MyMenu.Incidents.CreateIncident, waitTime)
         //заполняем карточку
         //Источник события - выбираем случайно
         createICToolCalltype("", waitTime)
@@ -146,9 +144,9 @@ class Dicts_Incidents :BaseTest() {
             .click()
         //Убеждаемся, что нам загрузило созданную карточку
         //проверяя что нам в принципе загрузило какую-то карточку
-        element(byCssSelector("#simple-tabpanel-card")).should(exist, ofSeconds(waitTime))
+        element(Selectors.byCssSelector("#simple-tabpanel-card")).should(exist, ofSeconds(waitTime))
         //что она в статусе "В обработке"
-        checkICToolIsStatus(`В обработке`, waitTime)
+        checkICToolIsStatus(StatusEnum.`В обработке`, waitTime)
         //развернём второе обращение
         element(byXpath("//*[text()='2']/ancestor::div[@id='panel1a-header']//*[name()='svg']/ancestor::div[1]"))
             .should(exist, ofSeconds(waitTime))
@@ -160,10 +158,7 @@ class Dicts_Incidents :BaseTest() {
             element(byXpath("//*[text()='2']/ancestor::div[@id='panel1a-header']//*[text()='$callType']"))
                 .exists()
         )
-        element(byXpath("//main//header//*[text()='Обращения']//ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .click()
+        icToolGoToTab(TabEnum.Обращения, waitTime)
         element(byXpath("//table"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -175,7 +170,6 @@ class Dicts_Incidents :BaseTest() {
             .should(exist, ofSeconds(longWait))
         element(byXpath("//table/tbody//*[text()='INC 0010 adr2 $dateTime']/ancestor::tr/td[$callTypeColumm]//text()/parent::*[text()='$callType']"))
             .should(exist, ofSeconds(longWait))
-        logoffTool()
     }
 
     @Test (retryAnalyzer = Retry::class, groups = ["ALL"])

@@ -134,6 +134,5 @@ open class StatusTests : BaseTest(){
             .click()
         //проверяем статус родительской карточки
         checkICToolIsStatus(statusSum, waitTime)
-        logoffTool()
     }
 }

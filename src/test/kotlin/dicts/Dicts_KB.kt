@@ -1150,6 +1150,7 @@ class Dicts_KB: BaseTest() {
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
             //проверяем что все статьи папки соответствуют фильтрам
+            Thread.sleep(500)
             for (artNum in 1..elements(byXpath("//div[@id='kb-card']")).size){
                 //для каждой карточки статьи открываем подробности, проверяем, закрываем подробности
                 element(byXpath("//div[@id='kb-card'][$artNum]//*[text()='ОТКРЫТЬ' and text()=' ПОДРОБНОСТИ']/.."))

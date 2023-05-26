@@ -29,7 +29,7 @@ class SearchTests : BaseTest(){
             arrayOf(Dictionaries.VideoCameras, "Наименование", "Наименование"),
             arrayOf(Dictionaries.Sensors, "Наименование", "Наименование"),
             arrayOf(Dictionaries.Labels, "Имя метки", "Метка"),
-            arrayOf(Dictionaries.HotlineAssets, "Наименование", "Наименование")
+            arrayOf(Dictionaries.HotlineAssets, "Наименование", "Наименование"),
         )
     }
 

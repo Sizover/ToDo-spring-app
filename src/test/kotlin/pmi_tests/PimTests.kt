@@ -1253,11 +1253,9 @@ class PimTests : BaseTest(){
     fun `PMI 0241 Проверка наличия справочников с иерархической системой классификации`(){
         //иерархических справосников стало больше, проверяем все
         logonTool(false)
-        for (dicts in 1..10) {
-            //кликаем по иконке справочников
-            element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul")).click()
+        for (dict in MyMenu.Dictionaries.values()) {
             //переходим в каждый справочник
-            element(byXpath("//div[@data-testid='app-menu-Справочники']/../parent::ul//div/ul[$dicts]")).click()
+            menuNavigation(dict, waitTime)
             //ждем загрузки таблицы
             element(byCssSelector("main table>tbody"))
                 .should(exist, ofSeconds(waitTime))
@@ -1300,24 +1298,59 @@ class PimTests : BaseTest(){
 //        } else { element(byXpath("//table/tbody/tr[${rndOrganization + 1}]"))
 //            .scrollIntoView(true)
 //        }
+//        element(byXpath("//table/tbody/tr[$rndOrganization]"))
+//            .scrollIntoView(false)
         element(byXpath("//table/tbody/tr[$rndOrganization]"))
-            .scrollIntoView(false)
-        element(byXpath("//table/tbody/tr[$rndOrganization]"))
+            .scrollIntoView("{block: \"center\"}")
             .click()
         //ждем Редактировать
         element(byXpath("//*[text()='Изменить']/ancestor::*[@aria-label='Редактировать']//button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        //из-за задержки в загрузке страницы, на месте названия организации отображается "Организации", поэтому подождем некоторого количества элементов
+        element(byXpath("//main//div[@id='dict-title']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//main//div[@id='left-menu']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//main//div[@id='card']/div[@id='labels']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//main//div[@id='card']/div[@id='main']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//main//div[@id='card']/div[@id='contacts']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//main//div[@id='card']/div[@id='hotlines']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//main//div[@id='card']/div[@id='details']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//main//div[@id='card']/div[@id='assets']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//main//div[@id='card']/div[@id='additional']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//main//div[@id='card']/div[@id='files']"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        element(byXpath("//main//div[@id='card']/div[@id='positions']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //запомнинаем какую организацию редактируем
         val organizationName = element(byXpath("//h1"))
             .ownText
         //считаем существующие метки на случай когда они есть и когда их нет
-        var amountLabels = elements(byXpath("//div[@id='labels']//span[@aria-label]//span[text()]")).size
+        var amountLabels = elements(byXpath("//div[@id='labels']//*[@aria-label]//span[text()]")).size
         val beforeLabelsList = mutableListOf<String>()
         val afterLabelsList = mutableListOf<String>()
         if (amountLabels > 0){
             for (i in 1..amountLabels){
-                beforeLabelsList.add(element(byXpath("//div[@id='labels']//span[@aria-label][$i]//span[text()]")).ownText)
+                beforeLabelsList.add(element(byXpath("//div[@id='labels']//*[@aria-label][$i]//span[text()]")).ownText)
             }
         }
         //жмем Редактировать
@@ -1340,10 +1373,10 @@ class PimTests : BaseTest(){
         //вставляем новую метку
         inputRandomNew("labelsId-textfield", true, waitTime)
         //пересчитываем метки
-        amountLabels = elements(byXpath("//label[text()='Метки']/..//span[@aria-label]//span[text()]")).size
+        amountLabels = elements(byXpath("//label[text()='Метки']/..//*[@aria-label]//span[text()]")).size
         //вносим каждую в список
         for (i in 1..amountLabels){
-            afterLabelsList.add(element(byXpath("//label[text()='Метки']/..//span[@aria-label][$i]//span[text()]")).ownText)
+            afterLabelsList.add(element(byXpath("//label[text()='Метки']/..//*[@aria-label][$i]//span[text()]")).ownText)
         }
         element(byXpath("//*[text()='Сохранить']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
@@ -1359,7 +1392,7 @@ class PimTests : BaseTest(){
         Assertions.assertTrue(afterLabelsList.size > beforeLabelsList.size)
         //убеждаемся что все метки есть на карточке
         afterLabelsList.forEach { label ->
-            element(byXpath("//div[@id='labels']//span[@aria-label]//span[text()='$label']"))
+            element(byXpath("//div[@id='labels']//*[@aria-label]//span[text()='$label']"))
                 .should(exist, ofSeconds(waitTime))
         }
         logoffTool()
@@ -1386,7 +1419,7 @@ class PimTests : BaseTest(){
             .shouldBe(visible, ofSeconds(waitTime))
         val newLabelsList = afterLabelsList.minus(beforeLabelsList.toSet())
         afterLabelsList.forEach { label ->
-            element(byXpath("//div[@id='labels']//span[@aria-label]//span[text()='$label']"))
+            element(byXpath("//div[@id='labels']//*[@aria-label]//span[text()='$label']"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
         }
@@ -1401,7 +1434,7 @@ class PimTests : BaseTest(){
             .shouldBe(visible, ofSeconds(waitTime))
             .scrollIntoView(false)
         newLabelsList.forEach {
-            element(byXpath("//label[text()='Метки']/..//span[text()='$it']/ancestor::span[@aria-label]//*[name()='svg']"))
+            element(byXpath("//label[text()='Метки']/..//span[text()='$it']/ancestor::*[@aria-label]//*[name()='svg']"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
                 .click()
@@ -1416,12 +1449,12 @@ class PimTests : BaseTest(){
             .shouldBe(visible, ofSeconds(waitTime))
         //убеждаемся, что нашей метки нет
         newLabelsList.forEach {
-            element(byXpath("//div[@id='labels']//span[@aria-label]//span[text()='$it']"))
+            element(byXpath("//div[@id='labels']//*[@aria-label]//span[text()='$it']"))
                 .shouldNot(exist, ofSeconds(waitTime))
                 .shouldNotBe(visible, ofSeconds(waitTime))
         }
         beforeLabelsList.forEach {
-            element(byXpath("//div[@id='labels']//span[@aria-label]//span[text()='$it']"))
+            element(byXpath("//div[@id='labels']//*[@aria-label]//span[text()='$it']"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
         }
@@ -1467,10 +1500,12 @@ class PimTests : BaseTest(){
         element(byXpath("//main//h1[text()='$officialFIO']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        element(byXpath("//span[@aria-label='Редактировать']//*[text()='Изменить']/text()/ancestor::button"))
+        element(byXpath("//main//div[@id='dict-title']//*[@aria-label='Редактировать']//*[text()='Изменить']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
+        element(byCssSelector("div[class*='error']"))
+            .shouldNot(exist, ofSeconds(waitTime))
         element(byXpath("//label[text()='Фамилия']/..//input"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
