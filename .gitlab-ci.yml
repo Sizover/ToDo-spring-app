@@ -25,7 +25,7 @@ deploy-kiap:
   variables:
     VALUESFILE: values-qa.yaml
     NAMESPACE: kiap
-    PROJECT_BRANCH: feature/D551
+#    PROJECT_BRANCH: feature/D551
 
 loader_data_qa:
   extends: .loader_data_qa
