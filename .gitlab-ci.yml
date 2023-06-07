@@ -14,6 +14,7 @@ variables:
   GRADLE_IMAGE: gradle:8.0.2-jdk17
   #IMPORT_DIR: deploy/demo-maket-2022/data ## Абсолютный путь к папке для загрузки через loader
   IMPORT_DIR: deploy/demo-maket/data-kk/v.2.10
+  IMPORT_DIR_BRANCH: develop
   ## Версия среды: # release - сооветствует test.kiap.local(ветка develop),dev - сооветствует dev.kiap.local(ветка feature), v2.x - stage.kiap.local   
 ## Версия среды киапы    
   KIAP_VERSION: release 
@@ -39,7 +40,7 @@ pull_loader_data:
     - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@git.kiap.dev/kiap/kiap-pm.git
     - mkdir -p loader/dicts
     - cd kiap-pm
-    - if [ $IMPORT_DIR_BRANCH != "" && $IMPORT_DIR_BRANCH != $CI_DEFAULT_BRANCH ]; then git checkout $IMPORT_DIR_BRANCH; fi
+    - if [ $IMPORT_DIR_BRANCH != $CI_DEFAULT_BRANCH ]; then git checkout $IMPORT_DIR_BRANCH; fi
     - |
       if [[ $IMPORT_DIRS != ""  ]]; then 
         cp -r $IMPORT_DIRS $CI_PROJECT_DIR/loader/dicts/;
