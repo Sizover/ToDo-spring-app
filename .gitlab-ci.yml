@@ -41,7 +41,7 @@ pull_loader_data:
     - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@git.kiap.dev/kiap/kiap-pm.git
     - mkdir -p loader/dicts
     - cd kiap-pm
-    - if [ $IMPORT_DIR_BRANCH == $CI_DEFAULT_BRANCH ]; then git checkout $IMPORT_DIR_BRANCH; fi
+    - if [ $IMPORT_DIR_BRANCH != $CI_DEFAULT_BRANCH ]; then git checkout $IMPORT_DIR_BRANCH; fi
     - |
       if [[ $IMPORT_DIRS != "" ]]; then 
         cp -r $IMPORT_DIRS $CI_PROJECT_DIR/loader/dicts/;
