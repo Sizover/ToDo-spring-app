@@ -36,7 +36,7 @@ pull_loader_data:
   extends: .pull_loader_data
   stage: prepare 
   variables:
-    IMPORT_DIR_BRANCH: feature/#2200
+    IMPORT_DIR_BRANCH: develop
   script:
     - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@git.kiap.dev/kiap/kiap-pm.git
     - mkdir -p loader/dicts
