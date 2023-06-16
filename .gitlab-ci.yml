@@ -9,7 +9,6 @@ stages:
   - prepare
   - pre-test   
   - test                      
-
 variables:
   GRADLE_IMAGE: gradle:8.0.2-jdk17
   #IMPORT_DIR: deploy/demo-maket-2022/data ## Абсолютный путь к папке для загрузки через loader
