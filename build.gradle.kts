@@ -51,14 +51,6 @@ dependencies {
 //    testImplementation("org.testng:testng:7.5")
 }
 
-// testing:
-val e2eProps: MutableMap<String, Any> = System.getProperties().mapKeys { it.key.toString() }.toMutableMap()
-if (null != project.findProperty("firefox")) e2eProps["selenide.browser"] = "firefox"
-if (null != project.findProperty("chrome")) e2eProps["selenide.browser"] = "chrome"
-if (null != project.findProperty("remote")) {
-    e2eProps["selenide.remote"] = "http://127.0.0.1:4444/wd/hub"
-}
-
 tasks.test {
     val suite = project.properties.getOrDefault("suite", "testng.xml")
     useTestNG() {
