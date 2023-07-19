@@ -41,6 +41,7 @@ dependencies {
     testImplementation("com.codeborne:selenide-proxy:6.12.3")
     testImplementation("org.jetbrains.kotlin:kotlin-reflect")
     testImplementation("org.jetbrains.kotlin:kotlin-reflect:%kotlinVersion%")
+    testImplementation("org.seleniumhq.selenium:selenium-remote-driver:4.10.0")
 
 //    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
 //    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.8.2")
@@ -50,9 +51,21 @@ dependencies {
 //    testImplementation("org.testng:testng:7.5")
 }
 
+// testing:
+val e2eProps: MutableMap<String, Any> = System.getProperties().mapKeys { it.key.toString() }.toMutableMap()
+if (null != project.findProperty("firefox")) e2eProps["selenide.browser"] = "firefox"
+if (null != project.findProperty("chrome")) e2eProps["selenide.browser"] = "chrome"
+if (null != project.findProperty("remote")) {
+    e2eProps["selenide.remote"] = "http://127.0.0.1:4444/wd/hub"
+}
+
 tasks.test {
-    //useJUnitPlatform()
-    useTestNG()
+    val suite = project.properties.getOrDefault("suite", "testng.xml")
+    useTestNG() {
+        useDefaultListeners = true
+        outputDirectory = file("$projectDir/build/reports/TestNG")
+        suites("/src/test/${suite}")
+    }
 }
 
 tasks.withType<KotlinCompile> {

@@ -55,6 +55,7 @@ open class BaseTest {
     lateinit var browserhead: String
     lateinit var no_sandbox: String
     lateinit var disable_gpu: String
+    lateinit var remote_url: String
 
     //"короткое" ожидание для совершения действия направленного на элемент страницы
     val waitTime: Long = 5
@@ -65,10 +66,10 @@ open class BaseTest {
     // отладочная переменная для выведения (или нет) отладочной информации, в консоль
     val print = true
 
-    @Parameters("url", "mainLogin", "mainPassword", "adminLogin", "adminPassword", "attachFolder", "headless", "no_sandbox", "disable_gpu")
+    @Parameters("url", "mainLogin", "mainPassword", "adminLogin", "adminPassword", "attachFolder", "headless", "no_sandbox", "disable_gpu", "remote_url")
 //    @BeforeSuite(alwaysRun = true)  Method
     @BeforeMethod(alwaysRun = true)
-    open fun getConf(urlValue: String, mainLoginValue: String, mainPasswordValue: String, adminLoginValue: String, adminPasswordValue: String, attachFolderValue: String, headless: String, nosandbox: String, disablegpu: String){
+    open fun getConf(urlValue: String, mainLoginValue: String, mainPasswordValue: String, adminLoginValue: String, adminPasswordValue: String, attachFolderValue: String, headless: String, nosandbox: String, disablegpu: String, remoteurl: String){
         standUrl = urlValue
         mainLogin = mainLoginValue
         mainPassword = mainPasswordValue
@@ -78,23 +79,35 @@ open class BaseTest {
         browserhead = headless
         no_sandbox = nosandbox
         disable_gpu = disablegpu
+        remote_url = remoteurl
     }
 
     fun logonTool(proxy: Boolean) {
         //https://overcoder.net/q/1369284/%D0%BA%D0%B0%D0%BA-%D1%80%D0%B0%D0%B7%D1%80%D0%B5%D1%88%D0%B8%D1%82%D1%8C-%D0%B8%D0%BB%D0%B8-%D0%B7%D0%B0%D0%BF%D1%80%D0%B5%D1%82%D0%B8%D1%82%D1%8C-%D1%83%D0%B2%D0%B5%D0%B4%D0%BE%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BE-%D0%B2%D1%81%D0%BF%D0%BB%D1%8B%D0%B2%D0%B0%D1%8E%D1%89%D0%B5%D0%B9-%D0%BA%D0%B0%D0%BC%D0%B5%D1%80%D0%B5-%D0%BC%D0%B8%D0%BA%D1%80%D0%BE%D1%84%D0%BE%D0%BD%D0%B0
         //https://peter.sh/experiments/chromium-command-line-switches/
         //https://selenide.org/javadoc/current/com/codeborne/selenide/Configuration.html
-        val options = ChromeOptions()
-        options.addArguments("--auto-accept-camera-and-microphone-capture")
-        options.addArguments("--use-fake-device-for-media-stream")
-//        options.addArguments("--use-file-for-fake-audio-capture")
-        options.addArguments("--use-fake-ui-for-media-stream")
-        if (no_sandbox.toBoolean()){
-            options.addArguments("--no-sandbox")
-        }
-        if (disable_gpu.toBoolean()){
-            options.addArguments("--disable-gpu")
-        }
+
+        // Поключение к selenoid
+        val options: MutableMap<String, Boolean> = HashMap()
+        Configuration.remote = remote_url
+        options["enableVNC"] = true
+        options["enableVideo"] = true
+        options["enableLog"] = true
+        val capabilities = ChromeOptions()
+        Configuration.browserCapabilities = capabilities
+        Configuration.browserCapabilities.setCapability("selenoid:options", options)
+            // TODO Ломается
+//        val options = ChromeOptions()
+//        options.addArguments("--auto-accept-camera-and-microphone-capture")
+//        options.addArguments("--use-fake-device-for-media-stream")
+////        options.addArguments("--use-file-for-fake-audio-capture")
+//        options.addArguments("--use-fake-ui-for-media-stream")
+//        if (no_sandbox.toBoolean()){
+//            options.addArguments("--no-sandbox")
+//        }
+//        if (disable_gpu.toBoolean()){
+//            options.addArguments("--disable-gpu")
+//        }
         Configuration.browser = CHROME
         Configuration.timeout = 10000
         Configuration.browserSize = "1920x1080"
@@ -103,7 +116,9 @@ open class BaseTest {
         Configuration.webdriverLogsEnabled = false
         Configuration.headless = browserhead.toBoolean()
         Configuration.baseUrl = standUrl
-        Configuration.browserCapabilities = options
+        // TODO Ломается
+//        Configuration.browserCapabilities = options
+
 //        open(standUrl)
 //        clearBrowserCookies()
 //        clearBrowserLocalStorage()
