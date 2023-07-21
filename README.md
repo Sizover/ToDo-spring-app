@@ -53,6 +53,10 @@
 
 # DevOPS
 
+## Запуск в контейнере
+Запуск браузеров для каждой сессии автотестирования осуществляется через [selenoid](https://aerokube.com/selenoid/latest/)
+Стенд доступен по адресу [selenoid.kiap.local](http://selenoid.kiap.local/)
+
 ## ENV-переменные
 
 ### Основные настройки
@@ -60,10 +64,7 @@
 На текущий момент реализовано согласно схеме предложенной в [этой статье](https://itnext.io/how-to-run-automation-scripts-in-multiple-environments-abc39d11aa20). Т.е. конфигурация/параметры/переменные запуска изложены в testng xml файле, в котором в свою очередь параметры запуска ссылаются на параметры переданные в командной строке виртуальной машины Java, используя системные свойства (-D).
 
 Пример запуска:  
-```java org.testng.TestNG testng1.xml```
-
-Пример запуска с определением параметров  
-```java -Dfirst-name=Cedrick -Dlast-name="von Braun" org.testng.TestNG testng.xml```
+```gradle clean test -Psuite=$SUITE```
 
 Список значений используемых на ТС test  
 ```ADMIN_LOGIN=autotest_admin;ADMIN_PASSWORD=autotest_admin;ATTACH_FOLDER=./attachFolder;DISABLE_GPU=false;HEADLESS=false;MAIN_LOGIN=a.sizov;MAIN_PASSWORD=a.sizov;NO_SANDBOX=false;URL=https://test.kiap.local/```
