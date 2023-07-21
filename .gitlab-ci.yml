@@ -14,11 +14,11 @@ variables:
   #IMPORT_DIR: deploy/demo-maket-2022/data ## Абсолютный путь к папке для загрузки через loader
   IMPORT_DIR: deploy/demo-maket/2.10/data-kk
   IMPORT_DIR_BRANCH: develop
-  ## Версия среды: # release - сооветствует test.kiap.local(ветка develop),dev - сооветствует dev.kiap.local(ветка feature), v2.x - stage.kiap.local   
+  ## Версия среды: # test - сооветствует test.kiap.local(ветка develop),dev - сооветствует dev.kiap.local(ветка feature), v2.x - stage.kiap.local
 ## Версия среды киапы    
-  KIAP_VERSION: release 
+  KIAP_VERSION: test
 ## Версия только компонента лоадера  
-  LOADER_VERSION: release       
+  LOADER_VERSION: test
 
 deploy-kiap:
   extends: .reinstall_helm_kiap
@@ -38,8 +38,8 @@ pull_loader_data:
 
 GradleTest:
   variables:
-    REMOTE_URL: https://qa.kiap.local
-    URL: http://selenoid.kiap.local:4444/wd/hub
+    REMOTE_URL: http://selenoid.kiap.local:4444/wd/hub
+    URL: https://qa.kiap.local
     MAIN_LOGIN: test
     MAIN_PASSWORD: test!1+1
     ADMIN_PASSWORD: test
