@@ -42,8 +42,8 @@ GradleTest:
     URL: https://qa.kiap.local
     MAIN_LOGIN: test
     MAIN_PASSWORD: test!1+1
-    ADMIN_PASSWORD: test
-    ADMIN_LOGIN: test!1+1
+    ADMIN_LOGIN: test
+    ADMIN_PASSWORD: test!1+1
     SUITE: ci.xml
 
   script:
