@@ -12,7 +12,7 @@ stages:
 variables:
   GRADLE_IMAGE: gradle:8.0.2-jdk17
   #IMPORT_DIR: deploy/demo-maket-2022/data ## Абсолютный путь к папке для загрузки через loader
-  IMPORT_DIR: deploy/demo-maket/data-kk/v.2.10
+  IMPORT_DIR: deploy/demo-maket/2.10/data-kk
   IMPORT_DIR_BRANCH: develop
   ## Версия среды: # release - сооветствует test.kiap.local(ветка develop),dev - сооветствует dev.kiap.local(ветка feature), v2.x - stage.kiap.local   
 ## Версия среды киапы    
