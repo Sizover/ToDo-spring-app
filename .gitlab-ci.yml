@@ -36,5 +36,19 @@ pull_loader_data:
   extends: .pull_loader_data
   stage: prepare 
 
+GradleTest:
+  variables:
+    REMOTE_URL: https://qa.kiap.local
+    URL: http://selenoid.kiap.local:4444/wd/hub
+    MAIN_LOGIN: test
+    MAIN_PASSWORD: test!1+1
+    ADMIN_PASSWORD: test
+    ADMIN_LOGIN: test!1+1
+    SUITE: ci.xml
+
+  script:
+    - gradle clean test -Psuite=$SUITE
+
+
 
 

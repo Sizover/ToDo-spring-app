@@ -14,7 +14,6 @@
     <parameter name="disable_gpu" value="${DISABLE_GPU}"/>
     <parameter name="remote_url" value="${REMOTE_URL}"/>
     <test name="TEST">
-        <parameter name="url" value="https://test.kiap.local/"/>
         <parameter name="mainLogin" value="a.sizov"/>
         <parameter name="mainPassword" value="a.sizov"/>
         <parameter name="adminLogin" value="autotest_admin"/>
