@@ -11,17 +11,21 @@ import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
 import com.codeborne.selenide.Selenide.open
 import com.codeborne.selenide.WebDriverRunner.url
+import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import org.testng.annotations.Test
+import test_library.alerts.AlertsEnum
 import test_library.filters.FilterEnum
 import test_library.menu.MyMenu
 import test_library.menu.MyMenu.Dictionaries
 import test_library.menu.MyMenu.System
 import test_library.operator_data.OperatorDataEnum
+import test_library.statuses.StatusEnum
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.random.Random
 
 class Events_Incidents :BaseTest() {
 
@@ -110,7 +114,6 @@ class Events_Incidents :BaseTest() {
 
     @Test (retryAnalyzer = Retry::class, groups = ["ALL"])
     fun `Event INC 5030 Предупреждение о ложном вызове актуально месяц`() {
-        //сначала соберем номера за последний месяц
         date = LocalDate.now()
         dateTime = LocalDateTime.now()
         val menuList = listOf(MyMenu.Incidents.IncidentsList, MyMenu.Incidents.IncidentsArchive)
@@ -118,7 +121,44 @@ class Events_Incidents :BaseTest() {
         val moreMonthFalseCallsNumbersList = mutableListOf<String>()
         var anotherRound: Boolean
         logonTool(false)
+        //сначала создадим ложный вызов, что бы тестовая среда не пересохла по метаданным
+        menuNavigation(MyMenu.Incidents.CreateIncident, waitTime)
+        createICToolCalltype("Телефон (ССОП)", waitTime)
+        createICToolPhone("", waitTime)
+        createICToolFIO(generateLastNameF(), generateFirstNameI(), generateMiddleNameO(), waitTime)
+        createICToolRandomCoordinates("", waitTime)
+        createICToolsDopInfo("Event INC 5030 $dateTime. Новый ложный вызов", waitTime)
+        if (Random.nextBoolean()){
+            element(byXpath("//form[@novalidate]/div//*[text()='Ложное обращение']/text()/ancestor::button"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .scrollIntoView("{block: \"center\"}")
+                .click()
+        } else {
+            element(byXpath("//form[@novalidate]/div//*[text()='Ложное обращение']/text()/ancestor::button//*[@name='arrowUp']"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .scrollIntoView("{block: \"center\"}")
+                .click()
+            element(byXpath("//div[@role='presentation']//text()"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+            Assertions.assertEquals(4, elements(byXpath("//div[@role='presentation']//text()/ancestor::div[1]")).size)
+            element(byXpath("(//div[@role='presentation']//text()/ancestor::div[1])[${(1..4).random()}]"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+        }
+        checkAlert(AlertsEnum.snackbarSuccess, "OK", false, waitTime)
+        element(byXpath("//table/tbody"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+        tableColumnCheckbox("Описание;Статус", true, waitTime)
+        element(byXpath("//table/tbody/tr[.//*[text()='${StatusEnum.Завершена.name}'] and .//*[text()='Event INC 5030 $dateTime. Новый ложный вызов']]"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //соберем номера за последний месяц
         menuList.forEach { menu ->
             menuNavigation(menu, waitTime)
             element(byXpath("//form[@novalidate]"))
@@ -136,8 +176,6 @@ class Events_Incidents :BaseTest() {
                 waitTime)
             setFilterByEnum(FilterEnum.Источники, "Портал населения;Система-112;СМС;Телефон (ССОП);Факс;ЭРА Глонасс", waitTime)
             //заполнили фильтры
-//            setIncidentFilters(LocalDate.now().minusMonths(1).toString(), LocalDate.now().toString())
-
             Thread.sleep(1000)
             //открываем все КП, проходясь и по пагинации и складываем контактный номер в список, не занося в него дубликаты
             if (elements(byXpath("//table/tbody/tr/td//*[text()='Нет данных']")).size == 0) {

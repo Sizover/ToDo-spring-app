@@ -228,7 +228,7 @@ class Dicts_KB: BaseTest() {
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
             //ждем заголовок
-            element(byXpath("//div[@id='dict-title']//h1[text()='Разделы базы знаний']"))
+            element(byXpath("//div[@id='dict-title']//h1[text()='Добавление раздела']"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
             //первый элемент списка будет родителем для остальных

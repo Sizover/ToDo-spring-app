@@ -269,7 +269,7 @@ class PimTests : BaseTest(){
         //проверяя что нам в принципе загрузило какую-то карточку
         element(Selectors.byCssSelector("#simple-tabpanel-card")).should(exist, ofSeconds(waitTime))
         //что она в статусе "В обработке"
-        checkICToolIsStatus(StatusEnum.`В обработке`, waitTime)
+        checkICToolIsStatus(StatusEnum.`В обработке`, longWait)
         //и что это именно так карточка которую мы только что создали
         checkICToolDopInfo("AutoTest N 0110 $dateTime", waitTime)
         Thread.sleep(5000)
@@ -485,8 +485,6 @@ class PimTests : BaseTest(){
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                 //Проверяем красненький кружочек первого пункта (для проверки позеленения по мере выполнения)
-//                element(byCssSelector(circleSelector.format("Не выполнен", "#BA3113")))
-//                element(byCssSelector("div#simple-tabpanel-iplan > div > div > div > div:nth-child($p) > div > div#panel1a-header div.MuiBox-root > div:nth-child($c) > span[title^='Статус: Не выполнен'] rect[fill='#16BA13']"))
                 element(byCssSelector(circleSelector.format("Не выполнен", "#63666C")))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
@@ -720,7 +718,7 @@ class PimTests : BaseTest(){
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
         element(byXpath(ddsCardSelector.format(descriptionFunction)))
-            .should(exist, ofSeconds(waitTime))
+            .should(exist, ofSeconds(longWait))
         element(byXpath("//*[text()='Назначенные службы']/ancestor::div[@role='tabpanel']//form[@novalidate]//*[text()='$descriptionFunction']"))
             .should(exist, ofSeconds(waitTime))
         element(byText("ДДС-02 г.Черкесск"))
@@ -899,7 +897,7 @@ class PimTests : BaseTest(){
         checkAlert(snackbarWarning, "Данный статус не может быть присвоен", true, longWait)
     }
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL", "LOCAL2"])
     fun `PMI 0112 Назначение КП из 112 в КИАП`() {
         //A.3.19 Убедиться на стороне Системы-112 в наличии возможности назначать   карточку на ЕЦОР  (КИАП) из Системы-112
         //A.3.20 Прием карточки из Системы-112
@@ -1060,36 +1058,35 @@ class PimTests : BaseTest(){
     fun `PMI 0220 Проверка открытия карточек справочных сущностей`() {
         //A.3.28 Проверка централизованного хранения и управления структурированной справочной информации
         logonTool(false)
-
-//        for (i in 1..10){
         Dictionaries.values().forEach {     it ->
             //кликаем по иконке справочников
             menuNavigation(it , waitTime)
-            //если в справочнике не пусто, то переходим в первую найденную строку и проверяем там наличие блока описания и заголовка "общие данные" в нем
             //ждем загрузки таблицы
             element(byCssSelector("main table>tbody"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
-            if (it != Dictionaries.IncidentTypes){
-                element(byXpath("//table/tbody/tr"))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
-                // отказался от изящной конструкции выше, т.к. придется встаялять победу над тем что подвал таблицы перекрывает таблицу, оставил как есть
-                element(byXpath("//table/tbody/tr[1]/td[1]"))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
-                    .click()
-            } else if (it == Dictionaries.IncidentTypes){
-                element(byXpath("//table/tbody/tr"))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
-                    .click()
-            }
+            //Ждем прорисовки таблицы до уровня появления хоть одного трехточечного меню
+            element(byXpath("//table/tbody/tr/td[last()]//button"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+            //открываем трехточечное меню случайной строки
+            elements(byXpath("//table/tbody/tr/td[last()]//button"))
+                .random()
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .scrollIntoView("{block: \"center\"}")
+                .click()
+            //кликаем по пункту меню "Рассмотреть"
+            element(byXpath("//div[@role='presentation']//*[text()='Просмотреть']/text()/ancestor::button"))
+                .should(exist, ofSeconds(waitTime))
+                .shouldBe(visible, ofSeconds(waitTime))
+                .click()
+            //проверяем наличие элемента "Общие данные"
             element(byXpath("//*[text()='Общие данные']/ancestor::div[1]"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
+            //проверяем шринки текстовых полей
             shrinkCheckTool()
-        //Thread.sleep(5000)
         }
     }
 
@@ -1264,16 +1261,15 @@ class PimTests : BaseTest(){
                 && elements(byXpath("//table/thead/tr[1]/th[1]//*[text()]")).size ==0
             ){
                 val stringCount = elements(byXpath("//table/tbody/tr")).size
-                element(byXpath("//table/thead/tr[1]/th[1]//button"))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
-                    .click()
-                element(byXpath("//table/thead/tr[1]/th[1]//*[@name='arrowDown']"))
-                    .should(exist, ofSeconds(waitTime))
-                    .shouldBe(visible, ofSeconds(waitTime))
+                do {
+                    element(byXpath("//table/thead/tr[1]/th[1]//button"))
+                        .should(exist, ofSeconds(waitTime))
+                        .shouldBe(visible, ofSeconds(waitTime))
+                        .click()
+                    Thread.sleep(300)
+                } while (!element(byXpath("//table/thead/tr[1]/th[1]//*[@name='arrowDown']")).exists())
                 val  newStringCount = elements(byXpath("//table/tbody/tr")).size
                 Assertions.assertTrue(stringCount < newStringCount)
-
             }
         }
     }

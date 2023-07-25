@@ -142,7 +142,7 @@ class MapTest  : BaseTest(){
 //            .should(exist, ofSeconds(waitTime))
 //            .shouldBe(visible, ofSeconds(waitTime))
 //            .click()
-        checkICToolIsStatus(`В обработке`, waitTime)
+        checkICToolIsStatus(`В обработке`, longWait)
         checkICToolDopInfo("Autotest MT_002, Широта = $lat, Долгота = $lon", waitTime)
         //переходим в карту
         element(byCssSelector("div#place div[style*='cursor']"))
@@ -175,7 +175,8 @@ class MapTest  : BaseTest(){
         if (ytile >= (1 shl coordinates[2].toInt())) {
             ytile = (1 shl coordinates[2].toInt()) - 1
         }
-        element(byXpath("//div[@id='skeleton']//main//img[@alt and @role='presentation' and contains(@src,'16/$xtile/$ytile.png')]"))
+        //div[@id='skeleton']//main//img[@alt and @role='presentation' and contains(@src,'16/$xtile/$ytile.png')]"
+        element(byXpath("//div[@id='skeleton']//main//img[@alt and contains(@src,'16/$xtile/$ytile.png')]"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         back()

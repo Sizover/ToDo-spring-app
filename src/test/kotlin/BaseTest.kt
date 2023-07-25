@@ -85,7 +85,12 @@ open class BaseTest {
         //https://peter.sh/experiments/chromium-command-line-switches/
         //https://selenide.org/javadoc/current/com/codeborne/selenide/Configuration.html
         val options = ChromeOptions()
-        options.addArguments("--auto-accept-camera-and-microphone-capture")
+        //options.addArguments("--auto-accept-camera-and-microphone-capture")
+        //TODO после обновления (выхода новых версий) браузера/selenide надо раскоментить опцию --auto-accept-camera-and-microphone-capture
+        // в текущем виде сборки (114.0.5735.90/6.15) браузер не запускается с ошибкой
+        // "org.openqa.selenium.SessionNotCreatedException: Could not start a new session. Response code 500. Message: unknown error: Chrome failed to start: crashed.
+        //  (unknown error: DevToolsActivePort file doesn't exist)
+        //  (The process started from chrome location /usr/bin/google-chrome is no longer running, so ChromeDriver is assuming that Chrome has crashed.) "
         options.addArguments("--use-fake-device-for-media-stream")
 //        options.addArguments("--use-file-for-fake-audio-capture")
         options.addArguments("--use-fake-ui-for-media-stream")
@@ -96,6 +101,7 @@ open class BaseTest {
             options.addArguments("--disable-gpu")
         }
         Configuration.browser = CHROME
+        Configuration.driverManagerEnabled = true
         Configuration.timeout = 10000
         Configuration.browserSize = "1920x1080"
         Configuration.proxyEnabled = proxy
@@ -105,10 +111,7 @@ open class BaseTest {
         Configuration.baseUrl = standUrl
         Configuration.browserCapabilities = options
 //        open(standUrl)
-//        clearBrowserCookies()
-//        clearBrowserLocalStorage()
-//        closeWindow()
-        open(standUrl)
+        open("https://test.kiap.local/")
         //логинимся
         element(byName("username")).sendKeys(mainLogin)
         element(byName("password")).sendKeys(mainPassword)
@@ -120,7 +123,7 @@ open class BaseTest {
 
     fun anyLogonTool(username: String, password: String) {
         val options = ChromeOptions()
-        options.addArguments("--auto-accept-camera-and-microphone-capture")
+//        options.addArguments("--auto-accept-camera-and-microphone-capture")
         options.addArguments("--use-fake-device-for-media-stream")
 //        options.addArguments("--use-file-for-fake-audio-capture")
         options.addArguments("--use-fake-ui-for-media-stream")

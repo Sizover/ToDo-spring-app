@@ -11,9 +11,9 @@ class MyMenu: BaseTest() {
     }
 
     enum class Incidents(override val menu: MenuEnum, override val subMenu: String, override val table: Boolean, override val desc: String?) : SubmenuInterface {
-        CreateIncident(MenuEnum.Происшествия, "Создать обращение", false, null),
-        IncidentsList(MenuEnum.Происшествия, "Список происшествий", true, null),
-        IncidentsArchive(MenuEnum.Происшествия, "Архив происшествий", true, null)
+        CreateIncident(MenuEnum.События, "Создать обращение", false, null),
+        IncidentsList(MenuEnum.События, "Список происшествий", true, null),
+        IncidentsArchive(MenuEnum.События, "Архив происшествий", true, null)
     }
 
     enum class Map(override val menu: MenuEnum, override val subMenu: String, override val table: Boolean, override val desc: String?) : SubmenuInterface {

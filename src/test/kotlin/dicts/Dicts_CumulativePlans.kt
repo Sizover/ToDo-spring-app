@@ -226,11 +226,6 @@ class Dicts_CumulativePlans:BaseTest() {
         element(byXpath("//div[@role='textbox']/p[text()='AutoTest Dicts CP 0010 parent 1 отредактировано']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//        logoffTool()
-//        logonTool(false)
-        //TODO убрать разлогинивание, когда починиться баг 1800
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //Идем за данными для заполнения доп полей
         menuNavigation(Dictionaries.Hotlines, waitTime)
         tableColumnCheckbox("Наименование", true, waitTime)
@@ -487,14 +482,15 @@ class Dicts_CumulativePlans:BaseTest() {
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .sendKeys("Назначено AutoTest Dicts CP 0010")
-                element(byXpath(stateLocator.format("true") + "//form[@novalidate]//*[text()='Назначить']/text()/ancestor::button"))
+                element(byXpath(stateLocator.format("true") + "/ancestor::form[@novalidate]//*[text()='Назначить']/text()/ancestor::button"))
+                    //div[@id='iplan']//*[text()='AutoTest Dicts CP 0010 child 3 Назначение']/ancestor::div[@role='button' and @aria-expanded='true']
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .scrollIntoView("{block: \"center\"}")
                     .click()
-                element(byXpath(stateLocator.format("true") + "//form[@novalidate]//*[text()='Назначить']/text()/ancestor::button"))
+                element(byXpath(stateLocator.format("true") + "/ancestor::form[@novalidate]//*[text()='Назначить']/text()/ancestor::button"))
                     .shouldNot(exist, ofSeconds(longWait))
-                element(byXpath(stateLocator.format("true") + "//form[@novalidate]//*[text()='Назначено']/text()/ancestor::button[@disabled]"))
+                element(byXpath(stateLocator.format("true") + "/ancestor::form[@novalidate]//*[text()='Назначено']/text()/ancestor::button[@disabled]"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
             }
@@ -574,8 +570,6 @@ class Dicts_CumulativePlans:BaseTest() {
         element(byXpath("//table/tbody/tr//*[contains(text(),'AutoTest Dicts CP 0010') or contains(text(),'Нет данных')]"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        //table/tbody/tr//*[contains(text(),'AutoTest Dicts CP 0010')]/ancestor::tr/td[$columnOfNumber]//text()/parent::*[contains(text(),'.')]/ancestor::tr/td[last()]
-        //table/tbody/tr[td[$nameCPColumn]//text()/parent::*[contains(text(),'AutoTest Dicts CP 0010')] and td[$columnOfNumber]//text()/parent::*[contains(text(),'.')]]/td[last()]//button
         //сначала добавим в список все дочерние пункты по принципу наличия точки в номере
         elements(byXpath("//table/tbody/tr[td[$nameCPColumn]//text()/parent::*[contains(text(),'AutoTest Dicts CP 0010')] and td[$columnOfNumber]//text()/parent::*[contains(text(),'.')]]/td[$nameCPColumn]/text()/..")).forEach {
             listOfRemoved.add(it.ownText)
