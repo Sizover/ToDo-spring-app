@@ -79,7 +79,7 @@
 * "HEADLESS" - булева настройка включения или выключения безголового режима браузера.  
 * "DISABLE_GPU" - булева настройка применения [опции](https://peter.sh/experiments/chromium-command-line-switches/#disable-gpu) запуска браузера "--disable-gpu".  
 * "NO_SANDBOX" - булева настройка применения [опции](https://peter.sh/experiments/chromium-command-line-switches/#disable-gpu) запуска браузера "--no-sandbox".
-* "REMOTE_URL" - URL удаленного веб-драйвера. (http://selenoid.kiap.local:4444/wd/hub)
+* "REMOTE_URL" - URL удаленного веб-драйвера. При передаче значения null запуск тестов будет произведен локально (http://selenoid.kiap.local:4444/wd/hub)
 ## Архитектура?
 
 Для управления составом запускаемых тестов используется аннотация @org.testng.annotations.Test с передачей параметра groups.  
