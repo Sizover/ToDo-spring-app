@@ -67,7 +67,7 @@
 ```gradle clean test -Psuite=$SUITE```
 
 Список значений используемых на ТС test  
-```ADMIN_LOGIN=autotest_admin;ADMIN_PASSWORD=autotest_admin;ATTACH_FOLDER=./attachFolder;DISABLE_GPU=false;HEADLESS=false;MAIN_LOGIN=a.sizov;MAIN_PASSWORD=a.sizov;NO_SANDBOX=false;URL=https://test.kiap.local/```
+```ADMIN_LOGIN=autotest_admin;ADMIN_PASSWORD=autotest_admin;ATTACH_FOLDER=./attachFolder;DISABLE_GPU=false;HEADLESS=false;MAIN_LOGIN=a.sizov;MAIN_PASSWORD=a.sizov;NO_SANDBOX=false;URL=https://test.kiap.local/;REMOTE_URL=http://selenoid.kiap.local:4444/wd/hub```
 
 
 * "URL" - ссылка на главную страницу КИАП.  
@@ -79,6 +79,7 @@
 * "HEADLESS" - булева настройка включения или выключения безголового режима браузера.  
 * "DISABLE_GPU" - булева настройка применения [опции](https://peter.sh/experiments/chromium-command-line-switches/#disable-gpu) запуска браузера "--disable-gpu".  
 * "NO_SANDBOX" - булева настройка применения [опции](https://peter.sh/experiments/chromium-command-line-switches/#disable-gpu) запуска браузера "--no-sandbox".
+* "REMOTE_URL" - URL удаленного веб-драйвера. (http://selenoid.kiap.local:4444/wd/hub)
 ## Архитектура?
 
 Для управления составом запускаемых тестов используется аннотация @org.testng.annotations.Test с передачей параметра groups.  
