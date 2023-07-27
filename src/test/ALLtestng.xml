@@ -12,13 +12,8 @@
     <parameter name="headless" value="${HEADLESS}"/>
     <parameter name="no_sandbox" value="${NO_SANDBOX}"/>
     <parameter name="disable_gpu" value="${DISABLE_GPU}"/>
+    <parameter name="remote_url" value="${REMOTE_URL}"/>
     <test name="All">
-        <parameter name="url" value="https://test.kiap.local/"/>
-        <parameter name="mainLogin" value="a.sizov"/>
-        <parameter name="mainPassword" value="a.sizov"/>
-        <parameter name="adminLogin" value="autotest_admin"/>
-        <parameter name="adminPassword" value="autotest_admin"/>
-        <parameter name="attachFolder" value="/home/isizov/IdeaProjects/testing-e2e/build/attachTests"/>
         <groups>
             <run>
                 <include name = "ALL"/>
