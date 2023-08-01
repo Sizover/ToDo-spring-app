@@ -12,6 +12,7 @@
     <parameter name="headless" value="${HEADLESS}"/>
     <parameter name="no_sandbox" value="${NO_SANDBOX}"/>
     <parameter name="disable_gpu" value="${DISABLE_GPU}"/>
+    <parameter name="remote_url" value="${REMOTE_URL}"/>
     <test name="All">
         <groups>
             <run>

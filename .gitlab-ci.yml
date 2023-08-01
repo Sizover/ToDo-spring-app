@@ -8,20 +8,26 @@ include:
 stages:
   - prepare
   - pre-test   
-  - test                                
+  - test       
+                 
 variables:
   GRADLE_IMAGE: gradle:8.0.2-jdk17
   #IMPORT_DIR: deploy/demo-maket-2022/data ## Абсолютный путь к папке для загрузки через loader
-  IMPORT_DIR: deploy/vladikavkaz
-  ## Версия среды: # release - сооветствует test.kiap.local(ветка develop),dev - сооветствует dev.kiap.local(ветка feature), v2.x - stage.kiap.local   
+  IMPORT_DIR: deploy/demo-maket/2.10/data-kk
+  IMPORT_DIR_BRANCH: develop
+  ## Версия среды: # test - сооветствует test.kiap.local(ветка develop),dev - сооветствует dev.kiap.local(ветка feature), v2.x - stage.kiap.local
 ## Версия среды киапы    
-  KIAP_VERSION: release 
+  KIAP_VERSION: test
 ## Версия только компонента лоадера  
-  LOADER_VERSION: release       
+  LOADER_VERSION: test
 
 deploy-kiap:
   extends: .reinstall_helm_kiap
   stage: prepare
+  variables:
+    VALUESFILE: values-qa.yaml
+    NAMESPACE: kiap
+#    PROJECT_BRANCH: feature/D551
 
 loader_data_qa:
   extends: .loader_data_qa
@@ -30,4 +36,20 @@ loader_data_qa:
 pull_loader_data:
   extends: .pull_loader_data
   stage: prepare 
+
+GradleTest:
+  variables:
+    REMOTE_URL: http://selenoid.kiap.local:4444/wd/hub
+    URL: https://qa.kiap.local
+    MAIN_LOGIN: test
+    MAIN_PASSWORD: test!1+1
+    ADMIN_LOGIN: test
+    ADMIN_PASSWORD: test!1+1
+    SUITE: ci.xml
+
+  script:
+    - gradle clean test -Psuite=$SUITE
+
+
+
 

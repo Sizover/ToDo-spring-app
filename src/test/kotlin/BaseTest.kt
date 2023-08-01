@@ -6,6 +6,7 @@ import com.codeborne.selenide.Condition.attribute
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.visible
 import com.codeborne.selenide.Configuration
+import com.codeborne.selenide.FileDownloadMode
 import com.codeborne.selenide.Selectors.byCssSelector
 import com.codeborne.selenide.Selectors.byName
 import com.codeborne.selenide.Selectors.byXpath
@@ -46,6 +47,7 @@ open class BaseTest {
     //просто переменные с текущей датой, для различных целей
     var date = LocalDate.now()
     var dateTime = LocalDateTime.now()
+    //Переменные определяемые через энвы/параметры запуска
     lateinit var standUrl: String
     lateinit var mainLogin: String
     lateinit var mainPassword: String
@@ -154,6 +156,8 @@ open class BaseTest {
         Configuration.webdriverLogsEnabled = false
         Configuration.headless = browserhead.toBoolean()
         Configuration.baseUrl = standUrl
+        Configuration.fileDownload = FileDownloadMode.FOLDER
+        Configuration.downloadsFolder = attachFolder
         Configuration.browserCapabilities = options
         open(standUrl)
         //логинимся

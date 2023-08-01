@@ -42,6 +42,7 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-reflect")
     testImplementation("org.jetbrains.kotlin:kotlin-reflect:%kotlinVersion%")
     testImplementation("io.rest-assured:rest-assured:5.3.0")
+    testImplementation("org.seleniumhq.selenium:selenium-remote-driver:4.10.0")
 
 //    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
 //    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.8.2")
@@ -52,8 +53,12 @@ dependencies {
 }
 
 tasks.test {
-    //useJUnitPlatform()
-    useTestNG()
+    val suite = project.properties.getOrDefault("suite", "testng.xml")
+    useTestNG() {
+        useDefaultListeners = true
+        outputDirectory = file("$projectDir/build/reports/TestNG")
+        suites("/src/test/${suite}")
+    }
 }
 
 tasks.withType<KotlinCompile> {
