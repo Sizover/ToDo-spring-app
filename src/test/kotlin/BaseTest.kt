@@ -55,6 +55,7 @@ open class BaseTest {
     lateinit var browserhead: String
     lateinit var no_sandbox: String
     lateinit var disable_gpu: String
+    var remote_url: String? = null
 
     //"короткое" ожидание для совершения действия направленного на элемент страницы
     val waitTime: Long = 5
@@ -65,10 +66,10 @@ open class BaseTest {
     // отладочная переменная для выведения (или нет) отладочной информации, в консоль
     val print = true
 
-    @Parameters("url", "mainLogin", "mainPassword", "adminLogin", "adminPassword", "attachFolder", "headless", "no_sandbox", "disable_gpu")
-//    @BeforeSuite(alwaysRun = true)  Method
+    @Parameters("url", "mainLogin", "mainPassword", "adminLogin", "adminPassword", "attachFolder", "headless", "no_sandbox", "disable_gpu", "remote_url")
+//    @BeforeSuite(alwaysRun = true)
     @BeforeMethod(alwaysRun = true)
-    open fun getConf(urlValue: String, mainLoginValue: String, mainPasswordValue: String, adminLoginValue: String, adminPasswordValue: String, attachFolderValue: String, headless: String, nosandbox: String, disablegpu: String){
+    open fun getConf(urlValue: String, mainLoginValue: String, mainPasswordValue: String, adminLoginValue: String, adminPasswordValue: String, attachFolderValue: String, headless: String, nosandbox: String, disablegpu: String, remoteurl: String?){
         standUrl = urlValue
         mainLogin = mainLoginValue
         mainPassword = mainPasswordValue
@@ -78,30 +79,44 @@ open class BaseTest {
         browserhead = headless
         no_sandbox = nosandbox
         disable_gpu = disablegpu
+        remote_url = remoteurl
     }
 
     fun logonTool(proxy: Boolean) {
         //https://overcoder.net/q/1369284/%D0%BA%D0%B0%D0%BA-%D1%80%D0%B0%D0%B7%D1%80%D0%B5%D1%88%D0%B8%D1%82%D1%8C-%D0%B8%D0%BB%D0%B8-%D0%B7%D0%B0%D0%BF%D1%80%D0%B5%D1%82%D0%B8%D1%82%D1%8C-%D1%83%D0%B2%D0%B5%D0%B4%D0%BE%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BE-%D0%B2%D1%81%D0%BF%D0%BB%D1%8B%D0%B2%D0%B0%D1%8E%D1%89%D0%B5%D0%B9-%D0%BA%D0%B0%D0%BC%D0%B5%D1%80%D0%B5-%D0%BC%D0%B8%D0%BA%D1%80%D0%BE%D1%84%D0%BE%D0%BD%D0%B0
         //https://peter.sh/experiments/chromium-command-line-switches/
         //https://selenide.org/javadoc/current/com/codeborne/selenide/Configuration.html
-        val options = ChromeOptions()
+
+        // Поключение к selenoid
+        val options: MutableMap<String, Boolean> = HashMap()
+        //Переключатель на локальный/удаленный запуск тестов. Либо тут, либо в передаваемых параметрах
+        Configuration.remote = remote_url
+        //http://selenoid.kiap.local:4444/wd/hub
+        //Configuration.remote = null
+        options["enableVNC"] = true
+        options["enableVideo"] = true
+        options["enableLog"] = true
+        val capabilities = ChromeOptions()
         //options.addArguments("--auto-accept-camera-and-microphone-capture")
         //TODO после обновления (выхода новых версий) браузера/selenide надо раскоментить опцию --auto-accept-camera-and-microphone-capture
         // в текущем виде сборки (114.0.5735.90/6.15) браузер не запускается с ошибкой
         // "org.openqa.selenium.SessionNotCreatedException: Could not start a new session. Response code 500. Message: unknown error: Chrome failed to start: crashed.
         //  (unknown error: DevToolsActivePort file doesn't exist)
         //  (The process started from chrome location /usr/bin/google-chrome is no longer running, so ChromeDriver is assuming that Chrome has crashed.) "
-        options.addArguments("--use-fake-device-for-media-stream")
-//        options.addArguments("--use-file-for-fake-audio-capture")
-        options.addArguments("--use-fake-ui-for-media-stream")
+        //capabilities.addArguments("--auto-accept-camera-and-microphone-capture")
+        capabilities.addArguments("--use-fake-device-for-media-stream")
+        capabilities.addArguments("--use-file-for-fake-audio-capture")
+        capabilities.addArguments("--use-fake-ui-for-media-stream")
+        //capabilities.addArguments("-Dselenide.headless=true")
         if (no_sandbox.toBoolean()){
-            options.addArguments("--no-sandbox")
+            capabilities.addArguments("--no-sandbox")
         }
         if (disable_gpu.toBoolean()){
-            options.addArguments("--disable-gpu")
+            capabilities.addArguments("--disable-gpu")
         }
+        Configuration.browserCapabilities = capabilities
+        Configuration.browserCapabilities.setCapability("selenoid:options", options)
         Configuration.browser = CHROME
-        Configuration.driverManagerEnabled = true
         Configuration.timeout = 10000
         Configuration.browserSize = "1920x1080"
         Configuration.proxyEnabled = proxy
@@ -109,13 +124,13 @@ open class BaseTest {
         Configuration.webdriverLogsEnabled = false
         Configuration.headless = browserhead.toBoolean()
         Configuration.baseUrl = standUrl
-        Configuration.browserCapabilities = options
-        open("https://test.kiap.local/")
+        open(standUrl)
         //логинимся
         element(byName("username")).sendKeys(mainLogin)
         element(byName("password")).sendKeys(mainPassword)
         element(byName("login")).click()
     }
+
 
 //        //https://overcoder.net/q/1369284/%D0%BA%D0%B0%D0%BA-%D1%80%D0%B0%D0%B7%D1%80%D0%B5%D1%88%D0%B8%D1%82%D1%8C-%D0%B8%D0%BB%D0%B8-%D0%B7%D0%B0%D0%BF%D1%80%D0%B5%D1%82%D0%B8%D1%82%D1%8C-%D1%83%D0%B2%D0%B5%D0%B4%D0%BE%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BE-%D0%B2%D1%81%D0%BF%D0%BB%D1%8B%D0%B2%D0%B0%D1%8E%D1%89%D0%B5%D0%B9-%D0%BA%D0%B0%D0%BC%D0%B5%D1%80%D0%B5-%D0%BC%D0%B8%D0%BA%D1%80%D0%BE%D1%84%D0%BE%D0%BD%D0%B0
 
