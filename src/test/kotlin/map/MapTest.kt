@@ -12,7 +12,6 @@ import com.codeborne.selenide.Selenide.elements
 import com.codeborne.selenide.Selenide.refresh
 import com.codeborne.selenide.Selenide.switchTo
 import org.junit.jupiter.api.Assertions
-import org.openqa.selenium.Keys
 import test_library.alerts.AlertsEnum
 import test_library.menu.MyMenu.Dictionaries
 import test_library.menu.MyMenu.Incidents
@@ -33,6 +32,7 @@ class MapTest  : BaseTest(){
         //включаем дежурные службы
         element(byXpath(checkboxSelector.format(checkboxName)))
             .should(exist, ofSeconds(waitTime))
+            .scrollIntoView("{block: \"center\"}")
             .click()
         element(byXpath(checkboxStatus.format(checkboxName)))
             .should(exist, ofSeconds(waitTime))
@@ -45,6 +45,7 @@ class MapTest  : BaseTest(){
             "Датчики" -> { src = "kiap_sensor" }
             "Организации" -> { src = "kiap_mass" }
         }
+        Thread.sleep(2000)
         val checkboxNameMarker = elements(byCssSelector("img.markerBlue10[src*='$src']")).size
         val summaryMarker = numericMarker + checkboxNameMarker
         Assertions.assertTrue(summaryMarker > 0)
@@ -78,8 +79,11 @@ class MapTest  : BaseTest(){
             .shouldBe(visible, ofSeconds(waitTime))
         //отключаем все чек боксы
         while (elements(byXpath("//main/div[@style='display: block;']//*[name()='path'][@d]/../../input")).size > 0) {
-            element(byXpath("//main/div[@style='display: block;']//*[name()='path'][@d]/../../input")).sendKeys(Keys.END)
-            element(byXpath("//main/div[@style='display: block;']//*[name()='path'][@d]/../../input")).click()
+//            element(byXpath("//main/div[@style='display: block;']//*[name()='path'][@d]/../../input")).sendKeys(Keys.END)
+            element(byXpath("//main/div[@style='display: block;']//*[name()='path'][@d]/../../input"))
+                .should(exist, ofSeconds(waitTime))
+                .scrollIntoView("{block: \"center\"}")
+                .click()
             Thread.sleep(500)
         }
         //включаем чекбокс всех происшествий
@@ -87,12 +91,14 @@ class MapTest  : BaseTest(){
         val checkboxStatus = "//h6[text()='%s']/../parent::span/parent::label/span[@style]//*[name()='path']"
         element(byXpath(checkboxSelector.format("Все статусы")))
             .should(exist, ofSeconds(waitTime))
+            .scrollIntoView("{block: \"center\"}")
             .click()
         //убеждаемся, что он включился
         element(byXpath(checkboxStatus.format("Все статусы")))
             .should(exist, ofSeconds(waitTime))
+        Thread.sleep(2000)
         //подсчитываем элементы, что бы сравнить их сумму с нулем
-        val markerSelector = "div.leaflet-pane.leaflet-marker-pane>img.%s"
+        val markerSelector = "div.leaflet-pane.leaflet-markers-pane>img.%s"
         val markerIncidentInProcess = elements(byCssSelector(markerSelector.format("markerIncidentInProcess"))).size
         val markerIncidentFinished = elements(byCssSelector(markerSelector.format("markerIncidentFinished"))).size
         val markerIncidentNew = elements(byCssSelector(markerSelector.format("markerIncidentNew"))).size

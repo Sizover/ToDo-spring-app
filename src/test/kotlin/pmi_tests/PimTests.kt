@@ -10,6 +10,8 @@ import com.codeborne.selenide.Condition.exactText
 import com.codeborne.selenide.Condition.exist
 import com.codeborne.selenide.Condition.text
 import com.codeborne.selenide.Condition.visible
+import com.codeborne.selenide.DownloadOptions
+import com.codeborne.selenide.FileDownloadMode
 import com.codeborne.selenide.Selectors
 import com.codeborne.selenide.Selectors.byCssSelector
 import com.codeborne.selenide.Selectors.byName
@@ -40,8 +42,8 @@ import test_library.statuses.StatusEnum
 import test_library.statuses.StatusEnum.`В обработке`
 import test_library.statuses.StatusEnum.Завершена
 import test_library.statuses.StatusEnum.Закрыта
-import test_library.statuses.StatusEnum.Отменена
 import test_library.statuses.StatusEnum.Реагирование
+import test_library.statuses.StatusEnum.Отменена
 import java.io.File
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
@@ -800,13 +802,12 @@ class PimTests : BaseTest(){
         element(byXpath("//label[text()='Телефон']/following-sibling::div/input"))
             .sendKeys("+79$tel")
         val teamS = (1..100).random()
-        element(byXpath("//label[text()='Численность ед.реагирования']/following-sibling::div/input"))
+        element(byXpath("//label[text()='Численность личного состава']/following-sibling::div/input"))
             .sendKeys("$teamS")
         val teamST = (0..10).random()
         element(byXpath("//label[text()='Количество техники']/following-sibling::div/input"))
             .sendKeys("$teamST")
-        element(byXpath("//form//label[text()='Примечание']/following-sibling::div/textarea[@name='description']"))
-            .sendKeys("Бригада-Team$team, в количестве $teamS человек, выехала на место происшествия, используя $teamST единиц(ы) техники")
+        enterTextInMDtextboxByName("Примечание", "Бригада-Team$team, в количестве $teamS человек, выехала на место происшествия, используя $teamST единиц(ы) техники", waitTime)
         element(byXpath("//*[text()='Сохранить']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -831,13 +832,13 @@ class PimTests : BaseTest(){
         element(byXpath("//label[text()='Телефон']/following-sibling::div/input[@value='+79$tel']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        element(byXpath("//label[text()='Численность ед.реагирования']/following-sibling::div/input[@value='$teamS']"))
+        element(byXpath("//label[text()='Численность личного состава']/following-sibling::div/input[@value='$teamS']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         element(byXpath("//label[text()='Количество техники']/following-sibling::div/input[@value='$teamST']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        element(byXpath("//form//label[text()='Примечание']/following-sibling::div/textarea[@name='description' and text()='Бригада-Team$team, в количестве $teamS человек, выехала на место происшествия, используя $teamST единиц(ы) техники']"))
+        element(byXpath("//*[text()='Примечание']/ancestor::div[2]//div[@role='textbox']//*[text()='Бригада-Team$team, в количестве $teamS человек, выехала на место происшествия, используя $teamST единиц(ы) техники']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         //передвигаем бригаду по статусам
@@ -897,7 +898,7 @@ class PimTests : BaseTest(){
         checkAlert(snackbarWarning, "Данный статус не может быть присвоен", true, longWait)
     }
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL", "LOCAL2"])
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL", "112"])
     fun `PMI 0112 Назначение КП из 112 в КИАП`() {
         //A.3.19 Убедиться на стороне Системы-112 в наличии возможности назначать   карточку на ЕЦОР  (КИАП) из Системы-112
         //A.3.20 Прием карточки из Системы-112
@@ -1014,7 +1015,7 @@ class PimTests : BaseTest(){
         //Из различных вариантов проверок скачивания+целостности скачивания было нагуглено, что самое оптимальное это метод .download()
         //который упадет если не сможет скачать файл
         val companiesList = mutableListOf<String>()
-        logonTool(false)
+        logonTool(true)
         menuNavigation(Dictionaries.Companies, waitTime)
         tableStringsOnPage(50, waitTime)
         //кликаем по иконке справочников в боковом меню
@@ -1048,13 +1049,22 @@ class PimTests : BaseTest(){
                 .scrollIntoView(true)
             elements(byXpath("//h3[text()='Паспорт объекта, файлы']/parent::div[@id='files']//*[@aria-label and not(@aria-label='Действия над файлом')]/a"))
                 .forEach { oneFile ->
-                    oneFile.download()
+                    oneFile.download(DownloadOptions.using(FileDownloadMode.PROXY).withTimeout(59999))
                 }
+//            elements(byXpath("//h3[text()='Паспорт объекта, файлы']/parent::div[@id='files']//*[@aria-label and not(@aria-label='Действия над файлом')]/a"))
+//                .forEach { oneFile ->
+//                    oneFile.click()
+//                    element(byXpath("//div[@role='presentation']//div[text()='Сохранить ']//a[@href]"))
+//                        .should(exist, ofSeconds(waitTime))
+//                        .shouldBe(visible, ofSeconds(waitTime))
+//                    element(byXpath("//div[@role='presentation']//div[text()='Сохранить ']//a[@href]"))
+//                        .download(DownloadOptions.using(FileDownloadMode.PROXY).withTimeout(59999))
+//                }
             back()
         }
     }
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
+    @Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `PMI 0220 Проверка открытия карточек справочных сущностей`() {
         //A.3.28 Проверка централизованного хранения и управления структурированной справочной информации
         logonTool(false)
@@ -1163,7 +1173,8 @@ class PimTests : BaseTest(){
                     val columnName = element(byXpath("//table/thead/tr/th[$col]//text()/..")).ownText.toString()
                     for (hint in 0 until searchHintList!!.size){
                         //если заголовок столбца совпал с подсказкой, то вбиваем значение этого столбца из каждой строки в список из которого выберем случайное значение для поиска, ждем что нижний счетчик строк будет строго меньше исходного
-                        if (columnName.contains(searchHintList[hint])
+//                        if (columnName.contains(searchHintList[hint])
+                        if (columnName == searchHintList[hint]
                             || ((columnName == "Телефонный код") && (searchHintList[hint] == "Тел.код"))
                             || ((columnName == "Метка") && (searchHintList[hint] == "Имя метки"))
                             || ((columnName == "№") && (searchHintList[hint] == "Номер пункта"))
@@ -1456,7 +1467,7 @@ class PimTests : BaseTest(){
         }
     }
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL", "LOCAL2"])
     fun `PMI 0260 Проверка использования ассоциативных связей-ссылок между объектами справочников`(){
         //A.3.32 Проверка использования ассоциативных связей-ссылок между объектами справочников
         logonTool(false)
@@ -1483,13 +1494,13 @@ class PimTests : BaseTest(){
         element(byXpath("//*[text()='Руководитель']/following-sibling::*//*[text()]"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        element(byXpath("//*[text()='Руководитель']/following-sibling::*//*[text()]//*[@aria-label='Перейти']"))
+        element(byXpath("//*[text()='Руководитель']/..//*[@aria-label='Перейти']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
         val officialFIO = element(byXpath("//*[text()='Руководитель']/following-sibling::*//*[text()]"))
             .ownText
         //кликаем на стрелку перехода к руководителю
-        element(byXpath("//*[text()='Руководитель']/following-sibling::*//*[text()]//*[@aria-label='Перейти']"))
+        element(byXpath("//*[text()='Руководитель']/..//*[@aria-label='Перейти']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
             .click()

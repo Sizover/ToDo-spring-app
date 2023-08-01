@@ -14,8 +14,8 @@ import test_library.icTabs.TabEnum
 import test_library.menu.MyMenu.Incidents
 import test_library.statuses.StatusEnum
 import test_library.statuses.StatusEnum.Завершена
-import test_library.statuses.StatusEnum.Закрыта
 import test_library.statuses.StatusEnum.Отменена
+import test_library.statuses.StatusEnum.Закрыта
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime

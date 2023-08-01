@@ -89,10 +89,11 @@ class Dicts_KB: BaseTest() {
                     element(byXpath("//table/tbody/tr/td[$columnOfNameArticl]/text()/parent::*[contains(text(),'$nameOfCategory')]/ancestor::tr"))
                         .click()
                     //ждем карточки
-                    element(byXpath("//div[@id='dict-title']//h1[text()='Просмотр статьи']"))
+                    //ждем заголовок в хлебных крошках
+                    element(byXpath("//nav//li//*[text()='Просмотр статьи']"))
                         .should(exist, ofSeconds(waitTime))
                         .shouldBe(visible, ofSeconds(waitTime))
-                    element(byXpath("//div[@id='dict-title']//h4[text()='$removedName']"))
+                    element(byXpath("//div[@id='dict-title']//h1[text()='$removedName']"))
                         .should(exist, ofSeconds(waitTime))
                         .shouldBe(visible, ofSeconds(waitTime))
                     //открываем трехточечное меню
@@ -597,11 +598,11 @@ class Dicts_KB: BaseTest() {
             element(byXpath("//nav/ol/li[last()]//*[text()='Просмотр статьи']"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
-            //проверяем РМ
-            element(byXpath("//div[@id='dict-title']//h1[text()='Просмотр статьи']"))
+            //проверяем РМ по хлебным крошкам
+            element(byXpath("//nav//li//*[text()='Просмотр статьи']"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
-            element(byXpath("//div[@id='dict-title']//h4[text()='Статья $nameOfCategory']"))
+            element(byXpath("//div[@id='dict-title']//h1[text()='Статья $nameOfCategory']"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
             //проверяем атрибуты статьи
@@ -622,9 +623,6 @@ class Dicts_KB: BaseTest() {
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
                 .click()
-            element(byXpath("//div[@id='dict-title']//h1[text()='Редактирование статьи']"))
-                .should(exist, ofSeconds(waitTime))
-                .shouldBe(visible, ofSeconds(waitTime))
             //проверяем хлебные крошки
             element(byXpath("//nav/ol/li[last()]//*[text()='Редактирование статьи']"))
                 .should(exist, ofSeconds(waitTime))
@@ -669,7 +667,7 @@ class Dicts_KB: BaseTest() {
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
             //проверяем сохранность изменений в режиме просмотра
-            element(byXpath("//div[@id='dict-title']//h4[text()='Статья $nameOfCategory$substringForUpdate']"))
+            element(byXpath("//div[@id='dict-title']//h1[text()='Статья $nameOfCategory$substringForUpdate']"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
             //переходим в изменение
@@ -724,7 +722,7 @@ class Dicts_KB: BaseTest() {
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
             //проверяем сохранность изменений в режиме просмотра
-            element(byXpath("//div[@id='dict-title']//h4[text()='Статья $nameOfCategory']"))
+            element(byXpath("//div[@id='dict-title']//h1[text()='Статья $nameOfCategory']"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
             //через хлебные крошки возвращаемся в корневую папку
