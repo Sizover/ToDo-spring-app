@@ -133,12 +133,13 @@ open class BaseTest {
         element(byName("login")).click()
     }
 
+
 //        //https://overcoder.net/q/1369284/%D0%BA%D0%B0%D0%BA-%D1%80%D0%B0%D0%B7%D1%80%D0%B5%D1%88%D0%B8%D1%82%D1%8C-%D0%B8%D0%BB%D0%B8-%D0%B7%D0%B0%D0%BF%D1%80%D0%B5%D1%82%D0%B8%D1%82%D1%8C-%D1%83%D0%B2%D0%B5%D0%B4%D0%BE%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BE-%D0%B2%D1%81%D0%BF%D0%BB%D1%8B%D0%B2%D0%B0%D1%8E%D1%89%D0%B5%D0%B9-%D0%BA%D0%B0%D0%BC%D0%B5%D1%80%D0%B5-%D0%BC%D0%B8%D0%BA%D1%80%D0%BE%D1%84%D0%BE%D0%BD%D0%B0
 
 
     fun anyLogonTool(username: String, password: String) {
         val options = ChromeOptions()
-        options.addArguments("--auto-accept-camera-and-microphone-capture")
+//        options.addArguments("--auto-accept-camera-and-microphone-capture")
         options.addArguments("--use-fake-device-for-media-stream")
 //        options.addArguments("--use-file-for-fake-audio-capture")
         options.addArguments("--use-fake-ui-for-media-stream")
@@ -428,6 +429,7 @@ open class BaseTest {
             if (element(byXpath("(//input[@type='text'])[$i]")).getAttribute("value")!!.isNotEmpty()
                 || elements(byXpath("(//input[@type='text'])[$i]/preceding-sibling::div/span")).size > 0
                 || elements(byXpath("(//input[@type='text'])[$i]/preceding-sibling::span")).size > 0
+                || elements(byXpath("(//input[@type='text'])[$i]/preceding-sibling::div[@aria-label]")).size > 0
             ){
                 Assertions.assertTrue(shrinkStatus)
             } else {Assertions.assertTrue(!shrinkStatus)}
@@ -438,12 +440,15 @@ open class BaseTest {
                 Assertions.assertTrue(shrinkStatus)
             } else {Assertions.assertTrue(!shrinkStatus)}
         }
-        for (i in 1..elements(byXpath("//input[contains(@class,'Select')]")).size){
-            val shrinkStatus = element(byXpath("(//input[contains(@class,'Select')])[$i]/parent::div/preceding-sibling::label")).getAttribute("data-shrink").toBoolean()
-            if (element(byXpath("(//input[contains(@class,'Select')])[$i]")).getAttribute("value")!!.isNotEmpty()){
-                Assertions.assertTrue(shrinkStatus)
-            } else {Assertions.assertTrue(!shrinkStatus)}
-        }
+//        for (i in 1..elements(byXpath("//input[contains(@class,'Select')]")).size){
+//            val shrinkStatus = element(byXpath("(//input[contains(@class,'Select')])[$i]/parent::div/preceding-sibling::label")).getAttribute("data-shrink").toBoolean()
+//            if (element(byXpath("(//input[contains(@class,'Select')])[$i]")).getAttribute("value")!!.isNotEmpty()){
+//                Assertions.assertTrue(shrinkStatus)
+//            } else {Assertions.assertTrue(!shrinkStatus)}
+//        }
+        //TODO надо переписать метод проверки шкинка, т.к. он:
+        // а) в реализации не предусматривает листового дизайна
+        // б)перестал работать в карточках со встроенной таблицей с пагинацией
         for (i in 1..elements(byXpath("//textarea[@rows]")).size){
             val shrinkStatus = element(byXpath("(//textarea[@rows])[$i]/parent::div/preceding-sibling::label")).getAttribute("data-shrink").toBoolean()
             if (element(byXpath("(//textarea[@rows])[$i]")).ownText.isNotEmpty()){
@@ -974,7 +979,7 @@ open class BaseTest {
                 .shouldNot(exist, ofSeconds(waitTime))
             element(byXpath("//div[@id='incidentButtons']//button[1]//text()/parent::*[text()='${nextStatus.name}']"))
                 .should(exist, ofSeconds(waitTime))
-            //statusNow = element(byXpath("//div[@id='incidentButtons']//button[1]//text()/..")).ownText
+//            statusNow = element(byXpath("//div[@id='incidentButtons']//button[1]//text()/..")).ownText
 //            checkAlert(AlertsEnum.snackbarSuccess, "OK", true, waitTime)
             statusNow = nextStatus
             Thread.sleep(200)

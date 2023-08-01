@@ -90,8 +90,9 @@ class Labels : BaseTest(){
             val labelSample = element(byXpath("//label[text()='Предварительный просмотр']/..//*[@aria-label]//text()/..")).ownText
             labelListName.add(labelSample)
             //добавляем описание
-            element(byCssSelector("textarea[name='description']")).click()
-            element(byCssSelector("textarea[name='description']")).sendKeys("Метка \"$labelSample\" создана автотестом и должна быть удалена им же")
+            enterTextInMDtextboxByName("Описание", "Метка \"$labelSample\" создана автотестом и должна быть удалена им же", waitTime)
+//            element(byCssSelector("textarea[name='description']")).click()
+//            element(byCssSelector("textarea[name='description']")).sendKeys("Метка \"$labelSample\" создана автотестом и должна быть удалена им же")
             //выбираем случайный цвет
             elements(byXpath("//form[@novalidate]//*[@aria-labelledby]//input"))
                 .random()
@@ -116,7 +117,7 @@ class Labels : BaseTest(){
             element(byXpath("//tr/td//*[contains(text(),'$labelSample')]"))
                 .should(exist, ofSeconds(longWait))
                 .shouldBe(visible, ofSeconds(waitTime))
-            element(byXpath("//tr/td[text()='Метка \"$labelSample\" создана автотестом и должна быть удалена им же']"))
+            element(byXpath("//tr/td[text()='Метка “$labelSample” создана автотестом и должна быть удалена им же']"))
                 .should(exist, ofSeconds(waitTime))
                 .shouldBe(visible, ofSeconds(waitTime))
         }

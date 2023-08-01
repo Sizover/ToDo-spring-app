@@ -15,6 +15,7 @@ import test_library.menu.MyMenu.Incidents
 import test_library.statuses.StatusEnum
 import test_library.statuses.StatusEnum.Завершена
 import test_library.statuses.StatusEnum.Отменена
+import test_library.statuses.StatusEnum.Закрыта
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -29,7 +30,10 @@ open class StatusTests : BaseTest(){
         return arrayOf<Array<Any>>(
             arrayOf(Завершена, Завершена, Завершена),
             arrayOf(Отменена, Отменена, Завершена),
-            arrayOf(Отменена, Завершена, Завершена)
+            arrayOf(Закрыта, Закрыта, Завершена),
+            arrayOf(Отменена, Завершена, Завершена),
+            arrayOf(Отменена, Закрыта, Завершена),
+            arrayOf(Завершена, Закрыта, Завершена)
         )
     }
 

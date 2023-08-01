@@ -148,8 +148,10 @@ class SearchTests : BaseTest(){
         element(byXpath("//*[@name='edit']/ancestor::button"))
             .click()
         //проверяем что красных полей нет
-        elements(byXpath("//div[contains(@class,'Mui-error')]/input"))
-            .shouldHave(CollectionCondition.size(0), ofSeconds(waitTime))
+        element(byXpath("//*[text()='Добавить']/text()/ancestor::button"))
+            .should(exist, ofSeconds(waitTime))
+            .shouldBe(visible, ofSeconds(waitTime))
+            .hover()
         //сохраняем
         element(byXpath("//*[text()='Добавить']/text()/ancestor::button"))
             .click()

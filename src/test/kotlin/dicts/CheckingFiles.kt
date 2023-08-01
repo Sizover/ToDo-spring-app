@@ -17,19 +17,19 @@ import java.time.Duration
 
 class CheckingFiles: BaseTest()  {
 
-    @DataProvider(name = "Табличные справочники")
+    @DataProvider(name = "Табличные справочники", parallel = true)
     fun returnAllClasses(): Array<Array<SubmenuInterface>> =
         arrayOf<SubmenuInterface>(*MyMenu.Incidents.values(), *MyMenu.Reports.values(), *MyMenu.Dictionaries.values(), *MyMenu.KB.values()).filter { it.table }.map { arrayOf ( it) }
             .toTypedArray()
 
 
-    @Test(retryAnalyzer = Retry::class, dataProvider = "Табличные справочники", groups = ["PROXY"])
+    @Test(retryAnalyzer = Retry::class, dataProvider = "Табличные справочники", groups = ["ALL", "PROXY"])
     fun `CF 0010 Проверка скачивания и корректности табличного CSV файла`(submenuInterface: SubmenuInterface) {
 //        Configuration.downloadsFolder = "/home/isizov/IdeaProjects/testing-e2e/build/CF_0010"
 //        Configuration.proxyEnabled = true
 //        Configuration.fileDownload = FileDownloadMode.PROXY
 //        FileUtils.deleteDirectory(File("/home/isizov/IdeaProjects/testing-e2e/build/CF_0010"))
-        logonTool(true)
+        logonTool(false)
         menuNavigation(submenuInterface, waitTime)
         tableColumnCheckbox("", true, waitTime)
         //Если таблица иерархическая раскроем иерархию
@@ -44,7 +44,7 @@ class CheckingFiles: BaseTest()  {
         }
 //        element(Selectors.byXpath("//a[@download='download.csv']"))
 //            .download(DownloadOptions.using(FileDownloadMode.PROXY))
-        var contolStringCount = 0
+        var contolCSVStringCount = 0
         var contolColumnCount = 0
         val contolTableColumnCount = elements(byXpath("//table/thead/tr/th")).size
         val contolTableStringCount = elements(byXpath("//table/tbody/tr")).size
@@ -55,7 +55,8 @@ class CheckingFiles: BaseTest()  {
             .split("\n")
             .forEach { oneString ->
                 Assertions.assertFalse(oneString.lowercase().contains("object"))
-                contolStringCount += 1
+                contolCSVStringCount += 1
+                if (print) println(oneString)
         }
 //        val testFile: File = element(byXpath("//a[@download='download.csv']"))
 //            .download(DownloadOptions.using(FileDownloadMode.FOLDER).withTimeout(59999))
@@ -74,8 +75,13 @@ class CheckingFiles: BaseTest()  {
 //                    }
 //                }
 //        }
-//        Assertions.assertTrue(contolStringCount > 1)
-        //Assertions.assertTrue(contolStringCount >= contolTableStringCount + 1)
+        if (!element(byXpath("//table/tbody/tr//h6[text()='Нет данных']")).exists()){
+            Assertions.assertTrue(contolCSVStringCount > 1)
+            Assertions.assertTrue(contolCSVStringCount >= contolTableStringCount + 1)
+        } else {
+            Assertions.assertTrue(contolCSVStringCount == 1)
+            Assertions.assertTrue(contolCSVStringCount == contolTableStringCount)
+        }
 //        Assertions.assertTrue(contolColumnCount > contolTableColumnCount)
     }
 }

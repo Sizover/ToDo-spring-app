@@ -15,6 +15,7 @@ import org.openqa.selenium.Keys
 import org.testng.annotations.Test
 import test_library.alerts.AlertsEnum
 import test_library.filters.FilterEnum
+import test_library.icTabs.TabEnum
 import test_library.menu.MyMenu.Dictionaries
 import test_library.menu.MyMenu.Incidents
 import test_library.statuses.StatusEnum.`В обработке`
@@ -226,11 +227,6 @@ class Dicts_CumulativePlans:BaseTest() {
         element(byXpath("//div[@role='textbox']/p[text()='AutoTest Dicts CP 0010 parent 1 отредактировано']"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//        logoffTool()
-//        logonTool(false)
-        //TODO убрать разлогинивание, когда починиться баг 1800
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //Идем за данными для заполнения доп полей
         menuNavigation(Dictionaries.Hotlines, waitTime)
         tableColumnCheckbox("Наименование", true, waitTime)
@@ -357,7 +353,7 @@ class Dicts_CumulativePlans:BaseTest() {
                         .should(exist, ofSeconds(waitTime))
                         .shouldBe(visible, ofSeconds(waitTime))
                     //element(byXpath("//form[@novalidate]//*[text()='Выберите службу из имеющихся']/following-sibling::*//input"))
-                    element(byXpath("//div[@data-testid='typeData']//*[text()='Выберите службу из имеющихся']/following-sibling::*//input"))
+                    element(byXpath("//div[@data-testid='typeDataHotline']//*[text()='Выберите службу из имеющихся']/following-sibling::*//input"))
                         .should(exist, ofSeconds(waitTime))
                         .shouldBe(visible, ofSeconds(waitTime))
                         .sendKeys(rndHLName)
@@ -367,7 +363,7 @@ class Dicts_CumulativePlans:BaseTest() {
                         .click()
                     element(byXpath("//div[@role='presentation']"))
                         .shouldNot(exist, ofSeconds(waitTime))
-                    element(byXpath("//div[@data-testid='typeData']//input[@value='$rndHLName']"))
+                    element(byXpath("//div[@data-testid='typeDataHotline']//input[@value='$rndHLName']"))
                         .should(exist, ofSeconds(waitTime))
                         .shouldBe(visible, ofSeconds(waitTime))
 //                    element(byXpath("(//form[@novalidate]//*[text()='Добавить']/text()/ancestor::button)[1]"))
@@ -427,7 +423,7 @@ class Dicts_CumulativePlans:BaseTest() {
             .shouldBe(visible, ofSeconds(waitTime))
             .click()
         createICToolButtonCreateNewIC("$dateTime AutoTest Dicts CP 0010 Создание, изменение, перемещение и удаление пунктов реагирования", waitTime)
-        checkICToolIsStatus(`В обработке`, waitTime)
+        checkICToolIsStatus(`В обработке`, longWait)
         checkICToolDopInfo("$dateTime AutoTest Dicts CP 0010 Создание, изменение, перемещение и удаление пунктов реагирования", waitTime)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //Проверяем то, что до манипуляций "Информационный" пункт выполнен
@@ -487,29 +483,44 @@ class Dicts_CumulativePlans:BaseTest() {
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .sendKeys("Назначено AutoTest Dicts CP 0010")
-                element(byXpath(stateLocator.format("true") + "//form[@novalidate]//*[text()='Назначить']/text()/ancestor::button"))
+                element(byXpath(stateLocator.format("true") + "/ancestor::div[2]//*[text()='Назначить']/text()/ancestor::button"))
+                    //div[@id='iplan']//*[text()='AutoTest Dicts CP 0010 child 3 Назначение']/ancestor::div[@role='button' and @aria-expanded='true']
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .scrollIntoView("{block: \"center\"}")
                     .click()
-                element(byXpath(stateLocator.format("true") + "//form[@novalidate]//*[text()='Назначить']/text()/ancestor::button"))
+                checkAlert(AlertsEnum.snackbarSuccess, "OK", true, waitTime)
+                element(byXpath(stateLocator.format("true") + "/ancestor::div[2]//*[text()='Назначить']/text()/ancestor::button[not(@disabled)]"))
                     .shouldNot(exist, ofSeconds(longWait))
-                element(byXpath(stateLocator.format("true") + "//form[@novalidate]//*[text()='Назначено']/text()/ancestor::button[@disabled]"))
+                element(byXpath(stateLocator.format("true") + "/ancestor::div[2]//*[text()='Назначено']/text()/ancestor::button[@disabled]"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
+                element(byXpath(stateLocator.format("true") + "/ancestor::div[2]//*[text()='Указать комментарий']/text()/ancestor::button[not(@disabled)]"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .scrollIntoView("{block: \"center\"}")
+                    .click()
             }
 //            element(byXpath("//div[@id='iplan']//*[text()='$childPCName']/ancestor::div[@role='button' and @aria-expanded='true']/..//*[text()='Выполнить']/text()/ancestor::button"))
             if (childPCName.contains("Информационный")){
+                element(byXpath(stateLocator.format("true") + "/ancestor::div[2]//*[text()='Указать комментарий']/text()/ancestor::button[not(@disabled)]"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                    .scrollIntoView("{block: \"center\"}")
+                    .click()
                 element(byXpath(stateLocator.format("true") + "/..//*[text()='Уточните комментарий']/../following-sibling::*//p"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .sendKeys("\"$childPCName\" Проверен")
-                element(byXpath(stateLocator.format("true") + "/..//*[text()='Выполнить']/text()/ancestor::button"))
+                element(byXpath(stateLocator.format("true") + "/..//*[text()='Выполнить']/text()/ancestor::button[not(@disabled)]"))
                     .shouldNot(exist, ofSeconds(waitTime))
-                element(byXpath(stateLocator.format("true") + "/..//*[text()='Отменить выполнение']/text()/ancestor::button"))
+                element(byXpath(stateLocator.format("true") + "/..//*[text()='Отменить выполнение']/text()/ancestor::button[not(@disabled)]"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
-                element(byXpath(stateLocator.format("true") + "/..//*[text()='Сохранить комментарий без изменения статуса']/text()/ancestor::button"))
+                element(byXpath(stateLocator.format("true") + "/..//*[text()='Свернуть']/text()/ancestor::button[not(@disabled)]"))
+                    .should(exist, ofSeconds(waitTime))
+                    .shouldBe(visible, ofSeconds(waitTime))
+                element(byXpath(stateLocator.format("true") + "/..//*[text()='Сохранить комментарий']/text()/ancestor::button"))
                     .should(exist, ofSeconds(waitTime))
                     .shouldBe(visible, ofSeconds(waitTime))
                     .scrollIntoView("{block: \"center\"}")
@@ -544,11 +555,7 @@ class Dicts_CumulativePlans:BaseTest() {
         elements(byXpath("//form[@novalidate]//div[@id='hotlines']//form[@novalidate]//*[text()='$rndHLName']"))
             .shouldHave(CollectionCondition.size(1))
         //Проверяем назначенную ДДС на вкладке
-        element(byXpath("//header//div[@role='tablist']//*[text()='Работа с ДДС']/text()/ancestor::button"))
-            .should(exist, ofSeconds(waitTime))
-            .shouldBe(visible, ofSeconds(waitTime))
-            .scrollIntoView("{block: \"center\"}")
-            .click()
+        icToolGoToTab(TabEnum.`Работа с ДДС`, waitTime)
         element(byXpath("//div[@role='tabpanel' and @id='simple-tabpanel-hotlines']//*[text()='Выбрать ДДС']/text()/ancestor::button"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
@@ -574,8 +581,6 @@ class Dicts_CumulativePlans:BaseTest() {
         element(byXpath("//table/tbody/tr//*[contains(text(),'AutoTest Dicts CP 0010') or contains(text(),'Нет данных')]"))
             .should(exist, ofSeconds(waitTime))
             .shouldBe(visible, ofSeconds(waitTime))
-        //table/tbody/tr//*[contains(text(),'AutoTest Dicts CP 0010')]/ancestor::tr/td[$columnOfNumber]//text()/parent::*[contains(text(),'.')]/ancestor::tr/td[last()]
-        //table/tbody/tr[td[$nameCPColumn]//text()/parent::*[contains(text(),'AutoTest Dicts CP 0010')] and td[$columnOfNumber]//text()/parent::*[contains(text(),'.')]]/td[last()]//button
         //сначала добавим в список все дочерние пункты по принципу наличия точки в номере
         elements(byXpath("//table/tbody/tr[td[$nameCPColumn]//text()/parent::*[contains(text(),'AutoTest Dicts CP 0010')] and td[$columnOfNumber]//text()/parent::*[contains(text(),'.')]]/td[$nameCPColumn]/text()/..")).forEach {
             listOfRemoved.add(it.ownText)
