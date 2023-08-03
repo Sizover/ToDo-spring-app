@@ -6,6 +6,7 @@ plugins {
     kotlin("jvm")
     kotlin("kapt")
     application
+    id("io.qameta.allure") version "2.11.2"
 }
 
 group = "ru.redgift"
@@ -43,6 +44,13 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-reflect:%kotlinVersion%")
     testImplementation("io.rest-assured:rest-assured:5.3.0")
     testImplementation("org.seleniumhq.selenium:selenium-remote-driver:4.10.0")
+    testImplementation("io.qameta.allure:allure-testng:2.20.1")
+    testImplementation("io.qameta.allure:allure-java-commons:2.20.1")
+    testImplementation("io.qameta.allure:allure-commandline:2.20.1")
+    testImplementation("io.qameta.allure:allure-selenide:2.20.1")
+
+
+
 
 //    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
 //    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.8.2")

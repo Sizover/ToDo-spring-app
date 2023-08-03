@@ -16,7 +16,7 @@
     <test name="TEST">
         <groups>
             <run>
-                <include name = "LOCAL3"/>
+                <include name = "LOCAL"/>
             </run>
         </groups>
         <packages>

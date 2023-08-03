@@ -101,7 +101,7 @@ class PimTests : BaseTest(){
         //разлогиниваемся и закрываем браузер
     }
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL", "LOCAL3"])
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `PMI 0020 Проверка загрузки и иерархии справочника "Типы происшествий"`() {
         //A32 Убедиться в наличии списка объектов  в справочнике «Типы происшествий»
         //логинимся
@@ -1064,7 +1064,7 @@ class PimTests : BaseTest(){
         }
     }
 
-    @Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
+    @Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL", "LOCAL"])
     fun `PMI 0220 Проверка открытия карточек справочных сущностей`() {
         //A.3.28 Проверка централизованного хранения и управления структурированной справочной информации
         logonTool(false)
