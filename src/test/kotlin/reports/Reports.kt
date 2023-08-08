@@ -1474,7 +1474,7 @@ class Reports : BaseTest(){
                 4 -> {login = "a.sizov.edds.2.2"; password = "a.sizov.edds.2.2"; reportsMapKeysList = listOf("2 МО", "ГО Черкесский", "ЕДДС", "Оператор") }
                 5 -> {login = "a.sizov.edds.2.2"; password = "a.sizov.edds.2.2"; reportsMapKeysList = listOf("2 МО", "ГО Черкесский", "ЕДДС", "Оператор", "Уровень происшествия") }
             }
-            anyLogonTool(login, password)
+            anyLogonTool(false, login, password)
             //убедимся что мы за оператор:
             //кликаем по иконке оператора сверху справа
             element(byXpath("//header//button//*[@name='user']/ancestor::button")).click()

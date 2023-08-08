@@ -13,7 +13,7 @@
     <parameter name="no_sandbox" value="${NO_SANDBOX}"/>
     <parameter name="disable_gpu" value="${DISABLE_GPU}"/>
     <parameter name="remote_url" value="${REMOTE_URL}"/>
-    <test name="TEST">
+    <test name="CI-TEST">
         <parameter name="attachFolder" value="./build/attachTests"/>
         <groups>
             <run>

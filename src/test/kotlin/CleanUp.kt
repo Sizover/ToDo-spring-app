@@ -105,7 +105,7 @@ class CleanUp : BaseTest(){
         val operatorFIO = operatorData(OperatorDataEnum.`Должностное лицо`)
         logoffTool()
         //переходим к списку происшествий и ждем загрузки
-        anyLogonTool("autotest_admin", "autotest_admin")
+        anyLogonTool(false,"autotest_admin", "autotest_admin")
         menuNavigation(MyMenu.Incidents.IncidentsList, waitTime)
         element(byCssSelector("table>tbody>tr"))
             .should(exist, ofSeconds(waitTime))

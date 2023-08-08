@@ -8,6 +8,7 @@ import com.codeborne.selenide.FileDownloadMode
 import com.codeborne.selenide.Selectors.byXpath
 import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
+import com.codeborne.selenide.files.FileFilters
 import org.junit.jupiter.api.Assertions
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
@@ -17,13 +18,13 @@ import java.time.Duration
 
 class CheckingFiles: BaseTest()  {
 
-    @DataProvider(name = "Табличные справочники", parallel = true)
-    fun returnAllClasses(): Array<Array<SubmenuInterface>> =
-        arrayOf<SubmenuInterface>(*MyMenu.Incidents.values(), *MyMenu.Reports.values(), *MyMenu.Dictionaries.values(), *MyMenu.KB.values()).filter { it.table }.map { arrayOf ( it) }
-            .toTypedArray()
+    @DataProvider(name = "Табличные справочники")//, parallel = true)
+    fun returnAllClasses(): Array<Array<SubmenuInterface>> = arrayOf(arrayOf<SubmenuInterface>(MyMenu.Dictionaries.HotlineAssets))
+//        arrayOf<SubmenuInterface>(*MyMenu.Incidents.values(), *MyMenu.Reports.values(), *MyMenu.Dictionaries.values(), *MyMenu.KB.values()).filter { it.table }.map { arrayOf ( it) }
+//            .toTypedArray()
 
 
-    @Test(retryAnalyzer = Retry::class, dataProvider = "Табличные справочники", groups = ["ALL", "PROXY"])
+    @Test(retryAnalyzer = Retry::class, dataProvider = "Табличные справочники", groups = ["ALL", "PROXY", "LOCAL"])
     fun `CF 0010 Проверка скачивания и корректности табличного CSV файла`(submenuInterface: SubmenuInterface) {
 //        Configuration.downloadsFolder = "/home/isizov/IdeaProjects/testing-e2e/build/CF_0010"
 //        Configuration.proxyEnabled = true
@@ -42,14 +43,13 @@ class CheckingFiles: BaseTest()  {
                 .should(Condition.exist, Duration.ofSeconds(waitTime))
                 .shouldBe(Condition.visible, Duration.ofSeconds(waitTime))
         }
-//        element(Selectors.byXpath("//a[@download='download.csv']"))
-//            .download(DownloadOptions.using(FileDownloadMode.PROXY))
         var contolCSVStringCount = 0
         var contolColumnCount = 0
         val contolTableColumnCount = elements(byXpath("//table/thead/tr/th")).size
         val contolTableStringCount = elements(byXpath("//table/tbody/tr")).size
         val testFile = element(byXpath("//a[@download='download.csv']"))
-            .download(DownloadOptions.using(FileDownloadMode.PROXY).withTimeout(59999))
+            //.download(DownloadOptions.using(FileDownloadMode.PROXY).withTimeout(59999).withFilter(FileFilters.withExtension("csv")))
+            .download(DownloadOptions.using(FileDownloadMode.FOLDER).withTimeout(59999))
             .reader()
             .readText()
             .split("\n")

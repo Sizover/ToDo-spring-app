@@ -116,7 +116,7 @@ open class StatusTests : BaseTest(){
                     1 -> statusI = status1
                     2 -> statusI = status2
                 }
-                anyLogonTool(login, login)
+                anyLogonTool(false, login, login)
                 menuNavigation(Incidents.IncidentsList, waitTime)
                 tableColumnCheckbox("Описание", true, waitTime)
                 //Находим созданную КП в КИАП ДДС

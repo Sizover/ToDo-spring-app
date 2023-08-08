@@ -1064,7 +1064,7 @@ class PimTests : BaseTest(){
         }
     }
 
-    @Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL", "LOCAL"])
+    @Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `PMI 0220 Проверка открытия карточек справочных сущностей`() {
         //A.3.28 Проверка централизованного хранения и управления структурированной справочной информации
         logonTool(false)

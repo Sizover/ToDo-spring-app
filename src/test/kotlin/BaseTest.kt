@@ -18,6 +18,8 @@ import com.codeborne.selenide.Selenide.closeWindow
 import com.codeborne.selenide.Selenide.element
 import com.codeborne.selenide.Selenide.elements
 import com.codeborne.selenide.Selenide.open
+import com.codeborne.selenide.logevents.SelenideLogger
+import io.qameta.allure.selenide.AllureSelenide
 import org.apache.commons.io.FileUtils
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
@@ -85,12 +87,20 @@ open class BaseTest {
     }
 
     fun logonTool(proxy: Boolean) {
+        anyLogonTool(proxy, mainLogin, mainPassword)
+    }
+
+
+//        //https://overcoder.net/q/1369284/%D0%BA%D0%B0%D0%BA-%D1%80%D0%B0%D0%B7%D1%80%D0%B5%D1%88%D0%B8%D1%82%D1%8C-%D0%B8%D0%BB%D0%B8-%D0%B7%D0%B0%D0%BF%D1%80%D0%B5%D1%82%D0%B8%D1%82%D1%8C-%D1%83%D0%B2%D0%B5%D0%B4%D0%BE%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BE-%D0%B2%D1%81%D0%BF%D0%BB%D1%8B%D0%B2%D0%B0%D1%8E%D1%89%D0%B5%D0%B9-%D0%BA%D0%B0%D0%BC%D0%B5%D1%80%D0%B5-%D0%BC%D0%B8%D0%BA%D1%80%D0%BE%D1%84%D0%BE%D0%BD%D0%B0
+
+
+    fun anyLogonTool(proxy: Boolean, username: String, password: String) {
         //https://overcoder.net/q/1369284/%D0%BA%D0%B0%D0%BA-%D1%80%D0%B0%D0%B7%D1%80%D0%B5%D1%88%D0%B8%D1%82%D1%8C-%D0%B8%D0%BB%D0%B8-%D0%B7%D0%B0%D0%BF%D1%80%D0%B5%D1%82%D0%B8%D1%82%D1%8C-%D1%83%D0%B2%D0%B5%D0%B4%D0%BE%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BE-%D0%B2%D1%81%D0%BF%D0%BB%D1%8B%D0%B2%D0%B0%D1%8E%D1%89%D0%B5%D0%B9-%D0%BA%D0%B0%D0%BC%D0%B5%D1%80%D0%B5-%D0%BC%D0%B8%D0%BA%D1%80%D0%BE%D1%84%D0%BE%D0%BD%D0%B0
         //https://peter.sh/experiments/chromium-command-line-switches/
         //https://selenide.org/javadoc/current/com/codeborne/selenide/Configuration.html
 
         // Поключение к selenoid
-        val options: MutableMap<String, Boolean> = HashMap()
+        val options: MutableMap<String, Any> = HashMap()
         //Переключатель на локальный/удаленный запуск тестов. Либо тут, либо в передаваемых параметрах
         Configuration.remote = remote_url
         //http://selenoid.kiap.local:4444/wd/hub
@@ -98,8 +108,12 @@ open class BaseTest {
         options["enableVNC"] = true
         options["enableVideo"] = true
         options["enableLog"] = true
+        options["profile.default_content_settings.popups"] = 0
+        options["download.default_directory"] = attachFolder
+        options["download.prompt_for_download"] = false
+        options["download.directory_upgrade"] = true
+        options["safebrowsing.enabled"] = true
         val capabilities = ChromeOptions()
-        //options.addArguments("--auto-accept-camera-and-microphone-capture")
         //TODO после обновления (выхода новых версий) браузера/selenide надо раскоментить опцию --auto-accept-camera-and-microphone-capture
         // в текущем виде сборки (114.0.5735.90/6.15) браузер не запускается с ошибкой
         // "org.openqa.selenium.SessionNotCreatedException: Could not start a new session. Response code 500. Message: unknown error: Chrome failed to start: crashed.
@@ -121,44 +135,19 @@ open class BaseTest {
         Configuration.browser = CHROME
         Configuration.timeout = 10000
         Configuration.browserSize = "1920x1080"
-        Configuration.proxyEnabled = proxy
         Configuration.holdBrowserOpen = false
         Configuration.webdriverLogsEnabled = false
         Configuration.headless = browserhead.toBoolean()
         Configuration.baseUrl = standUrl
-        open(standUrl)
-        //логинимся
-        element(byName("username")).sendKeys(mainLogin)
-        element(byName("password")).sendKeys(mainPassword)
-        element(byName("login")).click()
-    }
-
-
-//        //https://overcoder.net/q/1369284/%D0%BA%D0%B0%D0%BA-%D1%80%D0%B0%D0%B7%D1%80%D0%B5%D1%88%D0%B8%D1%82%D1%8C-%D0%B8%D0%BB%D0%B8-%D0%B7%D0%B0%D0%BF%D1%80%D0%B5%D1%82%D0%B8%D1%82%D1%8C-%D1%83%D0%B2%D0%B5%D0%B4%D0%BE%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BE-%D0%B2%D1%81%D0%BF%D0%BB%D1%8B%D0%B2%D0%B0%D1%8E%D1%89%D0%B5%D0%B9-%D0%BA%D0%B0%D0%BC%D0%B5%D1%80%D0%B5-%D0%BC%D0%B8%D0%BA%D1%80%D0%BE%D1%84%D0%BE%D0%BD%D0%B0
-
-
-    fun anyLogonTool(username: String, password: String) {
-        val options = ChromeOptions()
-//        options.addArguments("--auto-accept-camera-and-microphone-capture")
-        options.addArguments("--use-fake-device-for-media-stream")
-//        options.addArguments("--use-file-for-fake-audio-capture")
-        options.addArguments("--use-fake-ui-for-media-stream")
-        if (no_sandbox.toBoolean()){
-            options.addArguments("--no-sandbox")
+        if (proxy){
+            Configuration.proxyEnabled = proxy
+            Configuration.fileDownload = FileDownloadMode.PROXY
+        } else {
+            Configuration.proxyEnabled = proxy
+            Configuration.fileDownload = FileDownloadMode.FOLDER
+            Configuration.downloadsFolder = attachFolder
         }
-        if (disable_gpu.toBoolean()){
-            options.addArguments("--disable-gpu")
-        }
-        Configuration.browser = CHROME
-        Configuration.timeout = 10000
-        Configuration.browserSize = "1920x1080"
-        Configuration.holdBrowserOpen = false
-        Configuration.webdriverLogsEnabled = false
-        Configuration.headless = browserhead.toBoolean()
-        Configuration.baseUrl = standUrl
-        Configuration.fileDownload = FileDownloadMode.FOLDER
-        Configuration.downloadsFolder = attachFolder
-        Configuration.browserCapabilities = options
+        SelenideLogger.addListener("AllureSelenide", AllureSelenide())
         open(standUrl)
         //логинимся
         element(byName("username")).sendKeys(username)
