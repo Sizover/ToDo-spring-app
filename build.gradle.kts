@@ -35,6 +35,9 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.2")
     testImplementation("com.codeborne:selenide:6.17.0")
     testImplementation("com.codeborne:selenide-proxy:6.17.0")
+    //для скачивания файлов в папку на стороне селеноида
+    // https://github.com/selenide/selenide/blob/main/modules/selenoid/README.md
+    testImplementation("com.codeborne:selenide-selenoid:6.17.0")
     testImplementation("org.awaitility:awaitility:4.2.0")
     testImplementation("org.apache.directory.studio:org.apache.commons.io:2.4")
     testImplementation("org.testng:testng:7.7.1")
@@ -44,9 +47,9 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-reflect:%kotlinVersion%")
     testImplementation("io.rest-assured:rest-assured:5.3.0")
     testImplementation("org.seleniumhq.selenium:selenium-remote-driver:4.11.0")
-    testImplementation("io.qameta.allure:allure-testng:2.20.1")
-    testImplementation("io.qameta.allure:allure-java-commons:2.20.1")
-    testImplementation("io.qameta.allure:allure-commandline:2.20.1")
+//    testImplementation("io.qameta.allure:allure-testng:2.20.1")
+//    testImplementation("io.qameta.allure:allure-java-commons:2.20.1")
+//    testImplementation("io.qameta.allure:allure-commandline:2.20.1")
     testImplementation("io.qameta.allure:allure-selenide:2.20.1")
 
 

@@ -24,8 +24,12 @@ import org.apache.commons.io.FileUtils
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import org.openqa.selenium.chrome.ChromeOptions
+import org.testng.ITestContext
 import org.testng.annotations.AfterMethod
+import org.testng.annotations.AfterSuite
 import org.testng.annotations.BeforeMethod
+import org.testng.annotations.BeforeSuite
+import org.testng.annotations.BeforeTest
 import org.testng.annotations.Parameters
 import test_library.IncidentLevels.IncidentLevelEnum
 import test_library.alerts.AlertsEnum
@@ -36,6 +40,7 @@ import test_library.menu.SubmenuInterface
 import test_library.operator_data.OperatorDataEnum
 import test_library.statuses.StatusEnum
 import java.io.File
+import java.lang.reflect.Method
 import java.text.SimpleDateFormat
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
@@ -50,15 +55,19 @@ open class BaseTest {
     var date = LocalDate.now()
     var dateTime = LocalDateTime.now()
     //Переменные определяемые через энвы/параметры запуска
-    lateinit var standUrl: String
-    lateinit var mainLogin: String
-    lateinit var mainPassword: String
-    lateinit var adminLogin: String
-    lateinit var adminPassword: String
-    lateinit var attachFolder: String
-    lateinit var browserhead: String
-    lateinit var no_sandbox: String
-    lateinit var disable_gpu: String
+    companion object {
+        lateinit var standUrl: String
+        lateinit var mainLogin: String
+        lateinit var mainPassword: String
+        lateinit var adminLogin: String
+        lateinit var adminPassword: String
+        lateinit var attachFolder: String
+        lateinit var browserhead: String
+        lateinit var no_sandbox: String
+        lateinit var disable_gpu: String
+        val options: MutableMap<String, Any> = HashMap()
+    }
+
     var remote_url: String? = null
 
     //"короткое" ожидание для совершения действия направленного на элемент страницы
@@ -72,7 +81,7 @@ open class BaseTest {
 
     @Parameters("url", "mainLogin", "mainPassword", "adminLogin", "adminPassword", "attachFolder", "headless", "no_sandbox", "disable_gpu", "remote_url")
 //    @BeforeSuite(alwaysRun = true)
-    @BeforeMethod(alwaysRun = true)
+    @BeforeSuite(alwaysRun = true)
     open fun getConf(urlValue: String, mainLoginValue: String, mainPasswordValue: String, adminLoginValue: String, adminPasswordValue: String, attachFolderValue: String, headless: String, nosandbox: String, disablegpu: String, remoteurl: String?){
         standUrl = urlValue
         mainLogin = mainLoginValue
@@ -86,21 +95,18 @@ open class BaseTest {
         remote_url = remoteurl
     }
 
-    fun logonTool(proxy: Boolean) {
-        anyLogonTool(proxy, mainLogin, mainPassword)
-    }
+
 
 
 //        //https://overcoder.net/q/1369284/%D0%BA%D0%B0%D0%BA-%D1%80%D0%B0%D0%B7%D1%80%D0%B5%D1%88%D0%B8%D1%82%D1%8C-%D0%B8%D0%BB%D0%B8-%D0%B7%D0%B0%D0%BF%D1%80%D0%B5%D1%82%D0%B8%D1%82%D1%8C-%D1%83%D0%B2%D0%B5%D0%B4%D0%BE%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BE-%D0%B2%D1%81%D0%BF%D0%BB%D1%8B%D0%B2%D0%B0%D1%8E%D1%89%D0%B5%D0%B9-%D0%BA%D0%B0%D0%BC%D0%B5%D1%80%D0%B5-%D0%BC%D0%B8%D0%BA%D1%80%D0%BE%D1%84%D0%BE%D0%BD%D0%B0
 
-
-    fun anyLogonTool(proxy: Boolean, username: String, password: String) {
+    @BeforeTest(alwaysRun = true)
+    fun initDriver(){
         //https://overcoder.net/q/1369284/%D0%BA%D0%B0%D0%BA-%D1%80%D0%B0%D0%B7%D1%80%D0%B5%D1%88%D0%B8%D1%82%D1%8C-%D0%B8%D0%BB%D0%B8-%D0%B7%D0%B0%D0%BF%D1%80%D0%B5%D1%82%D0%B8%D1%82%D1%8C-%D1%83%D0%B2%D0%B5%D0%B4%D0%BE%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BE-%D0%B2%D1%81%D0%BF%D0%BB%D1%8B%D0%B2%D0%B0%D1%8E%D1%89%D0%B5%D0%B9-%D0%BA%D0%B0%D0%BC%D0%B5%D1%80%D0%B5-%D0%BC%D0%B8%D0%BA%D1%80%D0%BE%D1%84%D0%BE%D0%BD%D0%B0
         //https://peter.sh/experiments/chromium-command-line-switches/
         //https://selenide.org/javadoc/current/com/codeborne/selenide/Configuration.html
-
         // Поключение к selenoid
-        val options: MutableMap<String, Any> = HashMap()
+//        val options: MutableMap<String, Any> = HashMap()
         //Переключатель на локальный/удаленный запуск тестов. Либо тут, либо в передаваемых параметрах
         Configuration.remote = remote_url
         //http://selenoid.kiap.local:4444/wd/hub
@@ -108,6 +114,7 @@ open class BaseTest {
         options["enableVNC"] = true
         options["enableVideo"] = true
         options["enableLog"] = true
+//        options["videoName"] = "${testContext.getName().lowercase()}.mp4"
         options["profile.default_content_settings.popups"] = 0
         options["download.default_directory"] = attachFolder
         options["download.prompt_for_download"] = false
@@ -139,15 +146,29 @@ open class BaseTest {
         Configuration.webdriverLogsEnabled = false
         Configuration.headless = browserhead.toBoolean()
         Configuration.baseUrl = standUrl
+        SelenideLogger.addListener("AllureSelenide", AllureSelenide())
+    }
+
+    @BeforeMethod(alwaysRun = true)
+    fun initNameOfVideo(method: Method){
+        //https://stackoverflow.com/questions/8596632/retrieve-test-name-on-testng
+        val videoTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"))
+        val videoName = "$videoTime ${method.name.lowercase()}.mp4"
+        options["videoName"] = videoName
+    }
+
+    fun logonTool(proxy: Boolean) {
+        anyLogonTool(proxy, mainLogin, mainPassword)
+    }
+
+    fun anyLogonTool(proxy: Boolean, username: String, password: String) {
+        Configuration.proxyEnabled = proxy
         if (proxy){
-            Configuration.proxyEnabled = proxy
             Configuration.fileDownload = FileDownloadMode.PROXY
         } else {
-            Configuration.proxyEnabled = proxy
             Configuration.fileDownload = FileDownloadMode.FOLDER
             Configuration.downloadsFolder = attachFolder
         }
-        SelenideLogger.addListener("AllureSelenide", AllureSelenide())
         open(standUrl)
         //логинимся
         element(byName("username")).sendKeys(username)
@@ -179,6 +200,11 @@ open class BaseTest {
         clearBrowserCookies()
         clearBrowserLocalStorage()
         closeWindow()
+//        closeWebDriver()
+    }
+
+    @AfterSuite(alwaysRun = true)
+    fun closeDriver() {
         closeWebDriver()
     }
 

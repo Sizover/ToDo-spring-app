@@ -27,7 +27,7 @@
             <package name="pmi_tests" />
             <package name="reports" />
         </packages>
-        <!--classes>
+        <classes>
             <class name="dicts.CheckingFiles"></class>
             <class name="dicts.Dicts_CumulativePlans"></class>
             <class name="dicts.SearchTests"></class>
@@ -41,6 +41,6 @@
             <class name="reports.Reports"></class>
             <class name="CleanUp"></class>
             <class name="PlayGround"></class>
-        </classes-->
+        </classes>
     </test>
 </suite>

@@ -98,7 +98,6 @@ class PimTests : BaseTest(){
             elements(byXpath("//table/tbody/tr"))
                 .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(5))
         }
-        //разлогиниваемся и закрываем браузер
     }
 
     @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])

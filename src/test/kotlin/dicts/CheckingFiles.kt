@@ -19,9 +19,9 @@ import java.time.Duration
 class CheckingFiles: BaseTest()  {
 
     @DataProvider(name = "Табличные справочники")//, parallel = true)
-    fun returnAllClasses(): Array<Array<SubmenuInterface>> = arrayOf(arrayOf<SubmenuInterface>(MyMenu.Dictionaries.HotlineAssets))
-//        arrayOf<SubmenuInterface>(*MyMenu.Incidents.values(), *MyMenu.Reports.values(), *MyMenu.Dictionaries.values(), *MyMenu.KB.values()).filter { it.table }.map { arrayOf ( it) }
-//            .toTypedArray()
+    fun returnAllClasses(): Array<Array<SubmenuInterface>> =
+        arrayOf<SubmenuInterface>(*MyMenu.Incidents.values(), *MyMenu.Reports.values(), *MyMenu.Dictionaries.values(), *MyMenu.KB.values()).filter { it.table }.map { arrayOf ( it) }
+            .toTypedArray()
 
 
     @Test(retryAnalyzer = Retry::class, dataProvider = "Табличные справочники", groups = ["ALL", "PROXY", "LOCAL"])
