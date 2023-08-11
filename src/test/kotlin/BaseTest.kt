@@ -65,10 +65,13 @@ open class BaseTest {
         lateinit var browserhead: String
         lateinit var no_sandbox: String
         lateinit var disable_gpu: String
+        var remote_url: String? = null
         val options: MutableMap<String, Any> = HashMap()
+        var video_env: String? = null
     }
+    //<parameter name="video_env" value="${VIDEO_ENV}"/>
 
-    var remote_url: String? = null
+
 
     //"короткое" ожидание для совершения действия направленного на элемент страницы
     val waitTime: Long = 5
@@ -79,10 +82,10 @@ open class BaseTest {
     // отладочная переменная для выведения (или нет) отладочной информации, в консоль
     val print = true
 
-    @Parameters("url", "mainLogin", "mainPassword", "adminLogin", "adminPassword", "attachFolder", "headless", "no_sandbox", "disable_gpu", "remote_url")
+    @Parameters("url", "mainLogin", "mainPassword", "adminLogin", "adminPassword", "attachFolder", "headless", "noSandbox", "disableGpu", "remoteUrl", "videoEnv")
 //    @BeforeSuite(alwaysRun = true)
     @BeforeSuite(alwaysRun = true)
-    open fun getConf(urlValue: String, mainLoginValue: String, mainPasswordValue: String, adminLoginValue: String, adminPasswordValue: String, attachFolderValue: String, headless: String, nosandbox: String, disablegpu: String, remoteurl: String?){
+    open fun getConf(urlValue: String, mainLoginValue: String, mainPasswordValue: String, adminLoginValue: String, adminPasswordValue: String, attachFolderValue: String, headless: String, nosandbox: String, disablegpu: String, remoteurl: String?, videoenv: String?){
         standUrl = urlValue
         mainLogin = mainLoginValue
         mainPassword = mainPasswordValue
@@ -93,6 +96,7 @@ open class BaseTest {
         no_sandbox = nosandbox
         disable_gpu = disablegpu
         remote_url = remoteurl
+        video_env = videoenv
     }
 
 
@@ -153,7 +157,12 @@ open class BaseTest {
     fun initNameOfVideo(method: Method){
         //https://stackoverflow.com/questions/8596632/retrieve-test-name-on-testng
         val videoTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"))
-        val videoName = "$videoTime ${method.name.lowercase()}.mp4"
+//        var videoName = "$videoTime ${method.name.lowercase()}.mp4"
+        val videoName = if (video_env != null && video_env?.isNotEmpty() == true){
+            "$video_env $videoTime ${method.name.lowercase()}.mp4"
+        } else {
+            "$videoTime ${method.name.lowercase()}.mp4"
+        }
         options["videoName"] = videoName
     }
 

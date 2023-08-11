@@ -24,7 +24,7 @@ class CheckingFiles: BaseTest()  {
             .toTypedArray()
 
 
-    @Test(retryAnalyzer = Retry::class, dataProvider = "Табличные справочники", groups = ["ALL", "PROXY", "LOCAL"])
+    @Test(retryAnalyzer = Retry::class, dataProvider = "Табличные справочники", groups = ["ALL", "PROXY"])
     fun `CF 0010 Проверка скачивания и корректности табличного CSV файла`(submenuInterface: SubmenuInterface) {
 //        Configuration.downloadsFolder = "/home/isizov/IdeaProjects/testing-e2e/build/CF_0010"
 //        Configuration.proxyEnabled = true
