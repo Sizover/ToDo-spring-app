@@ -57,6 +57,11 @@
 Запуск браузеров для каждой сессии автотестирования осуществляется через [selenoid](https://aerokube.com/selenoid/latest/)
 Стенд доступен по адресу [selenoid.kiap.local](http://selenoid.kiap.local/)
 
+### Отчет прохождения тестов
+В проект интегрирован отчет [Allure](https://docs.qameta.io/allure/#_get_started)  
+Построение отчета инициируется запуском задачи "allureReport" с опцией "clean" (```./gradlew allureReport --clean```)  
+После построения отчет доступен в папке ```./build/reports/allure-report/allureReport``` (файл index.html)
+
 ## ENV-переменные
 
 ### Основные настройки
@@ -66,8 +71,9 @@
 Пример запуска:  
 ```gradle clean test -Psuite=$SUITE```
 
-Список значений используемых на ТС test  
-```ADMIN_LOGIN=autotest_admin;ADMIN_PASSWORD=autotest_admin;ATTACH_FOLDER=./attachFolder;DISABLE_GPU=false;HEADLESS=false;MAIN_LOGIN=a.sizov;MAIN_PASSWORD=a.sizov;NO_SANDBOX=false;URL=https://test.kiap.local/;REMOTE_URL=http://selenoid.kiap.local:4444/wd/hub```
+
+
+
 
 
 * "URL" - ссылка на главную страницу КИАП.  
@@ -80,6 +86,11 @@
 * "DISABLE_GPU" - булева настройка применения [опции](https://peter.sh/experiments/chromium-command-line-switches/#disable-gpu) запуска браузера "--disable-gpu".  
 * "NO_SANDBOX" - булева настройка применения [опции](https://peter.sh/experiments/chromium-command-line-switches/#disable-gpu) запуска браузера "--no-sandbox".
 * "REMOTE_URL" - URL удаленного веб-драйвера. При передаче значения null запуск тестов будет произведен локально (http://selenoid.kiap.local:4444/wd/hub)
+* "VIDEO_ENV" - метка/ярлык прокидываемая из пайплайна, содержащая имя(некоторый идентификатор) текущего пайплайна для присвоения в имя видеозаписи теста  
+
+Список значений используемых на ТС test  
+```ADMIN_LOGIN=autotest_admin;ADMIN_PASSWORD=autotest_admin;ATTACH_FOLDER=./attachFolder;DISABLE_GPU=false;HEADLESS=false;MAIN_LOGIN=a.sizov;MAIN_PASSWORD=a.sizov;NO_SANDBOX=false;URL=https://test.kiap.local/;REMOTE_URL=http://selenoid.kiap.local:4444/wd/hub```
+
 ## Архитектура?
 
 Для управления составом запускаемых тестов используется аннотация @org.testng.annotations.Test с передачей параметра groups.  

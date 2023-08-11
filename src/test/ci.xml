@@ -10,10 +10,11 @@
     <parameter name="adminPassword" value="${ADMIN_PASSWORD}"/>
     <parameter name="attachFolder" value="${ATTACH_FOLDER}"/>
     <parameter name="headless" value="${HEADLESS}"/>
-    <parameter name="no_sandbox" value="${NO_SANDBOX}"/>
-    <parameter name="disable_gpu" value="${DISABLE_GPU}"/>
-    <parameter name="remote_url" value="${REMOTE_URL}"/>
-    <test name="TEST">
+    <parameter name="noSandbox" value="${NO_SANDBOX}"/>
+    <parameter name="disableGpu" value="${DISABLE_GPU}"/>
+    <parameter name="remoteUrl" value="${REMOTE_URL}"/>
+    <parameter name="videoEnv" value="${VIDEO_ENV}"/>
+    <test name="CI-TEST">
         <parameter name="attachFolder" value="./build/attachTests"/>
         <groups>
             <run>

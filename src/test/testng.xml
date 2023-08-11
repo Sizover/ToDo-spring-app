@@ -2,7 +2,7 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 
 
-<suite name="Test Suite">
+<suite name="Test Suite" data-provider-thread-count="5" verbose="1">
     <parameter name="url" value="${URL}"/>
     <parameter name="mainLogin" value="${MAIN_LOGIN}"/>
     <parameter name="mainPassword" value="${MAIN_PASSWORD}"/>
@@ -10,13 +10,14 @@
     <parameter name="adminPassword" value="${ADMIN_PASSWORD}"/>
     <parameter name="attachFolder" value="${ATTACH_FOLDER}"/>
     <parameter name="headless" value="${HEADLESS}"/>
-    <parameter name="no_sandbox" value="${NO_SANDBOX}"/>
-    <parameter name="disable_gpu" value="${DISABLE_GPU}"/>
-    <parameter name="remote_url" value="${REMOTE_URL}"/>
+    <parameter name="noSandbox" value="${NO_SANDBOX}"/>
+    <parameter name="disableGpu" value="${DISABLE_GPU}"/>
+    <parameter name="remoteUrl" value="${REMOTE_URL}"/>
+    <parameter name="videoEnv" value="${VIDEO_ENV}"/>
     <test name="TEST">
         <groups>
             <run>
-                <include name = "LOCAL3"/>
+                <include name = "LOCAL"/>
             </run>
         </groups>
         <packages>
@@ -27,7 +28,7 @@
             <package name="pmi_tests" />
             <package name="reports" />
         </packages>
-        <!--classes>
+        <classes>
             <class name="dicts.CheckingFiles"></class>
             <class name="dicts.Dicts_CumulativePlans"></class>
             <class name="dicts.SearchTests"></class>
@@ -41,6 +42,6 @@
             <class name="reports.Reports"></class>
             <class name="CleanUp"></class>
             <class name="PlayGround"></class>
-        </classes-->
+        </classes>
     </test>
 </suite>

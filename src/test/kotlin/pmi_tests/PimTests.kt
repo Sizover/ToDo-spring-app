@@ -98,10 +98,9 @@ class PimTests : BaseTest(){
             elements(byXpath("//table/tbody/tr"))
                 .shouldHave(CollectionCondition.sizeGreaterThanOrEqual(5))
         }
-        //разлогиниваемся и закрываем браузер
     }
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL", "LOCAL3"])
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `PMI 0020 Проверка загрузки и иерархии справочника "Типы происшествий"`() {
         //A32 Убедиться в наличии списка объектов  в справочнике «Типы происшествий»
         //логинимся
@@ -898,7 +897,7 @@ class PimTests : BaseTest(){
         checkAlert(snackbarWarning, "Данный статус не может быть присвоен", true, longWait)
     }
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL", "112"])
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL", "112", "LOCAL"])
     fun `PMI 0112 Назначение КП из 112 в КИАП`() {
         //A.3.19 Убедиться на стороне Системы-112 в наличии возможности назначать   карточку на ЕЦОР  (КИАП) из Системы-112
         //A.3.20 Прием карточки из Системы-112
