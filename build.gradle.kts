@@ -47,10 +47,12 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-reflect:%kotlinVersion%")
     testImplementation("io.rest-assured:rest-assured:5.3.0")
     testImplementation("org.seleniumhq.selenium:selenium-remote-driver:4.11.0")
-//    testImplementation("io.qameta.allure:allure-testng:2.20.1")
+    testImplementation("io.qameta.allure:allure-testng:2.20.1")
 //    testImplementation("io.qameta.allure:allure-java-commons:2.20.1")
 //    testImplementation("io.qameta.allure:allure-commandline:2.20.1")
     testImplementation("io.qameta.allure:allure-selenide:2.20.1")
+    testImplementation("io.github.bonigarcia:webdrivermanager:5.4.1")
+    testImplementation("org.selenide:selenide-selenoid:6.15.0")
 
 
 

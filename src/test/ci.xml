@@ -14,8 +14,28 @@
     <parameter name="disableGpu" value="${DISABLE_GPU}"/>
     <parameter name="remoteUrl" value="${REMOTE_URL}"/>
     <parameter name="videoEnv" value="${VIDEO_ENV}"/>
-    <test name="CI-TEST">
+    <test name="CI-TEST-CHROME">
         <parameter name="attachFolder" value="./build/attachTests"/>
+        <parameter name = "browserName" value="chrome"/>
+        <groups>
+            <run>
+                <include name = "ALL"/>
+                <include name = "PROXY"/>
+                <include name = "CleanUp"/>
+            </run>
+        </groups>
+        <packages>
+            <package name="dicts" />
+            <package name="events" />
+            <package name="map" />
+            <package name="map" />
+            <package name="pmi_tests" />
+            <package name="reports" />
+        </packages>
+    </test>
+    <test name="CI-TEST_FF">
+        <parameter name="attachFolder" value="./build/attachTests"/>
+        <parameter name = "browserName" value="firefox"/>
         <groups>
             <run>
                 <include name = "ALL"/>

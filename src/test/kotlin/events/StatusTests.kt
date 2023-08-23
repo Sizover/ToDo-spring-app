@@ -13,9 +13,7 @@ import org.testng.annotations.DataProvider
 import test_library.icTabs.TabEnum
 import test_library.menu.MyMenu.Incidents
 import test_library.statuses.StatusEnum
-import test_library.statuses.StatusEnum.Завершена
-import test_library.statuses.StatusEnum.Отменена
-import test_library.statuses.StatusEnum.Закрыта
+import test_library.statuses.StatusEnum.*
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -37,7 +35,7 @@ open class StatusTests : BaseTest(){
         )
     }
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class, dataProvider = "Статусы детей и родителей", groups = ["ALL"])
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class, dataProvider = "Статусы детей и родителей", groups = ["ALL", "LOCAL"])
     fun `Status 0010 Проверка сумарного статуса родительской КП`(status1: StatusEnum, status2: StatusEnum, statusSum: StatusEnum) {
         //Проверка изменения статусов родительской карточки в зависимости от статусов дочерних
         //проверяемые комбинации - 2 статуса дочерней карточки, последний - искомой родительской

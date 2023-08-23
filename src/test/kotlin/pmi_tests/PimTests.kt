@@ -42,8 +42,8 @@ import test_library.statuses.StatusEnum
 import test_library.statuses.StatusEnum.`В обработке`
 import test_library.statuses.StatusEnum.Завершена
 import test_library.statuses.StatusEnum.Закрыта
-import test_library.statuses.StatusEnum.Реагирование
 import test_library.statuses.StatusEnum.Отменена
+import test_library.statuses.StatusEnum.Реагирование
 import java.io.File
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
@@ -897,7 +897,7 @@ class PimTests : BaseTest(){
         checkAlert(snackbarWarning, "Данный статус не может быть присвоен", true, longWait)
     }
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL", "112", "LOCAL"])
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL", "112"])
     fun `PMI 0112 Назначение КП из 112 в КИАП`() {
         //A.3.19 Убедиться на стороне Системы-112 в наличии возможности назначать   карточку на ЕЦОР  (КИАП) из Системы-112
         //A.3.20 Прием карточки из Системы-112
@@ -1466,7 +1466,7 @@ class PimTests : BaseTest(){
         }
     }
 
-    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL", "LOCAL2"])
+    @org.testng.annotations.Test (retryAnalyzer = Retry::class, groups = ["ПМИ", "ALL"])
     fun `PMI 0260 Проверка использования ассоциативных связей-ссылок между объектами справочников`(){
         //A.3.32 Проверка использования ассоциативных связей-ссылок между объектами справочников
         logonTool(false)

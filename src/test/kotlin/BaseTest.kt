@@ -1,36 +1,24 @@
 //import kotlin.collections.EmptyMap.keys
 
+import com.codeborne.selenide.*
 import com.codeborne.selenide.Browsers.CHROME
-import com.codeborne.selenide.CollectionCondition
-import com.codeborne.selenide.Condition.attribute
-import com.codeborne.selenide.Condition.exist
-import com.codeborne.selenide.Condition.visible
-import com.codeborne.selenide.Configuration
-import com.codeborne.selenide.FileDownloadMode
-import com.codeborne.selenide.Selectors.byCssSelector
-import com.codeborne.selenide.Selectors.byName
-import com.codeborne.selenide.Selectors.byXpath
-import com.codeborne.selenide.Selenide
-import com.codeborne.selenide.Selenide.clearBrowserCookies
-import com.codeborne.selenide.Selenide.clearBrowserLocalStorage
-import com.codeborne.selenide.Selenide.closeWebDriver
-import com.codeborne.selenide.Selenide.closeWindow
-import com.codeborne.selenide.Selenide.element
-import com.codeborne.selenide.Selenide.elements
-import com.codeborne.selenide.Selenide.open
+import com.codeborne.selenide.Browsers.FIREFOX
+import com.codeborne.selenide.Condition.*
+import com.codeborne.selenide.Selectors.*
+import com.codeborne.selenide.Selenide.*
 import com.codeborne.selenide.logevents.SelenideLogger
+import io.qameta.allure.Allure
 import io.qameta.allure.selenide.AllureSelenide
 import org.apache.commons.io.FileUtils
 import org.junit.jupiter.api.Assertions
 import org.openqa.selenium.Keys
 import org.openqa.selenium.chrome.ChromeOptions
-import org.testng.ITestContext
-import org.testng.annotations.AfterMethod
-import org.testng.annotations.AfterSuite
-import org.testng.annotations.BeforeMethod
-import org.testng.annotations.BeforeSuite
-import org.testng.annotations.BeforeTest
-import org.testng.annotations.Parameters
+import org.openqa.selenium.chrome.ChromeOptions.CAPABILITY
+import org.openqa.selenium.firefox.FirefoxOptions
+import org.openqa.selenium.firefox.FirefoxOptions.FIREFOX_OPTIONS
+import org.openqa.selenium.remote.RemoteWebDriver
+import org.testng.ITestResult
+import org.testng.annotations.*
 import test_library.IncidentLevels.IncidentLevelEnum
 import test_library.alerts.AlertsEnum
 import test_library.filters.FilterEnum
@@ -40,13 +28,17 @@ import test_library.menu.SubmenuInterface
 import test_library.operator_data.OperatorDataEnum
 import test_library.statuses.StatusEnum
 import java.io.File
+import java.io.IOException
+import java.io.InputStream
 import java.lang.reflect.Method
+import java.net.HttpURLConnection
+import java.net.URL
 import java.text.SimpleDateFormat
 import java.time.Duration.ofSeconds
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.Locale
+import java.util.*
 import kotlin.random.Random
 
 
@@ -54,6 +46,7 @@ open class BaseTest {
     //просто переменные с текущей датой, для различных целей
     var date = LocalDate.now()
     var dateTime = LocalDateTime.now()
+    val videoSessionsList = mutableListOf<String>()
     //Переменные определяемые через энвы/параметры запуска
     companion object {
         lateinit var standUrl: String
@@ -65,6 +58,7 @@ open class BaseTest {
         lateinit var browserhead: String
         lateinit var no_sandbox: String
         lateinit var disable_gpu: String
+        lateinit var browser_Name: String
         var remote_url: String? = null
         val options: MutableMap<String, Any> = HashMap()
         var video_env: String? = null
@@ -99,12 +93,19 @@ open class BaseTest {
         video_env = videoenv
     }
 
+    @Parameters("browserName")
+//    @BeforeSuite(alwaysRun = true)
+    @BeforeTest(alwaysRun = true)
+    open fun getBrowser(_browser: String){
+        browser_Name = _browser
+    }
+
 
 
 
 //        //https://overcoder.net/q/1369284/%D0%BA%D0%B0%D0%BA-%D1%80%D0%B0%D0%B7%D1%80%D0%B5%D1%88%D0%B8%D1%82%D1%8C-%D0%B8%D0%BB%D0%B8-%D0%B7%D0%B0%D0%BF%D1%80%D0%B5%D1%82%D0%B8%D1%82%D1%8C-%D1%83%D0%B2%D0%B5%D0%B4%D0%BE%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BE-%D0%B2%D1%81%D0%BF%D0%BB%D1%8B%D0%B2%D0%B0%D1%8E%D1%89%D0%B5%D0%B9-%D0%BA%D0%B0%D0%BC%D0%B5%D1%80%D0%B5-%D0%BC%D0%B8%D0%BA%D1%80%D0%BE%D1%84%D0%BE%D0%BD%D0%B0
 
-    @BeforeTest(alwaysRun = true)
+    @BeforeMethod(alwaysRun = true)
     fun initDriver(){
         //https://overcoder.net/q/1369284/%D0%BA%D0%B0%D0%BA-%D1%80%D0%B0%D0%B7%D1%80%D0%B5%D1%88%D0%B8%D1%82%D1%8C-%D0%B8%D0%BB%D0%B8-%D0%B7%D0%B0%D0%BF%D1%80%D0%B5%D1%82%D0%B8%D1%82%D1%8C-%D1%83%D0%B2%D0%B5%D0%B4%D0%BE%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BE-%D0%B2%D1%81%D0%BF%D0%BB%D1%8B%D0%B2%D0%B0%D1%8E%D1%89%D0%B5%D0%B9-%D0%BA%D0%B0%D0%BC%D0%B5%D1%80%D0%B5-%D0%BC%D0%B8%D0%BA%D1%80%D0%BE%D1%84%D0%BE%D0%BD%D0%B0
         //https://peter.sh/experiments/chromium-command-line-switches/
@@ -118,32 +119,46 @@ open class BaseTest {
         options["enableVNC"] = true
         options["enableVideo"] = true
         options["enableLog"] = true
-//        options["videoName"] = "${testContext.getName().lowercase()}.mp4"
         options["profile.default_content_settings.popups"] = 0
         options["download.default_directory"] = attachFolder
         options["download.prompt_for_download"] = false
         options["download.directory_upgrade"] = true
         options["safebrowsing.enabled"] = true
-        val capabilities = ChromeOptions()
-        //TODO после обновления (выхода новых версий) браузера/selenide надо раскоментить опцию --auto-accept-camera-and-microphone-capture
-        // в текущем виде сборки (114.0.5735.90/6.15) браузер не запускается с ошибкой
-        // "org.openqa.selenium.SessionNotCreatedException: Could not start a new session. Response code 500. Message: unknown error: Chrome failed to start: crashed.
-        //  (unknown error: DevToolsActivePort file doesn't exist)
-        //  (The process started from chrome location /usr/bin/google-chrome is no longer running, so ChromeDriver is assuming that Chrome has crashed.) "
-        //capabilities.addArguments("--auto-accept-camera-and-microphone-capture")
-        capabilities.addArguments("--use-fake-device-for-media-stream")
-        capabilities.addArguments("--use-file-for-fake-audio-capture")
-        capabilities.addArguments("--use-fake-ui-for-media-stream")
-        //capabilities.addArguments("-Dselenide.headless=true")
-        if (no_sandbox.toBoolean()){
-            capabilities.addArguments("--no-sandbox")
+        if (browser_Name == "chrome"){
+            val chromeOptions = ChromeOptions()
+            chromeOptions.addArguments("--use-fake-device-for-media-stream")
+            chromeOptions.addArguments("--use-file-for-fake-audio-capture")
+            chromeOptions.addArguments("--use-fake-ui-for-media-stream")
+            //TODO после обновления (выхода новых версий) браузера/selenide надо раскоментить опцию --auto-accept-camera-and-microphone-capture
+            // в текущем виде сборки (114.0.5735.90/6.15) браузер не запускается с ошибкой
+            // "org.openqa.selenium.SessionNotCreatedException: Could not start a new session. Response code 500. Message: unknown error: Chrome failed to start: crashed.
+            //  (unknown error: DevToolsActivePort file doesn't exist)
+            //  (The process started from chrome location /usr/bin/google-chrome is no longer running, so ChromeDriver is assuming that Chrome has crashed.) "
+            //chromeOptions.addArguments("--auto-accept-camera-and-microphone-capture")
+            //chromeOptions.addArguments("-Dselenide.headless=true")
+            if (no_sandbox.toBoolean()){
+                chromeOptions.addArguments("--no-sandbox")
+            }
+            if (disable_gpu.toBoolean()){
+                chromeOptions.addArguments("--disable-gpu")
+            }
+            Configuration.browserCapabilities.setCapability(CAPABILITY, chromeOptions)
+            Configuration.browser = CHROME
+        } else if (browser_Name == "firefox"){
+            val fireFoxOptions = FirefoxOptions()
+//            fireFoxOptions.addArguments("--disable-web-security")
+//            fireFoxOptions.addArguments("--allow-running-insecure-content")
+//            fireFoxOptions.addArguments("--use-fake-ui-for-media-stream")
+            if (no_sandbox.toBoolean()){
+                fireFoxOptions.addArguments("--no-sandbox")
+            }
+            if (disable_gpu.toBoolean()){
+                fireFoxOptions.addArguments("--disable-gpu")
+            }
+            Configuration.browserCapabilities.setCapability(FIREFOX_OPTIONS, fireFoxOptions)
+            Configuration.browser = FIREFOX
         }
-        if (disable_gpu.toBoolean()){
-            capabilities.addArguments("--disable-gpu")
-        }
-        Configuration.browserCapabilities = capabilities
         Configuration.browserCapabilities.setCapability("selenoid:options", options)
-        Configuration.browser = CHROME
         Configuration.timeout = 10000
         Configuration.browserSize = "1920x1080"
         Configuration.holdBrowserOpen = false
@@ -153,11 +168,84 @@ open class BaseTest {
         SelenideLogger.addListener("AllureSelenide", AllureSelenide())
     }
 
-    @BeforeMethod(alwaysRun = true)
+    fun getSessionId(): String {
+        return (WebDriverRunner.getWebDriver() as RemoteWebDriver).sessionId.toString()
+    }
+
+//    @AfterMethod
+//    fun saveVideo() {
+//        val sessionId = getSessionId()
+//        WebDriverRunner.closeWebDriver()
+//
+//        //System.out.println("video.enabled1: " + System.getProperty("video.enabled"));
+//        if ("true" == System.getProperty("video.enabled")) {
+//            //sleep(5000);
+//            attachAllureVideo(sessionId)
+//        }
+//    }
+
+    fun attachAllureVideo(sessionId: String) {
+        try {
+            val videoUrl = URL(remote_url?.substringBeforeLast(':') + "/video/" + sessionId + ".mp4")
+            val `is` = getSelenoidVideo(videoUrl)
+            Allure.addAttachment("Video", "video/mp4", `is`, "mp4")
+            deleteSelenoidVideo(videoUrl)
+        } catch (e: Exception) {
+            println("attachAllureVideoError")
+            e.printStackTrace()
+        }
+    }
+
+    fun getSelenoidVideo(url: URL): InputStream? {
+        var lastSize = 0
+        var exit = 2
+        for (i in 0..19) {
+            try {
+                val size = url.openConnection().getHeaderField("Content-Length").toInt()
+                println("Content-Length: $size")
+                println("i: $i")
+                if (size > lastSize) {
+                    lastSize = size
+                    Thread.sleep(1500)
+                } else if (size == lastSize) {
+                    println("Content-Length: $size")
+                    println("exit: $exit")
+                    exit--
+                    Thread.sleep(1000)
+                }
+                if (exit < 0) {
+                    println("video ok!")
+                    return url.openStream()
+                }
+            } catch (e: Exception) {
+                println("getSelenoidVideo: " + e.message)
+                //e.printStackTrace();
+            }
+        }
+        return null
+    }
+
+    fun deleteSelenoidVideo(url: URL) {
+        try {
+            val deleteConn = url.openConnection() as HttpURLConnection
+            deleteConn.setDoOutput(true)
+            deleteConn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
+            deleteConn.setRequestMethod("DELETE")
+            deleteConn.connect()
+            println("deleteSelenoidVideo")
+            println(deleteConn.getResponseCode())
+            println(deleteConn.getResponseMessage())
+            deleteConn.disconnect()
+        } catch (e: IOException) {
+            println("deleteSelenoidVideoError")
+            e.printStackTrace()
+        }
+    }
+
+//    @BeforeMethod(alwaysRun = true)
     fun initNameOfVideo(method: Method){
         //https://stackoverflow.com/questions/8596632/retrieve-test-name-on-testng
         val videoTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"))
-//        var videoName = "$videoTime ${method.name.lowercase()}.mp4"
         val videoName = if (video_env != null && video_env?.isNotEmpty() == true){
             "$video_env $videoTime ${method.name.lowercase()}.mp4"
         } else {
@@ -195,27 +283,57 @@ open class BaseTest {
 
 
     //    @AfterMethod(alwaysRun = true)
+//    fun logoffTool() {
+//        clearBrowserCookies()
+//        clearBrowserLocalStorage()
+//        closeWindow()
+////        closeWebDriver()
+//    }
+
+
+    //@AfterMethod(alwaysRun = true)
     fun logoffTool() {
+        val sessionId = getSessionId()
+        videoSessionsList.add(sessionId)
         clearBrowserCookies()
         clearBrowserLocalStorage()
         closeWindow()
+        closeWebDriver()
+//        attachAllureVideo(sessionId)
 //        closeWebDriver()
     }
 
+    @BeforeMethod(alwaysRun = true)
+    fun cleanVideoList(result: ITestResult) {
+        videoSessionsList.clear()
+    }
 
     @AfterMethod(alwaysRun = true)
-    fun logoffTool2() {
+    fun attachVideoAfter(result: ITestResult) {
+        val sessionId = getSessionId()
+        videoSessionsList.add(sessionId)
         FileUtils.deleteDirectory(File(attachFolder))
         clearBrowserCookies()
         clearBrowserLocalStorage()
         closeWindow()
-//        closeWebDriver()
+        closeWebDriver()
+        val test = result.status
+        if (result.status == ITestResult.FAILURE){
+            videoSessionsList.forEach {
+                attachAllureVideo(it)
+            }
+        } else {
+            videoSessionsList.forEach {
+                getSelenoidVideo(URL(remote_url?.substringBeforeLast(':') + "/video/" + it + ".mp4"))
+                deleteSelenoidVideo(URL(remote_url?.substringBeforeLast(':') + "/video/" + it + ".mp4"))
+            }
+        }
     }
 
-    @AfterSuite(alwaysRun = true)
-    fun closeDriver() {
-        closeWebDriver()
-    }
+//    @AfterSuite(alwaysRun = true)
+//    fun closeDriver() {
+//        closeWebDriver()
+//    }
 
     fun logonDds() {
         //Selenide.open("http://test.kiap.local:8000")
