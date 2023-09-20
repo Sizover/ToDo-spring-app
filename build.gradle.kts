@@ -29,6 +29,8 @@ repositories {
 
 apply("kiaplib.gradle.kts")
 
+
+
 dependencies {
     testImplementation(kotlin("test"))
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
@@ -38,11 +40,12 @@ dependencies {
     //для скачивания файлов в папку на стороне селеноида
     // https://github.com/selenide/selenide/blob/main/modules/selenoid/README.md
     testImplementation("com.codeborne:selenide-selenoid:6.17.0")
+    testImplementation("org.selenide:selenide-selenoid:6.15.0")
     testImplementation("org.awaitility:awaitility:4.2.0")
-    testImplementation("org.apache.directory.studio:org.apache.commons.io:2.4")
+    //testImplementation("org.apache.directory.studio:org.apache.commons.io:2.4")
     testImplementation("org.testng:testng:7.7.1")
     testImplementation("org.seleniumhq.selenium:selenium-java:4.8.3")
-    testImplementation("com.opencsv:opencsv:5.7.1")
+    //testImplementation("com.opencsv:opencsv:5.7.1")
     testImplementation("org.jetbrains.kotlin:kotlin-reflect")
     testImplementation("org.jetbrains.kotlin:kotlin-reflect:%kotlinVersion%")
     testImplementation("io.rest-assured:rest-assured:5.3.0")
@@ -51,12 +54,8 @@ dependencies {
 //    testImplementation("io.qameta.allure:allure-java-commons:2.20.1")
 //    testImplementation("io.qameta.allure:allure-commandline:2.20.1")
     testImplementation("io.qameta.allure:allure-selenide:2.20.1")
-    testImplementation("io.github.bonigarcia:webdrivermanager:5.4.1")
-    testImplementation("org.selenide:selenide-selenoid:6.15.0")
-
-
-
-
+    testImplementation("commons-io:commons-io:2.6")
+//    testImplementation("io.github.bonigarcia:webdrivermanager:5.4.1")
 //    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
 //    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.8.2")
 //    testImplementation("com.codeborne:selenide:6.4.0")
@@ -66,7 +65,7 @@ dependencies {
 }
 
 tasks.test {
-    val suite = project.properties.getOrDefault("suite", "testng.xml")
+    val suite = project.properties.getOrDefault("suite", "ALL_CHROME.xml")
     useTestNG() {
         useDefaultListeners = true
         outputDirectory = file("$projectDir/build/reports/TestNG")

@@ -27,7 +27,11 @@ enum class FilterEnum (val filterAlias: FilterObject) {
 
     `Файлы`(FilterObject("Файлы", "Есть файлы", FilterTypeEnum.RADIOBUTTON)),
 
+    `Отобразить при назначениях`(FilterObject("В назначениях", "Отобразить при назначениях", FilterTypeEnum.RADIOBUTTON)),
+
     `Пользователь`(FilterObject("Пользователь", "Пользователь системы", FilterTypeEnum.RADIOBUTTON)),
+
+    `Отобразить на слое ГИС`(FilterObject("Карта", "Отобразить на слое ГИС", FilterTypeEnum.RADIOBUTTON)),
 
     `Типы_происшествий`(FilterObject("Типы происшествий", "Типы происшествий", FilterTypeEnum.HIERARCHICATALOG)),
 

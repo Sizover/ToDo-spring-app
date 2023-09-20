@@ -2,7 +2,7 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 
 
-<suite name="Test Suite">
+<suite name="Test Suite" data-provider-thread-count="5" verbose="1">
     <parameter name="url" value="${URL}"/>
     <parameter name="mainLogin" value="${MAIN_LOGIN}"/>
     <parameter name="mainPassword" value="${MAIN_PASSWORD}"/>
@@ -14,17 +14,15 @@
     <parameter name="disableGpu" value="${DISABLE_GPU}"/>
     <parameter name="remoteUrl" value="${REMOTE_URL}"/>
     <parameter name="attachVideoAfterSuccessTest" value="${ATTACH_SUCCES}"/>
-    <test name="CI-TEST-CHROME">
-        <parameter name="attachFolder" value="./build/attachTests"/>
+    <test name="LOCAL_CHROME">
         <parameter name = "browserName" value="chrome"/>
         <groups>
             <run>
-                <include name = "ALL"/>
-                <include name = "PROXY"/>
-                <include name = "CleanUp"/>
+                <include name = "LOCAL"/>
             </run>
         </groups>
         <packages>
+            <package name="otus" />
             <package name="dicts" />
             <package name="events" />
             <package name="map" />
@@ -32,24 +30,21 @@
             <package name="pmi_tests" />
             <package name="reports" />
         </packages>
-    </test>
-    <test name="CI-TEST_FF">
-        <parameter name="attachFolder" value="./build/attachTests"/>
-        <parameter name = "browserName" value="firefox"/>
-        <groups>
-            <run>
-                <include name = "ALL"/>
-                <include name = "PROXY"/>
-                <include name = "CleanUp"/>
-            </run>
-        </groups>
-        <packages>
-            <package name="dicts" />
-            <package name="events" />
-            <package name="map" />
-            <package name="map" />
-            <package name="pmi_tests" />
-            <package name="reports" />
-        </packages>
+        <classes>
+            <class name="otus.Otus"></class>
+            <class name="dicts.CheckingFiles"></class>
+            <class name="dicts.Dicts_CumulativePlans"></class>
+            <class name="dicts.SearchTests"></class>
+            <class name="dicts.Labels"></class>
+            <class name="dicts.Dicts_Incidents"></class>
+            <class name="dicts.Dicts_KB"></class>
+            <class name="events.Events_Incidents"></class>
+            <class name="events.StatusTests"></class>
+            <class name="map.MapTest"></class>
+            <class name="pmi_tests.PimTests"></class>
+            <class name="reports.Reports"></class>
+            <class name="CleanUp"></class>
+            <class name="PlayGround"></class>
+        </classes>
     </test>
 </suite>

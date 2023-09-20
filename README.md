@@ -87,9 +87,10 @@
 * "NO_SANDBOX" - булева настройка применения [опции](https://peter.sh/experiments/chromium-command-line-switches/#disable-gpu) запуска браузера "--no-sandbox".
 * "REMOTE_URL" - URL удаленного веб-драйвера. При передаче значения null запуск тестов будет произведен локально (http://selenoid.kiap.local:4444/wd/hub)
 * ~~"VIDEO_ENV" - метка/ярлык прокидываемая из пайплайна, содержащая имя(некоторый идентификатор) текущего пайплайна для присвоения в имя видеозаписи теста~~ (Выведено из эксплуатации. Реализация заменена на скачивание видео и прикрепление его к отчету allure)  
+* "ATTACH_SUCCES" - булева переменная определяющая необходимость крепить к отчету видео положительно пройденных тестов. Логика определяет дефолтное/не заданное значение как "false" 
 
 Список значений используемых на ТС test  
-```ADMIN_LOGIN=autotest_admin;ADMIN_PASSWORD=autotest_admin;ATTACH_FOLDER=./attachFolder;DISABLE_GPU=false;HEADLESS=false;MAIN_LOGIN=a.sizov;MAIN_PASSWORD=a.sizov;NO_SANDBOX=false;URL=https://test.kiap.local/;REMOTE_URL=http://selenoid.kiap.local:4444/wd/hub```
+```ADMIN_LOGIN=autotest_admin;ADMIN_PASSWORD=autotest_admin;ATTACH_FOLDER=./build/attachTests;HEADLESS=false;MAIN_LOGIN=a.sizov;MAIN_PASSWORD=a.sizov;NO_SANDBOX=false;DISABLE_GPU=false;URL=https://test.kiap.local/;REMOTE_URL=http://selenoid.kiap.local:4444/wd/hub;ATTACH_SUCCES=true```
 
 ## Архитектура?
 

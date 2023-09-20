@@ -2,7 +2,7 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 
 
-<suite name="Test Suite" data-provider-thread-count="5" verbose="1" parallel = "methods" thread-count = "5">
+<suite name="All Test Suite">
     <parameter name="url" value="${URL}"/>
     <parameter name="mainLogin" value="${MAIN_LOGIN}"/>
     <parameter name="mainPassword" value="${MAIN_PASSWORD}"/>
@@ -13,18 +13,19 @@
     <parameter name="noSandbox" value="${NO_SANDBOX}"/>
     <parameter name="disableGpu" value="${DISABLE_GPU}"/>
     <parameter name="remoteUrl" value="${REMOTE_URL}"/>
-    <parameter name="videoEnv" value="${VIDEO_ENV}"/>
-    <test name="TestParallelismAndCrossBrowser">
+    <parameter name="attachVideoAfterSuccessTest" value="${ATTACH_SUCCES}"/>
+    <test name="CHROME_ALL">
         <parameter name = "browserName" value="chrome"/>
         <groups>
             <run>
-                <include name = "LOCAL"/>
+                <include name = "ALL"/>
+                <include name = "PROXY"/>
+                <include name = "CleanUp"/>
             </run>
         </groups>
         <packages>
             <package name="dicts" />
             <package name="events" />
-            <package name="map" />
             <package name="map" />
             <package name="pmi_tests" />
             <package name="reports" />
@@ -42,20 +43,20 @@
             <class name="pmi_tests.PimTests"></class>
             <class name="reports.Reports"></class>
             <class name="CleanUp"></class>
-            <class name="PlayGround"></class>
         </classes>
     </test>
-    <test name="2TestParallelismAndCrossBrowser">
+    <test name="FIREFOX_ALL">
         <parameter name = "browserName" value="firefox"/>
         <groups>
             <run>
-                <include name = "LOCAL"/>
+                <include name = "ALL"/>
+                <include name = "PROXY"/>
+                <include name = "CleanUp"/>
             </run>
         </groups>
         <packages>
             <package name="dicts" />
             <package name="events" />
-            <package name="map" />
             <package name="map" />
             <package name="pmi_tests" />
             <package name="reports" />
@@ -73,7 +74,6 @@
             <class name="pmi_tests.PimTests"></class>
             <class name="reports.Reports"></class>
             <class name="CleanUp"></class>
-            <class name="PlayGround"></class>
         </classes>
     </test>
 </suite>

@@ -41,6 +41,11 @@ class MyMenu: BaseTest() {
         HotlineAssets(MenuEnum.Справочники, "Силы и средства", true, null),
         IncidentTypes(MenuEnum.Справочники, "Типы происшествий", true, null)
     }
+
+    enum class OtusDictionaries(override val menu: MenuEnum, override val subMenu: String, override val table: Boolean, override val desc: String?) : SubmenuInterface {
+        Companies(MenuEnum.Справочники, "Организации", true, null),
+    }
+
     enum class KB (override val menu: MenuEnum, override val subMenu: String, override val table: Boolean, override val desc: String?) : SubmenuInterface {
         Explorer(MenuEnum.`База знаний`, "Проводник", false, null),
         Categories(MenuEnum.`База знаний`, "Разделы", true, null),
