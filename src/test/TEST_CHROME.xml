@@ -22,7 +22,7 @@
             </run>
         </groups>
         <packages>
-            <package name="otus" />
+            <package name="otus_balck_box_test_cases" />
             <package name="dicts" />
             <package name="events" />
             <package name="map" />
@@ -31,7 +31,7 @@
             <package name="reports" />
         </packages>
         <classes>
-            <class name="otus.Otus"></class>
+            <class name="otus_balck_box_test_cases.Otus"></class>
             <class name="dicts.CheckingFiles"></class>
             <class name="dicts.Dicts_CumulativePlans"></class>
             <class name="dicts.SearchTests"></class>

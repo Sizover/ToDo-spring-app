@@ -1,1 +1,0 @@
-{"uuid":"570b695c-501b-4136-871b-de574dceb59e","name":"BaseTest.initDriver","children":["8a5b8679-3dd5-45c6-b3c0-8ea7b4c1ac0c"],"description":"","befores":[{"name":"initDriver","status":"passed","stage":"finished","description":"","steps":[],"attachments":[],"parameters":[],"start":1695218760807,"stop":1695218760808}],"afters":[],"start":1695218760807,"stop":1695218760808}
