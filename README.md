@@ -1,5 +1,5 @@
-Environment variables: ADMIN_LOGIN=autotest_admin;ADMIN_PASSWORD=autotest_admin;ATTACH_FOLDER=./build/attachTests;HEADLESS=false;MAIN_LOGIN=a.sizov;MAIN_PASSWORD=a.sizov;NO_SANDBOX=false;DISABLE_GPU=false;URL=https://test.kiap.local/;REMOTE_URL=http://selenoid.kiap.local:4444/wd/hub;ATTACH_SUCCES=true
+Тесты под проверку находятся в */src/test/kotlin/otus_api_tests/TestClass
 
-testng file: */testing-e2e/src/test/TEST_CROSS.xml
+Тесты выполнены с использованием okhttp, testng
 
-Добавлены тесты API (честно пытался победить rest-assured, но не удалось, пришлось честно свиснуть с практичческого занятия)
+Тесты выполнены с претензией на автономность, т.е. каждый тест готовит данные на сервере, что бы избежать того что сервер пуст, но работает не с подготовленными данными а с любыми найденными

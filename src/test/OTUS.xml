@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+
+<suite name="All Test Suite">
+    <test name="OTUS_API_TESTS">
+        <groups>
+            <run>
+                <include name = "OTUS"/>
+                <include name = "PROXY"/>
+                <include name = "CleanUp"/>
+            </run>
+        </groups>
+        <packages>
+            <package name="dicts" />
+            <package name="events" />
+            <package name="map" />
+            <package name="pmi_tests" />
+            <package name="reports" />
+        </packages>
+        <classes>
+            <class name="otus_api_tests.TestClass"></class>
+        </classes>
+    </test>
+</suite>

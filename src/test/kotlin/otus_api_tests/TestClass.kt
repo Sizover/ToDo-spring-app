@@ -1,70 +1,114 @@
 package otus_api_tests
 
-//import io.restassured.module.kotlin.extensions.*
+import Retry
 import com.google.gson.Gson
-import io.restassured.RestAssured.*
-import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
-import org.hamcrest.CoreMatchers
-import org.hamcrest.MatcherAssert
-import org.hamcrest.Matchers.*
+import com.google.gson.JsonParser
 import org.junit.jupiter.api.Assertions
-import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import java.io.IOException
+import java.time.LocalDateTime
 
 class TestClass: BaseHttpClient() {
-    @DataProvider(name = "Имена")
-    open fun differentNames(): Any {
-        return arrayOf<Array<Any>>(
-            arrayOf(Name(name = "ivan"), 200),
-            arrayOf(Name(name = "igor", country_id = "US"), 200),
-            arrayOf(Name(name = ""), 422),
-            arrayOf(Name(), 422),
-        )
+
+
+    fun createTask(task: Task): Task{
+        val testUrl = "$url/api/v1/tasks"
+//        val testTask = Task(name= "apiTestTask${LocalDateTime.now()}", priority = Priority.values().random())
+        val rsPost = postTaskRequest(body = task)
+        val respTask = Gson().fromJson(rsPost.body!!.string(), Task::class.java)
+        Assertions.assertEquals(200, rsPost.code)
+        Assertions.assertEquals(task.name, respTask.name)
+        Assertions.assertEquals(task.priority, respTask.priority)
+        Assertions.assertFalse(respTask.completed)
+        Assertions.assertTrue(respTask.id != null)
+
+        return respTask
     }
 
-    @Test(dataProvider = "Имена")
-    fun testOfName(name: Name, respCode: Int){
-        val client = BaseHttpClient()
-        val resp = client.testGetRequest(name)
-        val respJson = Gson().fromJson(resp.body!!.string(), Name::class.java)
-        Assertions.assertEquals(respCode, resp.code)
-        if (respCode == 200){
-            Assertions.assertEquals(name.name?.lowercase(), respJson.name)
-            Assertions.assertEquals(name.country_id, respJson.country_id)
-            Assertions.assertTrue(respJson.country_id == null)
-            Assertions.assertTrue(respJson.age?.isNotEmpty() ?: false)
-            Assertions.assertTrue(respJson.count?.isNotEmpty() ?: false)
+    @Test(retryAnalyzer = Retry::class, groups = ["OTUS"])
+    fun createTaskAndCheckTask(){
+        val testTask = Task(name= "apiTestTask${LocalDateTime.now()}", priority = Priority.values().random())
+        val respTask = createTask(testTask)
+        val respTaskList = mutableListOf<Task>()
+        val getrs = getTasksRequest()
+        val getRsArray = JsonParser.parseString(getrs.body!!.string()).getAsJsonArray()
+        getRsArray.forEach{
+            val itTask = Gson().fromJson(it, Task::class.java)
+            respTaskList.add(itTask)
         }
+        testTask.id = respTask.id
+        Assertions.assertTrue(respTaskList.contains(testTask))
     }
 
-    @Test
-    fun testOfBadRealisationEmptyString() {
-        val urlBuilder: HttpUrl.Builder = (url).toHttpUrlOrNull()!!.newBuilder()
-        urlBuilder.addQueryParameter("name", "")
-        val url: String = urlBuilder.build().toString()
-        val request: Request = Request.Builder()
-            .url(url)
-            .build()
-        val call = client.newCall(request)
-        val response = call.execute()
-        Assertions.assertEquals(response.code, 200)
+    @Test(retryAnalyzer = Retry::class, groups = ["OTUS"])
+    fun completeRNDTask(){
+        val testTask = Task(name= "apiTestTask${LocalDateTime.now()}", priority = Priority.values().random())
+        createTask(testTask)
+        val respTaskList = mutableListOf<Task>()
+        var getrs = getTasksRequest()
+        val getRsArray = JsonParser.parseString(getrs.body!!.string()).getAsJsonArray()
+        getRsArray.forEach{
+            val itTask = Gson().fromJson(it, Task::class.java)
+            respTaskList.add(itTask)
+        }
+        val rndTestTask = respTaskList.random()
+        putTaskStatusRequest(id = rndTestTask.id!!, completed = true)
+        rndTestTask.completed = true
+        respTaskList.clear()
+        getrs = getTasksRequest(done = true)
+        JsonParser.parseString(getrs.body!!.string()).getAsJsonArray().forEach {
+            val itTask = Gson().fromJson(it, Task::class.java)
+            respTaskList.add(itTask)
+        }
+        Assertions.assertTrue(respTaskList.contains(rndTestTask))
     }
 
-    @Test
-    fun testOfBadRealisationEmptyString2() {
-        val urlBuilder: HttpUrl.Builder = (url).toHttpUrlOrNull()!!.newBuilder()
-        urlBuilder.addQueryParameter("name", null)
-        val url: String = urlBuilder.build().toString()
-        val request: Request = Request.Builder()
-            .url(url)
-            .build()
-        val call = client.newCall(request)
-        val response = call.execute()
-        Assertions.assertEquals(response.code, 200)
+    @Test(retryAnalyzer = Retry::class, groups = ["OTUS"])
+    fun deleteRNDCompletedTask(){
+        val testTask = Task(name= "apiTestTask${LocalDateTime.now()}", priority = Priority.values().random())
+        val rsTestTask = createTask(testTask)
+        putTaskStatusRequest(id = rsTestTask.id!!, completed = true)
+        val respTaskList = mutableListOf<Task>()
+        var getrs = getTasksRequest(done = true)
+        val getRsArray = JsonParser.parseString(getrs.body!!.string()).getAsJsonArray()
+        getRsArray.forEach{
+            val itTask = Gson().fromJson(it, Task::class.java)
+            respTaskList.add(itTask)
+        }
+        val rndTestTask = respTaskList.random()
+        val deleteRS = deleteTaskStatusRequest(id = rndTestTask.id!!)
+        val deleteRSError = Gson().fromJson(deleteRS.body!!.string(), ErrorMessage::class.java)
+        Assertions.assertEquals(500, deleteRS.code)
+        Assertions.assertEquals("Internal Server Error", deleteRSError.error)
+        Assertions.assertEquals("Deleting completed task not allowed!", deleteRSError.message)
+        getrs = getTasksRequest(done = true)
+        respTaskList.clear()
+        JsonParser.parseString(getrs.body!!.string()).getAsJsonArray().forEach{
+            val itTask = Gson().fromJson(it, Task::class.java)
+            respTaskList.add(itTask)
+        }
+        Assertions.assertTrue(respTaskList.contains(rndTestTask))
+    }
+
+    @Test(retryAnalyzer = Retry::class, groups = ["OTUS"])
+    fun deleteRNDNotCompletedTask(){
+        val testTask = Task(name= "apiTestTask${LocalDateTime.now()}", priority = Priority.values().random())
+        val rsTestTask = createTask(testTask)
+        val respTaskList = mutableListOf<Task>()
+        var getrs = getTasksRequest()
+        val getRsArray = JsonParser.parseString(getrs.body!!.string()).getAsJsonArray()
+        getRsArray.forEach{
+            val itTask = Gson().fromJson(it, Task::class.java)
+            respTaskList.add(itTask)
+        }
+        val rndTestTask = respTaskList.random()
+        val deleteRS = deleteTaskStatusRequest(id = rndTestTask.id!!)
+        Assertions.assertEquals(200, deleteRS.code)
+        getrs = getTasksRequest()
+        respTaskList.clear()
+        JsonParser.parseString(getrs.body!!.string()).getAsJsonArray().forEach{
+            val itTask = Gson().fromJson(it, Task::class.java)
+            respTaskList.add(itTask)
+        }
+        Assertions.assertTrue(!respTaskList.contains(rndTestTask))
     }
 }
