@@ -15,23 +15,6 @@ open class BaseHttpClient {
     val url = "http://localhost:8080"
 
 
-//    fun testGetRequest(queryParameter: Task): Response {
-//        val urlBuilder: HttpUrl.Builder = (url).toHttpUrlOrNull()!!.newBuilder()
-//        if (queryParameter.name?.trim()?.isNotEmpty() == true){
-//            urlBuilder.addQueryParameter("name", queryParameter.name)
-//        }
-//        if (queryParameter.country_id?.isNotEmpty() == true){
-//            urlBuilder.addQueryParameter("country_id", queryParameter.country_id)
-//        }
-//        val _url: String = urlBuilder.build().toString()
-//        val request = Request.Builder()
-//            .addHeader("Content-Type", "application/json")
-//            .url(_url)
-//            .build()
-//        val test = client.newCall(request)
-//        return client.newCall(request).execute()
-//    }
-
     fun getTasksRequest(url: String = "http://localhost:8080/api/v1/tasks", done: Boolean = false): Response{
         val urlBuilder: HttpUrl.Builder = (url).toHttpUrlOrNull()!!.newBuilder()
             urlBuilder.addQueryParameter("done", done.toString())

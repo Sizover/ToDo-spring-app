@@ -11,8 +11,6 @@ class TestClass: BaseHttpClient() {
 
 
     fun createTask(task: Task): Task{
-        val testUrl = "$url/api/v1/tasks"
-//        val testTask = Task(name= "apiTestTask${LocalDateTime.now()}", priority = Priority.values().random())
         val rsPost = postTaskRequest(body = task)
         val respTask = Gson().fromJson(rsPost.body!!.string(), Task::class.java)
         Assertions.assertEquals(200, rsPost.code)
